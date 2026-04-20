@@ -28,8 +28,6 @@
 #include <fcntl.h>
 #include <tree_sitter/api.h>
 
-using namespace ast_distance;
-
 static constexpr bool kTaskSystemEnabled = false;
 
 static bool is_task_system_flag(const std::string& arg) {
@@ -45,6 +43,8 @@ static bool is_task_system_flag(const std::string& arg) {
     };
     return kTaskFlags.find(arg) != kTaskFlags.end();
 }
+
+using namespace ast_distance;
 
 struct GuardrailsContext {
     bool active = false;
@@ -250,7 +250,8 @@ static void warn_kotlin_suspicious_constructs(
 void print_usage(const char* program) {
     std::cerr << "AST Distance - Cross-language AST comparison and porting analysis\n\n";
     std::cerr << "Usage:\n";
-    std::cerr << "  " << program << " <command>\n\n";
+    std::cerr << "  " << program << " [--agent <number>] [--task-file <tasks.json>] [--override] <command>\n";
+    std::cerr << "      Guardrails: when a task system is initialized, commands require --agent.\n\n";
     std::cerr << "  " << program << " <file1> <lang1> <file2> <lang2>\n";
     std::cerr << "      Compare AST similarity between two files\n\n";
     std::cerr << "  " << program << " --compare-functions <file1> <lang1> <file2> <lang2>\n";
@@ -311,6 +312,19 @@ void print_usage(const char* program) {
     std::cerr << "      Output as JSON\n\n";
     std::cerr << "  " << program << " --compiler-fixup <kotlin_root> <error_file> --verbose\n";
     std::cerr << "      Show alternative imports for ambiguous references\n\n";
+    std::cerr << "Swarm Task Management:\n";
+    std::cerr << "  " << program << " --init-tasks <src_dir> <src_lang> <tgt_dir> <tgt_lang> <task_file>\n";
+    std::cerr << "      Generate task file from missing/incomplete ports\n\n";
+    std::cerr << "  " << program << " --tasks <task_file>\n";
+    std::cerr << "      Show task status summary\n\n";
+    std::cerr << "  " << program << " --assign <task_file> [agent_number]\n";
+    std::cerr << "      Assign highest-priority pending task to an agent session\n";
+    std::cerr << "      If agent_number is omitted, a new one is allocated and printed\n";
+    std::cerr << "      Outputs complete porting instructions and AGENTS.md guidelines\n\n";
+    std::cerr << "  " << program << " --complete <task_file> <source_qualified>\n";
+    std::cerr << "      Mark a task as completed\n\n";
+    std::cerr << "  " << program << " --release <task_file> <source_qualified>\n";
+    std::cerr << "      Release an assigned task back to pending\n\n";
     std::cerr << "  Languages: rust, kotlin, cpp, python\n\n";
     std::cerr << "Port-Lint Headers:\n";
     std::cerr << "  Add a header comment to each ported file to enable accurate source tracking.\n";
@@ -1194,17 +1208,21 @@ void generate_reports(const Codebase& source, const Codebase& target,
     int matched = comp.matches.size();
     float completion_pct = (static_cast<float>(matched) / static_cast<float>(total_source)) * 100.0f;
     
-    // Count quality distribution
+    // Count quality distribution. Stubs are always critical regardless of
+    // whatever similarity score they carry, and are excluded from the average.
     int excellent = 0, good = 0, critical = 0;
     float avg_similarity = 0.0f;
+    int avg_count = 0;
     for (const auto& m : comp.matches) {
+        if (m.is_stub) { critical++; continue; }
         avg_similarity += m.similarity;
+        avg_count++;
         if (m.similarity >= 0.85) excellent++;
         else if (m.similarity >= 0.60) good++;
         else critical++;
     }
-    if (!comp.matches.empty()) {
-        avg_similarity /= comp.matches.size();
+    if (avg_count > 0) {
+        avg_similarity /= avg_count;
     }
     
     // Get current date/time as string
@@ -1247,7 +1265,7 @@ void generate_reports(const Codebase& source, const Codebase& target,
         report << "These files are well-ported and likely complete:\n\n";
         int shown = 0;
         for (const auto& m : ranked) {
-            if (m.similarity >= 0.85 && shown++ < 15) {
+            if (!m.is_stub && m.similarity >= 0.85 && shown++ < 15) {
                 report << "- `" << m.target_qualified << "` (" << std::fixed << std::setprecision(2)
                        << m.similarity << ", " << m.source_dependents << " deps)\n";
             }
@@ -2070,6 +2088,7 @@ void cmd_missing(const std::string& src_dir, const std::string& src_lang,
 
     CodebaseComparator comp(source, target);
     comp.find_matches();
+    comp.compute_similarities();
 
     std::cout << "=== Missing from " << tgt_lang << " (ranked by dependents) ===\n\n";
     std::cout << std::setw(40) << std::left << "Source File"
@@ -2093,7 +2112,33 @@ void cmd_missing(const std::string& src_dir, const std::string& src_lang,
                   << sf->relative_path << "\n";
     }
 
-    std::cout << "\nTotal: " << missing.size() << " files missing\n";
+    // Matched-but-stub files are not missing in the structural sense but are
+    // incomplete ports. Show them separately so they don't hide in the matched set.
+    std::vector<const CodebaseComparator::Match*> stub_matches;
+    for (const auto& m : comp.matches) {
+        if (m.is_stub) stub_matches.push_back(&m);
+    }
+    if (!stub_matches.empty()) {
+        std::sort(stub_matches.begin(), stub_matches.end(),
+            [&](const CodebaseComparator::Match* a, const CodebaseComparator::Match* b) {
+                return source.files.at(a->source_path).dependent_count >
+                       source.files.at(b->source_path).dependent_count;
+            });
+        std::cout << "\n=== Matched but STUB (port exists, needs real implementation) ===\n\n";
+        std::cout << std::setw(40) << std::left << "Source File"
+                  << std::setw(10) << "Deps"
+                  << "Target\n";
+        std::cout << std::string(80, '-') << "\n";
+        for (const auto* m : stub_matches) {
+            const auto& sf = source.files.at(m->source_path);
+            std::cout << std::setw(40) << std::left << sf.qualified_name.substr(0, 38)
+                      << std::setw(10) << sf.dependent_count
+                      << m->target_path << "\n";
+        }
+        std::cout << "\nTotal stubs: " << stub_matches.size() << "\n";
+    }
+
+    std::cout << "\nTotal missing: " << missing.size() << "\n";
 }
 
 void cmd_todos(const std::string& directory, bool verbose = true) {
@@ -3260,7 +3305,7 @@ void cmd_release(const std::string& task_file, const std::string& source_qualifi
         float similarity = 0.0f;
 
         // Require no stub bodies (e.g., Kotlin TODO(), Rust unimplemented!(), Python pass/...)
-        has_stubs = parser.has_stub_bodies_in_files({target_path.string()}, tgt_lang);
+        has_stubs = has_stubs || parser.has_stub_bodies_in_files({target_path.string()}, tgt_lang);
         if (has_stubs) {
             std::cerr << "Error: Cannot release task - target file contains stub/TODO markers in function bodies\n";
             std::cerr << "The code is fake. Complete the real implementation or delete the file.\n";
@@ -3382,6 +3427,15 @@ static bool guardrails_detect_shell_pipeline_peer_process() {
 }
 
 int main(int argc, char* argv[]) {
+    if (!kTaskSystemEnabled) {
+        for (int i = 1; i < argc; ++i) {
+            std::string arg = argv[i];
+            if (is_task_system_flag(arg)) {
+                std::cerr << "Error: task system flags are disabled in this fork (" << arg << ").\n";
+                return 2;
+            }
+        }
+    }
     // Refuse to run when stdout or stderr is piped to another program via a shell pipeline.
     // This blocks `ast_distance ... | sed/grep/...` which has caused model-driven wrappers
     // to silently filter or truncate dashboards.
@@ -3403,43 +3457,27 @@ int main(int argc, char* argv[]) {
                                "Run it directly in a terminal.\n";
             write(STDERR_FILENO, msg, sizeof(msg) - 1);
             return 2;
-	        }
-	    }
-
-    if (!kTaskSystemEnabled) {
-        for (int i = 1; i < argc; ++i) {
-            std::string arg = argv[i];
-            if (is_task_system_flag(arg)) {
-                std::cerr << "Error: task system flags are disabled in this fork (" << arg << ").\n";
-                return 2;
-            }
         }
     }
 
-	    int agent = 0;
-	    bool override_mode = false;
-	    std::string task_file_flag;
+    int agent = 0;
+    bool override_mode = false;
+    std::string task_file_flag;
 
-	    std::vector<std::string> rest;
-	    rest.reserve(static_cast<size_t>(argc));
-	    if (kTaskSystemEnabled) {
-	        for (int i = 1; i < argc; ++i) {
-	            std::string arg = argv[i];
-	            if (arg == "--agent" && i + 1 < argc) {
-	                agent = std::stoi(argv[++i]);
-	            } else if (arg == "--task-file" && i + 1 < argc) {
-	                task_file_flag = argv[++i];
-	            } else if (arg == "--override") {
-	                override_mode = true;
-	            } else {
-	                rest.push_back(arg);
-	            }
-	        }
-	    } else {
-	        for (int i = 1; i < argc; ++i) {
-	            rest.push_back(argv[i]);
-	        }
-	    }
+    std::vector<std::string> rest;
+    rest.reserve(static_cast<size_t>(argc));
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--agent" && i + 1 < argc) {
+            agent = std::stoi(argv[++i]);
+        } else if (arg == "--task-file" && i + 1 < argc) {
+            task_file_flag = argv[++i];
+        } else if (arg == "--override") {
+            override_mode = true;
+        } else {
+            rest.push_back(arg);
+        }
+    }
 
     std::vector<char*> argv_rebased;
     argv_rebased.reserve(rest.size() + 1);
@@ -3462,53 +3500,51 @@ int main(int argc, char* argv[]) {
     guard.agent = agent;
     guard.override_mode = override_mode;
 
+    if (!task_file_flag.empty()) {
+        guard.task_file = task_file_flag;
+    } else if ((mode == "--tasks" || mode == "--assign" || mode == "--complete" ||
+                mode == "--release") &&
+               argc >= 3) {
+        guard.task_file = argv[2];
+    } else if (mode == "--init-tasks" && argc >= 7) {
+        guard.task_file = argv[6];
+    } else if (std::filesystem::exists("tasks.json")) {
+        guard.task_file = "tasks.json";
+    }
+
+    cull_stale_task_file_if_needed(guard.task_file, mode, agent);
+
+    if (!guard.task_file.empty()) {
+        TaskManager tm(guard.task_file);
+        guard.active = tm.load();
+    }
+
+    if (guard.active && mode != "--assign" && agent <= 0) {
+        std::cerr << "Error: task system detected (" << guard.task_file << ").\n";
+        std::cerr << "All commands require an agent session number.\n";
+        std::cerr << "Get one with: ast_distance --assign " << guard.task_file << "\n";
+        std::cerr << "Then re-run with: ast_distance --agent <number> ...\n";
+        return 2;
+    }
+
     std::unique_ptr<AgentLock> agent_lock;
-    if (kTaskSystemEnabled) {
-        if (!task_file_flag.empty()) {
-            guard.task_file = task_file_flag;
-        } else if ((mode == "--tasks" || mode == "--assign" || mode == "--complete" ||
-                    mode == "--release") &&
-                   argc >= 3) {
-            guard.task_file = argv[2];
-        } else if (mode == "--init-tasks" && argc >= 7) {
-            guard.task_file = argv[6];
-        } else if (std::filesystem::exists("tasks.json")) {
-            guard.task_file = "tasks.json";
+    if (guard.active && mode != "--assign" && agent > 0) {
+        agent_lock = std::make_unique<AgentLock>(guard.task_file, agent, override_mode);
+        if (!agent_lock->locked()) {
+            int holder = agent_lock->holder_pid();
+            std::ostringstream msg;
+            msg << "Agent #" << agent << " appears to be in use";
+            if (holder > 0) msg << " by pid " << holder;
+            msg << ".\n"
+                << "Re-run with --override to wait, or pick a different agent number.\n";
+            std::cerr << "Error: " << msg.str();
+            write_agent_notice(guard.task_file, agent,
+                               "Conflict: another PID attempted to use this agent number.\n" +
+                                   msg.str());
+            return 3;
         }
-
-        cull_stale_task_file_if_needed(guard.task_file, mode, agent);
-
-        if (!guard.task_file.empty()) {
-            TaskManager tm(guard.task_file);
-            guard.active = tm.load();
-        }
-
-        if (guard.active && mode != "--assign" && agent <= 0) {
-            std::cerr << "Error: task system detected (" << guard.task_file << ").\n";
-            std::cerr << "All commands require an agent session number.\n";
-            std::cerr << "Get one with: ast_distance --assign " << guard.task_file << "\n";
-            std::cerr << "Then re-run with: ast_distance --agent <number> ...\n";
-            return 2;
-        }
-
-        if (guard.active && mode != "--assign" && agent > 0) {
-            agent_lock = std::make_unique<AgentLock>(guard.task_file, agent, override_mode);
-            if (!agent_lock->locked()) {
-                int holder = agent_lock->holder_pid();
-                std::ostringstream msg;
-                msg << "Agent #" << agent << " appears to be in use";
-                if (holder > 0) msg << " by pid " << holder;
-                msg << ".\n"
-                    << "Re-run with --override to wait, or pick a different agent number.\n";
-                std::cerr << "Error: " << msg.str();
-                write_agent_notice(guard.task_file, agent,
-                                   "Conflict: another PID attempted to use this agent number.\n" +
-                                       msg.str());
-                return 3;
-            }
-            print_and_clear_agent_notice(guard.task_file, agent);
-            touch_agent_last_used(guard.task_file, agent);
-        }
+        print_and_clear_agent_notice(guard.task_file, agent);
+        touch_agent_last_used(guard.task_file, agent);
     }
 
     g_guardrails = guard;
@@ -3828,8 +3864,18 @@ int main(int argc, char* argv[]) {
             bool file2_stubs = parser.has_stub_bodies_in_files({file2}, lang2);
 
             if (function_scored) {
-                file1_stubs = function_result.has_source_stub;
-                file2_stubs = function_result.has_target_stub;
+                // OR with file-level result so that categorical stubs (e.g.
+                // mod.rs port-lint header) are never cleared by function scoring.
+                file1_stubs = file1_stubs || function_result.has_source_stub;
+                file2_stubs = file2_stubs || function_result.has_target_stub;
+
+                // Short-circuit: if the target is a stub, skip blending entirely.
+                // Without this guard the lifting logic below can inflate content_score
+                // before the final zero-out.
+                if (file2_stubs) {
+                    content_score = 0.0f;
+                    goto stub_check;
+                }
 
                 // Blend function-level similarity with file-level structural metrics.
                 // The function-level score (per-body identifier matching) is reliable
@@ -3889,6 +3935,7 @@ int main(int argc, char* argv[]) {
                 }
             }
 
+            stub_check:
             // IMPORTANT: stubs in the *target* indicate incomplete transliteration and should gate completion.
             // Stubs in the *source* are treated as baseline and should not force similarity to zero.
             if (file2_stubs) {
