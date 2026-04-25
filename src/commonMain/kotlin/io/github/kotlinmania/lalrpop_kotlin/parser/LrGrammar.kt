@@ -3218,11 +3218,16 @@ internal val TERMINAL: Array<String> = arrayOf(
 
 // === lrgrammar.rs:3178-3187 — `___expected_tokens` fn ===
 /** `___expected_tokens(state)`. */
-internal fun expectedTokens(state: Short): List<String> =
-    TERMINAL.mapIndexedNotNull { index, terminal ->
+internal fun expectedTokens(state: Short): List<String> {
+    return TERMINAL.mapIndexedNotNull { index, terminal ->
         val nextState = action(state, index)
-        if (nextState.toInt() == 0) null else terminal
+        if (nextState.toInt() == 0) {
+            null
+        } else {
+            terminal
+        }
     }
+}
 
 // === lrgrammar.rs:3203-3303 — `___StateMachine` struct + `ParserDefinition` impl ===
 // The Rust struct holds `text: &'input str` plus a phantom marker; in
@@ -3244,9 +3249,13 @@ internal class StateMachine(
     Short,
     Int,
 > {
-    override fun startLocation(): Int = 0
+    override fun startLocation(): Int {
+        return 0
+    }
 
-    override fun startState(): Short = 0
+    override fun startState(): Short {
+        return 0
+    }
 
     override fun tokenToIndex(token: io.github.kotlinmania.lalrpop_kotlin.tok.Tok): Int? =
         tokenToInteger(token)
@@ -3306,7 +3315,9 @@ internal class StateMachine(
 // Maps a token to its column in the ACTION/EOF_ACTION tables.
 // Returns null when the token is not a recognised terminal (LALRPOP's
 // `___token_to_integer` returns `None` for the same case).
-internal fun tokenToInteger(token: io.github.kotlinmania.lalrpop_kotlin.tok.Tok): Int? {
+internal fun tokenToInteger(
+    token: io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
+): Int? {
     return when (token) {
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Enum -> 0
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Extern -> 1
@@ -3367,6 +3378,7 @@ internal fun tokenToInteger(token: io.github.kotlinmania.lalrpop_kotlin.tok.Tok)
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.StartMatchMapping -> 56
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.StartTypeRef -> 57
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.StartGrammarWhereClauses -> 58
+        else -> null
     }
 }
 
@@ -6622,22 +6634,41 @@ internal fun simulateReduce(reduceIndex: Short): io.github.kotlinmania.lalrpop_k
 // hypothetical lookahead token (or EOF when null), can eventually
 // accept. Drives the simulated reduce-loop until it shifts (true),
 // errors out (false), or reaches Accept (true).
-internal fun accepts(errorState: Short?, baseStates: List<Short>, optInteger: Int?): Boolean {
+internal fun accepts(
+    errorState: Short?,
+    baseStates: List<Short>,
+    optInteger: Int?,
+): Boolean {
     val states = baseStates.toMutableList()
-    if (errorState != null) states.add(errorState)
+    if (errorState != null) {
+        states.add(errorState)
+    }
     while (true) {
         var statesLen = states.size
         var top = states[statesLen - 1]
-        val act = if (optInteger == null) EOF_ACTION[top.toInt()] else action(top, optInteger)
-        if (act.toInt() == 0) return false
-        if (act > 0) return true
-        val sim = simulateReduce((-(act + 1)).toShort())
+        val act = when (optInteger) {
+            null -> EOF_ACTION[top.toInt()]
+            else -> action(top, optInteger)
+        }
+        if (act.toInt() == 0) {
+            return false
+        }
+        if (act > 0) {
+            return true
+        }
+        val sim = simulateReduce(
+            (-(act + 1)).toShort(),
+        )
         val (toPop, nt) = when (sim) {
-            is io.github.kotlinmania.lalrpop_kotlin.runtime.SimulatedReduce.Reduce -> sim.statesToPop to sim.nonterminalProduced
+            is io.github.kotlinmania.lalrpop_kotlin.runtime.SimulatedReduce.Reduce -> {
+                sim.statesToPop to sim.nonterminalProduced
+            }
             is io.github.kotlinmania.lalrpop_kotlin.runtime.SimulatedReduce.Accept -> return true
         }
         statesLen -= toPop
-        while (states.size > statesLen) states.removeAt(states.size - 1)
+        while (states.size > statesLen) {
+            states.removeAt(states.size - 1)
+        }
         top = states[statesLen - 1]
         val nextState = goto(top, nt)
         states.add(nextState)
@@ -6647,10 +6678,22 @@ internal fun accepts(errorState: Short?, baseStates: List<Short>, optInteger: In
 // === lrgrammar.rs:3188-3202 — `___expected_tokens_from_states` ===
 // Companion to `expectedTokens` that uses `accepts` to model the parse
 // state more precisely.
-internal fun expectedTokensFromStates(states: List<Short>): List<String> =
-    TERMINAL.mapIndexedNotNull { index, terminal ->
-        if (accepts(null, states, index)) terminal else null
+internal fun expectedTokensFromStates(
+    states: List<Short>,
+): List<String> {
+    return TERMINAL.mapIndexedNotNull { index, terminal ->
+        if (accepts(
+                null,
+                states,
+                index,
+            )
+        ) {
+            terminal
+        } else {
+            null
+        }
     }
+}
 // === lrgrammar.rs:8367-... — `___symbol_type_mismatch` and `___pop_VariantN` helpers ===
 // Each `___pop_VariantN` pops the top of the symbol stack, asserts that the
 // symbol is `LrSymbol.VariantN`, and returns its payload value tagged with
@@ -6660,515 +6703,1127 @@ internal fun symbolTypeMismatch(): Nothing {
     error("symbol type mismatch")
 }
 
-internal fun popVariant9(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, Unit, Int> {
+internal fun popVariant9(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, Unit, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     if (triple.second !is LrSymbol.Variant9) symbolTypeMismatch()
-    return Triple(triple.first, Unit, triple.third)
+    return Triple(
+        triple.first,
+        Unit,
+        triple.third,
+    )
 }
-internal fun popVariant82(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>>, Int> {
+internal fun popVariant82(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant82 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant44(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind, Int> {
+internal fun popVariant44(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant44 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant10(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative, Int> {
+internal fun popVariant10(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant10 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant34(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern, Int> {
+internal fun popVariant34(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant34 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant48(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType, Int> {
+internal fun popVariant48(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant48 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant22(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int> {
+internal fun popVariant22(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant22 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant12(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute, Int> {
+internal fun popVariant12(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant12 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant50(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg, Int> {
+internal fun popVariant50(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant50 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant7(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition, Int> {
+internal fun popVariant7(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant7 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant63(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp, Int> {
+internal fun popVariant63(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant63 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant14(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion, Int> {
+internal fun popVariant14(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant14 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant65(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken, Int> {
+internal fun popVariant65(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant65 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant66(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol, Int> {
+internal fun popVariant66(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant66 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant16(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant16(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant16 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant69(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar, Int> {
+internal fun popVariant69(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant69 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant67(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int> {
+internal fun popVariant67(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant67 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant24(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int> {
+internal fun popVariant24(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant24 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant77(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents, Int> {
+internal fun popVariant77(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant77 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant26(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem, Int> {
+internal fun popVariant26(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant26 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant79(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping, Int> {
+internal fun popVariant79(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant79 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant81(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken, Int> {
+internal fun popVariant81(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant81 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant28(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, Int> {
+internal fun popVariant28(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant28 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant45(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind?, Int> {
+internal fun popVariant45(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant45 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant46(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative?, Int> {
+internal fun popVariant46(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant46 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant96(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern?, Int> {
+internal fun popVariant96(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant96 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant52(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute?, Int> {
+internal fun popVariant52(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant52 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant51(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg?, Int> {
+internal fun popVariant51(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant51 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant8(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition?, Int> {
+internal fun popVariant8(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant8 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant64(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion?, Int> {
+internal fun popVariant64(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant64 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant68(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
+internal fun popVariant68(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant68 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant76(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime?, Int> {
+internal fun popVariant76(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant76 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant78(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem?, Int> {
+internal fun popVariant78(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant78 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant83(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString?, Int> {
+internal fun popVariant83(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant83 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant71(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter?, Int> {
+internal fun popVariant71(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant71 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant85(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
+internal fun popVariant85(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant85 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant93(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol?, Int> {
+internal fun popVariant93(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant93 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant2(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok?, Int> {
+internal fun popVariant2(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant2 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant98(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
+internal fun popVariant98(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant98 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant99(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
+internal fun popVariant99(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant99 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant100(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter?, Int> {
+internal fun popVariant100(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant100 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant4(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef?, Int> {
+internal fun popVariant4(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant4 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant72(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>?, Int> {
+internal fun popVariant72(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant72 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant6(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>?, Int> {
+internal fun popVariant6(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant6 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant73(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>?, Int> {
+internal fun popVariant73(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant73 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant75(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>?, Int> {
+internal fun popVariant75(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant75 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant74(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
+internal fun popVariant74(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant74 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant18(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter, Int> {
+internal fun popVariant18(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant18 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant84(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path, Int> {
+internal fun popVariant84(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant84 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant30(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant30(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant30 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant86(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant86(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant86 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant90(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp, Int> {
+internal fun popVariant90(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant90 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant91(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, String, Int> {
+internal fun popVariant91(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, String, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant91 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant32(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int> {
+internal fun popVariant32(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant32 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant94(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind, Int> {
+internal fun popVariant94(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant94 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant80(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral, Int> {
+internal fun popVariant80(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant80 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant89(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString, Int> {
+internal fun popVariant89(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant89 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant0(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int> {
+internal fun popVariant0(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant0 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant95(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.parser.Top, Int> {
+internal fun popVariant95(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.parser.Top, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant95 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant97(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple, Int> {
+internal fun popVariant97(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant97 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant36(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant36(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant36 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant38(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant38(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant38 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant40(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter, Int> {
+internal fun popVariant40(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant40 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant3(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int> {
+internal fun popVariant3(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant3 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant47(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int> {
+internal fun popVariant47(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant47 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant53(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute>, Int> {
+internal fun popVariant53(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant53 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant54(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion>, Int> {
+internal fun popVariant54(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant54 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant87(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime>, Int> {
+internal fun popVariant87(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant87 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant57(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem>, Int> {
+internal fun popVariant57(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant57 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant58(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>, Int> {
+internal fun popVariant58(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant58 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant55(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>, Int> {
+internal fun popVariant55(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant55 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant59(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant59(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant59 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant60(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int> {
+internal fun popVariant60(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant60 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant88(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant88(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant88 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant5(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant5(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant5 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant61(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int> {
+internal fun popVariant61(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant61 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant62(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant62(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant62 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant56(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant56(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant56 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant101(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility, Int> {
+internal fun popVariant101(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant101 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant20(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant20(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant20 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant11(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int> {
+internal fun popVariant11(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant11 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant35(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern>, Int> {
+internal fun popVariant35(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant35 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant49(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType>, Int> {
+internal fun popVariant49(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant49 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant23(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.Atom>, Int> {
+internal fun popVariant23(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.Atom>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant23 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant13(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute>, Int> {
+internal fun popVariant13(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant13 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant15(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion>, Int> {
+internal fun popVariant15(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant15 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant17(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant17(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant17 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant70(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem>, Int> {
+internal fun popVariant70(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant70 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant25(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime>, Int> {
+internal fun popVariant25(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant25 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant27(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem>, Int> {
+internal fun popVariant27(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant27 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant29(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>, Int> {
+internal fun popVariant29(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant29 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant19(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>, Int> {
+internal fun popVariant19(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant19 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant31(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant31(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant31 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant92(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<String>, Int> {
+internal fun popVariant92(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<String>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant92 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant33(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int> {
+internal fun popVariant33(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant33 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant37(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant37(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant37 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant39(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant39(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant39 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant41(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int> {
+internal fun popVariant41(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant41 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant42(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
+internal fun popVariant42(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant42 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant21(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
+internal fun popVariant21(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant21 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant43(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, Int, Int> {
+internal fun popVariant43(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, Int, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant43 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
-internal fun popVariant1(symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>): Triple<Int, String, Int> {
+internal fun popVariant1(
+    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+): Triple<Int, String, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant1 ?: symbolTypeMismatch()
-    return Triple(triple.first, sym.v, triple.third)
+    return Triple(
+        triple.first,
+        sym.v,
+        triple.third,
+    )
 }
 
 // === lrgrammar.rs:19692-19765 — `___action0`..`___action5` ===
@@ -7186,37 +7841,49 @@ internal fun popVariant1(symbols: MutableList<io.github.kotlinmania.lalrpop_kotl
 internal fun action0(
     text: String,
     sym0: Triple<Int, Top, Int>,
-): Top = sym0.second
+): Top {
+    return sym0.second
+}
 
 internal fun action1(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar, Int>,
-): Top = Top.Grammar(sym1.second)
+): Top {
+    return Top.Grammar(sym1.second)
+}
 
 internal fun action2(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): Top = Top.Pattern(sym1.second)
+): Top {
+    return Top.Pattern(sym1.second)
+}
 
 internal fun action3(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping, Int>,
-): Top = Top.MatchMapping(sym1.second)
+): Top {
+    return Top.MatchMapping(sym1.second)
+}
 
 internal fun action4(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): Top = Top.TypeRefTop(sym1.second)
+): Top {
+    return Top.TypeRefTop(sym1.second)
+}
 
 internal fun action5(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): Top = Top.GrammarWhereClauses(sym1.second)
+): Top {
+    return Top.GrammarWhereClauses(sym1.second)
+}
 
 // === lrgrammar.rs:19767-20010 — `___action6`..`___action22` ===
 // Hand-translated grammar productions for the top-level `Grammar` rule
@@ -7239,8 +7906,8 @@ internal fun action6(
     whereClauses: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>?, Int>,
     sym9: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     items: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar(
         prefix = "__", // adjusted by `parseGrammar`
         span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         typeParameters = (tps.second ?: emptyList()).toMutableList(),
@@ -7250,42 +7917,50 @@ internal fun action6(
         attributes = attributes.second.toMutableList(),
         moduleAttributes = moduleAttributes.second.toMutableList(),
     )
+}
 
 internal fun action7(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> = sym1.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
+    return sym1.second
+}
 
 internal fun action8(
     text: String,
     l: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter.LifetimeTp(l.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter.LifetimeTp(l.second)
+}
 
 internal fun action9(
     text: String,
     l: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter.Id(l.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter.Id(l.second)
+}
 
 internal fun action10(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = sym1.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return sym1.second
+}
 
 internal fun action11(
     text: String,
     l: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     bounds: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause.LifetimeClause(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause.LifetimeClause(
         lifetime = l.second,
         bounds = bounds.second.toMutableList(),
     )
+}
 
 internal fun action12(
     text: String,
@@ -7293,12 +7968,13 @@ internal fun action12(
     ty: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     bounds: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause.Type(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause.Type(
         forall = f.second.toMutableList(),
         ty = ty.second,
         bounds = bounds.second.toMutableList(),
     )
+}
 
 internal fun action13(
     text: String,
@@ -7306,23 +7982,30 @@ internal fun action13(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym2: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> = sym2.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
+    return sym2.second
+}
 
 internal fun action14(
     text: String,
     sym0: Triple<Int, Unit, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
+    return emptyList()
+}
 
 internal fun action15(
     text: String,
     sym0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = sym0.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return sym0.second
+}
 
 internal fun action16(
     text: String,
     l: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound.LifetimeBound(l.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound.LifetimeBound(l.second)
+}
 
 internal fun action17(
     text: String,
@@ -7332,52 +8015,59 @@ internal fun action17(
     params: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     ret: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef?, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound.Fn(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound.Fn(
         forall = f.second.toMutableList(),
         path = p.second,
         parameters = params.second.toMutableList(),
         ret = ret.second,
     )
+}
 
 internal fun action18(
     text: String,
     f: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int>,
     p: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path, Int>,
     params: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>?, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound.Trait(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound.Trait(
         forall = f.second.toMutableList(),
         path = p.second,
         parameters = (params.second ?: emptyList()).toMutableList(),
     )
+}
 
 internal fun action19(
     text: String,
     l: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter.LifetimeParam(l.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter.LifetimeParam(l.second)
+}
 
 internal fun action20(
     text: String,
     ty: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter.TypeParameterParam(ty.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter.TypeParameterParam(ty.second)
+}
 
 internal fun action21(
     text: String,
     id: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     ty: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter.Associated(id.second, ty.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter.Associated(id.second, ty.second)
+}
 
 internal fun action22(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> = sym1.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
+    return sym1.second
+}
 
 // === lrgrammar.rs:20011-20455 — `___action23`..`___action53` ===
 // Productions for `Parameter`, `GrammarItem` (Use / Nonterminal),
@@ -7390,35 +8080,45 @@ internal fun action23(
     id: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     ty: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter(name = id.second, ty = ty.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter(name = id.second, ty = ty.second)
+}
 
 internal fun action24(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return sym0.second
+}
 
 internal fun action25(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return sym0.second
+}
 
 internal fun action26(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return sym0.second
+}
 
 internal fun action27(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return sym0.second
+}
 
 internal fun action28(
     text: String,
     u: Triple<Int, String, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.Use(io.github.kotlinmania.lalrpop_kotlin.strip(u.second))
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.Use(io.github.kotlinmania.lalrpop_kotlin.strip(u.second))
+}
 
 internal fun action29(
     text: String,
@@ -7426,8 +8126,9 @@ internal fun action29(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     p: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.Pub(p.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.Pub(p.second)
+}
 
 internal fun action30(
     text: String,
@@ -7436,20 +8137,23 @@ internal fun action30(
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     p: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path, Int>,
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.PubIn(p.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.PubIn(p.second)
+}
 
 internal fun action31(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.Pub(null)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.Pub(null)
+}
 
 internal fun action32(
     text: String,
     sym0: Triple<Int, Unit, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.Priv
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility.Priv
+}
 
 internal fun action33(
     text: String,
@@ -7461,8 +8165,8 @@ internal fun action33(
     t: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef?, Int>,
     sym6: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     a: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.Nonterminal(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.Nonterminal(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalData(
             visibility = v.second,
             span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
@@ -7473,6 +8177,7 @@ internal fun action33(
             alternatives = a.second.toMutableList(),
         )
     )
+}
 
 internal fun action34(
     text: String,
@@ -7480,7 +8185,9 @@ internal fun action34(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute = sym2.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
+    return sym2.second
+}
 
 internal fun action35(
     text: String,
@@ -7488,27 +8195,30 @@ internal fun action35(
     id: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
     arg: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg?, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute(
         idSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         id = id.second,
         arg = arg.second ?: io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg.default(),
     )
+}
 
 internal fun action36(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute>, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg.Paren(sym1.second.toMutableList())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg.Paren(sym1.second.toMutableList())
+}
 
 internal fun action37(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     value: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg.Equal(value.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg.Equal(value.second)
+}
 
 internal fun action38(
     text: String,
@@ -7516,26 +8226,31 @@ internal fun action38(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym2: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>> =
-    sym0.second to sym2.second
+): Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>> {
+    return sym0.second to sym2.second
+}
 
 internal fun action39(
     text: String,
     n: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, Int>,
-): Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>> =
-    n.second to emptyList()
+): Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>> {
+    return n.second to emptyList()
+}
 
 internal fun action40(
     text: String,
     sym0: Triple<Int, String, Int>,
-): Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString(io.github.kotlinmania.lalrpop_kotlin.Atom.from(sym0.second)) to emptyList()
+): Pair<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString(io.github.kotlinmania.lalrpop_kotlin.Atom.from(sym0.second)) to emptyList()
+}
 
 internal fun action41(
     text: String,
     a: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> = listOf(a.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
+    return listOf(a.second)
+}
 
 internal fun action42(
     text: String,
@@ -7543,7 +8258,9 @@ internal fun action42(
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok?, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> = sym1.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
+    return sym1.second
+}
 
 internal fun action43(
     text: String,
@@ -7553,14 +8270,15 @@ internal fun action43(
     c: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition?, Int>,
     a: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind?, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
         span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         expr = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = s.second.toMutableList()),
         condition = c.second,
         action = a.second,
         attributes = attr.second.toMutableList(),
     )
+}
 
 internal fun action44(
     text: String,
@@ -7568,38 +8286,43 @@ internal fun action44(
     c: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition?, Int>,
     a: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
         span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         expr = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = mutableListOf()),
         condition = c.second,
         action = a.second,
         attributes = mutableListOf(),
     )
+}
 
 internal fun action45(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.Lookahead
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.Lookahead
+}
 
 internal fun action46(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.Lookbehind
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.Lookbehind
+}
 
 internal fun action47(
     text: String,
     c: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.User(io.github.kotlinmania.lalrpop_kotlin.strip(c.second))
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.User(io.github.kotlinmania.lalrpop_kotlin.strip(c.second))
+}
 
 internal fun action48(
     text: String,
     c: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.Fallible(io.github.kotlinmania.lalrpop_kotlin.strip(c.second))
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind.Fallible(io.github.kotlinmania.lalrpop_kotlin.strip(c.second))
+}
 
 internal fun action49(
     text: String,
@@ -7608,37 +8331,42 @@ internal fun action49(
     op: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp, Int>,
     b: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition(
         span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         lhs = a.second,
         rhs = b.second,
         op = op.second,
     )
+}
 
 internal fun action50(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.Equals
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.Equals
+}
 
 internal fun action51(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.NotEquals
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.NotEquals
+}
 
 internal fun action52(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.Match
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.Match
+}
 
 internal fun action53(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.NotMatch
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ConditionOp.NotMatch
+}
 
 // === lrgrammar.rs:20456-20875 — `___action54`..`___action83` ===
 // Productions for `Symbol` / `SymbolKind` (named symbols, choose, tuple
@@ -7650,8 +8378,9 @@ internal fun action53(
 internal fun action54(
     text: String,
     sym0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = sym0.second.toMutableList())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = sym0.second.toMutableList())
+}
 
 internal fun action55(
     text: String,
@@ -7664,14 +8393,15 @@ internal fun action55(
     s: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
     sym7: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Name(
             io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Name.new(m.second != null, l.second),
             s.second,
         ),
     )
+}
 
 internal fun action56(
     text: String,
@@ -7680,11 +8410,12 @@ internal fun action56(
     s: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Choose(s.second),
     )
+}
 
 internal fun action57(
     text: String,
@@ -7695,63 +8426,73 @@ internal fun action57(
     s: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
     sym5: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.TupleKind(t.second, s.second),
     )
+}
 
 internal fun action58(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return sym0.second
+}
 
 internal fun action59(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return sym0.second
+}
 
 internal fun action60(
     text: String,
     lhs: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
     op: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lhs.second.span.start, hi.second),
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Repeat(
             io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatSymbol(symbol = lhs.second, op = op.second)
         ),
     )
+}
 
 internal fun action61(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp.Plus
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp.Plus
+}
 
 internal fun action62(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp.Star
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp.Star
+}
 
 internal fun action63(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp.Question
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.RepeatOp.Question
+}
 
 internal fun action64(
     text: String,
     lo: Triple<Int, Int, Int>,
     sk: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol.new(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         sk.second,
     )
+}
 
 internal fun action65(
     text: String,
@@ -7759,56 +8500,64 @@ internal fun action65(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     args: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Macro(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Macro(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MacroSymbol(name = name.second, args = args.second.toMutableList())
     )
+}
 
 internal fun action66(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Terminal(sym0.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Terminal(sym0.second)
+}
 
 internal fun action67(
     text: String,
     sym0: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.AmbiguousId(io.github.kotlinmania.lalrpop_kotlin.Atom.from(sym0.second))
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.AmbiguousId(io.github.kotlinmania.lalrpop_kotlin.Atom.from(sym0.second))
+}
 
 internal fun action68(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Nonterminal(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Nonterminal(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString(sym0.second)
     )
+}
 
 internal fun action69(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Expr(sym1.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Expr(sym1.second)
+}
 
 internal fun action70(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Lookahead
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Lookahead
+}
 
 internal fun action71(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Lookbehind
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Lookbehind
+}
 
 internal fun action72(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Error
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.SymbolKind.Error
+}
 
 internal fun action73(
     text: String,
@@ -7818,49 +8567,55 @@ internal fun action73(
     e: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern?, Int>,
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple.new(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple.new(
         (tuples.second + listOfNotNull(e.second)).toMutableList()
     )
+}
 
 internal fun action74(
     text: String,
     m: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok?, Int>,
     l: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern.NamePat(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern.NamePat(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Name.new(m.second != null, l.second)
     )
+}
 
 internal fun action75(
     text: String,
     t: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern.TuplePat(t.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern.TuplePat(t.second)
+}
 
 internal fun action76(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Tuple(sym1.second.toMutableList())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Tuple(sym1.second.toMutableList())
+}
 
 internal fun action77(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Slice(sym1.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Slice(sym1.second)
+}
 
 internal fun action78(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.OfSymbol(sym1.second.kind)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.OfSymbol(sym1.second.kind)
+}
 
 internal fun action79(
     text: String,
@@ -7868,12 +8623,13 @@ internal fun action79(
     l: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime?, Int>,
     m: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok?, Int>,
     t: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Ref(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Ref(
         lifetime = l.second,
         mutable = m.second != null,
         referent = t.second,
     )
+}
 
 internal fun action80(
     text: String,
@@ -7881,8 +8637,9 @@ internal fun action80(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     types: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Nominal(path = path.second, types = types.second.toMutableList())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Nominal(path = path.second, types = types.second.toMutableList())
+}
 
 internal fun action81(
     text: String,
@@ -7903,15 +8660,17 @@ internal fun action82(
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     types: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.TraitObject(path = path.second, types = types.second.toMutableList())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.TraitObject(path = path.second, types = types.second.toMutableList())
+}
 
 internal fun action83(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     path: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.TraitObject(path = path.second, types = mutableListOf())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.TraitObject(path = path.second, types = mutableListOf())
+}
 
 // === lrgrammar.rs:20876-21330 — `___action84`..`___action112` ===
 
@@ -7925,8 +8684,8 @@ internal fun action84(
     parameters: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym5: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     ret: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef?, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Fn(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Fn(
         forall = forall.second.toMutableList(),
         path = path.second,
         parameters = parameters.second.toMutableList(),
@@ -7934,19 +8693,23 @@ internal fun action84(
         // `TypeRef?` is passed through unchanged.
         ret = ret.second,
     )
+}
 
 /** `___action85`: identity `TypeRef`. */
 internal fun action85(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return sym0.second
+}
 
 /** `___action86`: wrap a `Lifetime` as `TypeRef::Lifetime` (Kotlin: `LifetimeRef`). */
 internal fun action86(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.LifetimeRef(sym0.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.LifetimeRef(sym0.second)
+}
 
 /** `___action87`: build `Path { absolute, ids }` from optional `::` + head atoms + tail atom. */
 internal fun action87(
@@ -7995,21 +8758,23 @@ internal fun action89(
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     a0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType>, Int>,
     sym5: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.ExternToken(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.ExternToken(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExternToken(
             span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
             associatedTypes = a0.second.toMutableList(),
             enumToken = null,
         ),
     )
+}
 
 /** `___action90`: wrap `MatchToken` as `GrammarItem::MatchToken`. */
 internal fun action90(
     text: String,
     t: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.MatchToken(t.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.MatchToken(t.second)
+}
 
 /** `___action91`: append a `MatchContents` block to an existing `MatchToken` via `t.add(c)`. */
 internal fun action91(
@@ -8019,7 +8784,9 @@ internal fun action91(
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     c: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents, Int>,
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken = t.second.add(c.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken {
+    return t.second.add(c.second)
+}
 
 /** `___action92`: build a fresh `MatchToken` from the first `match { ... }` block. */
 internal fun action92(
@@ -8030,18 +8797,20 @@ internal fun action92(
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     c: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents, Int>,
     sym5: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken.new(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken.new(
         contents = c.second,
         span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
     )
+}
 
 /** `___action93`: wrap a `Vec<MatchItem>` as a `MatchContents { items }`. */
 internal fun action93(
     text: String,
     items: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents(items = items.second.toMutableList())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchContents(items = items.second.toMutableList())
+}
 
 /** `___action94`: `MatchItem::CatchAll(Span(lo, hi))`. */
 internal fun action94(
@@ -8049,10 +8818,11 @@ internal fun action94(
     lo: Triple<Int, Int, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.CatchAll(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.CatchAll(
         io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
     )
+}
 
 /** `___action95`: `MatchItem::Unmapped(s, Span(lo, hi))`. */
 internal fun action95(
@@ -8060,11 +8830,12 @@ internal fun action95(
     lo: Triple<Int, Int, Int>,
     s: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.Unmapped(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.Unmapped(
         symbol = s.second,
         span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
     )
+}
 
 // === lrgrammar.rs:21105-21126 — `___action96` ===
 /**
@@ -8096,22 +8867,26 @@ internal fun action96(
 internal fun action97(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral {
+    return sym0.second
+}
 
 /** `___action98`: `MatchMapping::Terminal(t)`. */
 internal fun action98(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping.Terminal(sym0.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping.Terminal(sym0.second)
+}
 
 /** `___action99`: `MatchMapping::Skip` (`{ }` → unit). */
 internal fun action99(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping.Skip
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchMapping.Skip
+}
 
 /** `___action100`: `EnumToken { type_name, type_span, conversions }`. */
 internal fun action100(
@@ -8123,12 +8898,13 @@ internal fun action100(
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     c: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion>, Int>,
     sym6: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken(
         typeName = t.second,
         typeSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         conversions = c.second.toMutableList(),
     )
+}
 
 /** `___action101`: `AssociatedType { type_span, type_name, type_ref }`. */
 internal fun action101(
@@ -8140,12 +8916,13 @@ internal fun action101(
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     t: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
     sym6: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType(
         typeSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         typeName = n.second,
         typeRef = t.second,
     )
+}
 
 // === lrgrammar.rs:21208-21230 — `___action102` ===
 /**
@@ -8180,11 +8957,12 @@ internal fun action103(
     lo: Triple<Int, Int, Int>,
     k: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern(
         span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         kind = k.second,
     )
+}
 
 /** `___action104`: `PatternKind::Enum(path, pats)`. */
 internal fun action104(
@@ -8193,11 +8971,12 @@ internal fun action104(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym2: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Enum(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Enum(
         path = sym0.second,
         pats = sym2.second.toMutableList(),
     )
+}
 
 /** `___action105`: `PatternKind::Struct(p, fields, dotdot=false)`. */
 internal fun action105(
@@ -8225,26 +9004,29 @@ internal fun action106(
     a0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Struct(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Struct(
         path = p.second,
         fields = a0.second.toMutableList(),
         dotdot = true,
     )
+}
 
 /** `___action107`: `PatternKind::Underscore`. */
 internal fun action107(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Underscore()
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Underscore()
+}
 
 /** `___action108`: `PatternKind::DotDot`. */
 internal fun action108(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.DotDot()
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.DotDot()
+}
 
 /** `___action109`: `PatternKind::Choose(typeRef)`. */
 internal fun action109(
@@ -8252,8 +9034,9 @@ internal fun action109(
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Choose(sym1.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Choose(sym1.second)
+}
 
 /** `___action110`: `PatternKind::Tuple(pats)`. */
 internal fun action110(
@@ -8261,24 +9044,27 @@ internal fun action110(
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Tuple(sym1.second.toMutableList())
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.Tuple(sym1.second.toMutableList())
+}
 
 /** `___action111`: `PatternKind::CharLiteral(Atom::from(c))`. */
 internal fun action111(
     text: String,
     c: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.CharLiteral(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.CharLiteral(
         io.github.kotlinmania.lalrpop_kotlin.Atom.from(c.second),
     )
+}
 
 /** `___action112`: `PatternKind::Path(path)` — Kotlin sealed-class variant is `PathKind`. */
 internal fun action112(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.PathKind(sym0.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.PathKind(sym0.second)
+}
 
 // === lrgrammar.rs:21331-21900 — `___action113`..`___action156` ===
 
@@ -8286,8 +9072,9 @@ internal fun action112(
 internal fun action113(
     text: String,
     s: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.StringKind(s.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind.StringKind(s.second)
+}
 
 /** `___action114`: `FieldPattern { field_span, field_name, pattern }`. */
 internal fun action114(
@@ -8297,93 +9084,109 @@ internal fun action114(
     hi: Triple<Int, Int, Int>,
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     pat: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern(
         fieldSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
         fieldName = id.second,
         pattern = pat.second,
     )
+}
 
 /** `___action115`: `NonterminalString(Atom::from(i))` for raw identifiers. */
 internal fun action115(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString(
         io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second),
     )
+}
 
 /** `___action116`: same body as `___action115`, produced by a different grammar path. */
 internal fun action116(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString(
         io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second),
     )
+}
 
 /** `___action117`: `Atom::from(i)`. */
 internal fun action117(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.Atom = io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second)
+): io.github.kotlinmania.lalrpop_kotlin.Atom {
+    return io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second)
+}
 
 /** `___action118`: duplicate of `___action117` reached from a different NT. */
 internal fun action118(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.Atom = io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second)
+): io.github.kotlinmania.lalrpop_kotlin.Atom {
+    return io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second)
+}
 
 /** `___action119`: duplicate of `___action117` reached from a different NT. */
 internal fun action119(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.Atom = io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second)
+): io.github.kotlinmania.lalrpop_kotlin.Atom {
+    return io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second)
+}
 
 /** `___action120`: `Lifetime(Atom::from(i))` from a `'ident` literal. */
 internal fun action120(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime(
         io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second),
     )
+}
 
 /** `___action121`: identity `TerminalString`. */
 internal fun action121(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString {
+    return sym0.second
+}
 
 /** `___action122`: `TerminalString::Bare(Atom::from(i))`. */
 internal fun action122(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString.Bare(
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString.Bare(
         io.github.kotlinmania.lalrpop_kotlin.Atom.from(i.second),
     )
+}
 
 /** `___action123`: `TerminalString::Literal(l)`. */
 internal fun action123(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString.Literal(sym0.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString.Literal(sym0.second)
+}
 
 /** `___action124`: `TerminalLiteral::Quoted(s)`. */
 internal fun action124(
     text: String,
     s: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral.Quoted(s.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral.Quoted(s.second)
+}
 
 /** `___action125`: `TerminalLiteral::Regex(s)`. */
 internal fun action125(
     text: String,
     s: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral =
-    io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral.Regex(s.second)
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral {
+    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalLiteral.Regex(s.second)
+}
 
 // === lrgrammar.rs:21494-21540 — `___action126` / `___action127` ===
 // Both call `tok::apply_string_escapes(s, lo+1)?` and the macro-expanded
@@ -8433,46 +9236,60 @@ internal fun action127(
 internal fun action128(
     text: String,
     s: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.Atom = io.github.kotlinmania.lalrpop_kotlin.Atom.from(s.second)
+): io.github.kotlinmania.lalrpop_kotlin.Atom {
+    return io.github.kotlinmania.lalrpop_kotlin.Atom.from(s.second)
+}
 
 /** `___action129`: `s.to_string()` for a `&str` terminal. */
 internal fun action129(
     text: String,
     s: Triple<Int, String, Int>,
-): String = s.second
+): String {
+    return s.second
+}
 
 /** `___action130`: `Some(fieldPattern)`. */
 internal fun action130(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return sym0.second
+}
 
 /** `___action131`: `None` for the trailing `FieldPattern?`. */
 internal fun action131(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return null
+}
 
 /** `___action132`: empty `Vec<FieldPattern<TypeRef>>`. */
 internal fun action132(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return emptyList()
+}
 
 /** `___action133`: identity on a `Vec<FieldPattern<TypeRef>>`. */
 internal fun action133(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return v.second
+}
 
 /** `___action134`: drop a trailing `,` after a `FieldPattern`. */
 internal fun action134(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return sym0.second
+}
 
 /** `___action135`: concatenate a `Vec<Pattern>` with an optional trailing `Pattern`. */
 internal fun action135(
@@ -8512,46 +9329,60 @@ internal fun action138(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType> {
+    return emptyList()
+}
 
 /** `___action139`: identity on a `Vec<AssociatedType>`. */
 internal fun action139(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType> {
+    return v.second
+}
 
 /** `___action140`: empty `Vec<Atom>`. */
 internal fun action140(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.Atom> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.Atom> {
+    return emptyList()
+}
 
 /** `___action141`: identity on a `Vec<Atom>`. */
 internal fun action141(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.Atom>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.Atom> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.Atom> {
+    return v.second
+}
 
 /** `___action142`: drop a trailing `,` or `::` after an `Atom`. */
 internal fun action142(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.Atom = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.Atom {
+    return sym0.second
+}
 
 /** `___action143`: `Some(tok)` — wrap an optional Tok literal. */
 internal fun action143(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? {
+    return sym0.second
+}
 
 /** `___action144`: `None` for the optional Tok literal (`::` prefix in a `Path`). */
 internal fun action144(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? = null
+): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? {
+    return null
+}
 
 /** `___action145`: concatenate a `Vec<TypeRef>` with an optional trailing `TypeRef`. */
 internal fun action145(
@@ -8568,33 +9399,43 @@ internal fun action145(
 internal fun action146(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime? {
+    return sym0.second
+}
 
 /** `___action147`: `None` for an optional `Lifetime`. */
 internal fun action147(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime? {
+    return null
+}
 
 /** `___action148`: `Some(argPattern)`. */
 internal fun action148(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern? {
+    return sym0.second
+}
 
 /** `___action149`: `None` for an optional `ArgPattern`. */
 internal fun action149(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern? {
+    return null
+}
 
 /** `___action150`: singleton `Vec<ArgPattern>` from a single `ArgPattern`. */
 internal fun action150(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern> {
+    return listOf(sym0.second)
+}
 
 /** `___action151`: append one `ArgPattern` to an existing `Vec<ArgPattern>`. */
 internal fun action151(
@@ -8612,7 +9453,9 @@ internal fun action152(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern {
+    return sym0.second
+}
 
 /** `___action153`: concatenate a `Vec<Symbol>` with an optional trailing `Symbol`. */
 internal fun action153(
@@ -8629,21 +9472,27 @@ internal fun action153(
 internal fun action154(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? {
+    return sym0.second
+}
 
 /** `___action155`: `None` for an optional terminating Tok. */
 internal fun action155(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? = null
+): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? {
+    return null
+}
 
 /** `___action156`: empty `Vec<Symbol>`. */
 internal fun action156(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
+    return emptyList()
+}
 
 // === lrgrammar.rs:21900-22600 — `___action157`..`___action212` ===
 //
@@ -8655,46 +9504,60 @@ internal fun action156(
 internal fun action157(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
+    return v.second
+}
 
 /** `___action158`: `Some(actionKind)`. */
 internal fun action158(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind? {
+    return sym0.second
+}
 
 /** `___action159`: `None` for an optional `ActionKind`. */
 internal fun action159(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind? {
+    return null
+}
 
 /** `___action160`: `Some(condition)`. */
 internal fun action160(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition? {
+    return sym0.second
+}
 
 /** `___action161`: `None` for an optional `Condition`. */
 internal fun action161(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition? {
+    return null
+}
 
 /** `___action162`: drop a leading `if` (`Tok`) before a `Condition`. */
 internal fun action162(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition = sym1.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition {
+    return sym1.second
+}
 
 /** `___action163`: singleton `Vec<Symbol>` from one `Symbol`. */
 internal fun action163(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
+    return listOf(sym0.second)
+}
 
 /** `___action164`: append one `Symbol` to a `Vec<Symbol>`. */
 internal fun action164(
@@ -8711,14 +9574,18 @@ internal fun action164(
 internal fun action165(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? {
+    return sym0.second
+}
 
 /** `___action166`: `None` for an optional `Tok`. */
 internal fun action166(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? = null
+): io.github.kotlinmania.lalrpop_kotlin.tok.Tok? {
+    return null
+}
 
 /** `___action167`: concatenate a `Vec<Alternative>` with an optional trailing `Alternative`. */
 internal fun action167(
@@ -8757,34 +9624,44 @@ internal fun action169(
 internal fun action170(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg? {
+    return sym0.second
+}
 
 /** `___action171`: `None` for an optional `AttributeArg`. */
 internal fun action171(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg? {
+    return null
+}
 
 /** `___action172`: `Some(typeRef)`. */
 internal fun action172(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return sym0.second
+}
 
 /** `___action173`: `None` for an optional `TypeRef`. */
 internal fun action173(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return null
+}
 
 /** `___action174`: drop a leading `->` (`Tok`) before a return `TypeRef`. */
 internal fun action174(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef = sym1.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return sym1.second
+}
 
 /** `___action175`: concatenate a `Vec<Parameter>` with an optional trailing `Parameter`. */
 internal fun action175(
@@ -8801,14 +9678,18 @@ internal fun action175(
 internal fun action176(
     text: String,
     sym0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? = sym0.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? {
+    return sym0.second
+}
 
 /** `___action177`: `None` for an optional `Vec<TypeBoundParameter<TypeRef>>`. */
 internal fun action177(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? = null
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? {
+    return null
+}
 
 /** `___action178`: drop the surrounding `<` ... `>` from a `Vec<TypeBoundParameter<TypeRef>>`. */
 internal fun action178(
@@ -8816,7 +9697,9 @@ internal fun action178(
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = sym1.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return sym1.second
+}
 
 /** `___action179`: concatenate a `Vec<TypeBoundParameter<TypeRef>>` with an optional trailing element. */
 internal fun action179(
@@ -8833,21 +9716,27 @@ internal fun action179(
 internal fun action180(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return sym0.second
+}
 
 /** `___action181`: `None` for an optional `TypeRef`. */
 internal fun action181(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return null
+}
 
 /** `___action182`: drop a leading `:` (`Tok`) before a `TypeRef`. */
 internal fun action182(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef = sym1.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return sym1.second
+}
 
 /** `___action183`: concatenate a `Vec<TypeRef>` with an optional trailing `TypeRef`. */
 internal fun action183(
@@ -8917,111 +9806,145 @@ internal fun action189(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> {
+    return emptyList()
+}
 
 /** `___action190`: identity on a `Vec<GrammarItem>`. */
 internal fun action190(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> {
+    return v.second
+}
 
 /** `___action191`: `Some(whereClauses)`. */
 internal fun action191(
     text: String,
     sym0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? = sym0.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? {
+    return sym0.second
+}
 
 /** `___action192`: `None` for an optional `Vec<WhereClause<TypeRef>>`. */
 internal fun action192(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? = null
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? {
+    return null
+}
 
 /** `___action193`: `Some(parameters)`. */
 internal fun action193(
     text: String,
     sym0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>? = sym0.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>? {
+    return sym0.second
+}
 
 /** `___action194`: `None` for an optional `Vec<Parameter>`. */
 internal fun action194(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>? = null
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>? {
+    return null
+}
 
 /** `___action195`: `Some(typeParameters)`. */
 internal fun action195(
     text: String,
     sym0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>? = sym0.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>? {
+    return sym0.second
+}
 
 /** `___action196`: `None` for an optional `Vec<TypeParameter>`. */
 internal fun action196(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>? = null
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>? {
+    return null
+}
 
 /** `___action197`: returns the lookbehind position (`*___lookbehind`). */
 internal fun action197(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): Int = lookbehind
+): Int {
+    return lookbehind
+}
 
 /** `___action198`: returns the lookahead position (`*___lookahead`). */
 internal fun action198(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): Int = lookahead
+): Int {
+    return lookahead
+}
 
 /** `___action199`: empty `Vec<Attribute>`. */
 internal fun action199(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
+    return emptyList()
+}
 
 /** `___action200`: identity on a `Vec<Attribute>`. */
 internal fun action200(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
+    return v.second
+}
 
 /** `___action201`: empty `Vec<GrammarItem>`. */
 internal fun action201(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> {
+    return emptyList()
+}
 
 /** `___action202`: identity on a `Vec<GrammarItem>`. */
 internal fun action202(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> {
+    return v.second
+}
 
 /** `___action203`: empty `Vec<String>`. */
 internal fun action203(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<String> = emptyList()
+): List<String> {
+    return emptyList()
+}
 
 /** `___action204`: identity on a `Vec<String>`. */
 internal fun action204(
     text: String,
     v: Triple<Int, List<String>, Int>,
-): List<String> = v.second
+): List<String> {
+    return v.second
+}
 
 /** `___action205`: singleton `Vec<String>` from one `String`. */
 internal fun action205(
     text: String,
     sym0: Triple<Int, String, Int>,
-): List<String> = listOf(sym0.second)
+): List<String> {
+    return listOf(sym0.second)
+}
 
 /** `___action206`: append one `String` to a `Vec<String>`. */
 internal fun action206(
@@ -9038,7 +9961,9 @@ internal fun action206(
 internal fun action207(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> {
+    return listOf(sym0.second)
+}
 
 /** `___action208`: append one `GrammarItem` to a `Vec<GrammarItem>`. */
 internal fun action208(
@@ -9055,7 +9980,9 @@ internal fun action208(
 internal fun action209(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
+    return listOf(sym0.second)
+}
 
 /** `___action210`: append one `Attribute` to a `Vec<Attribute>`. */
 internal fun action210(
@@ -9072,7 +9999,9 @@ internal fun action210(
 internal fun action211(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem> {
+    return listOf(sym0.second)
+}
 
 // === lrgrammar.rs:22600-23300 — `___action212`..`___action267` ===
 // More mechanical Some/None/empty/identity/append/strip-trailing-comma
@@ -9094,364 +10023,474 @@ internal fun action212(
 internal fun action213(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter? {
+    return sym0.second
+}
 
 /** `___action214`: `None` for an optional `TypeParameter`. */
 internal fun action214(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter? {
+    return null
+}
 
 /** `___action215`: empty `Vec<TypeParameter>`. */
 internal fun action215(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
+    return emptyList()
+}
 
 /** `___action216`: identity on a `Vec<TypeParameter>`. */
 internal fun action216(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
+    return v.second
+}
 
 /** `___action217`: drop trailing `,` after a `TypeParameter`. */
 internal fun action217(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter {
+    return sym0.second
+}
 
 /** `___action218`: `Some(whereClause)`. */
 internal fun action218(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return sym0.second
+}
 
 /** `___action219`: `None` for an optional `WhereClause<TypeRef>`. */
 internal fun action219(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return null
+}
 
 /** `___action220`: empty `Vec<WhereClause<TypeRef>>`. */
 internal fun action220(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return emptyList()
+}
 
 /** `___action221`: identity on a `Vec<WhereClause<TypeRef>>`. */
 internal fun action221(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return v.second
+}
 
 /** `___action222`: drop trailing `,` after a `WhereClause<TypeRef>`. */
 internal fun action222(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return sym0.second
+}
 
 /** `___action223`: empty `Vec<Lifetime>`. */
 internal fun action223(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
+    return emptyList()
+}
 
 /** `___action224`: identity on a `Vec<Lifetime>`. */
 internal fun action224(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
+    return v.second
+}
 
 /** `___action225`: drop trailing `,` after a `Lifetime`. */
 internal fun action225(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime {
+    return sym0.second
+}
 
 /** `___action226`: `Some(typeBound)`. */
 internal fun action226(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return sym0.second
+}
 
 /** `___action227`: `None` for an optional `TypeBound<TypeRef>`. */
 internal fun action227(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return null
+}
 
 /** `___action228`: empty `Vec<TypeBound<TypeRef>>`. */
 internal fun action228(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return emptyList()
+}
 
 /** `___action229`: identity on a `Vec<TypeBound<TypeRef>>`. */
 internal fun action229(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return v.second
+}
 
 /** `___action230`: drop trailing `+` after a `TypeBound<TypeRef>`. */
 internal fun action230(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return sym0.second
+}
 
 /** `___action231`: `Some(typeRef)`. */
 internal fun action231(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return sym0.second
+}
 
 /** `___action232`: `None` for an optional `TypeRef`. */
 internal fun action232(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return null
+}
 
 /** `___action233`: empty `Vec<TypeRef>`. */
 internal fun action233(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return emptyList()
+}
 
 /** `___action234`: identity on a `Vec<TypeRef>`. */
 internal fun action234(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return v.second
+}
 
 /** `___action235`: drop trailing `,` after a `TypeRef`. */
 internal fun action235(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return sym0.second
+}
 
 /** `___action236`: `Some(typeBoundParameter)`. */
 internal fun action236(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return sym0.second
+}
 
 /** `___action237`: `None` for an optional `TypeBoundParameter<TypeRef>`. */
 internal fun action237(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return null
+}
 
 /** `___action238`: empty `Vec<TypeBoundParameter<TypeRef>>`. */
 internal fun action238(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return emptyList()
+}
 
 /** `___action239`: identity on a `Vec<TypeBoundParameter<TypeRef>>`. */
 internal fun action239(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return v.second
+}
 
 /** `___action240`: drop trailing `,` after a `TypeBoundParameter<TypeRef>`. */
 internal fun action240(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return sym0.second
+}
 
 /** `___action241`: `Some(parameter)`. */
 internal fun action241(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter? {
+    return sym0.second
+}
 
 /** `___action242`: `None` for an optional `Parameter`. */
 internal fun action242(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter? {
+    return null
+}
 
 /** `___action243`: empty `Vec<Parameter>`. */
 internal fun action243(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
+    return emptyList()
+}
 
 /** `___action244`: identity on a `Vec<Parameter>`. */
 internal fun action244(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
+    return v.second
+}
 
 /** `___action245`: drop trailing `,` after a `Parameter`. */
 internal fun action245(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter {
+    return sym0.second
+}
 
 /** `___action246`: `Some(attribute)`. */
 internal fun action246(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute? {
+    return sym0.second
+}
 
 /** `___action247`: `None` for an optional `Attribute`. */
 internal fun action247(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute? {
+    return null
+}
 
 /** `___action248`: empty `Vec<Attribute>`. */
 internal fun action248(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
+    return emptyList()
+}
 
 /** `___action249`: identity on a `Vec<Attribute>`. */
 internal fun action249(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
+    return v.second
+}
 
 /** `___action250`: drop trailing `,` after an `Attribute`. */
 internal fun action250(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
+    return sym0.second
+}
 
 /** `___action251`: `Some(nonterminalString)`. */
 internal fun action251(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString? {
+    return sym0.second
+}
 
 /** `___action252`: `None` for an optional `NonterminalString`. */
 internal fun action252(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString? {
+    return null
+}
 
 /** `___action253`: empty `Vec<NonterminalString>`. */
 internal fun action253(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
+    return emptyList()
+}
 
 /** `___action254`: identity on a `Vec<NonterminalString>`. */
 internal fun action254(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
+    return v.second
+}
 
 /** `___action255`: drop trailing `,` after a `NonterminalString`. */
 internal fun action255(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString {
+    return sym0.second
+}
 
 /** `___action256`: `Some(alternative)`. */
 internal fun action256(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative? {
+    return sym0.second
+}
 
 /** `___action257`: `None` for an optional `Alternative`. */
 internal fun action257(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative? {
+    return null
+}
 
 /** `___action258`: empty `Vec<Alternative>`. */
 internal fun action258(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
+    return emptyList()
+}
 
 /** `___action259`: identity on a `Vec<Alternative>`. */
 internal fun action259(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
+    return v.second
+}
 
 /** `___action260`: drop trailing `,` after an `Alternative`. */
 internal fun action260(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
+    return sym0.second
+}
 
 /** `___action261`: `Some(symbol)`. */
 internal fun action261(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol? {
+    return sym0.second
+}
 
 /** `___action262`: `None` for an optional `Symbol`. */
 internal fun action262(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol? {
+    return null
+}
 
 /** `___action263`: empty `Vec<Symbol>`. */
 internal fun action263(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
+    return emptyList()
+}
 
 /** `___action264`: identity on a `Vec<Symbol>`. */
 internal fun action264(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
+    return v.second
+}
 
 /** `___action265`: drop trailing `,` after a `Symbol`. */
 internal fun action265(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
+    return sym0.second
+}
 
 /** `___action266`: `Some(typeRef)`. */
 internal fun action266(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return sym0.second
+}
 
 /** `___action267`: `None` for an optional `TypeRef`. */
 internal fun action267(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
+    return null
+}
 
 // === lrgrammar.rs:23301-24000 — `___action268`..`___action321` ===
 
@@ -9460,26 +10499,34 @@ internal fun action268(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return emptyList()
+}
 
 /** `___action269`: identity on a `Vec<TypeRef>`. */
 internal fun action269(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return v.second
+}
 
 /** `___action270`: drop trailing `,` after a `TypeRef`. */
 internal fun action270(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
+    return sym0.second
+}
 
 /** `___action271`: singleton `Vec<Atom>` from one `Atom`. */
 internal fun action271(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.Atom> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.Atom> {
+    return listOf(sym0.second)
+}
 
 /** `___action272`: append one `Atom` to a `Vec<Atom>`. */
 internal fun action272(
@@ -9496,7 +10543,9 @@ internal fun action272(
 internal fun action273(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType> {
+    return listOf(sym0.second)
+}
 
 /** `___action274`: append one `AssociatedType` to a `Vec<AssociatedType>`. */
 internal fun action274(
@@ -9513,106 +10562,138 @@ internal fun action274(
 internal fun action275(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem? {
+    return sym0.second
+}
 
 /** `___action276`: `None` for an optional `MatchItem`. */
 internal fun action276(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem? {
+    return null
+}
 
 /** `___action277`: empty `Vec<MatchItem>`. */
 internal fun action277(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
+    return emptyList()
+}
 
 /** `___action278`: identity on a `Vec<MatchItem>`. */
 internal fun action278(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
+    return v.second
+}
 
 /** `___action279`: drop trailing `,` after a `MatchItem`. */
 internal fun action279(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem {
+    return sym0.second
+}
 
 /** `___action280`: `Some(conversion)`. */
 internal fun action280(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion? {
+    return sym0.second
+}
 
 /** `___action281`: `None` for an optional `Conversion`. */
 internal fun action281(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion? {
+    return null
+}
 
 /** `___action282`: empty `Vec<Conversion>`. */
 internal fun action282(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
+    return emptyList()
+}
 
 /** `___action283`: identity on a `Vec<Conversion>`. */
 internal fun action283(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
+    return v.second
+}
 
 /** `___action284`: drop trailing `,` after a `Conversion`. */
 internal fun action284(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion {
+    return sym0.second
+}
 
 /** `___action285`: `Some(pattern)`. */
 internal fun action285(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return sym0.second
+}
 
 /** `___action286`: `None` for an optional `Pattern<TypeRef>`. */
 internal fun action286(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? = null
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>? {
+    return null
+}
 
 /** `___action287`: empty `Vec<Pattern<TypeRef>>`. */
 internal fun action287(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = emptyList()
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return emptyList()
+}
 
 /** `___action288`: identity on a `Vec<Pattern<TypeRef>>`. */
 internal fun action288(
     text: String,
     v: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = v.second
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return v.second
+}
 
 /** `___action289`: drop trailing `,` after a `Pattern<TypeRef>`. */
 internal fun action289(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = sym0.second
+): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return sym0.second
+}
 
 /** `___action290`: singleton `Vec<FieldPattern<TypeRef>>`. */
 internal fun action290(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return listOf(sym0.second)
+}
 
 /** `___action291`: append one `FieldPattern<TypeRef>` to a `Vec`. */
 internal fun action291(
@@ -9629,7 +10710,9 @@ internal fun action291(
 internal fun action292(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return listOf(sym0.second)
+}
 
 /** `___action293`: append one `Pattern<TypeRef>` to a `Vec`. */
 internal fun action293(
@@ -9646,7 +10729,9 @@ internal fun action293(
 internal fun action294(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
+    return listOf(sym0.second)
+}
 
 /** `___action295`: append one `Conversion` to a `Vec`. */
 internal fun action295(
@@ -9663,7 +10748,9 @@ internal fun action295(
 internal fun action296(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
+    return listOf(sym0.second)
+}
 
 /** `___action297`: append one `MatchItem` to a `Vec`. */
 internal fun action297(
@@ -9680,7 +10767,9 @@ internal fun action297(
 internal fun action298(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return listOf(sym0.second)
+}
 
 /** `___action299`: append one `TypeRef` to a `Vec<TypeRef>`. */
 internal fun action299(
@@ -9697,7 +10786,9 @@ internal fun action299(
 internal fun action300(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
+    return listOf(sym0.second)
+}
 
 /** `___action301`: append one `Symbol` to a `Vec<Symbol>`. */
 internal fun action301(
@@ -9714,7 +10805,9 @@ internal fun action301(
 internal fun action302(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
+    return listOf(sym0.second)
+}
 
 /** `___action303`: append one `Alternative` to a `Vec<Alternative>`. */
 internal fun action303(
@@ -9731,7 +10824,9 @@ internal fun action303(
 internal fun action304(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
+    return listOf(sym0.second)
+}
 
 /** `___action305`: append one `NonterminalString` to a `Vec<NonterminalString>`. */
 internal fun action305(
@@ -9748,7 +10843,9 @@ internal fun action305(
 internal fun action306(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
+    return listOf(sym0.second)
+}
 
 /** `___action307`: append one `Attribute` to a `Vec<Attribute>`. */
 internal fun action307(
@@ -9765,7 +10862,9 @@ internal fun action307(
 internal fun action308(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
+    return listOf(sym0.second)
+}
 
 /** `___action309`: append one `Parameter` to a `Vec<Parameter>`. */
 internal fun action309(
@@ -9782,7 +10881,9 @@ internal fun action309(
 internal fun action310(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return listOf(sym0.second)
+}
 
 /** `___action311`: append one `TypeBoundParameter<TypeRef>` to a `Vec`. */
 internal fun action311(
@@ -9799,7 +10900,9 @@ internal fun action311(
 internal fun action312(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
+    return listOf(sym0.second)
+}
 
 /** `___action313`: append one `TypeRef` to a `Vec<TypeRef>`. */
 internal fun action313(
@@ -9816,7 +10919,9 @@ internal fun action313(
 internal fun action314(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return listOf(sym0.second)
+}
 
 /** `___action315`: append one `TypeBound<TypeRef>` to a `Vec`. */
 internal fun action315(
@@ -9833,7 +10938,9 @@ internal fun action315(
 internal fun action316(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
+    return listOf(sym0.second)
+}
 
 /** `___action317`: append one `Lifetime` to a `Vec<Lifetime>`. */
 internal fun action317(
@@ -9850,7 +10957,9 @@ internal fun action317(
 internal fun action318(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
+    return listOf(sym0.second)
+}
 
 /** `___action319`: append one `WhereClause<TypeRef>` to a `Vec`. */
 internal fun action319(
@@ -9867,7 +10976,9 @@ internal fun action319(
 internal fun action320(
     text: String,
     sym0: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter, Int>,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> = listOf(sym0.second)
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
+    return listOf(sym0.second)
+}
 
 /** `___action321`: append one `TypeParameter` to a `Vec<TypeParameter>`. */
 internal fun action321(
@@ -10654,11 +11765,20 @@ internal fun action348(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
+): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter>
+{
     val start0 = lookbehind
     val end0 = lookahead
-    action185(text, start0, end0)
-    val tempTriple = Triple(start0, Unit, end0)
+    val temp0 = action185(
+        text,
+        start0,
+        end0,
+    )
+    val tempTriple = Triple(
+        start0,
+        temp0,
+        end0,
+    )
     return action14(
         text,
         tempTriple,
@@ -10673,11 +11793,20 @@ internal fun action349(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility {
+): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Visibility
+{
     val start0 = lookbehind
     val end0 = lookahead
-    action185(text, start0, end0)
-    val tempTriple = Triple(start0, Unit, end0)
+    val temp0 = action185(
+        text,
+        start0,
+        end0,
+    )
+    val tempTriple = Triple(
+        start0,
+        temp0,
+        end0,
+    )
     return action32(
         text,
         tempTriple,
@@ -24867,8 +25996,11 @@ internal fun Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, In
 internal fun reduce0(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // "::"? = "::" => ActionFn(143);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -24881,8 +26013,11 @@ internal fun reduce0(
 internal fun reduce1(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // "::"? =  => ActionFn(144);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action144(text, start, end)
@@ -24894,8 +26029,11 @@ internal fun reduce1(
 internal fun reduce2(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ";"? = ";" => ActionFn(165);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -24908,8 +26046,11 @@ internal fun reduce2(
 internal fun reduce3(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ";"? =  => ActionFn(166);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action166(text, start, end)
@@ -24921,8 +26062,11 @@ internal fun reduce3(
 internal fun reduce4(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // "mut"? = "mut" => ActionFn(154);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -24935,8 +26079,11 @@ internal fun reduce4(
 internal fun reduce5(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // "mut"? =  => ActionFn(155);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action155(text, start, end)
@@ -24948,8 +26095,14 @@ internal fun reduce5(
 internal fun reduce6(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("->" <TypeRef>) = "->", TypeRef => ActionFn(182);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -24963,8 +26116,14 @@ internal fun reduce6(
 internal fun reduce7(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("->" <TypeRef>)? = "->", TypeRef => ActionFn(332);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -24978,8 +26137,11 @@ internal fun reduce7(
 internal fun reduce8(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("->" <TypeRef>)? =  => ActionFn(181);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action181(text, start, end)
@@ -24991,8 +26153,14 @@ internal fun reduce8(
 internal fun reduce9(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (":" <TypeRef>) = ":", TypeRef => ActionFn(174);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -25006,8 +26174,14 @@ internal fun reduce9(
 internal fun reduce10(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (":" <TypeRef>)? = ":", TypeRef => ActionFn(337);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -25021,8 +26195,11 @@ internal fun reduce10(
 internal fun reduce11(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (":" <TypeRef>)? =  => ActionFn(173);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action173(text, start, end)
@@ -25034,8 +26211,14 @@ internal fun reduce11(
 internal fun reduce12(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("<" <Comma<TypeBoundParameter>> ">") = "<", Comma<TypeBoundParameter>, ">" => ActionFn(178);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant5(symbols)
     val sym0 = popVariant0(symbols)
@@ -25050,8 +26233,14 @@ internal fun reduce12(
 internal fun reduce13(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("<" <Comma<TypeBoundParameter>> ">")? = "<", Comma<TypeBoundParameter>, ">" => ActionFn(340);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant5(symbols)
     val sym0 = popVariant0(symbols)
@@ -25066,8 +26255,11 @@ internal fun reduce13(
 internal fun reduce14(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("<" <Comma<TypeBoundParameter>> ">")? =  => ActionFn(177);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action177(text, start, end)
@@ -25079,8 +26271,14 @@ internal fun reduce14(
 internal fun reduce15(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("if" <Cond>) = "if", Cond => ActionFn(162);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant7(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -25094,8 +26292,14 @@ internal fun reduce15(
 internal fun reduce16(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("if" <Cond>)? = "if", Cond => ActionFn(343);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant7(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -25109,8 +26313,11 @@ internal fun reduce16(
 internal fun reduce17(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ("if" <Cond>)? =  => ActionFn(161);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action161(text, start, end)
@@ -25122,8 +26329,11 @@ internal fun reduce17(
 internal fun reduce18(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // () =  => ActionFn(185);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     action185(text, start, end)
@@ -25135,8 +26345,14 @@ internal fun reduce18(
 internal fun reduce19(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Alternative> ",") = Alternative, "," => ActionFn(260);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant10(symbols)
     val start = sym0.first
@@ -25150,8 +26366,11 @@ internal fun reduce19(
 internal fun reduce20(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Alternative> ",")* =  => ActionFn(258);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action258(text, start, end)
@@ -25163,8 +26382,11 @@ internal fun reduce20(
 internal fun reduce21(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Alternative> ",")* = (<Alternative> ",")+ => ActionFn(259);
     val sym0 = popVariant11(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25177,8 +26399,14 @@ internal fun reduce21(
 internal fun reduce22(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Alternative> ",")+ = Alternative, "," => ActionFn(350);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant10(symbols)
     val start = sym0.first
@@ -25192,8 +26420,14 @@ internal fun reduce22(
 internal fun reduce23(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Alternative> ",")+ = (<Alternative> ",")+, Alternative, "," => ActionFn(351);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant10(symbols)
     val sym0 = popVariant11(symbols)
@@ -25208,8 +26442,14 @@ internal fun reduce23(
 internal fun reduce24(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<AttributeInner> ",") = AttributeInner, "," => ActionFn(250);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant12(symbols)
     val start = sym0.first
@@ -25223,8 +26463,11 @@ internal fun reduce24(
 internal fun reduce25(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<AttributeInner> ",")* =  => ActionFn(248);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action248(text, start, end)
@@ -25236,8 +26479,11 @@ internal fun reduce25(
 internal fun reduce26(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<AttributeInner> ",")* = (<AttributeInner> ",")+ => ActionFn(249);
     val sym0 = popVariant13(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25250,8 +26496,14 @@ internal fun reduce26(
 internal fun reduce27(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<AttributeInner> ",")+ = AttributeInner, "," => ActionFn(354);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant12(symbols)
     val start = sym0.first
@@ -25265,8 +26517,14 @@ internal fun reduce27(
 internal fun reduce28(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<AttributeInner> ",")+ = (<AttributeInner> ",")+, AttributeInner, "," => ActionFn(355);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant12(symbols)
     val sym0 = popVariant13(symbols)
@@ -25281,8 +26539,14 @@ internal fun reduce28(
 internal fun reduce29(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Conversion> ",") = Conversion, "," => ActionFn(284);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant14(symbols)
     val start = sym0.first
@@ -25296,8 +26560,11 @@ internal fun reduce29(
 internal fun reduce30(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Conversion> ",")* =  => ActionFn(282);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action282(text, start, end)
@@ -25309,8 +26576,11 @@ internal fun reduce30(
 internal fun reduce31(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Conversion> ",")* = (<Conversion> ",")+ => ActionFn(283);
     val sym0 = popVariant15(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25323,8 +26593,14 @@ internal fun reduce31(
 internal fun reduce32(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Conversion> ",")+ = Conversion, "," => ActionFn(358);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant14(symbols)
     val start = sym0.first
@@ -25338,8 +26614,14 @@ internal fun reduce32(
 internal fun reduce33(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Conversion> ",")+ = (<Conversion> ",")+, Conversion, "," => ActionFn(359);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant14(symbols)
     val sym0 = popVariant15(symbols)
@@ -25354,8 +26636,14 @@ internal fun reduce33(
 internal fun reduce34(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<FieldPattern> ",") = FieldPattern, "," => ActionFn(134);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant16(symbols)
     val start = sym0.first
@@ -25369,8 +26657,11 @@ internal fun reduce34(
 internal fun reduce35(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<FieldPattern> ",")* =  => ActionFn(132);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action132(text, start, end)
@@ -25382,8 +26673,11 @@ internal fun reduce35(
 internal fun reduce36(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<FieldPattern> ",")* = (<FieldPattern> ",")+ => ActionFn(133);
     val sym0 = popVariant17(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25396,8 +26690,14 @@ internal fun reduce36(
 internal fun reduce37(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<FieldPattern> ",")+ = FieldPattern, "," => ActionFn(362);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant16(symbols)
     val start = sym0.first
@@ -25411,8 +26711,14 @@ internal fun reduce37(
 internal fun reduce38(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<FieldPattern> ",")+ = (<FieldPattern> ",")+, FieldPattern, "," => ActionFn(363);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant16(symbols)
     val sym0 = popVariant17(symbols)
@@ -25427,8 +26733,14 @@ internal fun reduce38(
 internal fun reduce39(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarParameter> ",") = GrammarParameter, "," => ActionFn(245);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant18(symbols)
     val start = sym0.first
@@ -25442,8 +26754,11 @@ internal fun reduce39(
 internal fun reduce40(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarParameter> ",")* =  => ActionFn(243);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action243(text, start, end)
@@ -25455,8 +26770,11 @@ internal fun reduce40(
 internal fun reduce41(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarParameter> ",")* = (<GrammarParameter> ",")+ => ActionFn(244);
     val sym0 = popVariant19(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25469,8 +26787,14 @@ internal fun reduce41(
 internal fun reduce42(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarParameter> ",")+ = GrammarParameter, "," => ActionFn(368);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant18(symbols)
     val start = sym0.first
@@ -25484,8 +26808,14 @@ internal fun reduce42(
 internal fun reduce43(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarParameter> ",")+ = (<GrammarParameter> ",")+, GrammarParameter, "," => ActionFn(369);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant18(symbols)
     val sym0 = popVariant19(symbols)
@@ -25500,8 +26830,14 @@ internal fun reduce43(
 internal fun reduce44(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarWhereClause> ",") = GrammarWhereClause, "," => ActionFn(222);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant20(symbols)
     val start = sym0.first
@@ -25515,8 +26851,11 @@ internal fun reduce44(
 internal fun reduce45(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarWhereClause> ",")* =  => ActionFn(220);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action220(text, start, end)
@@ -25528,8 +26867,11 @@ internal fun reduce45(
 internal fun reduce46(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarWhereClause> ",")* = (<GrammarWhereClause> ",")+ => ActionFn(221);
     val sym0 = popVariant21(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25542,8 +26884,14 @@ internal fun reduce46(
 internal fun reduce47(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarWhereClause> ",")+ = GrammarWhereClause, "," => ActionFn(372);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant20(symbols)
     val start = sym0.first
@@ -25557,8 +26905,14 @@ internal fun reduce47(
 internal fun reduce48(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<GrammarWhereClause> ",")+ = (<GrammarWhereClause> ",")+, GrammarWhereClause, "," => ActionFn(373);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant20(symbols)
     val sym0 = popVariant21(symbols)
@@ -25573,8 +26927,14 @@ internal fun reduce48(
 internal fun reduce49(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Id> "::") = Id, "::" => ActionFn(142);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant22(symbols)
     val start = sym0.first
@@ -25588,8 +26948,11 @@ internal fun reduce49(
 internal fun reduce50(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Id> "::")* =  => ActionFn(140);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action140(text, start, end)
@@ -25601,8 +26964,11 @@ internal fun reduce50(
 internal fun reduce51(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Id> "::")* = (<Id> "::")+ => ActionFn(141);
     val sym0 = popVariant23(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25615,8 +26981,14 @@ internal fun reduce51(
 internal fun reduce52(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Id> "::")+ = Id, "::" => ActionFn(376);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant22(symbols)
     val start = sym0.first
@@ -25630,8 +27002,14 @@ internal fun reduce52(
 internal fun reduce53(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Id> "::")+ = (<Id> "::")+, Id, "::" => ActionFn(377);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant22(symbols)
     val sym0 = popVariant23(symbols)
@@ -25646,8 +27024,14 @@ internal fun reduce53(
 internal fun reduce54(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Lifetime> "+") = Lifetime, "+" => ActionFn(225);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -25661,8 +27045,11 @@ internal fun reduce54(
 internal fun reduce55(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Lifetime> "+")* =  => ActionFn(223);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action223(text, start, end)
@@ -25674,8 +27061,11 @@ internal fun reduce55(
 internal fun reduce56(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Lifetime> "+")* = (<Lifetime> "+")+ => ActionFn(224);
     val sym0 = popVariant25(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25688,8 +27078,14 @@ internal fun reduce56(
 internal fun reduce57(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Lifetime> "+")+ = Lifetime, "+" => ActionFn(382);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -25703,8 +27099,14 @@ internal fun reduce57(
 internal fun reduce58(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Lifetime> "+")+ = (<Lifetime> "+")+, Lifetime, "+" => ActionFn(383);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant24(symbols)
     val sym0 = popVariant25(symbols)
@@ -25719,8 +27121,14 @@ internal fun reduce58(
 internal fun reduce59(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<MatchItem> ",") = MatchItem, "," => ActionFn(279);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant26(symbols)
     val start = sym0.first
@@ -25734,8 +27142,11 @@ internal fun reduce59(
 internal fun reduce60(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<MatchItem> ",")* =  => ActionFn(277);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action277(text, start, end)
@@ -25747,8 +27158,11 @@ internal fun reduce60(
 internal fun reduce61(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<MatchItem> ",")* = (<MatchItem> ",")+ => ActionFn(278);
     val sym0 = popVariant27(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25761,8 +27175,14 @@ internal fun reduce61(
 internal fun reduce62(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<MatchItem> ",")+ = MatchItem, "," => ActionFn(386);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant26(symbols)
     val start = sym0.first
@@ -25776,8 +27196,14 @@ internal fun reduce62(
 internal fun reduce63(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<MatchItem> ",")+ = (<MatchItem> ",")+, MatchItem, "," => ActionFn(387);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant26(symbols)
     val sym0 = popVariant27(symbols)
@@ -25792,8 +27218,14 @@ internal fun reduce63(
 internal fun reduce64(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<NotMacroId> ",") = NotMacroId, "," => ActionFn(255);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant28(symbols)
     val start = sym0.first
@@ -25807,8 +27239,11 @@ internal fun reduce64(
 internal fun reduce65(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<NotMacroId> ",")* =  => ActionFn(253);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action253(text, start, end)
@@ -25820,8 +27255,11 @@ internal fun reduce65(
 internal fun reduce66(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<NotMacroId> ",")* = (<NotMacroId> ",")+ => ActionFn(254);
     val sym0 = popVariant29(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25834,8 +27272,14 @@ internal fun reduce66(
 internal fun reduce67(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<NotMacroId> ",")+ = NotMacroId, "," => ActionFn(390);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant28(symbols)
     val start = sym0.first
@@ -25849,8 +27293,14 @@ internal fun reduce67(
 internal fun reduce68(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<NotMacroId> ",")+ = (<NotMacroId> ",")+, NotMacroId, "," => ActionFn(391);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant28(symbols)
     val sym0 = popVariant29(symbols)
@@ -25865,8 +27315,14 @@ internal fun reduce68(
 internal fun reduce69(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Pattern> ",") = Pattern, "," => ActionFn(289);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant30(symbols)
     val start = sym0.first
@@ -25880,8 +27336,11 @@ internal fun reduce69(
 internal fun reduce70(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Pattern> ",")* =  => ActionFn(287);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action287(text, start, end)
@@ -25893,8 +27352,11 @@ internal fun reduce70(
 internal fun reduce71(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Pattern> ",")* = (<Pattern> ",")+ => ActionFn(288);
     val sym0 = popVariant31(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25907,8 +27369,14 @@ internal fun reduce71(
 internal fun reduce72(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Pattern> ",")+ = Pattern, "," => ActionFn(394);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant30(symbols)
     val start = sym0.first
@@ -25922,8 +27390,14 @@ internal fun reduce72(
 internal fun reduce73(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Pattern> ",")+ = (<Pattern> ",")+, Pattern, "," => ActionFn(395);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant30(symbols)
     val sym0 = popVariant31(symbols)
@@ -25938,8 +27412,14 @@ internal fun reduce73(
 internal fun reduce74(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Symbol> ",") = Symbol, "," => ActionFn(265);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant32(symbols)
     val start = sym0.first
@@ -25953,8 +27433,11 @@ internal fun reduce74(
 internal fun reduce75(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Symbol> ",")* =  => ActionFn(263);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action263(text, start, end)
@@ -25966,8 +27449,11 @@ internal fun reduce75(
 internal fun reduce76(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Symbol> ",")* = (<Symbol> ",")+ => ActionFn(264);
     val sym0 = popVariant33(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -25980,8 +27466,14 @@ internal fun reduce76(
 internal fun reduce77(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Symbol> ",")+ = Symbol, "," => ActionFn(398);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant32(symbols)
     val start = sym0.first
@@ -25995,8 +27487,14 @@ internal fun reduce77(
 internal fun reduce78(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<Symbol> ",")+ = (<Symbol> ",")+, Symbol, "," => ActionFn(399);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant32(symbols)
     val sym0 = popVariant33(symbols)
@@ -26011,8 +27509,14 @@ internal fun reduce78(
 internal fun reduce79(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TupleItem> ",") = TupleItem, "," => ActionFn(152);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant34(symbols)
     val start = sym0.first
@@ -26026,8 +27530,14 @@ internal fun reduce79(
 internal fun reduce80(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TupleItem> ",")+ = TupleItem, "," => ActionFn(402);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant34(symbols)
     val start = sym0.first
@@ -26041,8 +27551,14 @@ internal fun reduce80(
 internal fun reduce81(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TupleItem> ",")+ = (<TupleItem> ",")+, TupleItem, "," => ActionFn(403);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant34(symbols)
     val sym0 = popVariant35(symbols)
@@ -26057,8 +27573,14 @@ internal fun reduce81(
 internal fun reduce82(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBound> "+") = TypeBound, "+" => ActionFn(230);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant36(symbols)
     val start = sym0.first
@@ -26072,8 +27594,11 @@ internal fun reduce82(
 internal fun reduce83(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBound> "+")* =  => ActionFn(228);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action228(text, start, end)
@@ -26085,8 +27610,11 @@ internal fun reduce83(
 internal fun reduce84(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBound> "+")* = (<TypeBound> "+")+ => ActionFn(229);
     val sym0 = popVariant37(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26099,8 +27627,14 @@ internal fun reduce84(
 internal fun reduce85(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBound> "+")+ = TypeBound, "+" => ActionFn(404);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant36(symbols)
     val start = sym0.first
@@ -26114,8 +27648,14 @@ internal fun reduce85(
 internal fun reduce86(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBound> "+")+ = (<TypeBound> "+")+, TypeBound, "+" => ActionFn(405);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant36(symbols)
     val sym0 = popVariant37(symbols)
@@ -26130,8 +27670,14 @@ internal fun reduce86(
 internal fun reduce87(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBoundParameter> ",") = TypeBoundParameter, "," => ActionFn(240);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant38(symbols)
     val start = sym0.first
@@ -26145,8 +27691,11 @@ internal fun reduce87(
 internal fun reduce88(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBoundParameter> ",")* =  => ActionFn(238);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action238(text, start, end)
@@ -26158,8 +27707,11 @@ internal fun reduce88(
 internal fun reduce89(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBoundParameter> ",")* = (<TypeBoundParameter> ",")+ => ActionFn(239);
     val sym0 = popVariant39(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26172,8 +27724,14 @@ internal fun reduce89(
 internal fun reduce90(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBoundParameter> ",")+ = TypeBoundParameter, "," => ActionFn(408);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant38(symbols)
     val start = sym0.first
@@ -26187,8 +27745,14 @@ internal fun reduce90(
 internal fun reduce91(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeBoundParameter> ",")+ = (<TypeBoundParameter> ",")+, TypeBoundParameter, "," => ActionFn(409);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant38(symbols)
     val sym0 = popVariant39(symbols)
@@ -26203,8 +27767,14 @@ internal fun reduce91(
 internal fun reduce92(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeParameter> ",") = TypeParameter, "," => ActionFn(217);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant40(symbols)
     val start = sym0.first
@@ -26218,8 +27788,11 @@ internal fun reduce92(
 internal fun reduce93(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeParameter> ",")* =  => ActionFn(215);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action215(text, start, end)
@@ -26231,8 +27804,11 @@ internal fun reduce93(
 internal fun reduce94(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeParameter> ",")* = (<TypeParameter> ",")+ => ActionFn(216);
     val sym0 = popVariant41(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26245,8 +27821,14 @@ internal fun reduce94(
 internal fun reduce95(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeParameter> ",")+ = TypeParameter, "," => ActionFn(412);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant40(symbols)
     val start = sym0.first
@@ -26260,8 +27842,14 @@ internal fun reduce95(
 internal fun reduce96(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeParameter> ",")+ = (<TypeParameter> ",")+, TypeParameter, "," => ActionFn(413);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant40(symbols)
     val sym0 = popVariant41(symbols)
@@ -26276,8 +27864,14 @@ internal fun reduce96(
 internal fun reduce97(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRef> ",") = TypeRef, "," => ActionFn(235);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant3(symbols)
     val start = sym0.first
@@ -26291,8 +27885,11 @@ internal fun reduce97(
 internal fun reduce98(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRef> ",")* =  => ActionFn(233);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action233(text, start, end)
@@ -26304,8 +27901,11 @@ internal fun reduce98(
 internal fun reduce99(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRef> ",")* = (<TypeRef> ",")+ => ActionFn(234);
     val sym0 = popVariant42(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26318,8 +27918,14 @@ internal fun reduce99(
 internal fun reduce100(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRef> ",")+ = TypeRef, "," => ActionFn(416);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant3(symbols)
     val start = sym0.first
@@ -26333,8 +27939,14 @@ internal fun reduce100(
 internal fun reduce101(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRef> ",")+ = (<TypeRef> ",")+, TypeRef, "," => ActionFn(417);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant42(symbols)
@@ -26349,8 +27961,14 @@ internal fun reduce101(
 internal fun reduce102(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRefOrLifetime> ",") = TypeRefOrLifetime, "," => ActionFn(270);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant3(symbols)
     val start = sym0.first
@@ -26364,8 +27982,11 @@ internal fun reduce102(
 internal fun reduce103(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRefOrLifetime> ",")* =  => ActionFn(268);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action268(text, start, end)
@@ -26377,8 +27998,11 @@ internal fun reduce103(
 internal fun reduce104(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRefOrLifetime> ",")* = (<TypeRefOrLifetime> ",")+ => ActionFn(269);
     val sym0 = popVariant42(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26391,8 +28015,14 @@ internal fun reduce104(
 internal fun reduce105(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRefOrLifetime> ",")+ = TypeRefOrLifetime, "," => ActionFn(420);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant3(symbols)
     val start = sym0.first
@@ -26406,8 +28036,14 @@ internal fun reduce105(
 internal fun reduce106(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // (<TypeRefOrLifetime> ",")+ = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime, "," => ActionFn(421);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant42(symbols)
@@ -26422,8 +28058,11 @@ internal fun reduce106(
 internal fun reduce107(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // @L =  => ActionFn(198);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action198(text, start, end)
@@ -26435,8 +28074,11 @@ internal fun reduce107(
 internal fun reduce108(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // @R =  => ActionFn(197);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action197(text, start, end)
@@ -26448,8 +28090,11 @@ internal fun reduce108(
 internal fun reduce109(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Action = "=>@L" => ActionFn(45);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26462,8 +28107,11 @@ internal fun reduce109(
 internal fun reduce110(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Action = "=>@R" => ActionFn(46);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26476,8 +28124,11 @@ internal fun reduce110(
 internal fun reduce111(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Action = "=>" => ActionFn(47);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26490,8 +28141,11 @@ internal fun reduce111(
 internal fun reduce112(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Action = "=>?" => ActionFn(48);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26504,8 +28158,11 @@ internal fun reduce112(
 internal fun reduce113(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Action? = Action => ActionFn(158);
     val sym0 = popVariant44(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26518,8 +28175,11 @@ internal fun reduce113(
 internal fun reduce114(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Action? =  => ActionFn(159);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action159(text, start, end)
@@ -26531,8 +28191,14 @@ internal fun reduce114(
 internal fun reduce115(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Symbol+, "if", Cond, Action => ActionFn(493);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant44(symbols)
     val sym2 = popVariant7(symbols)
     val sym1 = popVariant0(symbols)
@@ -26548,8 +28214,14 @@ internal fun reduce115(
 internal fun reduce116(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Attribute+, Symbol+, "if", Cond, Action => ActionFn(494);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant44(symbols)
     val sym3 = popVariant7(symbols)
     val sym2 = popVariant0(symbols)
@@ -26566,8 +28238,14 @@ internal fun reduce116(
 internal fun reduce117(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Symbol+, "if", Cond => ActionFn(495);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant7(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant33(symbols)
@@ -26582,8 +28260,14 @@ internal fun reduce117(
 internal fun reduce118(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Attribute+, Symbol+, "if", Cond => ActionFn(496);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant7(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant33(symbols)
@@ -26599,8 +28283,14 @@ internal fun reduce118(
 internal fun reduce119(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Symbol+, Action => ActionFn(497);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant44(symbols)
     val sym0 = popVariant33(symbols)
     val start = sym0.first
@@ -26614,8 +28304,14 @@ internal fun reduce119(
 internal fun reduce120(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Attribute+, Symbol+, Action => ActionFn(498);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant44(symbols)
     val sym1 = popVariant33(symbols)
     val sym0 = popVariant13(symbols)
@@ -26630,8 +28326,11 @@ internal fun reduce120(
 internal fun reduce121(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Symbol+ => ActionFn(499);
     val sym0 = popVariant33(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26644,8 +28343,14 @@ internal fun reduce121(
 internal fun reduce122(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Attribute+, Symbol+ => ActionFn(500);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant33(symbols)
     val sym0 = popVariant13(symbols)
     val start = sym0.first
@@ -26659,8 +28364,14 @@ internal fun reduce122(
 internal fun reduce123(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = "if", Cond, Action => ActionFn(454);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant44(symbols)
     val sym1 = popVariant7(symbols)
     val sym0 = popVariant0(symbols)
@@ -26675,8 +28386,11 @@ internal fun reduce123(
 internal fun reduce124(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative = Action => ActionFn(455);
     val sym0 = popVariant44(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26689,8 +28403,11 @@ internal fun reduce124(
 internal fun reduce125(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative? = Alternative => ActionFn(256);
     val sym0 = popVariant10(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26703,8 +28420,11 @@ internal fun reduce125(
 internal fun reduce126(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternative? =  => ActionFn(257);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action257(text, start, end)
@@ -26716,8 +28436,14 @@ internal fun reduce126(
 internal fun reduce127(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternatives = Alternative, ";" => ActionFn(41);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant10(symbols)
     val start = sym0.first
@@ -26731,8 +28457,14 @@ internal fun reduce127(
 internal fun reduce128(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternatives = "{", Comma<Alternative>, "}", ";" => ActionFn(324);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant47(symbols)
@@ -26748,8 +28480,14 @@ internal fun reduce128(
 internal fun reduce129(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Alternatives = "{", Comma<Alternative>, "}" => ActionFn(325);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant47(symbols)
     val sym0 = popVariant0(symbols)
@@ -26764,8 +28502,14 @@ internal fun reduce129(
 internal fun reduce130(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AssociatedType = "type", Id, "=", TypeRef, ";" => ActionFn(456);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant3(symbols)
     val sym2 = popVariant0(symbols)
@@ -26782,8 +28526,11 @@ internal fun reduce130(
 internal fun reduce131(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AssociatedType* =  => ActionFn(138);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action138(text, start, end)
@@ -26795,8 +28542,11 @@ internal fun reduce131(
 internal fun reduce132(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AssociatedType* = AssociatedType+ => ActionFn(139);
     val sym0 = popVariant49(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26809,8 +28559,11 @@ internal fun reduce132(
 internal fun reduce133(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AssociatedType+ = AssociatedType => ActionFn(273);
     val sym0 = popVariant48(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26823,8 +28576,14 @@ internal fun reduce133(
 internal fun reduce134(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AssociatedType+ = AssociatedType+, AssociatedType => ActionFn(274);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant48(symbols)
     val sym0 = popVariant49(symbols)
     val start = sym0.first
@@ -26838,8 +28597,14 @@ internal fun reduce134(
 internal fun reduce135(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Attribute = "#", "[", AttributeInner, "]" => ActionFn(34);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant12(symbols)
     val sym1 = popVariant0(symbols)
@@ -26855,8 +28620,11 @@ internal fun reduce135(
 internal fun reduce136(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Attribute* =  => ActionFn(199);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action199(text, start, end)
@@ -26868,8 +28636,11 @@ internal fun reduce136(
 internal fun reduce137(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Attribute* = Attribute+ => ActionFn(200);
     val sym0 = popVariant13(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26882,8 +28653,11 @@ internal fun reduce137(
 internal fun reduce138(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Attribute+ = Attribute => ActionFn(209);
     val sym0 = popVariant12(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26896,8 +28670,14 @@ internal fun reduce138(
 internal fun reduce139(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Attribute+ = Attribute+, Attribute => ActionFn(210);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant12(symbols)
     val sym0 = popVariant13(symbols)
     val start = sym0.first
@@ -26911,8 +28691,14 @@ internal fun reduce139(
 internal fun reduce140(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeArg = "(", Comma<AttributeInner>, ")" => ActionFn(36);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant53(symbols)
     val sym0 = popVariant0(symbols)
@@ -26927,8 +28713,14 @@ internal fun reduce140(
 internal fun reduce141(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeArg = "=", "StringLiteral" => ActionFn(37);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant1(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -26942,8 +28734,11 @@ internal fun reduce141(
 internal fun reduce142(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeArg? = AttributeArg => ActionFn(170);
     val sym0 = popVariant50(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26956,8 +28751,11 @@ internal fun reduce142(
 internal fun reduce143(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeArg? =  => ActionFn(171);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action171(text, start, end)
@@ -26969,8 +28767,14 @@ internal fun reduce143(
 internal fun reduce144(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeInner = Id, AttributeArg => ActionFn(509);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant50(symbols)
     val sym0 = popVariant22(symbols)
     val start = sym0.first
@@ -26984,8 +28788,11 @@ internal fun reduce144(
 internal fun reduce145(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeInner = Id => ActionFn(510);
     val sym0 = popVariant22(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -26998,8 +28805,11 @@ internal fun reduce145(
 internal fun reduce146(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeInner? = AttributeInner => ActionFn(246);
     val sym0 = popVariant12(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27012,8 +28822,11 @@ internal fun reduce146(
 internal fun reduce147(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // AttributeInner? =  => ActionFn(247);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action247(text, start, end)
@@ -27025,8 +28838,11 @@ internal fun reduce147(
 internal fun reduce148(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Alternative> = Alternative => ActionFn(483);
     val sym0 = popVariant10(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27039,8 +28855,11 @@ internal fun reduce148(
 internal fun reduce149(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Alternative> =  => ActionFn(484);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action484(text, start, end)
@@ -27052,8 +28871,14 @@ internal fun reduce149(
 internal fun reduce150(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Alternative> = (<Alternative> ",")+, Alternative => ActionFn(485);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant10(symbols)
     val sym0 = popVariant11(symbols)
     val start = sym0.first
@@ -27067,8 +28892,11 @@ internal fun reduce150(
 internal fun reduce151(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Alternative> = (<Alternative> ",")+ => ActionFn(486);
     val sym0 = popVariant11(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27081,8 +28909,11 @@ internal fun reduce151(
 internal fun reduce152(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<AttributeInner> = AttributeInner => ActionFn(511);
     val sym0 = popVariant12(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27095,8 +28926,11 @@ internal fun reduce152(
 internal fun reduce153(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<AttributeInner> =  => ActionFn(512);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action512(text, start, end)
@@ -27108,8 +28942,14 @@ internal fun reduce153(
 internal fun reduce154(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<AttributeInner> = (<AttributeInner> ",")+, AttributeInner => ActionFn(513);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant12(symbols)
     val sym0 = popVariant13(symbols)
     val start = sym0.first
@@ -27123,8 +28963,11 @@ internal fun reduce154(
 internal fun reduce155(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<AttributeInner> = (<AttributeInner> ",")+ => ActionFn(514);
     val sym0 = popVariant13(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27137,8 +28980,11 @@ internal fun reduce155(
 internal fun reduce156(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Conversion> = Conversion => ActionFn(515);
     val sym0 = popVariant14(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27151,8 +28997,11 @@ internal fun reduce156(
 internal fun reduce157(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Conversion> =  => ActionFn(516);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action516(text, start, end)
@@ -27164,8 +29013,14 @@ internal fun reduce157(
 internal fun reduce158(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Conversion> = (<Conversion> ",")+, Conversion => ActionFn(517);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant14(symbols)
     val sym0 = popVariant15(symbols)
     val start = sym0.first
@@ -27179,8 +29034,11 @@ internal fun reduce158(
 internal fun reduce159(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Conversion> = (<Conversion> ",")+ => ActionFn(518);
     val sym0 = popVariant15(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27193,8 +29051,11 @@ internal fun reduce159(
 internal fun reduce160(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarParameter> = GrammarParameter => ActionFn(541);
     val sym0 = popVariant18(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27207,8 +29068,11 @@ internal fun reduce160(
 internal fun reduce161(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarParameter> =  => ActionFn(542);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action542(text, start, end)
@@ -27220,8 +29084,14 @@ internal fun reduce161(
 internal fun reduce162(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarParameter> = (<GrammarParameter> ",")+, GrammarParameter => ActionFn(543);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant18(symbols)
     val sym0 = popVariant19(symbols)
     val start = sym0.first
@@ -27235,8 +29105,11 @@ internal fun reduce162(
 internal fun reduce163(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarParameter> = (<GrammarParameter> ",")+ => ActionFn(544);
     val sym0 = popVariant19(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27249,8 +29122,11 @@ internal fun reduce163(
 internal fun reduce164(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarWhereClause> = GrammarWhereClause => ActionFn(569);
     val sym0 = popVariant20(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27263,8 +29139,11 @@ internal fun reduce164(
 internal fun reduce165(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarWhereClause> =  => ActionFn(570);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action570(text, start, end)
@@ -27276,8 +29155,14 @@ internal fun reduce165(
 internal fun reduce166(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+, GrammarWhereClause => ActionFn(571);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant20(symbols)
     val sym0 = popVariant21(symbols)
     val start = sym0.first
@@ -27291,8 +29176,11 @@ internal fun reduce166(
 internal fun reduce167(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+ => ActionFn(572);
     val sym0 = popVariant21(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27305,8 +29193,11 @@ internal fun reduce167(
 internal fun reduce168(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<MatchItem> = MatchItem => ActionFn(613);
     val sym0 = popVariant26(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27319,8 +29210,11 @@ internal fun reduce168(
 internal fun reduce169(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<MatchItem> =  => ActionFn(614);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action614(text, start, end)
@@ -27332,8 +29226,14 @@ internal fun reduce169(
 internal fun reduce170(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<MatchItem> = (<MatchItem> ",")+, MatchItem => ActionFn(615);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant26(symbols)
     val sym0 = popVariant27(symbols)
     val start = sym0.first
@@ -27347,8 +29247,11 @@ internal fun reduce170(
 internal fun reduce171(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<MatchItem> = (<MatchItem> ",")+ => ActionFn(616);
     val sym0 = popVariant27(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27361,8 +29264,11 @@ internal fun reduce171(
 internal fun reduce172(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<NotMacroId> = NotMacroId => ActionFn(617);
     val sym0 = popVariant28(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27375,8 +29281,11 @@ internal fun reduce172(
 internal fun reduce173(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<NotMacroId> =  => ActionFn(618);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action618(text, start, end)
@@ -27388,8 +29297,14 @@ internal fun reduce173(
 internal fun reduce174(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<NotMacroId> = (<NotMacroId> ",")+, NotMacroId => ActionFn(619);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant28(symbols)
     val sym0 = popVariant29(symbols)
     val start = sym0.first
@@ -27403,8 +29318,11 @@ internal fun reduce174(
 internal fun reduce175(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<NotMacroId> = (<NotMacroId> ",")+ => ActionFn(620);
     val sym0 = popVariant29(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27417,8 +29335,11 @@ internal fun reduce175(
 internal fun reduce176(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Pattern> = Pattern => ActionFn(621);
     val sym0 = popVariant30(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27431,8 +29352,11 @@ internal fun reduce176(
 internal fun reduce177(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Pattern> =  => ActionFn(622);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action622(text, start, end)
@@ -27444,8 +29368,14 @@ internal fun reduce177(
 internal fun reduce178(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Pattern> = (<Pattern> ",")+, Pattern => ActionFn(623);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant30(symbols)
     val sym0 = popVariant31(symbols)
     val start = sym0.first
@@ -27459,8 +29389,11 @@ internal fun reduce178(
 internal fun reduce179(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Pattern> = (<Pattern> ",")+ => ActionFn(624);
     val sym0 = popVariant31(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27473,8 +29406,11 @@ internal fun reduce179(
 internal fun reduce180(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Symbol> = Symbol => ActionFn(691);
     val sym0 = popVariant32(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27487,8 +29423,11 @@ internal fun reduce180(
 internal fun reduce181(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Symbol> =  => ActionFn(692);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action692(text, start, end)
@@ -27500,8 +29439,14 @@ internal fun reduce181(
 internal fun reduce182(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Symbol> = (<Symbol> ",")+, Symbol => ActionFn(693);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant32(symbols)
     val sym0 = popVariant33(symbols)
     val start = sym0.first
@@ -27515,8 +29460,11 @@ internal fun reduce182(
 internal fun reduce183(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<Symbol> = (<Symbol> ",")+ => ActionFn(694);
     val sym0 = popVariant33(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27529,8 +29477,11 @@ internal fun reduce183(
 internal fun reduce184(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeBoundParameter> = TypeBoundParameter => ActionFn(701);
     val sym0 = popVariant38(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27543,8 +29494,11 @@ internal fun reduce184(
 internal fun reduce185(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeBoundParameter> =  => ActionFn(702);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action702(text, start, end)
@@ -27556,8 +29510,14 @@ internal fun reduce185(
 internal fun reduce186(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+, TypeBoundParameter => ActionFn(703);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant38(symbols)
     val sym0 = popVariant39(symbols)
     val start = sym0.first
@@ -27571,8 +29531,11 @@ internal fun reduce186(
 internal fun reduce187(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+ => ActionFn(704);
     val sym0 = popVariant39(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27585,8 +29548,11 @@ internal fun reduce187(
 internal fun reduce188(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeParameter> = TypeParameter => ActionFn(705);
     val sym0 = popVariant40(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27599,8 +29565,11 @@ internal fun reduce188(
 internal fun reduce189(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeParameter> =  => ActionFn(706);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action706(text, start, end)
@@ -27612,8 +29581,14 @@ internal fun reduce189(
 internal fun reduce190(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeParameter> = (<TypeParameter> ",")+, TypeParameter => ActionFn(707);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant40(symbols)
     val sym0 = popVariant41(symbols)
     val start = sym0.first
@@ -27627,8 +29602,11 @@ internal fun reduce190(
 internal fun reduce191(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeParameter> = (<TypeParameter> ",")+ => ActionFn(708);
     val sym0 = popVariant41(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27641,8 +29619,11 @@ internal fun reduce191(
 internal fun reduce192(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRef> = TypeRef => ActionFn(709);
     val sym0 = popVariant3(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27655,8 +29636,11 @@ internal fun reduce192(
 internal fun reduce193(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRef> =  => ActionFn(710);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action710(text, start, end)
@@ -27668,8 +29652,14 @@ internal fun reduce193(
 internal fun reduce194(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRef> = (<TypeRef> ",")+, TypeRef => ActionFn(711);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant42(symbols)
     val start = sym0.first
@@ -27683,8 +29673,11 @@ internal fun reduce194(
 internal fun reduce195(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRef> = (<TypeRef> ",")+ => ActionFn(712);
     val sym0 = popVariant42(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27697,8 +29690,11 @@ internal fun reduce195(
 internal fun reduce196(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRefOrLifetime> = TypeRefOrLifetime => ActionFn(713);
     val sym0 = popVariant3(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27711,8 +29707,11 @@ internal fun reduce196(
 internal fun reduce197(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRefOrLifetime> =  => ActionFn(714);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action714(text, start, end)
@@ -27724,8 +29723,14 @@ internal fun reduce197(
 internal fun reduce198(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime => ActionFn(715);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant42(symbols)
     val start = sym0.first
@@ -27739,8 +29744,11 @@ internal fun reduce198(
 internal fun reduce199(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+ => ActionFn(716);
     val sym0 = popVariant42(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27753,8 +29761,14 @@ internal fun reduce199(
 internal fun reduce200(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Cond = NotMacroId, CondOp, StringLiteral => ActionFn(458);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant22(symbols)
     val sym1 = popVariant63(symbols)
     val sym0 = popVariant28(symbols)
@@ -27769,8 +29783,11 @@ internal fun reduce200(
 internal fun reduce201(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // CondOp = "==" => ActionFn(50);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27783,8 +29800,11 @@ internal fun reduce201(
 internal fun reduce202(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // CondOp = "!=" => ActionFn(51);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27797,8 +29817,11 @@ internal fun reduce202(
 internal fun reduce203(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // CondOp = "~~" => ActionFn(52);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27811,8 +29834,11 @@ internal fun reduce203(
 internal fun reduce204(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // CondOp = "!~" => ActionFn(53);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27825,8 +29851,11 @@ internal fun reduce204(
 internal fun reduce207(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Conversion? = Conversion => ActionFn(280);
     val sym0 = popVariant14(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27839,8 +29868,11 @@ internal fun reduce207(
 internal fun reduce208(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Conversion? =  => ActionFn(281);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action281(text, start, end)
@@ -27852,8 +29884,14 @@ internal fun reduce208(
 internal fun reduce209(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // EnumToken = "enum", TypeRef, "{", Comma<Conversion>, "}" => ActionFn(460);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant54(symbols)
     val sym2 = popVariant0(symbols)
@@ -27870,8 +29908,11 @@ internal fun reduce209(
 internal fun reduce210(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Escape = "Escape" => ActionFn(119);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27884,8 +29925,11 @@ internal fun reduce210(
 internal fun reduce211(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExprSymbol =  => ActionFn(689);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action689(text, start, end)
@@ -27897,8 +29941,11 @@ internal fun reduce211(
 internal fun reduce212(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExprSymbol = Symbol+ => ActionFn(690);
     val sym0 = popVariant33(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -27911,8 +29958,14 @@ internal fun reduce212(
 internal fun reduce213(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExternToken = "extern", "{", EnumToken, "}" => ActionFn(487);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant65(symbols)
     val sym1 = popVariant0(symbols)
@@ -27928,8 +29981,14 @@ internal fun reduce213(
 internal fun reduce214(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExternToken = "extern", "{", EnumToken, AssociatedType+, "}" => ActionFn(488);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant49(symbols)
     val sym2 = popVariant65(symbols)
@@ -27946,8 +30005,14 @@ internal fun reduce214(
 internal fun reduce215(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExternToken = "extern", "{", AssociatedType+, EnumToken, "}" => ActionFn(489);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant65(symbols)
     val sym2 = popVariant49(symbols)
@@ -27964,8 +30029,14 @@ internal fun reduce215(
 internal fun reduce216(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExternToken = "extern", "{", AssociatedType+, EnumToken, AssociatedType+, "}" => ActionFn(490);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant49(symbols)
     val sym3 = popVariant65(symbols)
@@ -27983,8 +30054,14 @@ internal fun reduce216(
 internal fun reduce217(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExternToken = "extern", "{", "}" => ActionFn(491);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant0(symbols)
@@ -27999,8 +30076,14 @@ internal fun reduce217(
 internal fun reduce218(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ExternToken = "extern", "{", AssociatedType+, "}" => ActionFn(492);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant49(symbols)
     val sym1 = popVariant0(symbols)
@@ -28016,8 +30099,14 @@ internal fun reduce218(
 internal fun reduce219(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // FieldPattern = Id, ":", Pattern => ActionFn(463);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant30(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant22(symbols)
@@ -28032,8 +30121,11 @@ internal fun reduce219(
 internal fun reduce220(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // FieldPattern? = FieldPattern => ActionFn(130);
     val sym0 = popVariant16(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -28046,8 +30138,11 @@ internal fun reduce220(
 internal fun reduce221(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // FieldPattern? =  => ActionFn(131);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action131(text, start, end)
@@ -28059,8 +30154,14 @@ internal fun reduce221(
 internal fun reduce222(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ForAll = "for", "<", Comma<TypeParameter>, ">" => ActionFn(13);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
     val sym1 = popVariant0(symbols)
@@ -28076,8 +30177,11 @@ internal fun reduce222(
 internal fun reduce223(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ForAll =  => ActionFn(348);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action348(text, start, end)
@@ -28089,8 +30193,14 @@ internal fun reduce223(
 internal fun reduce224(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(717);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant55(symbols)
@@ -28107,8 +30217,14 @@ internal fun reduce224(
 internal fun reduce225(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(718);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant55(symbols)
@@ -28126,8 +30242,14 @@ internal fun reduce225(
 internal fun reduce226(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(719);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant55(symbols)
@@ -28145,8 +30267,14 @@ internal fun reduce226(
 internal fun reduce227(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(720);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
     val sym4 = popVariant55(symbols)
@@ -28165,8 +30293,14 @@ internal fun reduce227(
 internal fun reduce228(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(721);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
     val sym1 = popVariant61(symbols)
@@ -28182,8 +30316,14 @@ internal fun reduce228(
 internal fun reduce229(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(722);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
     val sym2 = popVariant61(symbols)
@@ -28200,8 +30340,14 @@ internal fun reduce229(
 internal fun reduce230(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(723);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
     val sym2 = popVariant61(symbols)
@@ -28218,8 +30364,14 @@ internal fun reduce230(
 internal fun reduce231(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(724);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
     val sym3 = popVariant61(symbols)
@@ -28237,8 +30389,14 @@ internal fun reduce231(
 internal fun reduce232(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(725);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
     val sym1 = popVariant55(symbols)
@@ -28254,8 +30412,14 @@ internal fun reduce232(
 internal fun reduce233(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(726);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant55(symbols)
@@ -28272,8 +30436,14 @@ internal fun reduce233(
 internal fun reduce234(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(727);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant55(symbols)
@@ -28290,8 +30460,14 @@ internal fun reduce234(
 internal fun reduce235(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(728);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant55(symbols)
@@ -28309,8 +30485,14 @@ internal fun reduce235(
 internal fun reduce236(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarParameters, ";" => ActionFn(729);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant55(symbols)
     val sym0 = popVariant0(symbols)
@@ -28325,8 +30507,14 @@ internal fun reduce236(
 internal fun reduce237(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarParameters, ";" => ActionFn(730);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
     val sym1 = popVariant0(symbols)
@@ -28342,8 +30530,14 @@ internal fun reduce237(
 internal fun reduce238(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";" => ActionFn(731);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
     val sym1 = popVariant0(symbols)
@@ -28359,8 +30553,14 @@ internal fun reduce238(
 internal fun reduce239(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";" => ActionFn(732);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
     val sym2 = popVariant0(symbols)
@@ -28377,8 +30577,14 @@ internal fun reduce239(
 internal fun reduce240(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(733);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
     val sym1 = popVariant61(symbols)
@@ -28394,8 +30600,14 @@ internal fun reduce240(
 internal fun reduce241(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(734);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant61(symbols)
@@ -28412,8 +30624,14 @@ internal fun reduce241(
 internal fun reduce242(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(735);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant61(symbols)
@@ -28430,8 +30648,14 @@ internal fun reduce242(
 internal fun reduce243(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(736);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant61(symbols)
@@ -28449,8 +30673,14 @@ internal fun reduce243(
 internal fun reduce244(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, ";" => ActionFn(737);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant61(symbols)
     val sym0 = popVariant0(symbols)
@@ -28465,8 +30695,14 @@ internal fun reduce244(
 internal fun reduce245(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(738);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
     val sym1 = popVariant0(symbols)
@@ -28482,8 +30718,14 @@ internal fun reduce245(
 internal fun reduce246(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(739);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
     val sym1 = popVariant0(symbols)
@@ -28499,8 +30741,14 @@ internal fun reduce246(
 internal fun reduce247(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(740);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant61(symbols)
     val sym2 = popVariant0(symbols)
@@ -28517,8 +30765,14 @@ internal fun reduce247(
 internal fun reduce248(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarWhereClauses, ";" => ActionFn(741);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant56(symbols)
     val sym0 = popVariant0(symbols)
@@ -28533,8 +30787,14 @@ internal fun reduce248(
 internal fun reduce249(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(742);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
     val sym1 = popVariant0(symbols)
@@ -28550,8 +30810,14 @@ internal fun reduce249(
 internal fun reduce250(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(743);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
     val sym1 = popVariant0(symbols)
@@ -28567,8 +30833,14 @@ internal fun reduce250(
 internal fun reduce251(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(744);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant0(symbols)
@@ -28585,8 +30857,14 @@ internal fun reduce251(
 internal fun reduce252(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", ";" => ActionFn(745);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -28600,8 +30878,14 @@ internal fun reduce252(
 internal fun reduce253(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", ";" => ActionFn(746);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant70(symbols)
@@ -28616,8 +30900,14 @@ internal fun reduce253(
 internal fun reduce254(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", ";" => ActionFn(747);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant92(symbols)
@@ -28632,8 +30922,14 @@ internal fun reduce254(
 internal fun reduce255(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", ";" => ActionFn(748);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant70(symbols)
@@ -28649,8 +30945,14 @@ internal fun reduce255(
 internal fun reduce256(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(749);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -28668,8 +30970,14 @@ internal fun reduce256(
 internal fun reduce257(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(750);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -28688,8 +30996,14 @@ internal fun reduce257(
 internal fun reduce258(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(751);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -28708,8 +31022,14 @@ internal fun reduce258(
 internal fun reduce259(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(752);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant70(symbols)
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
@@ -28729,8 +31049,14 @@ internal fun reduce259(
 internal fun reduce260(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(753);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
@@ -28747,8 +31073,14 @@ internal fun reduce260(
 internal fun reduce261(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(754);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
@@ -28766,8 +31098,14 @@ internal fun reduce261(
 internal fun reduce262(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(755);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
@@ -28785,8 +31123,14 @@ internal fun reduce262(
 internal fun reduce263(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(756);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
@@ -28805,8 +31149,14 @@ internal fun reduce263(
 internal fun reduce264(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(757);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
@@ -28823,8 +31173,14 @@ internal fun reduce264(
 internal fun reduce265(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(758);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -28842,8 +31198,14 @@ internal fun reduce265(
 internal fun reduce266(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(759);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -28861,8 +31223,14 @@ internal fun reduce266(
 internal fun reduce267(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(760);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -28881,8 +31249,14 @@ internal fun reduce267(
 internal fun reduce268(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(761);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant70(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant55(symbols)
@@ -28898,8 +31272,14 @@ internal fun reduce268(
 internal fun reduce269(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(762);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
@@ -28916,8 +31296,14 @@ internal fun reduce269(
 internal fun reduce270(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(763);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
@@ -28934,8 +31320,14 @@ internal fun reduce270(
 internal fun reduce271(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(764);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
@@ -28953,8 +31345,14 @@ internal fun reduce271(
 internal fun reduce272(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(765);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
@@ -28971,8 +31369,14 @@ internal fun reduce272(
 internal fun reduce273(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(766);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -28990,8 +31394,14 @@ internal fun reduce273(
 internal fun reduce274(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(767);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -29009,8 +31419,14 @@ internal fun reduce274(
 internal fun reduce275(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(768);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -29029,8 +31445,14 @@ internal fun reduce275(
 internal fun reduce276(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(769);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant70(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant61(symbols)
@@ -29046,8 +31468,14 @@ internal fun reduce276(
 internal fun reduce277(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(770);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
@@ -29064,8 +31492,14 @@ internal fun reduce277(
 internal fun reduce278(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(771);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
@@ -29082,8 +31516,14 @@ internal fun reduce278(
 internal fun reduce279(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(772);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant61(symbols)
@@ -29101,8 +31541,14 @@ internal fun reduce279(
 internal fun reduce280(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(773);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant70(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant56(symbols)
@@ -29118,8 +31564,14 @@ internal fun reduce280(
 internal fun reduce281(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(774);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
@@ -29136,8 +31588,14 @@ internal fun reduce281(
 internal fun reduce282(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(775);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
@@ -29154,8 +31612,14 @@ internal fun reduce282(
 internal fun reduce283(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(776);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -29173,8 +31637,14 @@ internal fun reduce283(
 internal fun reduce284(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = "grammar", ";", GrammarItem+ => ActionFn(777);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant70(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant0(symbols)
@@ -29189,8 +31659,14 @@ internal fun reduce284(
 internal fun reduce285(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, "grammar", ";", GrammarItem+ => ActionFn(778);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant70(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
@@ -29206,8 +31682,14 @@ internal fun reduce285(
 internal fun reduce286(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, "grammar", ";", GrammarItem+ => ActionFn(779);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant70(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
@@ -29223,8 +31705,14 @@ internal fun reduce286(
 internal fun reduce287(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, "grammar", ";", GrammarItem+ => ActionFn(780);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
@@ -29241,8 +31729,14 @@ internal fun reduce287(
 internal fun reduce288(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(781);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant55(symbols)
@@ -29260,8 +31754,14 @@ internal fun reduce288(
 internal fun reduce289(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(782);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
     val sym4 = popVariant55(symbols)
@@ -29280,8 +31780,14 @@ internal fun reduce289(
 internal fun reduce290(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(783);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
     val sym4 = popVariant55(symbols)
@@ -29300,8 +31806,14 @@ internal fun reduce290(
 internal fun reduce291(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(784);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant0(symbols)
     val sym6 = popVariant56(symbols)
     val sym5 = popVariant55(symbols)
@@ -29321,8 +31833,14 @@ internal fun reduce291(
 internal fun reduce292(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(785);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
     val sym2 = popVariant61(symbols)
@@ -29339,8 +31857,14 @@ internal fun reduce292(
 internal fun reduce293(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(786);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
     val sym3 = popVariant61(symbols)
@@ -29358,8 +31882,14 @@ internal fun reduce293(
 internal fun reduce294(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(787);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
     val sym3 = popVariant61(symbols)
@@ -29377,8 +31907,14 @@ internal fun reduce294(
 internal fun reduce295(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(788);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant55(symbols)
     val sym4 = popVariant61(symbols)
@@ -29397,8 +31933,14 @@ internal fun reduce295(
 internal fun reduce296(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(789);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant55(symbols)
@@ -29415,8 +31957,14 @@ internal fun reduce296(
 internal fun reduce297(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(790);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant55(symbols)
@@ -29434,8 +31982,14 @@ internal fun reduce297(
 internal fun reduce298(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(791);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant55(symbols)
@@ -29453,8 +32007,14 @@ internal fun reduce298(
 internal fun reduce299(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(792);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
     val sym4 = popVariant55(symbols)
@@ -29473,8 +32033,14 @@ internal fun reduce299(
 internal fun reduce300(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarParameters, ";" => ActionFn(793);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
     val sym1 = popVariant0(symbols)
@@ -29490,8 +32056,14 @@ internal fun reduce300(
 internal fun reduce301(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(794);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
     val sym2 = popVariant0(symbols)
@@ -29508,8 +32080,14 @@ internal fun reduce301(
 internal fun reduce302(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(795);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
     val sym2 = popVariant0(symbols)
@@ -29526,8 +32104,14 @@ internal fun reduce302(
 internal fun reduce303(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(796);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
     val sym3 = popVariant0(symbols)
@@ -29545,8 +32129,14 @@ internal fun reduce303(
 internal fun reduce304(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(797);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant61(symbols)
@@ -29563,8 +32153,14 @@ internal fun reduce304(
 internal fun reduce305(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(798);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant61(symbols)
@@ -29582,8 +32178,14 @@ internal fun reduce305(
 internal fun reduce306(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(799);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant61(symbols)
@@ -29601,8 +32203,14 @@ internal fun reduce306(
 internal fun reduce307(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(800);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
     val sym4 = popVariant61(symbols)
@@ -29621,8 +32229,14 @@ internal fun reduce307(
 internal fun reduce308(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(801);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
     val sym1 = popVariant0(symbols)
@@ -29638,8 +32252,14 @@ internal fun reduce308(
 internal fun reduce309(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(802);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant61(symbols)
     val sym2 = popVariant0(symbols)
@@ -29656,8 +32276,14 @@ internal fun reduce309(
 internal fun reduce310(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(803);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant61(symbols)
     val sym2 = popVariant0(symbols)
@@ -29674,8 +32300,14 @@ internal fun reduce310(
 internal fun reduce311(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(804);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant61(symbols)
     val sym3 = popVariant0(symbols)
@@ -29693,8 +32325,14 @@ internal fun reduce311(
 internal fun reduce312(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(805);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
     val sym1 = popVariant0(symbols)
@@ -29710,8 +32348,14 @@ internal fun reduce312(
 internal fun reduce313(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(806);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant0(symbols)
@@ -29728,8 +32372,14 @@ internal fun reduce313(
 internal fun reduce314(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(807);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
     val sym2 = popVariant0(symbols)
@@ -29746,8 +32396,14 @@ internal fun reduce314(
 internal fun reduce315(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(808);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
     val sym3 = popVariant0(symbols)
@@ -29765,8 +32421,14 @@ internal fun reduce315(
 internal fun reduce316(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", ";" => ActionFn(809);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant13(symbols)
@@ -29781,8 +32443,14 @@ internal fun reduce316(
 internal fun reduce317(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", ";" => ActionFn(810);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant13(symbols)
@@ -29798,8 +32466,14 @@ internal fun reduce317(
 internal fun reduce318(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", ";" => ActionFn(811);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant13(symbols)
@@ -29815,8 +32489,14 @@ internal fun reduce318(
 internal fun reduce319(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";" => ActionFn(812);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant13(symbols)
@@ -29833,8 +32513,14 @@ internal fun reduce319(
 internal fun reduce320(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(813);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -29853,8 +32539,14 @@ internal fun reduce320(
 internal fun reduce321(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(814);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant70(symbols)
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
@@ -29874,8 +32566,14 @@ internal fun reduce321(
 internal fun reduce322(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(815);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant70(symbols)
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
@@ -29895,8 +32593,14 @@ internal fun reduce322(
 internal fun reduce323(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(816);
+    check(
+        symbols.size >= 9,
+    )
     val sym8 = popVariant70(symbols)
     val sym7 = popVariant0(symbols)
     val sym6 = popVariant56(symbols)
@@ -29917,8 +32621,14 @@ internal fun reduce323(
 internal fun reduce324(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(817);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
@@ -29936,8 +32646,14 @@ internal fun reduce324(
 internal fun reduce325(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(818);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
@@ -29956,8 +32672,14 @@ internal fun reduce325(
 internal fun reduce326(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(819);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
@@ -29976,8 +32698,14 @@ internal fun reduce326(
 internal fun reduce327(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(820);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant70(symbols)
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant55(symbols)
@@ -29997,8 +32725,14 @@ internal fun reduce327(
 internal fun reduce328(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(821);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -30016,8 +32750,14 @@ internal fun reduce328(
 internal fun reduce329(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(822);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -30036,8 +32776,14 @@ internal fun reduce329(
 internal fun reduce330(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(823);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -30056,8 +32802,14 @@ internal fun reduce330(
 internal fun reduce331(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(824);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant70(symbols)
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
@@ -30077,8 +32829,14 @@ internal fun reduce331(
 internal fun reduce332(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(825);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant55(symbols)
@@ -30095,8 +32853,14 @@ internal fun reduce332(
 internal fun reduce333(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(826);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
@@ -30114,8 +32878,14 @@ internal fun reduce333(
 internal fun reduce334(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(827);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant55(symbols)
@@ -30133,8 +32903,14 @@ internal fun reduce334(
 internal fun reduce335(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(828);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant55(symbols)
@@ -30153,8 +32929,14 @@ internal fun reduce335(
 internal fun reduce336(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(829);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -30172,8 +32954,14 @@ internal fun reduce336(
 internal fun reduce337(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(830);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -30192,8 +32980,14 @@ internal fun reduce337(
 internal fun reduce338(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(831);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -30212,8 +33006,14 @@ internal fun reduce338(
 internal fun reduce339(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(832);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant70(symbols)
     val sym6 = popVariant0(symbols)
     val sym5 = popVariant56(symbols)
@@ -30233,8 +33033,14 @@ internal fun reduce339(
 internal fun reduce340(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(833);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
@@ -30251,8 +33057,14 @@ internal fun reduce340(
 internal fun reduce341(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(834);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant61(symbols)
@@ -30270,8 +33082,14 @@ internal fun reduce341(
 internal fun reduce342(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(835);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant61(symbols)
@@ -30289,8 +33107,14 @@ internal fun reduce342(
 internal fun reduce343(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(836);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant61(symbols)
@@ -30309,8 +33133,14 @@ internal fun reduce343(
 internal fun reduce344(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(837);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant56(symbols)
@@ -30327,8 +33157,14 @@ internal fun reduce344(
 internal fun reduce345(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(838);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -30346,8 +33182,14 @@ internal fun reduce345(
 internal fun reduce346(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(839);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant56(symbols)
@@ -30365,8 +33207,14 @@ internal fun reduce346(
 internal fun reduce347(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(840);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant70(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant56(symbols)
@@ -30385,8 +33233,14 @@ internal fun reduce347(
 internal fun reduce348(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Attribute+, "grammar", ";", GrammarItem+ => ActionFn(841);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant70(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
@@ -30402,8 +33256,14 @@ internal fun reduce348(
 internal fun reduce349(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(842);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
@@ -30420,8 +33280,14 @@ internal fun reduce349(
 internal fun reduce350(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(843);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant70(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
@@ -30438,8 +33304,14 @@ internal fun reduce350(
 internal fun reduce351(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(844);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant70(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant0(symbols)
@@ -30457,8 +33329,11 @@ internal fun reduce351(
 internal fun reduce352(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem = Use => ActionFn(24);
     val sym0 = popVariant67(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30471,8 +33346,11 @@ internal fun reduce352(
 internal fun reduce353(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem = MatchToken => ActionFn(25);
     val sym0 = popVariant67(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30485,8 +33363,11 @@ internal fun reduce353(
 internal fun reduce354(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem = ExternToken => ActionFn(26);
     val sym0 = popVariant67(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30499,8 +33380,11 @@ internal fun reduce354(
 internal fun reduce355(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem = Nonterminal => ActionFn(27);
     val sym0 = popVariant67(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30513,8 +33397,11 @@ internal fun reduce355(
 internal fun reduce356(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem* =  => ActionFn(189);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action189(text, start, end)
@@ -30526,8 +33413,11 @@ internal fun reduce356(
 internal fun reduce357(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem* = GrammarItem+ => ActionFn(190);
     val sym0 = popVariant70(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30540,8 +33430,11 @@ internal fun reduce357(
 internal fun reduce358(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem+ = GrammarItem => ActionFn(211);
     val sym0 = popVariant67(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30554,8 +33447,14 @@ internal fun reduce358(
 internal fun reduce359(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarItem+ = GrammarItem+, GrammarItem => ActionFn(212);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant67(symbols)
     val sym0 = popVariant70(symbols)
     val start = sym0.first
@@ -30569,8 +33468,14 @@ internal fun reduce359(
 internal fun reduce360(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarParameter = Id, ":", TypeRef => ActionFn(23);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant3(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant22(symbols)
@@ -30585,8 +33490,11 @@ internal fun reduce360(
 internal fun reduce361(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarParameter? = GrammarParameter => ActionFn(241);
     val sym0 = popVariant18(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30599,8 +33507,11 @@ internal fun reduce361(
 internal fun reduce362(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarParameter? =  => ActionFn(242);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action242(text, start, end)
@@ -30612,8 +33523,14 @@ internal fun reduce362(
 internal fun reduce363(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarParameters = "(", Comma<GrammarParameter>, ")" => ActionFn(22);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant55(symbols)
     val sym0 = popVariant0(symbols)
@@ -30628,8 +33545,11 @@ internal fun reduce363(
 internal fun reduce364(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarParameters? = GrammarParameters => ActionFn(193);
     val sym0 = popVariant55(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30642,8 +33562,11 @@ internal fun reduce364(
 internal fun reduce365(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarParameters? =  => ActionFn(194);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action194(text, start, end)
@@ -30655,8 +33578,14 @@ internal fun reduce365(
 internal fun reduce366(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarTypeParameters = "<", Comma<TypeParameter>, ">" => ActionFn(7);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant61(symbols)
     val sym0 = popVariant0(symbols)
@@ -30671,8 +33600,11 @@ internal fun reduce366(
 internal fun reduce367(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarTypeParameters? = GrammarTypeParameters => ActionFn(195);
     val sym0 = popVariant61(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30685,8 +33617,11 @@ internal fun reduce367(
 internal fun reduce368(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarTypeParameters? =  => ActionFn(196);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action196(text, start, end)
@@ -30698,8 +33633,14 @@ internal fun reduce368(
 internal fun reduce369(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClause = Lifetime, ":", Plus<Lifetime> => ActionFn(11);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant87(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant24(symbols)
@@ -30714,8 +33655,14 @@ internal fun reduce369(
 internal fun reduce370(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClause = "for", "<", Comma<TypeParameter>, ">", TypeRef, ":", TypeBounds => ActionFn(523);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant88(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant3(symbols)
@@ -30734,8 +33681,14 @@ internal fun reduce370(
 internal fun reduce371(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClause = TypeRef, ":", TypeBounds => ActionFn(524);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant88(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant3(symbols)
@@ -30750,8 +33703,11 @@ internal fun reduce371(
 internal fun reduce372(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClause? = GrammarWhereClause => ActionFn(218);
     val sym0 = popVariant20(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30764,8 +33720,11 @@ internal fun reduce372(
 internal fun reduce373(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClause? =  => ActionFn(219);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action219(text, start, end)
@@ -30777,8 +33736,14 @@ internal fun reduce373(
 internal fun reduce374(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClauses = "where", Comma<GrammarWhereClause> => ActionFn(10);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant56(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -30792,8 +33757,11 @@ internal fun reduce374(
 internal fun reduce375(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClauses? = GrammarWhereClauses => ActionFn(191);
     val sym0 = popVariant56(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30806,8 +33774,11 @@ internal fun reduce375(
 internal fun reduce376(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // GrammarWhereClauses? =  => ActionFn(192);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action192(text, start, end)
@@ -30819,8 +33790,11 @@ internal fun reduce376(
 internal fun reduce377(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Id = "Id" => ActionFn(117);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30833,8 +33807,11 @@ internal fun reduce377(
 internal fun reduce378(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Id = "MacroId" => ActionFn(118);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30847,8 +33824,11 @@ internal fun reduce378(
 internal fun reduce379(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Lifetime = "Lifetime" => ActionFn(120);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30861,8 +33841,11 @@ internal fun reduce379(
 internal fun reduce380(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Lifetime? = Lifetime => ActionFn(146);
     val sym0 = popVariant24(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30875,8 +33858,11 @@ internal fun reduce380(
 internal fun reduce381(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Lifetime? =  => ActionFn(147);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action147(text, start, end)
@@ -30888,8 +33874,11 @@ internal fun reduce381(
 internal fun reduce382(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MacroId = "MacroId" => ActionFn(115);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30902,8 +33891,11 @@ internal fun reduce382(
 internal fun reduce383(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchContents = Comma<MatchItem> => ActionFn(93);
     val sym0 = popVariant57(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30916,8 +33908,11 @@ internal fun reduce383(
 internal fun reduce384(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchItem = "_" => ActionFn(465);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30930,8 +33925,11 @@ internal fun reduce384(
 internal fun reduce385(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchItem = MatchSymbol => ActionFn(466);
     val sym0 = popVariant80(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30944,8 +33942,11 @@ internal fun reduce385(
 internal fun reduce387(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchItem? = MatchItem => ActionFn(275);
     val sym0 = popVariant26(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30958,8 +33959,11 @@ internal fun reduce387(
 internal fun reduce388(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchItem? =  => ActionFn(276);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action276(text, start, end)
@@ -30971,8 +33975,11 @@ internal fun reduce388(
 internal fun reduce389(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchMapping = Terminal => ActionFn(98);
     val sym0 = popVariant89(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -30985,8 +33992,14 @@ internal fun reduce389(
 internal fun reduce390(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchMapping = "{", "}" => ActionFn(99);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -31000,8 +34013,11 @@ internal fun reduce390(
 internal fun reduce391(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchSymbol = QuotedLiteral => ActionFn(97);
     val sym0 = popVariant80(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31014,8 +34030,11 @@ internal fun reduce391(
 internal fun reduce392(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchToken = MatchTokenInt => ActionFn(90);
     val sym0 = popVariant81(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31028,8 +34047,14 @@ internal fun reduce392(
 internal fun reduce393(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchTokenInt = MatchTokenInt, "else", "{", MatchContents, "}" => ActionFn(91);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant77(symbols)
     val sym2 = popVariant0(symbols)
@@ -31046,8 +34071,14 @@ internal fun reduce393(
 internal fun reduce394(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // MatchTokenInt = "match", "{", MatchContents, "}" => ActionFn(468);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant77(symbols)
     val sym1 = popVariant0(symbols)
@@ -31063,8 +34094,14 @@ internal fun reduce394(
 internal fun reduce395(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Nonterminal = Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(505);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant47(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant3(symbols)
@@ -31082,8 +34119,14 @@ internal fun reduce395(
 internal fun reduce396(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Nonterminal = Attribute+, Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(506);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant47(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant3(symbols)
@@ -31102,8 +34145,14 @@ internal fun reduce396(
 internal fun reduce397(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Nonterminal = Visibility, NonterminalName, "=", Alternatives => ActionFn(507);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant47(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant82(symbols)
@@ -31119,8 +34168,14 @@ internal fun reduce397(
 internal fun reduce398(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Nonterminal = Attribute+, Visibility, NonterminalName, "=", Alternatives => ActionFn(508);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant47(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant82(symbols)
@@ -31137,8 +34192,14 @@ internal fun reduce398(
 internal fun reduce399(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // NonterminalName = MacroId, "<", Comma<NotMacroId>, ">" => ActionFn(38);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant58(symbols)
     val sym1 = popVariant0(symbols)
@@ -31154,8 +34215,11 @@ internal fun reduce399(
 internal fun reduce400(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // NonterminalName = NotMacroId => ActionFn(39);
     val sym0 = popVariant28(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31168,8 +34232,11 @@ internal fun reduce400(
 internal fun reduce401(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // NonterminalName = "Escape" => ActionFn(40);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31182,8 +34249,11 @@ internal fun reduce401(
 internal fun reduce402(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // NotMacroId = "Id" => ActionFn(116);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31196,8 +34266,11 @@ internal fun reduce402(
 internal fun reduce403(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // NotMacroId? = NotMacroId => ActionFn(251);
     val sym0 = popVariant28(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31210,8 +34283,11 @@ internal fun reduce403(
 internal fun reduce404(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // NotMacroId? =  => ActionFn(252);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action252(text, start, end)
@@ -31223,8 +34299,14 @@ internal fun reduce404(
 internal fun reduce405(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Path = "::", Id => ActionFn(378);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant22(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -31238,8 +34320,14 @@ internal fun reduce405(
 internal fun reduce406(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Path = "::", (<Id> "::")+, Id => ActionFn(379);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant22(symbols)
     val sym1 = popVariant23(symbols)
     val sym0 = popVariant0(symbols)
@@ -31254,8 +34342,11 @@ internal fun reduce406(
 internal fun reduce407(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Path = Id => ActionFn(380);
     val sym0 = popVariant22(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31268,8 +34359,14 @@ internal fun reduce407(
 internal fun reduce408(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Path = (<Id> "::")+, Id => ActionFn(381);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant22(symbols)
     val sym0 = popVariant23(symbols)
     val start = sym0.first
@@ -31283,8 +34380,11 @@ internal fun reduce408(
 internal fun reduce409(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Pattern = PatternKind => ActionFn(471);
     val sym0 = popVariant86(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31297,8 +34397,11 @@ internal fun reduce409(
 internal fun reduce410(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Pattern? = Pattern => ActionFn(285);
     val sym0 = popVariant30(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31311,8 +34414,11 @@ internal fun reduce410(
 internal fun reduce411(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Pattern? =  => ActionFn(286);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action286(text, start, end)
@@ -31324,8 +34430,14 @@ internal fun reduce411(
 internal fun reduce412(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path, "(", Comma<Pattern>, ")" => ActionFn(104);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant59(symbols)
     val sym1 = popVariant0(symbols)
@@ -31341,8 +34453,14 @@ internal fun reduce412(
 internal fun reduce413(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path, "{", FieldPattern, "}" => ActionFn(519);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant16(symbols)
     val sym1 = popVariant0(symbols)
@@ -31358,8 +34476,14 @@ internal fun reduce413(
 internal fun reduce414(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path, "{", "}" => ActionFn(520);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant84(symbols)
@@ -31374,8 +34498,14 @@ internal fun reduce414(
 internal fun reduce415(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path, "{", (<FieldPattern> ",")+, FieldPattern, "}" => ActionFn(521);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant16(symbols)
     val sym2 = popVariant17(symbols)
@@ -31392,8 +34522,14 @@ internal fun reduce415(
 internal fun reduce416(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path, "{", (<FieldPattern> ",")+, "}" => ActionFn(522);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant17(symbols)
     val sym1 = popVariant0(symbols)
@@ -31409,8 +34545,14 @@ internal fun reduce416(
 internal fun reduce417(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path, "{", "..", "}" => ActionFn(366);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant0(symbols)
@@ -31426,8 +34568,14 @@ internal fun reduce417(
 internal fun reduce418(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path, "{", (<FieldPattern> ",")+, "..", "}" => ActionFn(367);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant17(symbols)
@@ -31444,8 +34592,11 @@ internal fun reduce418(
 internal fun reduce419(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = "_" => ActionFn(107);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31458,8 +34609,11 @@ internal fun reduce419(
 internal fun reduce420(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = ".." => ActionFn(108);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31472,8 +34626,14 @@ internal fun reduce420(
 internal fun reduce421(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = "<", TypeRef, ">" => ActionFn(109);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
@@ -31488,8 +34648,14 @@ internal fun reduce421(
 internal fun reduce422(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = "(", Comma<Pattern>, ")" => ActionFn(110);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant59(symbols)
     val sym0 = popVariant0(symbols)
@@ -31504,8 +34670,11 @@ internal fun reduce422(
 internal fun reduce423(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = "CharLiteral" => ActionFn(111);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31518,8 +34687,11 @@ internal fun reduce423(
 internal fun reduce424(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = Path => ActionFn(112);
     val sym0 = popVariant84(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31532,8 +34704,11 @@ internal fun reduce424(
 internal fun reduce425(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // PatternKind = StringConstant => ActionFn(113);
     val sym0 = popVariant91(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31546,8 +34721,11 @@ internal fun reduce425(
 internal fun reduce426(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<Lifetime> = Lifetime => ActionFn(605);
     val sym0 = popVariant24(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31560,8 +34738,11 @@ internal fun reduce426(
 internal fun reduce427(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<Lifetime> =  => ActionFn(606);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action606(text, start, end)
@@ -31573,8 +34754,14 @@ internal fun reduce427(
 internal fun reduce428(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<Lifetime> = (<Lifetime> "+")+, Lifetime => ActionFn(607);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant24(symbols)
     val sym0 = popVariant25(symbols)
     val start = sym0.first
@@ -31588,8 +34775,11 @@ internal fun reduce428(
 internal fun reduce429(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<Lifetime> = (<Lifetime> "+")+ => ActionFn(608);
     val sym0 = popVariant25(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31602,8 +34792,11 @@ internal fun reduce429(
 internal fun reduce430(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<TypeBound> = TypeBound => ActionFn(697);
     val sym0 = popVariant36(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31616,8 +34809,11 @@ internal fun reduce430(
 internal fun reduce431(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<TypeBound> =  => ActionFn(698);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action698(text, start, end)
@@ -31629,8 +34825,14 @@ internal fun reduce431(
 internal fun reduce432(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<TypeBound> = (<TypeBound> "+")+, TypeBound => ActionFn(699);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant36(symbols)
     val sym0 = popVariant37(symbols)
     val start = sym0.first
@@ -31644,8 +34846,11 @@ internal fun reduce432(
 internal fun reduce433(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Plus<TypeBound> = (<TypeBound> "+")+ => ActionFn(700);
     val sym0 = popVariant37(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31658,8 +34863,11 @@ internal fun reduce433(
 internal fun reduce434(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // QuotedLiteral = StringLiteral => ActionFn(124);
     val sym0 = popVariant22(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31672,8 +34880,11 @@ internal fun reduce434(
 internal fun reduce435(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // QuotedLiteral = RegexLiteral => ActionFn(125);
     val sym0 = popVariant22(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31686,8 +34897,11 @@ internal fun reduce435(
 internal fun reduce436(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // QuotedTerminal = QuotedLiteral => ActionFn(123);
     val sym0 = popVariant80(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31700,8 +34914,11 @@ internal fun reduce436(
 internal fun reduce437(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // RegexLiteral = "RegexLiteral" => ActionFn(128);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31714,8 +34931,11 @@ internal fun reduce437(
 internal fun reduce438(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // RepeatOp = "+" => ActionFn(61);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31728,8 +34948,11 @@ internal fun reduce438(
 internal fun reduce439(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // RepeatOp = "*" => ActionFn(62);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31742,8 +34965,11 @@ internal fun reduce439(
 internal fun reduce440(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // RepeatOp = "?" => ActionFn(63);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31756,8 +34982,11 @@ internal fun reduce440(
 internal fun reduce441(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ShebangAttribute = "#![...]" => ActionFn(129);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31770,8 +34999,11 @@ internal fun reduce441(
 internal fun reduce442(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ShebangAttribute* =  => ActionFn(203);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action203(text, start, end)
@@ -31783,8 +35015,11 @@ internal fun reduce442(
 internal fun reduce443(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ShebangAttribute* = ShebangAttribute+ => ActionFn(204);
     val sym0 = popVariant92(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31797,8 +35032,11 @@ internal fun reduce443(
 internal fun reduce444(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ShebangAttribute+ = ShebangAttribute => ActionFn(205);
     val sym0 = popVariant91(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31811,8 +35049,14 @@ internal fun reduce444(
 internal fun reduce445(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // ShebangAttribute+ = ShebangAttribute+, ShebangAttribute => ActionFn(206);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant91(symbols)
     val sym0 = popVariant92(symbols)
     val start = sym0.first
@@ -31826,8 +35070,14 @@ internal fun reduce445(
 internal fun reduce448(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol = "<", "mut", Id, ":", Symbol0, ">" => ActionFn(472);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant32(symbols)
     val sym3 = popVariant0(symbols)
@@ -31845,8 +35095,14 @@ internal fun reduce448(
 internal fun reduce449(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol = "<", Id, ":", Symbol0, ">" => ActionFn(473);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant32(symbols)
     val sym2 = popVariant0(symbols)
@@ -31863,8 +35119,14 @@ internal fun reduce449(
 internal fun reduce450(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol = "<", Symbol0, ">" => ActionFn(474);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant32(symbols)
     val sym0 = popVariant0(symbols)
@@ -31879,8 +35141,14 @@ internal fun reduce450(
 internal fun reduce451(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol = "<", Tuples, ":", Symbol0, ">" => ActionFn(475);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant32(symbols)
     val sym2 = popVariant0(symbols)
@@ -31897,8 +35165,11 @@ internal fun reduce451(
 internal fun reduce452(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol = Symbol0 => ActionFn(58);
     val sym0 = popVariant32(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31911,8 +35182,11 @@ internal fun reduce452(
 internal fun reduce453(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol* =  => ActionFn(156);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action156(text, start, end)
@@ -31924,8 +35198,11 @@ internal fun reduce453(
 internal fun reduce454(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol* = Symbol+ => ActionFn(157);
     val sym0 = popVariant33(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31938,8 +35215,11 @@ internal fun reduce454(
 internal fun reduce455(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol+ = Symbol => ActionFn(163);
     val sym0 = popVariant32(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31952,8 +35232,14 @@ internal fun reduce455(
 internal fun reduce456(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol+ = Symbol+, Symbol => ActionFn(164);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant32(symbols)
     val sym0 = popVariant33(symbols)
     val start = sym0.first
@@ -31967,8 +35253,11 @@ internal fun reduce456(
 internal fun reduce457(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol0 = Symbol1 => ActionFn(59);
     val sym0 = popVariant32(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -31981,8 +35270,14 @@ internal fun reduce457(
 internal fun reduce458(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol0 = Symbol0, RepeatOp => ActionFn(476);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant90(symbols)
     val sym0 = popVariant32(symbols)
     val start = sym0.first
@@ -31996,8 +35291,11 @@ internal fun reduce458(
 internal fun reduce459(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol1 = SymbolKind1 => ActionFn(477);
     val sym0 = popVariant94(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32010,8 +35308,11 @@ internal fun reduce459(
 internal fun reduce460(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol? = Symbol => ActionFn(261);
     val sym0 = popVariant32(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32024,8 +35325,11 @@ internal fun reduce460(
 internal fun reduce461(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Symbol? =  => ActionFn(262);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action262(text, start, end)
@@ -32037,8 +35341,14 @@ internal fun reduce461(
 internal fun reduce462(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = MacroId, "<", Comma<Symbol>, ">" => ActionFn(65);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant60(symbols)
     val sym1 = popVariant0(symbols)
@@ -32054,8 +35364,11 @@ internal fun reduce462(
 internal fun reduce463(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = QuotedTerminal => ActionFn(66);
     val sym0 = popVariant89(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32068,8 +35381,11 @@ internal fun reduce463(
 internal fun reduce464(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = "Id" => ActionFn(67);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32082,8 +35398,11 @@ internal fun reduce464(
 internal fun reduce465(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = Escape => ActionFn(68);
     val sym0 = popVariant22(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32096,8 +35415,14 @@ internal fun reduce465(
 internal fun reduce466(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = "(", ExprSymbol, ")" => ActionFn(69);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant66(symbols)
     val sym0 = popVariant0(symbols)
@@ -32112,8 +35437,11 @@ internal fun reduce466(
 internal fun reduce467(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = "@L" => ActionFn(70);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32126,8 +35454,11 @@ internal fun reduce467(
 internal fun reduce468(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = "@R" => ActionFn(71);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32140,8 +35471,11 @@ internal fun reduce468(
 internal fun reduce469(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // SymbolKind1 = "!" => ActionFn(72);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32154,8 +35488,11 @@ internal fun reduce469(
 internal fun reduce470(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Terminal = QuotedTerminal => ActionFn(121);
     val sym0 = popVariant89(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32168,8 +35505,11 @@ internal fun reduce470(
 internal fun reduce471(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Terminal = "Id" => ActionFn(122);
     val sym0 = popVariant1(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32182,8 +35522,14 @@ internal fun reduce471(
 internal fun reduce472(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Top = "StartGrammar", Grammar => ActionFn(1);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant69(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32197,8 +35543,14 @@ internal fun reduce472(
 internal fun reduce473(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Top = "StartPattern", Pattern => ActionFn(2);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant30(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32212,8 +35564,14 @@ internal fun reduce473(
 internal fun reduce474(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Top = "StartMatchMapping", MatchMapping => ActionFn(3);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant79(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32227,8 +35585,14 @@ internal fun reduce474(
 internal fun reduce475(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Top = "StartTypeRef", TypeRef => ActionFn(4);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32242,8 +35606,14 @@ internal fun reduce475(
 internal fun reduce476(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Top = "StartGrammarWhereClauses", GrammarWhereClauses => ActionFn(5);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant56(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32257,8 +35627,14 @@ internal fun reduce476(
 internal fun reduce477(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TupleItem = "mut", Id => ActionFn(328);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant22(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32272,8 +35648,11 @@ internal fun reduce477(
 internal fun reduce478(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TupleItem = Id => ActionFn(329);
     val sym0 = popVariant22(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32286,8 +35665,11 @@ internal fun reduce478(
 internal fun reduce479(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TupleItem = Tuples => ActionFn(75);
     val sym0 = popVariant97(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32300,8 +35682,11 @@ internal fun reduce479(
 internal fun reduce480(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TupleItem? = TupleItem => ActionFn(148);
     val sym0 = popVariant34(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32314,8 +35699,11 @@ internal fun reduce480(
 internal fun reduce481(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TupleItem? =  => ActionFn(149);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action149(text, start, end)
@@ -32327,8 +35715,14 @@ internal fun reduce481(
 internal fun reduce482(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Tuples = "(", (<TupleItem> ",")+, TupleItem, ")" => ActionFn(695);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant34(symbols)
     val sym1 = popVariant35(symbols)
@@ -32344,8 +35738,14 @@ internal fun reduce482(
 internal fun reduce483(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Tuples = "(", (<TupleItem> ",")+, ")" => ActionFn(696);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant35(symbols)
     val sym0 = popVariant0(symbols)
@@ -32360,8 +35760,11 @@ internal fun reduce483(
 internal fun reduce484(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = Lifetime => ActionFn(16);
     val sym0 = popVariant24(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32374,8 +35777,14 @@ internal fun reduce484(
 internal fun reduce485(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(525);
+    check(
+        symbols.size >= 10,
+    )
     val sym9 = popVariant3(symbols)
     val sym8 = popVariant0(symbols)
     val sym7 = popVariant0(symbols)
@@ -32397,8 +35806,14 @@ internal fun reduce485(
 internal fun reduce486(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(526);
+    check(
+        symbols.size >= 6,
+    )
     val sym5 = popVariant3(symbols)
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant0(symbols)
@@ -32416,8 +35831,14 @@ internal fun reduce486(
 internal fun reduce487(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(527);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant0(symbols)
     val sym6 = popVariant62(symbols)
     val sym5 = popVariant0(symbols)
@@ -32437,8 +35858,14 @@ internal fun reduce487(
 internal fun reduce488(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = Path, "(", Comma<TypeRef>, ")" => ActionFn(528);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant62(symbols)
     val sym1 = popVariant0(symbols)
@@ -32454,8 +35881,14 @@ internal fun reduce488(
 internal fun reduce489(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(529);
+    check(
+        symbols.size >= 8,
+    )
     val sym7 = popVariant0(symbols)
     val sym6 = popVariant5(symbols)
     val sym5 = popVariant0(symbols)
@@ -32475,8 +35908,14 @@ internal fun reduce489(
 internal fun reduce490(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(530);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant5(symbols)
     val sym1 = popVariant0(symbols)
@@ -32492,8 +35931,14 @@ internal fun reduce490(
 internal fun reduce491(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path => ActionFn(531);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant84(symbols)
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant61(symbols)
@@ -32510,8 +35955,11 @@ internal fun reduce491(
 internal fun reduce492(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound = Path => ActionFn(532);
     val sym0 = popVariant84(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32524,8 +35972,11 @@ internal fun reduce492(
 internal fun reduce493(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound? = TypeBound => ActionFn(226);
     val sym0 = popVariant36(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32538,8 +35989,11 @@ internal fun reduce493(
 internal fun reduce494(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBound? =  => ActionFn(227);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action227(text, start, end)
@@ -32551,8 +36005,11 @@ internal fun reduce494(
 internal fun reduce495(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBoundParameter = Lifetime => ActionFn(19);
     val sym0 = popVariant24(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32565,8 +36022,11 @@ internal fun reduce495(
 internal fun reduce496(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBoundParameter = TypeRef => ActionFn(20);
     val sym0 = popVariant3(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32579,8 +36039,14 @@ internal fun reduce496(
 internal fun reduce497(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBoundParameter = Id, "=", TypeRef => ActionFn(21);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant3(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant22(symbols)
@@ -32595,8 +36061,11 @@ internal fun reduce497(
 internal fun reduce498(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBoundParameter? = TypeBoundParameter => ActionFn(236);
     val sym0 = popVariant38(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32609,8 +36078,11 @@ internal fun reduce498(
 internal fun reduce499(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBoundParameter? =  => ActionFn(237);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action237(text, start, end)
@@ -32622,8 +36094,11 @@ internal fun reduce499(
 internal fun reduce500(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeBounds = Plus<TypeBound> => ActionFn(15);
     val sym0 = popVariant88(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32636,8 +36111,11 @@ internal fun reduce500(
 internal fun reduce501(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeParameter = Lifetime => ActionFn(8);
     val sym0 = popVariant24(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32650,8 +36128,11 @@ internal fun reduce501(
 internal fun reduce502(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeParameter = Id => ActionFn(9);
     val sym0 = popVariant22(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32664,8 +36145,11 @@ internal fun reduce502(
 internal fun reduce503(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeParameter? = TypeParameter => ActionFn(213);
     val sym0 = popVariant40(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32678,8 +36162,11 @@ internal fun reduce503(
 internal fun reduce504(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeParameter? =  => ActionFn(214);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action214(text, start, end)
@@ -32691,8 +36178,14 @@ internal fun reduce504(
 internal fun reduce505(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "(", Comma<TypeRef>, ")" => ActionFn(76);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant62(symbols)
     val sym0 = popVariant0(symbols)
@@ -32707,8 +36200,14 @@ internal fun reduce505(
 internal fun reduce506(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "[", TypeRef, "]" => ActionFn(77);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
@@ -32723,8 +36222,14 @@ internal fun reduce506(
 internal fun reduce507(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "#", Symbol, "#" => ActionFn(78);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant32(symbols)
     val sym0 = popVariant0(symbols)
@@ -32739,8 +36244,14 @@ internal fun reduce507(
 internal fun reduce508(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "&", Lifetime, "mut", TypeRef => ActionFn(609);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant3(symbols)
     val sym2 = popVariant0(symbols)
     val sym1 = popVariant24(symbols)
@@ -32756,8 +36267,14 @@ internal fun reduce508(
 internal fun reduce509(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "&", "mut", TypeRef => ActionFn(610);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant3(symbols)
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant0(symbols)
@@ -32772,8 +36289,14 @@ internal fun reduce509(
 internal fun reduce510(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "&", Lifetime, TypeRef => ActionFn(611);
+    check(
+        symbols.size >= 3,
+    )
     val sym2 = popVariant3(symbols)
     val sym1 = popVariant24(symbols)
     val sym0 = popVariant0(symbols)
@@ -32788,8 +36311,14 @@ internal fun reduce510(
 internal fun reduce511(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "&", TypeRef => ActionFn(612);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant3(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32803,8 +36332,14 @@ internal fun reduce511(
 internal fun reduce512(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(80);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant62(symbols)
     val sym1 = popVariant0(symbols)
@@ -32820,8 +36355,11 @@ internal fun reduce512(
 internal fun reduce513(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = Path => ActionFn(81);
     val sym0 = popVariant84(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32834,8 +36372,14 @@ internal fun reduce513(
 internal fun reduce514(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "dyn", Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(82);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant62(symbols)
     val sym2 = popVariant0(symbols)
@@ -32852,8 +36396,14 @@ internal fun reduce514(
 internal fun reduce515(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "dyn", Path => ActionFn(83);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant84(symbols)
     val sym0 = popVariant0(symbols)
     val start = sym0.first
@@ -32867,8 +36417,14 @@ internal fun reduce515(
 internal fun reduce516(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "dyn", "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(533);
+    check(
+        symbols.size >= 11,
+    )
     val sym10 = popVariant3(symbols)
     val sym9 = popVariant0(symbols)
     val sym8 = popVariant0(symbols)
@@ -32891,8 +36447,14 @@ internal fun reduce516(
 internal fun reduce517(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "dyn", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(534);
+    check(
+        symbols.size >= 7,
+    )
     val sym6 = popVariant3(symbols)
     val sym5 = popVariant0(symbols)
     val sym4 = popVariant0(symbols)
@@ -32911,8 +36473,14 @@ internal fun reduce517(
 internal fun reduce518(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "dyn", "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(535);
+    check(
+        symbols.size >= 9,
+    )
     val sym8 = popVariant0(symbols)
     val sym7 = popVariant62(symbols)
     val sym6 = popVariant0(symbols)
@@ -32933,8 +36501,14 @@ internal fun reduce518(
 internal fun reduce519(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef = "dyn", Path, "(", Comma<TypeRef>, ")" => ActionFn(536);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant62(symbols)
     val sym2 = popVariant0(symbols)
@@ -32951,8 +36525,11 @@ internal fun reduce519(
 internal fun reduce520(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef? = TypeRef => ActionFn(231);
     val sym0 = popVariant3(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32965,8 +36542,11 @@ internal fun reduce520(
 internal fun reduce521(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRef? =  => ActionFn(232);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action232(text, start, end)
@@ -32978,8 +36558,11 @@ internal fun reduce521(
 internal fun reduce522(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRefOrLifetime = TypeRef => ActionFn(85);
     val sym0 = popVariant3(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -32992,8 +36575,11 @@ internal fun reduce522(
 internal fun reduce523(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRefOrLifetime = Lifetime => ActionFn(86);
     val sym0 = popVariant24(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -33006,8 +36592,11 @@ internal fun reduce523(
 internal fun reduce524(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRefOrLifetime? = TypeRefOrLifetime => ActionFn(266);
     val sym0 = popVariant3(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -33020,8 +36609,11 @@ internal fun reduce524(
 internal fun reduce525(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // TypeRefOrLifetime? =  => ActionFn(267);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action267(text, start, end)
@@ -33033,8 +36625,14 @@ internal fun reduce525(
 internal fun reduce526(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Use = "use", ";" => ActionFn(28);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant0(symbols)
     val sym0 = popVariant1(symbols)
     val start = sym0.first
@@ -33048,8 +36646,11 @@ internal fun reduce526(
 internal fun reduce527(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Use* =  => ActionFn(201);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action201(text, start, end)
@@ -33061,8 +36662,11 @@ internal fun reduce527(
 internal fun reduce528(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Use* = Use+ => ActionFn(202);
     val sym0 = popVariant70(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -33075,8 +36679,11 @@ internal fun reduce528(
 internal fun reduce529(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Use+ = Use => ActionFn(207);
     val sym0 = popVariant67(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -33089,8 +36696,14 @@ internal fun reduce529(
 internal fun reduce530(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Use+ = Use+, Use => ActionFn(208);
+    check(
+        symbols.size >= 2,
+    )
     val sym1 = popVariant67(symbols)
     val sym0 = popVariant70(symbols)
     val start = sym0.first
@@ -33104,8 +36717,14 @@ internal fun reduce530(
 internal fun reduce531(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Visibility = "pub", "(", Path, ")" => ActionFn(29);
+    check(
+        symbols.size >= 4,
+    )
     val sym3 = popVariant0(symbols)
     val sym2 = popVariant84(symbols)
     val sym1 = popVariant0(symbols)
@@ -33121,8 +36740,14 @@ internal fun reduce531(
 internal fun reduce532(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Visibility = "pub", "(", "in", Path, ")" => ActionFn(30);
+    check(
+        symbols.size >= 5,
+    )
     val sym4 = popVariant0(symbols)
     val sym3 = popVariant84(symbols)
     val sym2 = popVariant0(symbols)
@@ -33139,8 +36764,11 @@ internal fun reduce532(
 internal fun reduce533(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Visibility = "pub" => ActionFn(31);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -33153,8 +36781,11 @@ internal fun reduce533(
 internal fun reduce534(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<
+        io.github.kotlinmania.lalrpop_kotlin.runtime.SymbolTriple<Int, LrSymbol>,
+    >,
 ): Pair<Int, Int> {
+    // Visibility =  => ActionFn(349);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
     val nt = action349(text, start, end)
@@ -35085,7 +38716,12 @@ internal fun reduce(
  */
 class TopParser {
     companion object {
-        fun new(): TopParser = TopParser()
+        fun new(): TopParser
+        {
+            return TopParser(
+            )
+        }
+
         fun default(): TopParser = new()
     }
 
