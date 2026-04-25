@@ -25870,6 +25870,7 @@ internal fun reduce(
 class TopParser {
     companion object {
         fun new(): TopParser = TopParser()
+        fun default(): TopParser = new()
     }
 
     fun parse(
@@ -25881,17 +25882,8 @@ class TopParser {
         io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
         io.github.kotlinmania.lalrpop_kotlin.tok.Error,
     > {
-        val adapted = object : Iterator<io.github.kotlinmania.lalrpop_kotlin.runtime.TokResult<
-            Int,
-            io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
-            io.github.kotlinmania.lalrpop_kotlin.tok.Error,
-        >> {
-            override fun hasNext(): Boolean = tokens.hasNext()
-            override fun next(): io.github.kotlinmania.lalrpop_kotlin.runtime.TokResult<
-                Int,
-                io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
-                io.github.kotlinmania.lalrpop_kotlin.tok.Error,
-            > = tokens.next().fold(
+        val adapted = tokens.asSequence().map { token ->
+            token.fold(
                 onSuccess = { io.github.kotlinmania.lalrpop_kotlin.runtime.TokResult.Ok(it) },
                 onFailure = { err ->
                     val pe = when (err) {
@@ -25903,7 +25895,7 @@ class TopParser {
                     io.github.kotlinmania.lalrpop_kotlin.runtime.TokResult.Err(pe)
                 },
             )
-        }
+        }.iterator()
         return io.github.kotlinmania.lalrpop_kotlin.runtime.Parser.drive(StateMachine(text), adapted)
     }
 }
