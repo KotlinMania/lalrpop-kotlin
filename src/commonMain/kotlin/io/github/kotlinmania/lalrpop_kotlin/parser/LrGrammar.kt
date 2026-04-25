@@ -3305,7 +3305,12 @@ internal class StateMachine(
         Int,
         io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
         io.github.kotlinmania.lalrpop_kotlin.tok.Error,
-    >? = io.github.kotlinmania.lalrpop_kotlin.parser.reduce(text, reduceIndex, startLocation, states, symbols)
+    >? {
+        return io.github.kotlinmania.lalrpop_kotlin.parser.reduce(
+            text,
+            reduceIndex, startLocation, states, symbols,
+        )
+    }
 
     override fun simulateReduce(action: Short): io.github.kotlinmania.lalrpop_kotlin.runtime.SimulatedReduce<Int> =
         io.github.kotlinmania.lalrpop_kotlin.parser.simulateReduce(action)
@@ -3317,8 +3322,12 @@ internal class StateMachine(
 // `___token_to_integer` returns `None` for the same case).
 internal fun tokenToInteger(
     token: io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
-): Int? {
-    return when (token) {
+): Int?
+{
+    @Suppress("REDUNDANT_ELSE_IN_WHEN")
+    return when (
+        token
+    ) {
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Enum -> 0
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Extern -> 1
         is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Grammar -> 2
@@ -3393,16 +3402,11 @@ internal fun tokenToSymbol(tokenIndex: Int, token: io.github.kotlinmania.lalrpop
         33, 34, 35, 36, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
         54, 55, 56, 57, 58 -> LrSymbol.Variant0(token)
         13, 15, 16, 17, 18, 19, 20, 21, 31, 32, 37 -> when (token) {
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Use -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Escape -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Id -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.MacroId -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Lifetime -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.StringLiteral -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.CharLiteral -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.RegexLiteral -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.EqualsGreaterThanCode -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.EqualsGreaterThanQuestionCode -> LrSymbol.Variant1(token.s)
+            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Use -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Escape -> LrSymbol.Variant1(token.s)
+            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Id -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.MacroId -> LrSymbol.Variant1(token.s)
+            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.Lifetime -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.StringLiteral -> LrSymbol.Variant1(token.s)
+            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.CharLiteral -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.RegexLiteral -> LrSymbol.Variant1(token.s)
+            is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.EqualsGreaterThanCode -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.EqualsGreaterThanQuestionCode -> LrSymbol.Variant1(token.s)
             is io.github.kotlinmania.lalrpop_kotlin.tok.Tok.ShebangAttribute -> LrSymbol.Variant1(token.s)
             else -> error("unreachable: tokenIndex=$tokenIndex token=$token")
         }
@@ -8697,11 +8701,7 @@ internal fun action84(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.Fn(
         forall = forall.second.toMutableList(),
-        path = path.second,
-        parameters = parameters.second.toMutableList(),
-        // Rust wraps `ret` in `Box::new`; Kotlin has no Box, so the nullable
-        // `TypeRef?` is passed through unchanged.
-        ret = ret.second,
+        path = path.second, parameters = parameters.second.toMutableList(), ret = ret.second,
     )
 }
 
@@ -8872,11 +8872,7 @@ internal fun action96(
         .getOrElse { return Result.failure(it) }
     return run {
         Result.success(
-            io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.Mapped(
-                symbol = from.second,
-                mapping = to,
-                span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-            ),
+            io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.Mapped(symbol = from.second, mapping = to, span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second)),
         )
     }
 }
@@ -9782,8 +9778,13 @@ internal fun action184(
     e: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>?, Int>,
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val out = v.second.toMutableList()
-    e.second?.let { out.add(it) }
-    return out
+    return when (val item = e.second) {
+        null -> out
+        else -> {
+            out.add(item)
+            out
+        }
+    }
 }
 
 /** `___action185`: zero-arg, returns `()` (Unit). Used for empty productions. */
@@ -9801,8 +9802,13 @@ internal fun action186(
     e: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime?, Int>,
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val out = v.second.toMutableList()
-    e.second?.let { out.add(it) }
-    return out
+    return when (val item = e.second) {
+        null -> out
+        else -> {
+            out.add(item)
+            out
+        }
+    }
 }
 
 /** `___action187`: concatenate a `Vec<WhereClause<TypeRef>>` with an optional trailing element. */
@@ -38749,12 +38755,7 @@ class TopParser {
     fun parse(
         text: String,
         tokens: Iterator<Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>>>,
-    ): io.github.kotlinmania.lalrpop_kotlin.runtime.ParseResult<
-        Top,
-        Int,
-        io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
-        io.github.kotlinmania.lalrpop_kotlin.tok.Error,
-    > {
+    ): io.github.kotlinmania.lalrpop_kotlin.runtime.ParseResult<Top, Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, io.github.kotlinmania.lalrpop_kotlin.tok.Error> {
         val adapted = tokens.asSequence().map { token ->
             token.fold(
                 onSuccess = { io.github.kotlinmania.lalrpop_kotlin.runtime.TokResult.Ok(it) },
