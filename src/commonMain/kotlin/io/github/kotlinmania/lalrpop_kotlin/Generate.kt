@@ -11,6 +11,11 @@ sealed class ParseTree {
     data class Nonterminal(val nt: NonterminalString, val trees: MutableList<ParseTree>) : ParseTree()
     data class Terminal(val t: TerminalString) : ParseTree()
 
+    override fun toString(): String = when (this) {
+        is Nonterminal -> "[${nt}: ${Sep(", ", trees)}]"
+        is Terminal -> "$t"
+    }
+
     fun terminals(): MutableList<TerminalString> {
         val vec: MutableList<TerminalString> = mutableListOf()
         pushTerminals(vec)

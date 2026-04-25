@@ -351,32 +351,34 @@ sealed class WhereClause<T> : Comparable<WhereClause<T>> {
     ) : WhereClause<T>()
 
     override fun compareTo(other: WhereClause<T>): Int = toString().compareTo(other.toString())
+
+    override fun toString(): String = when (this) {
+        is LifetimeClause<T> -> buildString {
+            append("$lifetime:")
+            for ((i, b) in bounds.withIndex()) {
+                if (i != 0) append(" +")
+                append(" $b")
+            }
+        }
+        is Type<T> -> buildString {
+            if (forall.isNotEmpty()) {
+                append("for<")
+                for ((i, l) in forall.withIndex()) {
+                    if (i != 0) append(", ")
+                    append("$l")
+                }
+                append("> ")
+            }
+            append("$ty: ")
+            for ((i, b) in bounds.withIndex()) {
+                if (i != 0) append(" +")
+                append(" $b")
+            }
+        }
+    }
 }
 
-fun <T> WhereClause<T>.display(): String = when (this) {
-    is WhereClause.LifetimeClause<T> -> buildString {
-        append("$lifetime:")
-        for ((i, b) in bounds.withIndex()) {
-            if (i != 0) append(" +")
-            append(" $b")
-        }
-    }
-    is WhereClause.Type<T> -> buildString {
-        if (forall.isNotEmpty()) {
-            append("for<")
-            for ((i, l) in forall.withIndex()) {
-                if (i != 0) append(", ")
-                append("$l")
-            }
-            append("> ")
-        }
-        append("$ty: ")
-        for ((i, b) in bounds.withIndex()) {
-            if (i != 0) append(" +")
-            append(" ${b.display()}")
-        }
-    }
-}
+fun <T> WhereClause<T>.display(): String = toString()
 
 sealed class TypeBound<T> : Comparable<TypeBound<T>> {
     // The `'a` in `T: 'a`.
@@ -414,46 +416,48 @@ sealed class TypeBound<T> : Comparable<TypeBound<T>> {
             parameters = parameters.map { it.map(f) }.toMutableList(),
         )
     }
+
+    override fun toString(): String = when (this) {
+        is LifetimeBound<T> -> "$lifetime"
+        is Fn<T> -> buildString {
+            if (forall.isNotEmpty()) {
+                append("for<")
+                for ((i, l) in forall.withIndex()) {
+                    if (i != 0) append(", ")
+                    append("$l")
+                }
+                append("> ")
+            }
+            append("$path(")
+            for ((i, p) in parameters.withIndex()) {
+                if (i != 0) append(", ")
+                append("$p")
+            }
+            append(")")
+            if (ret != null) append(" -> $ret")
+        }
+        is Trait<T> -> buildString {
+            if (forall.isNotEmpty()) {
+                append("for<")
+                for ((i, l) in forall.withIndex()) {
+                    if (i != 0) append(", ")
+                    append("$l")
+                }
+                append("> ")
+            }
+            append("$path")
+            if (parameters.isEmpty()) return@buildString
+            append("<")
+            for ((i, p) in parameters.withIndex()) {
+                if (i != 0) append(", ")
+                append(p.display())
+            }
+            append(">")
+        }
+    }
 }
 
-fun <T> TypeBound<T>.display(): String = when (this) {
-    is TypeBound.LifetimeBound<T> -> "$lifetime"
-    is TypeBound.Fn<T> -> buildString {
-        if (forall.isNotEmpty()) {
-            append("for<")
-            for ((i, l) in forall.withIndex()) {
-                if (i != 0) append(", ")
-                append("$l")
-            }
-            append("> ")
-        }
-        append("$path(")
-        for ((i, p) in parameters.withIndex()) {
-            if (i != 0) append(", ")
-            append("$p")
-        }
-        append(")")
-        if (ret != null) append(" -> $ret")
-    }
-    is TypeBound.Trait<T> -> buildString {
-        if (forall.isNotEmpty()) {
-            append("for<")
-            for ((i, l) in forall.withIndex()) {
-                if (i != 0) append(", ")
-                append("$l")
-            }
-            append("> ")
-        }
-        append("$path")
-        if (parameters.isEmpty()) return@buildString
-        append("<")
-        for ((i, p) in parameters.withIndex()) {
-            if (i != 0) append(", ")
-            append(p.display())
-        }
-        append(">")
-    }
-}
+fun <T> TypeBound<T>.display(): String = toString()
 
 sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
     // 'a
@@ -476,6 +480,8 @@ sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
         is TypeParameterParam -> "$ty"
         is Associated -> "$id = $ty"
     }
+
+    override fun toString(): String = display()
 }
 
 sealed class TypeParameter : Comparable<TypeParameter> {

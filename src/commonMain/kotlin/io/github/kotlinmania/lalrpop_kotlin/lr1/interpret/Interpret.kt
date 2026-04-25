@@ -3,14 +3,12 @@
 package io.github.kotlinmania.lalrpop_kotlin.lr1.interpret
 
 import io.github.kotlinmania.lalrpop_kotlin.ParseTree
-import io.github.kotlinmania.lalrpop_kotlin.Sep
 import io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop_kotlin.grammar.repr.Production
 import io.github.kotlinmania.lalrpop_kotlin.lr1.core.State
 import io.github.kotlinmania.lalrpop_kotlin.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop_kotlin.lr1.lookahead.Lookahead
 import io.github.kotlinmania.lalrpop_kotlin.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop_kotlin.lr1.lookahead.TokenSet
 
 typealias InterpretError<L> = Pair<State<L>, Token>
 
@@ -103,23 +101,8 @@ private class Machine<L : LookaheadInterpret<L>>(
     }
 
     private fun reduction(state: State<L>, token: Token): Production? {
-        // Rust's static dispatch `L::reduction(state, &token)` resolves
-        // to one of the two impls below. Since Kotlin lacks static
-        // trait dispatch over a generic parameter, we route through
-        // whichever concrete Lookahead subclass the state carries.
-        @Suppress("UNCHECKED_CAST")
-        return when {
-            state.reductions.isEmpty() -> null
-            state.reductions[0].first is TokenSet ->
-                (state as State<TokenSet>).reductions
-                    .filter { (tokens, _) -> tokens.contains(token) }
-                    .map { (_, production) -> production }
-                    .firstOrNull()
-            else ->
-                state.reductions
-                    .map { (_, production) -> production }
-                    .firstOrNull()
-        }
+        val lookahead = state.reductions.firstOrNull()?.first ?: return null
+        return lookahead.reduction(state, token)
     }
 
     fun reduce(production: Production): Boolean {
@@ -157,10 +140,7 @@ private class Machine<L : LookaheadInterpret<L>>(
 
 class InterpretErrorException(val state: State<*>, val token: Token) : RuntimeException()
 
-fun ParseTree.displayString(): String = when (this) {
-    is ParseTree.Nonterminal -> "[${nt}: ${Sep(", ", trees)}]"
-    is ParseTree.Terminal -> "$t"
-}
+fun ParseTree.displayString(): String = toString()
 
 interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {
     fun reduction(state: State<Self>, token: Token): Production?

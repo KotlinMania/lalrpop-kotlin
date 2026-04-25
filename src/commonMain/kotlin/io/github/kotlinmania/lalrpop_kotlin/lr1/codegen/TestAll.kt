@@ -50,7 +50,7 @@ private fun CodeGenerator<TestAll>.write() {
 
         rust(this1.out, "#[rustfmt::skip]")
         rust(this1.out, "mod ${this1.prefix}ascent {")
-        compileAscent(
+        Ascent.compile(
             this1.grammar,
             this1.userStartSymbol,
             this1.startSymbol,
@@ -65,7 +65,7 @@ private fun CodeGenerator<TestAll>.write() {
 
         rust(this1.out, "#[rustfmt::skip]")
         rust(this1.out, "mod ${this1.prefix}parse_table {")
-        compileParseTable(
+        ParseTable.compile(
             this1.grammar,
             this1.userStartSymbol,
             this1.startSymbol,

@@ -5,6 +5,7 @@ import io.github.kotlinmania.lalrpop_kotlin.collections.multimap.Collection
 import io.github.kotlinmania.lalrpop_kotlin.grammar.repr.TerminalSet
 import io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop_kotlin.grammar.repr.Production
 import io.github.kotlinmania.lalrpop_kotlin.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop_kotlin.lr1.build.LookaheadBuild
 import io.github.kotlinmania.lalrpop_kotlin.lr1.build.Lr
@@ -12,13 +13,14 @@ import io.github.kotlinmania.lalrpop_kotlin.lr1.core.Item
 import io.github.kotlinmania.lalrpop_kotlin.lr1.core.Action
 import io.github.kotlinmania.lalrpop_kotlin.lr1.core.Conflict
 import io.github.kotlinmania.lalrpop_kotlin.lr1.core.State
+import io.github.kotlinmania.lalrpop_kotlin.lr1.interpret.LookaheadInterpret
 import io.github.kotlinmania.lalrpop_kotlin.lr1.tls.Lr1Tls
 
 interface Lookahead<Self : Lookahead<Self>> : Collection<Self>, Comparable<Self> {
     fun fmtAsItemSuffix(): String
 }
 
-class Nil : Lookahead<Nil>, LookaheadBuild<Nil> {
+class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
     override fun push(item: Nil): Boolean = false
 
     override fun fmtAsItemSuffix(): String = ""
@@ -29,6 +31,9 @@ class Nil : Lookahead<Nil>, LookaheadBuild<Nil> {
         remainder: List<Symbol>,
         lookahead: Nil,
     ): MutableList<Item<Nil>> = lr.items(nt, 0, lookahead)
+
+    override fun reduction(state: State<Nil>, token: Token): Production? =
+        state.reductions.firstOrNull()?.second
 
     override fun equals(other: Any?): Boolean = other is Nil
     override fun hashCode(): Int = 0
@@ -109,7 +114,7 @@ sealed class Token : Comparable<Token> {
     }
 }
 
-class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet> {
+class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInterpret<TokenSet> {
     internal val bitSet: MutableSet<Int> = mutableSetOf()
 
     override fun fmtAsItemSuffix(): String = " $this"
@@ -125,6 +130,12 @@ class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet> {
         val firstSet = lr.firstSets.first1(remainder, lookahead)
         return lr.items(nt, 0, firstSet)
     }
+
+    override fun reduction(state: State<TokenSet>, token: Token): Production? =
+        state.reductions
+            .filter { (tokens, _) -> tokens.contains(token) }
+            .map { (_, production) -> production }
+            .firstOrNull()
 
     companion object {
         fun new(): TokenSet = with { _ -> TokenSet() }
@@ -280,8 +291,8 @@ class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet> {
     override fun hashCode(): Int = bitSet.hashCode()
 
     override fun compareTo(other: TokenSet): Int {
-        val a = this.bitSet.toList()
-        val b = other.bitSet.toList()
+        val a = this.bitSet.sorted()
+        val b = other.bitSet.sorted()
         val n = minOf(a.size, b.size)
         for (k in 0 until n) {
             val c = a[k].compareTo(b[k])

@@ -21,7 +21,20 @@ import io.github.kotlinmania.lalrpop_kotlin.rust.RustWrite
 import io.github.kotlinmania.lalrpop_kotlin.rust.rust
 import io.github.kotlinmania.lalrpop_kotlin.tls.Tls
 
-private const val DEBUG_PRINT: Boolean = false
+object ParseTable {
+    const val DEBUG_PRINT: Boolean = false
+
+    fun compile(
+        grammar: Grammar,
+        userStartSymbol: NonterminalString,
+        startSymbol: NonterminalString,
+        states: List<Lr1State>,
+        actionModule: String,
+        out: RustWrite,
+    ) {
+        compileParseTable(grammar, userStartSymbol, startSymbol, states, actionModule, out)
+    }
+}
 
 fun compileParseTable(
     grammar: Grammar,
@@ -834,7 +847,7 @@ private fun CodeGenerator<TableDriven>.emitReduceActions() {
         this.out,
         "let ${this.prefix}next_state = ${this.prefix}goto(${this.prefix}state, ${this.prefix}nonterminal);",
     )
-    if (DEBUG_PRINT) {
+    if (ParseTable.DEBUG_PRINT) {
         rust(
             this.out,
             "println!(\"goto state {} from {} due to nonterminal {}\", ${this.prefix}next_state, ${this.prefix}state, ${this.prefix}nonterminal);",
@@ -1000,7 +1013,7 @@ private fun CodeGenerator<TableDriven>.emitDowncastFn(variantName: String, varia
 
     rust(this.out, " {")
 
-    if (DEBUG_PRINT) {
+    if (ParseTable.DEBUG_PRINT) {
         rust(this.out, "println!(\"pop_$variantName\");")
     }
     rust(this.out, "match ${this.prefix}symbols.pop() {")
@@ -1052,7 +1065,7 @@ private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
                 val nonterminalIdx = this.custom.allNonterminals
                     .indexOfFirst { x -> x == production.nonterminal }
                 rust(this.out, "$index => {")
-                if (DEBUG_PRINT) {
+                if (ParseTable.DEBUG_PRINT) {
                     rust(this.out, "println!(r##\"accepts: simulating $production\"##);")
                 }
                 rust(this.out, "${this.prefix}state_machine::SimulatedReduce::Reduce {")
@@ -1119,7 +1132,7 @@ private fun CodeGenerator<TableDriven>.writeAcceptsFn() {
         .emit()
     rust(this.out, "{")
 
-    if (DEBUG_PRINT) {
+    if (ParseTable.DEBUG_PRINT) {
         rust(
             this.out,
             "println!(\"Testing whether state {} accepts token {:?}\", ${this.prefix}error_state, ${this.prefix}opt_integer);",
@@ -1136,7 +1149,7 @@ private fun CodeGenerator<TableDriven>.writeAcceptsFn() {
 
     rust(this.out, "let ${this.prefix}top = ${this.prefix}states[${this.prefix}states_len - 1];")
 
-    if (DEBUG_PRINT) {
+    if (ParseTable.DEBUG_PRINT) {
         rust(
             this.out,
             "println!(\"accepts: top-state={} num-states={}\", ${this.prefix}top, ${this.prefix}states_len);",
@@ -1176,7 +1189,7 @@ private fun CodeGenerator<TableDriven>.writeAcceptsFn() {
     rust(this.out, "${this.prefix}states.truncate(${this.prefix}states_len);")
     rust(this.out, "let ${this.prefix}top = ${this.prefix}states[${this.prefix}states_len - 1];")
 
-    if (DEBUG_PRINT) {
+    if (ParseTable.DEBUG_PRINT) {
         rust(
             this.out,
             "println!(\"accepts: popped {} symbols, new top is {}, nt is {}\", ${this.prefix}to_pop, ${this.prefix}top, ${this.prefix}nt, );",

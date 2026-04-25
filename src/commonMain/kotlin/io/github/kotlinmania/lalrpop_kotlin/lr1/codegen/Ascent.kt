@@ -25,6 +25,19 @@ import io.github.kotlinmania.lalrpop_kotlin.rust.RustWrite
 import io.github.kotlinmania.lalrpop_kotlin.rust.rust
 import io.github.kotlinmania.lalrpop_kotlin.tls.Tls
 
+object Ascent {
+    fun compile(
+        grammar: Grammar,
+        userStartSymbol: NonterminalString,
+        startSymbol: NonterminalString,
+        states: List<Lr1State>,
+        actionModule: String,
+        out: RustWrite,
+    ) {
+        compileAscent(grammar, userStartSymbol, startSymbol, states, actionModule, out)
+    }
+}
+
 fun compileAscent(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
