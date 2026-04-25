@@ -9900,9 +9900,17 @@ internal fun action322(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action143(text, sym0)
+    val temp0 = action143(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action87(text, tempTriple, sym1, sym2)
+    return action87(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -9917,9 +9925,18 @@ internal fun action323(
     // Rust: ___start0 = ___0.0, ___end0 = ___0.0 (same value, both ends).
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action144(text, start0, end0)
+    val temp0 = action144(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action87(text, tempTriple, sym0, sym1)
+    return action87(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 /**
@@ -9935,9 +9952,18 @@ internal fun action324(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action165(text, sym3)
+    val temp0 = action165(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action42(text, sym0, sym1, sym2, tempTriple)
+    return action42(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+    )
 }
 
 /**
@@ -9952,9 +9978,19 @@ internal fun action325(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym2.third
     val end0 = sym2.third
-    val temp0 = action166(text, start0, end0)
+    val temp0 = action166(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action42(text, sym0, sym1, sym2, tempTriple)
+    return action42(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+    )
 }
 
 /**
@@ -9975,9 +10011,23 @@ internal fun action326(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action154(text, sym2)
+    val temp0 = action154(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action55(text, sym0, sym1, tempTriple, sym3, sym4, sym5, sym6, sym7, sym8)
+    return action55(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -9997,9 +10047,24 @@ internal fun action327(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action155(text, start0, end0)
+    val temp0 = action155(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action55(text, sym0, sym1, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action55(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -10013,9 +10078,16 @@ internal fun action328(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action154(text, sym0)
+    val temp0 = action154(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action74(text, tempTriple, sym1)
+    return action74(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10028,9 +10100,17 @@ internal fun action329(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action155(text, start0, end0)
+    val temp0 = action155(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action74(text, tempTriple, sym0)
+    return action74(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10046,9 +10126,18 @@ internal fun action330(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action154(text, sym2)
+    val temp0 = action154(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action79(text, sym0, sym1, tempTriple, sym3)
+    return action79(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+    )
 }
 
 /**
@@ -10063,9 +10152,19 @@ internal fun action331(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action155(text, start0, end0)
+    val temp0 = action155(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action79(text, sym0, sym1, tempTriple, sym2)
+    return action79(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+    )
 }
 
 /**
@@ -10079,9 +10178,16 @@ internal fun action332(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action182(text, sym0, sym1)
+    val temp0 = action182(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action180(text, tempTriple)
+    return action180(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10100,9 +10206,21 @@ internal fun action333(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym5.first
     val end0 = sym6.third
-    val temp0 = action332(text, sym5, sym6)
+    val temp0 = action332(
+        text,
+        sym5,
+        sym6,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action17(text, sym0, sym1, sym2, sym3, sym4, tempTriple)
+    return action17(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+    )
 }
 
 /**
@@ -10119,9 +10237,21 @@ internal fun action334(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym4.third
     val end0 = sym4.third
-    val temp0 = action181(text, start0, end0)
+    val temp0 = action181(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action17(text, sym0, sym1, sym2, sym3, sym4, tempTriple)
+    return action17(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+    )
 }
 
 /**
@@ -10141,9 +10271,22 @@ internal fun action335(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym6.first
     val end0 = sym7.third
-    val temp0 = action332(text, sym6, sym7)
+    val temp0 = action332(
+        text,
+        sym6,
+        sym7,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action84(text, sym0, sym1, sym2, sym3, sym4, sym5, tempTriple)
+    return action84(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        tempTriple,
+    )
 }
 
 /**
@@ -10161,9 +10304,22 @@ internal fun action336(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym5.third
     val end0 = sym5.third
-    val temp0 = action181(text, start0, end0)
+    val temp0 = action181(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action84(text, sym0, sym1, sym2, sym3, sym4, sym5, tempTriple)
+    return action84(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        tempTriple,
+    )
 }
 
 /**
@@ -10177,9 +10333,16 @@ internal fun action337(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef? {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action174(text, sym0, sym1)
+    val temp0 = action174(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action172(text, tempTriple)
+    return action172(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10200,9 +10363,23 @@ internal fun action338(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym5.first
     val end0 = sym6.third
-    val temp0 = action337(text, sym5, sym6)
+    val temp0 = action337(
+        text,
+        sym5,
+        sym6,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action33(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym7, sym8)
+    return action33(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -10221,9 +10398,23 @@ internal fun action339(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action173(text, start0, end0)
+    val temp0 = action173(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action33(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5, sym6)
+    return action33(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -10238,9 +10429,17 @@ internal fun action340(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>>? {
     val start0 = sym0.first
     val end0 = sym2.third
-    val temp0 = action178(text, sym0, sym1, sym2)
+    val temp0 = action178(
+        text,
+        sym0,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action176(text, tempTriple)
+    return action176(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10257,9 +10456,19 @@ internal fun action341(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym2.first
     val end0 = sym4.third
-    val temp0 = action340(text, sym2, sym3, sym4)
+    val temp0 = action340(
+        text,
+        sym2,
+        sym3,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action18(text, sym0, sym1, tempTriple)
+    return action18(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+    )
 }
 
 /**
@@ -10273,9 +10482,18 @@ internal fun action342(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.third
     val end0 = sym1.third
-    val temp0 = action177(text, start0, end0)
+    val temp0 = action177(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action18(text, sym0, sym1, tempTriple)
+    return action18(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+    )
 }
 
 /**
@@ -10289,9 +10507,16 @@ internal fun action343(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition? {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action162(text, sym0, sym1)
+    val temp0 = action162(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action160(text, tempTriple)
+    return action160(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10310,9 +10535,21 @@ internal fun action344(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym3.first
     val end0 = sym4.third
-    val temp0 = action343(text, sym3, sym4)
+    val temp0 = action343(
+        text,
+        sym3,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action43(text, sym0, sym1, sym2, tempTriple, sym5, sym6)
+    return action43(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -10329,9 +10566,21 @@ internal fun action345(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action161(text, start0, end0)
+    val temp0 = action161(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action43(text, sym0, sym1, sym2, tempTriple, sym3, sym4)
+    return action43(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -10348,9 +10597,19 @@ internal fun action346(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action343(text, sym1, sym2)
+    val temp0 = action343(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action44(text, sym0, tempTriple, sym3, sym4)
+    return action44(
+        text,
+        sym0,
+        tempTriple,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -10365,9 +10624,19 @@ internal fun action347(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action161(text, start0, end0)
+    val temp0 = action161(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action44(text, sym0, tempTriple, sym1, sym2)
+    return action44(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+    )
 }
 
 // === lrgrammar.rs:24801-25568 — `___action348`..`___action377` ===
@@ -10390,7 +10659,10 @@ internal fun action348(
     val end0 = lookahead
     action185(text, start0, end0)
     val tempTriple = Triple(start0, Unit, end0)
-    return action14(text, tempTriple)
+    return action14(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10406,7 +10678,10 @@ internal fun action349(
     val end0 = lookahead
     action185(text, start0, end0)
     val tempTriple = Triple(start0, Unit, end0)
-    return action32(text, tempTriple)
+    return action32(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10420,9 +10695,16 @@ internal fun action350(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action260(text, sym0, sym1)
+    val temp0 = action260(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action302(text, tempTriple)
+    return action302(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10437,9 +10719,17 @@ internal fun action351(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action260(text, sym1, sym2)
+    val temp0 = action260(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action303(text, sym0, tempTriple)
+    return action303(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10452,9 +10742,17 @@ internal fun action352(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action258(text, start0, end0)
+    val temp0 = action258(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action167(text, tempTriple, sym0)
+    return action167(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10468,9 +10766,16 @@ internal fun action353(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action259(text, sym0)
+    val temp0 = action259(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action167(text, tempTriple, sym1)
+    return action167(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10484,9 +10789,16 @@ internal fun action354(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action250(text, sym0, sym1)
+    val temp0 = action250(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action306(text, tempTriple)
+    return action306(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10501,9 +10813,17 @@ internal fun action355(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action250(text, sym1, sym2)
+    val temp0 = action250(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action307(text, sym0, tempTriple)
+    return action307(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10516,9 +10836,17 @@ internal fun action356(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action248(text, start0, end0)
+    val temp0 = action248(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action169(text, tempTriple, sym0)
+    return action169(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10532,9 +10860,16 @@ internal fun action357(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action249(text, sym0)
+    val temp0 = action249(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action169(text, tempTriple, sym1)
+    return action169(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10548,9 +10883,16 @@ internal fun action358(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action284(text, sym0, sym1)
+    val temp0 = action284(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action294(text, tempTriple)
+    return action294(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10565,9 +10907,17 @@ internal fun action359(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action284(text, sym1, sym2)
+    val temp0 = action284(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action295(text, sym0, tempTriple)
+    return action295(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10580,9 +10930,17 @@ internal fun action360(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action282(text, start0, end0)
+    val temp0 = action282(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action136(text, tempTriple, sym0)
+    return action136(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10596,9 +10954,16 @@ internal fun action361(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action283(text, sym0)
+    val temp0 = action283(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action136(text, tempTriple, sym1)
+    return action136(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10612,9 +10977,16 @@ internal fun action362(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action134(text, sym0, sym1)
+    val temp0 = action134(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action290(text, tempTriple)
+    return action290(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10629,9 +11001,17 @@ internal fun action363(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action134(text, sym1, sym2)
+    val temp0 = action134(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action291(text, sym0, tempTriple)
+    return action291(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10647,9 +11027,20 @@ internal fun action364(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action132(text, start0, end0)
+    val temp0 = action132(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action105(text, sym0, sym1, tempTriple, sym2, sym3)
+    return action105(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -10666,9 +11057,19 @@ internal fun action365(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action133(text, sym2)
+    val temp0 = action133(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action105(text, sym0, sym1, tempTriple, sym3, sym4)
+    return action105(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -10684,9 +11085,20 @@ internal fun action366(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action132(text, start0, end0)
+    val temp0 = action132(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action106(text, sym0, sym1, tempTriple, sym2, sym3)
+    return action106(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -10703,9 +11115,19 @@ internal fun action367(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action133(text, sym2)
+    val temp0 = action133(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action106(text, sym0, sym1, tempTriple, sym3, sym4)
+    return action106(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -10719,9 +11141,16 @@ internal fun action368(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action245(text, sym0, sym1)
+    val temp0 = action245(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action308(text, tempTriple)
+    return action308(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10736,9 +11165,17 @@ internal fun action369(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action245(text, sym1, sym2)
+    val temp0 = action245(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action309(text, sym0, tempTriple)
+    return action309(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10751,9 +11188,17 @@ internal fun action370(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action243(text, start0, end0)
+    val temp0 = action243(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action175(text, tempTriple, sym0)
+    return action175(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10767,9 +11212,16 @@ internal fun action371(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action244(text, sym0)
+    val temp0 = action244(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action175(text, tempTriple, sym1)
+    return action175(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10783,9 +11235,16 @@ internal fun action372(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action222(text, sym0, sym1)
+    val temp0 = action222(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action318(text, tempTriple)
+    return action318(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10800,9 +11259,17 @@ internal fun action373(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action222(text, sym1, sym2)
+    val temp0 = action222(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action319(text, sym0, tempTriple)
+    return action319(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10815,9 +11282,17 @@ internal fun action374(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action220(text, start0, end0)
+    val temp0 = action220(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action187(text, tempTriple, sym0)
+    return action187(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10831,9 +11306,16 @@ internal fun action375(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action221(text, sym0)
+    val temp0 = action221(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action187(text, tempTriple, sym1)
+    return action187(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10847,9 +11329,16 @@ internal fun action376(
 ): List<io.github.kotlinmania.lalrpop_kotlin.Atom> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action142(text, sym0, sym1)
+    val temp0 = action142(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action271(text, tempTriple)
+    return action271(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10864,9 +11353,17 @@ internal fun action377(
 ): List<io.github.kotlinmania.lalrpop_kotlin.Atom> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action142(text, sym1, sym2)
+    val temp0 = action142(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action272(text, sym0, tempTriple)
+    return action272(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10880,9 +11377,18 @@ internal fun action378(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action140(text, start0, end0)
+    val temp0 = action140(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action322(text, sym0, tempTriple, sym1)
+    return action322(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10897,9 +11403,17 @@ internal fun action379(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action141(text, sym1)
+    val temp0 = action141(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action322(text, sym0, tempTriple, sym2)
+    return action322(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+    )
 }
 
 /**
@@ -10912,9 +11426,17 @@ internal fun action380(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action140(text, start0, end0)
+    val temp0 = action140(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action323(text, tempTriple, sym0)
+    return action323(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10928,9 +11450,16 @@ internal fun action381(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action141(text, sym0)
+    val temp0 = action141(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action323(text, tempTriple, sym1)
+    return action323(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -10944,9 +11473,16 @@ internal fun action382(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action225(text, sym0, sym1)
+    val temp0 = action225(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action316(text, tempTriple)
+    return action316(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -10961,9 +11497,17 @@ internal fun action383(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action225(text, sym1, sym2)
+    val temp0 = action225(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action317(text, sym0, tempTriple)
+    return action317(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -10976,9 +11520,17 @@ internal fun action384(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action223(text, start0, end0)
+    val temp0 = action223(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action186(text, tempTriple, sym0)
+    return action186(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -10992,9 +11544,16 @@ internal fun action385(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action224(text, sym0)
+    val temp0 = action224(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action186(text, tempTriple, sym1)
+    return action186(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11008,9 +11567,16 @@ internal fun action386(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action279(text, sym0, sym1)
+    val temp0 = action279(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action296(text, tempTriple)
+    return action296(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11025,9 +11591,17 @@ internal fun action387(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action279(text, sym1, sym2)
+    val temp0 = action279(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action297(text, sym0, tempTriple)
+    return action297(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11040,9 +11614,17 @@ internal fun action388(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action277(text, start0, end0)
+    val temp0 = action277(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action137(text, tempTriple, sym0)
+    return action137(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11056,9 +11638,16 @@ internal fun action389(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action278(text, sym0)
+    val temp0 = action278(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action137(text, tempTriple, sym1)
+    return action137(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11072,9 +11661,16 @@ internal fun action390(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action255(text, sym0, sym1)
+    val temp0 = action255(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action304(text, tempTriple)
+    return action304(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11089,9 +11685,17 @@ internal fun action391(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action255(text, sym1, sym2)
+    val temp0 = action255(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action305(text, sym0, tempTriple)
+    return action305(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11104,9 +11708,17 @@ internal fun action392(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action253(text, start0, end0)
+    val temp0 = action253(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action168(text, tempTriple, sym0)
+    return action168(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11120,9 +11732,16 @@ internal fun action393(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action254(text, sym0)
+    val temp0 = action254(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action168(text, tempTriple, sym1)
+    return action168(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11136,9 +11755,16 @@ internal fun action394(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action289(text, sym0, sym1)
+    val temp0 = action289(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action292(text, tempTriple)
+    return action292(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11153,9 +11779,17 @@ internal fun action395(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action289(text, sym1, sym2)
+    val temp0 = action289(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action293(text, sym0, tempTriple)
+    return action293(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11168,9 +11802,17 @@ internal fun action396(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action287(text, start0, end0)
+    val temp0 = action287(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action135(text, tempTriple, sym0)
+    return action135(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11184,9 +11826,16 @@ internal fun action397(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action288(text, sym0)
+    val temp0 = action288(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action135(text, tempTriple, sym1)
+    return action135(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11200,9 +11849,16 @@ internal fun action398(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action265(text, sym0, sym1)
+    val temp0 = action265(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action300(text, tempTriple)
+    return action300(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11217,9 +11873,17 @@ internal fun action399(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action265(text, sym1, sym2)
+    val temp0 = action265(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action301(text, sym0, tempTriple)
+    return action301(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11232,9 +11896,17 @@ internal fun action400(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action263(text, start0, end0)
+    val temp0 = action263(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action153(text, tempTriple, sym0)
+    return action153(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11248,9 +11920,16 @@ internal fun action401(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action264(text, sym0)
+    val temp0 = action264(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action153(text, tempTriple, sym1)
+    return action153(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11264,9 +11943,16 @@ internal fun action402(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action152(text, sym0, sym1)
+    val temp0 = action152(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action150(text, tempTriple)
+    return action150(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11281,9 +11967,17 @@ internal fun action403(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ArgPattern> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action152(text, sym1, sym2)
+    val temp0 = action152(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action151(text, sym0, tempTriple)
+    return action151(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11297,9 +11991,16 @@ internal fun action404(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action230(text, sym0, sym1)
+    val temp0 = action230(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action314(text, tempTriple)
+    return action314(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11314,9 +12015,17 @@ internal fun action405(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action230(text, sym1, sym2)
+    val temp0 = action230(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action315(text, sym0, tempTriple)
+    return action315(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11329,9 +12038,17 @@ internal fun action406(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action228(text, start0, end0)
+    val temp0 = action228(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action184(text, tempTriple, sym0)
+    return action184(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11345,9 +12062,16 @@ internal fun action407(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action229(text, sym0)
+    val temp0 = action229(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action184(text, tempTriple, sym1)
+    return action184(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11361,9 +12085,16 @@ internal fun action408(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action240(text, sym0, sym1)
+    val temp0 = action240(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action310(text, tempTriple)
+    return action310(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11378,9 +12109,17 @@ internal fun action409(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action240(text, sym1, sym2)
+    val temp0 = action240(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action311(text, sym0, tempTriple)
+    return action311(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11393,9 +12132,17 @@ internal fun action410(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action238(text, start0, end0)
+    val temp0 = action238(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action179(text, tempTriple, sym0)
+    return action179(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11409,9 +12156,16 @@ internal fun action411(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action239(text, sym0)
+    val temp0 = action239(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action179(text, tempTriple, sym1)
+    return action179(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11425,9 +12179,16 @@ internal fun action412(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action217(text, sym0, sym1)
+    val temp0 = action217(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action320(text, tempTriple)
+    return action320(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11442,9 +12203,17 @@ internal fun action413(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action217(text, sym1, sym2)
+    val temp0 = action217(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action321(text, sym0, tempTriple)
+    return action321(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11457,9 +12226,17 @@ internal fun action414(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action215(text, start0, end0)
+    val temp0 = action215(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action188(text, tempTriple, sym0)
+    return action188(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11473,9 +12250,16 @@ internal fun action415(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action216(text, sym0)
+    val temp0 = action216(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action188(text, tempTriple, sym1)
+    return action188(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11489,9 +12273,16 @@ internal fun action416(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action235(text, sym0, sym1)
+    val temp0 = action235(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action312(text, tempTriple)
+    return action312(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11506,9 +12297,17 @@ internal fun action417(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action235(text, sym1, sym2)
+    val temp0 = action235(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action313(text, sym0, tempTriple)
+    return action313(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11521,9 +12320,17 @@ internal fun action418(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action233(text, start0, end0)
+    val temp0 = action233(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action183(text, tempTriple, sym0)
+    return action183(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11537,9 +12344,16 @@ internal fun action419(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action234(text, sym0)
+    val temp0 = action234(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action183(text, tempTriple, sym1)
+    return action183(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11553,9 +12367,16 @@ internal fun action420(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym1.third
-    val temp0 = action270(text, sym0, sym1)
+    val temp0 = action270(
+        text,
+        sym0,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action298(text, tempTriple)
+    return action298(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -11570,9 +12391,17 @@ internal fun action421(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.first
     val end0 = sym2.third
-    val temp0 = action270(text, sym1, sym2)
+    val temp0 = action270(
+        text,
+        sym1,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action299(text, sym0, tempTriple)
+    return action299(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -11585,9 +12414,17 @@ internal fun action422(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action268(text, start0, end0)
+    val temp0 = action268(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action145(text, tempTriple, sym0)
+    return action145(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -11601,9 +12438,16 @@ internal fun action423(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action269(text, sym0)
+    val temp0 = action269(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action145(text, tempTriple, sym1)
+    return action145(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 /**
@@ -11621,9 +12465,22 @@ internal fun action424(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action344(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action344(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -11639,9 +12496,20 @@ internal fun action425(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action345(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action345(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -11657,9 +12525,20 @@ internal fun action426(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action346(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action346(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -11673,9 +12552,18 @@ internal fun action427(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action347(text, tempTriple, sym0, sym1)
+    return action347(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 /**
@@ -11693,9 +12581,22 @@ internal fun action428(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action101(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action101(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -11710,9 +12611,19 @@ internal fun action429(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action35(text, tempTriple, sym0, sym1, sym2)
+    return action35(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -11728,9 +12639,20 @@ internal fun action430(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action49(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action49(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 // `___action431` is defined below alongside the other fallible forwarders —
@@ -11751,9 +12673,22 @@ internal fun action432(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action100(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action100(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -11772,9 +12707,23 @@ internal fun action433(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action88(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action88(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -11791,9 +12740,21 @@ internal fun action434(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action89(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action89(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -11809,9 +12770,20 @@ internal fun action435(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action114(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action114(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -11833,9 +12805,26 @@ internal fun action436(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action6(text, sym0, sym1, sym2, tempTriple, sym3, sym4, sym5, sym6, sym7, sym8, sym9)
+    return action6(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+        sym9,
+    )
 }
 
 /**
@@ -11849,9 +12838,18 @@ internal fun action437(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action94(text, tempTriple, sym0, sym1)
+    return action94(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 /**
@@ -11865,9 +12863,18 @@ internal fun action438(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action95(text, tempTriple, sym0, sym1)
+    return action95(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 // `___action439` is defined below alongside the other fallible forwarders.
@@ -11886,9 +12893,21 @@ internal fun action440(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action92(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action92(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -11908,9 +12927,24 @@ internal fun action441(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action338(text, sym0, sym1, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action338(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -11928,9 +12962,22 @@ internal fun action442(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action339(text, sym0, sym1, tempTriple, sym2, sym3, sym4, sym5)
+    return action339(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -11944,9 +12991,18 @@ internal fun action443(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action103(text, tempTriple, sym0, sym1)
+    return action103(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 // `___action444` and `___action445` are defined below alongside the other
@@ -11968,13 +13024,32 @@ internal fun action446(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple0 = Triple(start0, temp0, end0)
     val start1 = sym1.third
     val end1 = sym2.first
-    val temp1 = action198(text, start1, end1)
+    val temp1 = action198(
+        text,
+        start1,
+        end1,
+    )
     val tempTriple1 = Triple(start1, temp1, end1)
-    return action326(text, tempTriple0, sym0, sym1, tempTriple1, sym2, sym3, sym4, sym5, sym6)
+    return action326(
+        text,
+        tempTriple0,
+        sym0,
+        sym1,
+        tempTriple1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -11992,13 +13067,31 @@ internal fun action447(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple0 = Triple(start0, temp0, end0)
     val start1 = sym0.third
     val end1 = sym1.first
-    val temp1 = action198(text, start1, end1)
+    val temp1 = action198(
+        text,
+        start1,
+        end1,
+    )
     val tempTriple1 = Triple(start1, temp1, end1)
-    return action327(text, tempTriple0, sym0, tempTriple1, sym1, sym2, sym3, sym4, sym5)
+    return action327(
+        text,
+        tempTriple0,
+        sym0,
+        tempTriple1,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -12014,9 +13107,20 @@ internal fun action448(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action56(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action56(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -12034,9 +13138,22 @@ internal fun action449(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action57(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action57(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -12050,9 +13167,18 @@ internal fun action450(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action64(text, tempTriple, sym0, sym1)
+    return action64(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 /**
@@ -12069,9 +13195,21 @@ internal fun action451(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action73(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action73(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -12088,9 +13226,21 @@ internal fun action452(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym4.third
     val end0 = sym4.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action424(text, sym0, sym1, sym2, sym3, sym4, tempTriple)
+    return action424(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+    )
 }
 
 /**
@@ -12105,9 +13255,19 @@ internal fun action453(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym2.third
     val end0 = sym2.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action425(text, sym0, sym1, sym2, tempTriple)
+    return action425(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+    )
 }
 
 /**
@@ -12122,9 +13282,19 @@ internal fun action454(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym2.third
     val end0 = sym2.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action426(text, sym0, sym1, sym2, tempTriple)
+    return action426(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+    )
 }
 
 /**
@@ -12137,9 +13307,17 @@ internal fun action455(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action427(text, sym0, tempTriple)
+    return action427(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -12156,9 +13334,21 @@ internal fun action456(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action428(text, sym0, sym1, tempTriple, sym2, sym3, sym4)
+    return action428(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -12172,9 +13362,18 @@ internal fun action457(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
     val start0 = sym1.third
     val end0 = sym1.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action429(text, sym0, sym1, tempTriple)
+    return action429(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+    )
 }
 
 /**
@@ -12189,9 +13388,19 @@ internal fun action458(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition {
     val start0 = sym2.third
     val end0 = sym2.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action430(text, sym0, sym1, sym2, tempTriple)
+    return action430(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+    )
 }
 
 // `___action459` is defined below alongside the other fallible forwarders.
@@ -12210,9 +13419,21 @@ internal fun action460(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action432(text, sym0, sym1, tempTriple, sym2, sym3, sym4)
+    return action432(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -12230,9 +13451,22 @@ internal fun action461(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action433(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action433(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -12248,9 +13482,20 @@ internal fun action462(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action434(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action434(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -12265,9 +13510,19 @@ internal fun action463(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action435(text, sym0, tempTriple, sym1, sym2)
+    return action435(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -12288,9 +13543,25 @@ internal fun action464(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action436(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5, sym6, sym7, sym8)
+    return action436(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -12303,9 +13574,17 @@ internal fun action465(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action437(text, sym0, tempTriple)
+    return action437(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -12318,9 +13597,17 @@ internal fun action466(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action438(text, sym0, tempTriple)
+    return action438(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 // `___action467` is defined below alongside the other fallible forwarders.
@@ -12338,9 +13625,20 @@ internal fun action468(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchToken {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action440(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action440(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -12359,9 +13657,23 @@ internal fun action469(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action441(text, sym0, sym1, sym2, tempTriple, sym3, sym4, sym5, sym6)
+    return action441(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -12378,9 +13690,21 @@ internal fun action470(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action442(text, sym0, sym1, sym2, tempTriple, sym3, sym4)
+    return action442(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -12393,9 +13717,17 @@ internal fun action471(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action443(text, sym0, tempTriple)
+    return action443(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -12413,9 +13745,22 @@ internal fun action472(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym5.third
     val end0 = sym5.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action446(text, sym0, sym1, sym2, sym3, sym4, sym5, tempTriple)
+    return action446(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        tempTriple,
+    )
 }
 
 /**
@@ -12432,9 +13777,21 @@ internal fun action473(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym4.third
     val end0 = sym4.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action447(text, sym0, sym1, sym2, sym3, sym4, tempTriple)
+    return action447(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+    )
 }
 
 /**
@@ -12449,9 +13806,19 @@ internal fun action474(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym2.third
     val end0 = sym2.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action448(text, sym0, sym1, sym2, tempTriple)
+    return action448(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+    )
 }
 
 /**
@@ -12468,9 +13835,21 @@ internal fun action475(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym4.third
     val end0 = sym4.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action449(text, sym0, sym1, sym2, sym3, sym4, tempTriple)
+    return action449(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+    )
 }
 
 /**
@@ -12484,9 +13863,18 @@ internal fun action476(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym1.third
     val end0 = sym1.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action60(text, sym0, sym1, tempTriple)
+    return action60(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+    )
 }
 
 /**
@@ -12499,9 +13887,17 @@ internal fun action477(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action450(text, sym0, tempTriple)
+    return action450(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -12517,9 +13913,20 @@ internal fun action478(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple {
     val start0 = sym3.third
     val end0 = sym3.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action451(text, sym0, sym1, sym2, sym3, tempTriple)
+    return action451(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+    )
 }
 
 /**
@@ -12536,9 +13943,19 @@ internal fun action479(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action158(text, sym4)
+    val temp0 = action158(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action452(text, sym0, sym1, sym2, sym3, tempTriple)
+    return action452(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+    )
 }
 
 /**
@@ -12554,9 +13971,20 @@ internal fun action480(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym3.third
     val end0 = sym3.third
-    val temp0 = action159(text, start0, end0)
+    val temp0 = action159(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action452(text, sym0, sym1, sym2, sym3, tempTriple)
+    return action452(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+    )
 }
 
 /**
@@ -12571,9 +13999,17 @@ internal fun action481(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action158(text, sym2)
+    val temp0 = action158(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action453(text, sym0, sym1, tempTriple)
+    return action453(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+    )
 }
 
 /**
@@ -12587,9 +14023,18 @@ internal fun action482(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym1.third
     val end0 = sym1.third
-    val temp0 = action159(text, start0, end0)
+    val temp0 = action159(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action453(text, sym0, sym1, tempTriple)
+    return action453(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+    )
 }
 
 /**
@@ -12602,9 +14047,15 @@ internal fun action483(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action256(text, sym0)
+    val temp0 = action256(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action352(text, tempTriple)
+    return action352(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -12617,9 +14068,16 @@ internal fun action484(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action257(text, start0, end0)
+    val temp0 = action257(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action352(text, tempTriple)
+    return action352(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -12632,9 +14090,16 @@ internal fun action485(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action256(text, sym1)
+    val temp0 = action256(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action353(text, sym0, tempTriple)
+    return action353(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -12646,9 +14111,17 @@ internal fun action486(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action257(text, start0, end0)
+    val temp0 = action257(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action353(text, sym0, tempTriple)
+    return action353(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -12666,11 +14139,27 @@ internal fun action487(
     val end0 = sym2.first
     val start1 = sym2.third
     val end1 = sym3.first
-    val temp0 = action138(text, start0, end0)
+    val temp0 = action138(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple0 = Triple(start0, temp0, end0)
-    val temp1 = action138(text, start1, end1)
+    val temp1 = action138(
+        text,
+        start1,
+        end1,
+    )
     val tempTriple1 = Triple(start1, temp1, end1)
-    return action461(text, sym0, sym1, tempTriple0, sym2, tempTriple1, sym3)
+    return action461(
+        text,
+        sym0,
+        sym1,
+        tempTriple0,
+        sym2,
+        tempTriple1,
+        sym3,
+    )
 }
 
 /**
@@ -12689,11 +14178,26 @@ internal fun action488(
     val end0 = sym2.first
     val start1 = sym3.first
     val end1 = sym3.third
-    val temp0 = action138(text, start0, end0)
+    val temp0 = action138(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple0 = Triple(start0, temp0, end0)
-    val temp1 = action139(text, sym3)
+    val temp1 = action139(
+        text,
+        sym3,
+    )
     val tempTriple1 = Triple(start1, temp1, end1)
-    return action461(text, sym0, sym1, tempTriple0, sym2, tempTriple1, sym4)
+    return action461(
+        text,
+        sym0,
+        sym1,
+        tempTriple0,
+        sym2,
+        tempTriple1,
+        sym4,
+    )
 }
 
 /**
@@ -12712,11 +14216,26 @@ internal fun action489(
     val end0 = sym2.third
     val start1 = sym3.third
     val end1 = sym4.first
-    val temp0 = action139(text, sym2)
+    val temp0 = action139(
+        text,
+        sym2,
+    )
     val tempTriple0 = Triple(start0, temp0, end0)
-    val temp1 = action138(text, start1, end1)
+    val temp1 = action138(
+        text,
+        start1,
+        end1,
+    )
     val tempTriple1 = Triple(start1, temp1, end1)
-    return action461(text, sym0, sym1, tempTriple0, sym3, tempTriple1, sym4)
+    return action461(
+        text,
+        sym0,
+        sym1,
+        tempTriple0,
+        sym3,
+        tempTriple1,
+        sym4,
+    )
 }
 
 /**
@@ -12736,11 +14255,25 @@ internal fun action490(
     val end0 = sym2.third
     val start1 = sym4.first
     val end1 = sym4.third
-    val temp0 = action139(text, sym2)
+    val temp0 = action139(
+        text,
+        sym2,
+    )
     val tempTriple0 = Triple(start0, temp0, end0)
-    val temp1 = action139(text, sym4)
+    val temp1 = action139(
+        text,
+        sym4,
+    )
     val tempTriple1 = Triple(start1, temp1, end1)
-    return action461(text, sym0, sym1, tempTriple0, sym3, tempTriple1, sym5)
+    return action461(
+        text,
+        sym0,
+        sym1,
+        tempTriple0,
+        sym3,
+        tempTriple1,
+        sym5,
+    )
 }
 
 /**
@@ -12755,9 +14288,19 @@ internal fun action491(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action138(text, start0, end0)
+    val temp0 = action138(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action462(text, sym0, sym1, tempTriple, sym2)
+    return action462(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+    )
 }
 
 /**
@@ -12773,9 +14316,18 @@ internal fun action492(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action139(text, sym2)
+    val temp0 = action139(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action462(text, sym0, sym1, tempTriple, sym3)
+    return action462(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+    )
 }
 
 /**
@@ -12791,9 +14343,20 @@ internal fun action493(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action479(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action479(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -12810,9 +14373,19 @@ internal fun action494(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action200(text, sym0)
+    val temp0 = action200(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action479(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action479(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -12827,9 +14400,19 @@ internal fun action495(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action480(text, tempTriple, sym0, sym1, sym2)
+    return action480(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -12845,9 +14428,18 @@ internal fun action496(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action200(text, sym0)
+    val temp0 = action200(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action480(text, tempTriple, sym1, sym2, sym3)
+    return action480(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -12861,9 +14453,18 @@ internal fun action497(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action481(text, tempTriple, sym0, sym1)
+    return action481(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 /**
@@ -12878,9 +14479,17 @@ internal fun action498(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action200(text, sym0)
+    val temp0 = action200(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action481(text, tempTriple, sym1, sym2)
+    return action481(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -12893,9 +14502,17 @@ internal fun action499(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action482(text, tempTriple, sym0)
+    return action482(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -12909,9 +14526,16 @@ internal fun action500(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action200(text, sym0)
+    val temp0 = action200(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action482(text, tempTriple, sym1)
+    return action482(
+        text,
+        tempTriple,
+        sym1,
+    )
 }
 
 // `___action501` and `___action502` are defined below alongside the other
@@ -12934,9 +14558,24 @@ internal fun action503(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action464(text, sym0, sym1, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action464(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -12956,9 +14595,23 @@ internal fun action504(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action200(text, sym2)
+    val temp0 = action200(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action464(text, sym0, sym1, tempTriple, sym3, sym4, sym5, sym6, sym7, sym8)
+    return action464(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -12976,9 +14629,22 @@ internal fun action505(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action469(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action469(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -12997,9 +14663,21 @@ internal fun action506(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action200(text, sym0)
+    val temp0 = action200(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action469(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action469(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -13015,9 +14693,20 @@ internal fun action507(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action470(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action470(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -13034,9 +14723,19 @@ internal fun action508(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action200(text, sym0)
+    val temp0 = action200(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action470(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action470(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -13050,9 +14749,16 @@ internal fun action509(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action170(text, sym1)
+    val temp0 = action170(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action457(text, sym0, tempTriple)
+    return action457(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13064,9 +14770,17 @@ internal fun action510(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action171(text, start0, end0)
+    val temp0 = action171(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action457(text, sym0, tempTriple)
+    return action457(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13079,9 +14793,15 @@ internal fun action511(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action246(text, sym0)
+    val temp0 = action246(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action356(text, tempTriple)
+    return action356(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -13094,9 +14814,16 @@ internal fun action512(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action247(text, start0, end0)
+    val temp0 = action247(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action356(text, tempTriple)
+    return action356(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -13109,9 +14836,16 @@ internal fun action513(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action246(text, sym1)
+    val temp0 = action246(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action357(text, sym0, tempTriple)
+    return action357(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13123,9 +14857,17 @@ internal fun action514(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action247(text, start0, end0)
+    val temp0 = action247(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action357(text, sym0, tempTriple)
+    return action357(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13138,9 +14880,15 @@ internal fun action515(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action280(text, sym0)
+    val temp0 = action280(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action360(text, tempTriple)
+    return action360(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -13153,9 +14901,16 @@ internal fun action516(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action281(text, start0, end0)
+    val temp0 = action281(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action360(text, tempTriple)
+    return action360(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -13168,9 +14923,16 @@ internal fun action517(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action280(text, sym1)
+    val temp0 = action280(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action361(text, sym0, tempTriple)
+    return action361(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13182,9 +14944,17 @@ internal fun action518(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action281(text, start0, end0)
+    val temp0 = action281(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action361(text, sym0, tempTriple)
+    return action361(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13200,9 +14970,18 @@ internal fun action519(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action130(text, sym2)
+    val temp0 = action130(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action364(text, sym0, sym1, tempTriple, sym3)
+    return action364(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+    )
 }
 
 /**
@@ -13217,9 +14996,19 @@ internal fun action520(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action131(text, start0, end0)
+    val temp0 = action131(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action364(text, sym0, sym1, tempTriple, sym2)
+    return action364(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+    )
 }
 
 /**
@@ -13236,9 +15025,19 @@ internal fun action521(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action130(text, sym3)
+    val temp0 = action130(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action365(text, sym0, sym1, sym2, tempTriple, sym4)
+    return action365(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym4,
+    )
 }
 
 /**
@@ -13254,9 +15053,20 @@ internal fun action522(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action131(text, start0, end0)
+    val temp0 = action131(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action365(text, sym0, sym1, sym2, tempTriple, sym3)
+    return action365(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+    )
 }
 
 /**
@@ -13275,9 +15085,21 @@ internal fun action523(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym3.third
-    val temp0 = action13(text, sym0, sym1, sym2, sym3)
+    val temp0 = action13(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action12(text, tempTriple, sym4, sym5, sym6)
+    return action12(
+        text,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -13292,9 +15114,19 @@ internal fun action524(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action348(text, start0, end0)
+    val temp0 = action348(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action12(text, tempTriple, sym0, sym1, sym2)
+    return action12(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -13316,9 +15148,24 @@ internal fun action525(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym3.third
-    val temp0 = action13(text, sym0, sym1, sym2, sym3)
+    val temp0 = action13(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action333(text, tempTriple, sym4, sym5, sym6, sym7, sym8, sym9)
+    return action333(
+        text,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+        sym9,
+    )
 }
 
 /**
@@ -13336,9 +15183,22 @@ internal fun action526(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action348(text, start0, end0)
+    val temp0 = action348(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action333(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action333(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -13358,9 +15218,22 @@ internal fun action527(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym3.third
-    val temp0 = action13(text, sym0, sym1, sym2, sym3)
+    val temp0 = action13(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action334(text, tempTriple, sym4, sym5, sym6, sym7)
+    return action334(
+        text,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -13376,9 +15249,20 @@ internal fun action528(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action348(text, start0, end0)
+    val temp0 = action348(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action334(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action334(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -13398,9 +15282,22 @@ internal fun action529(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym3.third
-    val temp0 = action13(text, sym0, sym1, sym2, sym3)
+    val temp0 = action13(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action341(text, tempTriple, sym4, sym5, sym6, sym7)
+    return action341(
+        text,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -13416,9 +15313,20 @@ internal fun action530(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action348(text, start0, end0)
+    val temp0 = action348(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action341(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action341(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -13435,9 +15343,19 @@ internal fun action531(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym3.third
-    val temp0 = action13(text, sym0, sym1, sym2, sym3)
+    val temp0 = action13(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action342(text, tempTriple, sym4)
+    return action342(
+        text,
+        tempTriple,
+        sym4,
+    )
 }
 
 /**
@@ -13450,9 +15368,17 @@ internal fun action532(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action348(text, start0, end0)
+    val temp0 = action348(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action342(text, tempTriple, sym0)
+    return action342(
+        text,
+        tempTriple,
+        sym0,
+    )
 }
 
 /**
@@ -13476,9 +15402,25 @@ internal fun action533(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym1.first
     val end0 = sym4.third
-    val temp0 = action13(text, sym1, sym2, sym3, sym4)
+    val temp0 = action13(
+        text,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action335(text, sym0, tempTriple, sym5, sym6, sym7, sym8, sym9, sym10)
+    return action335(
+        text,
+        sym0,
+        tempTriple,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+        sym9,
+        sym10,
+    )
 }
 
 /**
@@ -13498,9 +15440,23 @@ internal fun action534(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action348(text, start0, end0)
+    val temp0 = action348(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action335(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action335(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -13522,9 +15478,23 @@ internal fun action535(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym1.first
     val end0 = sym4.third
-    val temp0 = action13(text, sym1, sym2, sym3, sym4)
+    val temp0 = action13(
+        text,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action336(text, sym0, tempTriple, sym5, sym6, sym7, sym8)
+    return action336(
+        text,
+        sym0,
+        tempTriple,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -13542,9 +15512,21 @@ internal fun action536(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action348(text, start0, end0)
+    val temp0 = action348(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action336(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action336(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -13563,9 +15545,23 @@ internal fun action537(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym6.third
     val end0 = sym6.third
-    val temp0 = action189(text, start0, end0)
+    val temp0 = action189(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action503(text, sym0, sym1, sym2, sym3, sym4, sym5, sym6, tempTriple)
+    return action503(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        tempTriple,
+    )
 }
 
 /**
@@ -13585,9 +15581,22 @@ internal fun action538(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym7.first
     val end0 = sym7.third
-    val temp0 = action190(text, sym7)
+    val temp0 = action190(
+        text,
+        sym7,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action503(text, sym0, sym1, sym2, sym3, sym4, sym5, sym6, tempTriple)
+    return action503(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        tempTriple,
+    )
 }
 
 /**
@@ -13607,9 +15616,24 @@ internal fun action539(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym7.third
     val end0 = sym7.third
-    val temp0 = action189(text, start0, end0)
+    val temp0 = action189(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action504(text, sym0, sym1, sym2, sym3, sym4, sym5, sym6, sym7, tempTriple)
+    return action504(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        tempTriple,
+    )
 }
 
 /**
@@ -13630,9 +15654,23 @@ internal fun action540(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym8.first
     val end0 = sym8.third
-    val temp0 = action190(text, sym8)
+    val temp0 = action190(
+        text,
+        sym8,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action504(text, sym0, sym1, sym2, sym3, sym4, sym5, sym6, sym7, tempTriple)
+    return action504(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        tempTriple,
+    )
 }
 
 /**
@@ -13645,9 +15683,15 @@ internal fun action541(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action241(text, sym0)
+    val temp0 = action241(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action370(text, tempTriple)
+    return action370(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -13660,9 +15704,16 @@ internal fun action542(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action242(text, start0, end0)
+    val temp0 = action242(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action370(text, tempTriple)
+    return action370(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -13675,9 +15726,16 @@ internal fun action543(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action241(text, sym1)
+    val temp0 = action241(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action371(text, sym0, tempTriple)
+    return action371(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13689,9 +15747,17 @@ internal fun action544(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Parameter> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action242(text, start0, end0)
+    val temp0 = action242(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action371(text, sym0, tempTriple)
+    return action371(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -13710,9 +15776,21 @@ internal fun action545(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action193(text, sym4)
+    val temp0 = action193(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action537(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6)
+    return action537(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -13730,9 +15808,22 @@ internal fun action546(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action194(text, start0, end0)
+    val temp0 = action194(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action537(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5)
+    return action537(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -13752,9 +15843,22 @@ internal fun action547(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action193(text, sym4)
+    val temp0 = action193(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action538(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6, sym7)
+    return action538(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -13773,9 +15877,23 @@ internal fun action548(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action194(text, start0, end0)
+    val temp0 = action194(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action538(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5, sym6)
+    return action538(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -13795,9 +15913,22 @@ internal fun action549(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action193(text, sym5)
+    val temp0 = action193(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action539(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6, sym7)
+    return action539(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -13816,9 +15947,23 @@ internal fun action550(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action194(text, start0, end0)
+    val temp0 = action194(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action539(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5, sym6)
+    return action539(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -13839,9 +15984,23 @@ internal fun action551(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action193(text, sym5)
+    val temp0 = action193(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action540(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6, sym7, sym8)
+    return action540(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -13861,9 +16020,24 @@ internal fun action552(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action194(text, start0, end0)
+    val temp0 = action194(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action540(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5, sym6, sym7)
+    return action540(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -13882,9 +16056,21 @@ internal fun action553(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action195(text, sym3)
+    val temp0 = action195(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action545(text, sym0, sym1, sym2, tempTriple, sym4, sym5, sym6)
+    return action545(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -13902,9 +16088,22 @@ internal fun action554(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action545(text, sym0, sym1, sym2, tempTriple, sym3, sym4, sym5)
+    return action545(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -13922,9 +16121,20 @@ internal fun action555(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action195(text, sym3)
+    val temp0 = action195(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action546(text, sym0, sym1, sym2, tempTriple, sym4, sym5)
+    return action546(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -13941,9 +16151,21 @@ internal fun action556(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action546(text, sym0, sym1, sym2, tempTriple, sym3, sym4)
+    return action546(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -13963,9 +16185,22 @@ internal fun action557(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action195(text, sym3)
+    val temp0 = action195(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action547(text, sym0, sym1, sym2, tempTriple, sym4, sym5, sym6, sym7)
+    return action547(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -13984,9 +16219,23 @@ internal fun action558(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action547(text, sym0, sym1, sym2, tempTriple, sym3, sym4, sym5, sym6)
+    return action547(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14005,9 +16254,21 @@ internal fun action559(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action195(text, sym3)
+    val temp0 = action195(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action548(text, sym0, sym1, sym2, tempTriple, sym4, sym5, sym6)
+    return action548(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14025,9 +16286,22 @@ internal fun action560(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action548(text, sym0, sym1, sym2, tempTriple, sym3, sym4, sym5)
+    return action548(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -14047,9 +16321,22 @@ internal fun action561(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action195(text, sym4)
+    val temp0 = action195(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action549(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6, sym7)
+    return action549(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -14068,9 +16355,23 @@ internal fun action562(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action549(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5, sym6)
+    return action549(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14089,9 +16390,21 @@ internal fun action563(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action195(text, sym4)
+    val temp0 = action195(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action550(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6)
+    return action550(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14109,9 +16422,22 @@ internal fun action564(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action550(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5)
+    return action550(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -14132,9 +16458,23 @@ internal fun action565(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action195(text, sym4)
+    val temp0 = action195(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action551(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6, sym7, sym8)
+    return action551(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -14154,9 +16494,24 @@ internal fun action566(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action551(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5, sym6, sym7)
+    return action551(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -14176,9 +16531,22 @@ internal fun action567(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action195(text, sym4)
+    val temp0 = action195(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action552(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6, sym7)
+    return action552(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -14197,9 +16565,23 @@ internal fun action568(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action196(text, start0, end0)
+    val temp0 = action196(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action552(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5, sym6)
+    return action552(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14211,9 +16593,15 @@ internal fun action569(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action218(text, sym0)
+    val temp0 = action218(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action374(text, tempTriple)
+    return action374(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -14226,9 +16614,16 @@ internal fun action570(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action219(text, start0, end0)
+    val temp0 = action219(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action374(text, tempTriple)
+    return action374(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -14241,9 +16636,16 @@ internal fun action571(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action218(text, sym1)
+    val temp0 = action218(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action375(text, sym0, tempTriple)
+    return action375(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -14255,9 +16657,17 @@ internal fun action572(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action219(text, start0, end0)
+    val temp0 = action219(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action375(text, sym0, tempTriple)
+    return action375(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -14276,9 +16686,21 @@ internal fun action573(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action191(text, sym5)
+    val temp0 = action191(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action553(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6)
+    return action553(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+    )
 }
 
 /**
@@ -14296,9 +16718,22 @@ internal fun action574(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action553(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5)
+    return action553(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+    )
 }
 
 /**
@@ -14316,9 +16751,20 @@ internal fun action575(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action191(text, sym4)
+    val temp0 = action191(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action554(text, sym0, sym1, sym2, sym3, tempTriple, sym5)
+    return action554(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+    )
 }
 
 /**
@@ -14335,9 +16781,21 @@ internal fun action576(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action554(text, sym0, sym1, sym2, sym3, tempTriple, sym4)
+    return action554(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+    )
 }
 
 /**
@@ -14355,9 +16813,20 @@ internal fun action577(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action191(text, sym4)
+    val temp0 = action191(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action555(text, sym0, sym1, sym2, sym3, tempTriple, sym5)
+    return action555(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+    )
 }
 
 /**
@@ -14374,9 +16843,21 @@ internal fun action578(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action555(text, sym0, sym1, sym2, sym3, tempTriple, sym4)
+    return action555(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+    )
 }
 
 /**
@@ -14393,9 +16874,19 @@ internal fun action579(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action191(text, sym3)
+    val temp0 = action191(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action556(text, sym0, sym1, sym2, tempTriple, sym4)
+    return action556(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym4,
+    )
 }
 
 /**
@@ -14411,9 +16902,20 @@ internal fun action580(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action556(text, sym0, sym1, sym2, tempTriple, sym3)
+    return action556(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+    )
 }
 
 /**
@@ -14433,9 +16935,22 @@ internal fun action581(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action191(text, sym5)
+    val temp0 = action191(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action557(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6, sym7)
+    return action557(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -14454,9 +16969,23 @@ internal fun action582(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action557(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5, sym6)
+    return action557(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14475,9 +17004,21 @@ internal fun action583(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action191(text, sym4)
+    val temp0 = action191(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action558(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6)
+    return action558(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14495,9 +17036,22 @@ internal fun action584(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action558(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5)
+    return action558(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -14516,9 +17070,21 @@ internal fun action585(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action191(text, sym4)
+    val temp0 = action191(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action559(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6)
+    return action559(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14536,9 +17102,22 @@ internal fun action586(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action559(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5)
+    return action559(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -14556,9 +17135,20 @@ internal fun action587(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.first
     val end0 = sym3.third
-    val temp0 = action191(text, sym3)
+    val temp0 = action191(
+        text,
+        sym3,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action560(text, sym0, sym1, sym2, tempTriple, sym4, sym5)
+    return action560(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -14575,9 +17165,21 @@ internal fun action588(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym2.third
     val end0 = sym3.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action560(text, sym0, sym1, sym2, tempTriple, sym3, sym4)
+    return action560(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        tempTriple,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -14597,9 +17199,22 @@ internal fun action589(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym6.first
     val end0 = sym6.third
-    val temp0 = action191(text, sym6)
+    val temp0 = action191(
+        text,
+        sym6,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action561(text, sym0, sym1, sym2, sym3, sym4, sym5, tempTriple, sym7)
+    return action561(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        tempTriple,
+        sym7,
+    )
 }
 
 /**
@@ -14618,9 +17233,23 @@ internal fun action590(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.third
     val end0 = sym6.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action561(text, sym0, sym1, sym2, sym3, sym4, sym5, tempTriple, sym6)
+    return action561(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        tempTriple,
+        sym6,
+    )
 }
 
 /**
@@ -14639,9 +17268,21 @@ internal fun action591(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action191(text, sym5)
+    val temp0 = action191(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action562(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6)
+    return action562(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+    )
 }
 
 /**
@@ -14659,9 +17300,22 @@ internal fun action592(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action562(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5)
+    return action562(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+    )
 }
 
 /**
@@ -14680,9 +17334,21 @@ internal fun action593(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action191(text, sym5)
+    val temp0 = action191(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action563(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6)
+    return action563(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+    )
 }
 
 /**
@@ -14700,9 +17366,22 @@ internal fun action594(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action563(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5)
+    return action563(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+    )
 }
 
 /**
@@ -14720,9 +17399,20 @@ internal fun action595(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action191(text, sym4)
+    val temp0 = action191(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action564(text, sym0, sym1, sym2, sym3, tempTriple, sym5)
+    return action564(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+    )
 }
 
 /**
@@ -14739,9 +17429,21 @@ internal fun action596(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action564(text, sym0, sym1, sym2, sym3, tempTriple, sym4)
+    return action564(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+    )
 }
 
 /**
@@ -14762,9 +17464,23 @@ internal fun action597(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym6.first
     val end0 = sym6.third
-    val temp0 = action191(text, sym6)
+    val temp0 = action191(
+        text,
+        sym6,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action565(text, sym0, sym1, sym2, sym3, sym4, sym5, tempTriple, sym7, sym8)
+    return action565(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        tempTriple,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -14784,9 +17500,24 @@ internal fun action598(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.third
     val end0 = sym6.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action565(text, sym0, sym1, sym2, sym3, sym4, sym5, tempTriple, sym6, sym7)
+    return action565(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        tempTriple,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -14806,9 +17537,22 @@ internal fun action599(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action191(text, sym5)
+    val temp0 = action191(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action566(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6, sym7)
+    return action566(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -14827,9 +17571,23 @@ internal fun action600(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action566(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5, sym6)
+    return action566(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14849,9 +17607,22 @@ internal fun action601(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym5.first
     val end0 = sym5.third
-    val temp0 = action191(text, sym5)
+    val temp0 = action191(
+        text,
+        sym5,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action567(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym6, sym7)
+    return action567(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -14870,9 +17641,23 @@ internal fun action602(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.third
     val end0 = sym5.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action567(text, sym0, sym1, sym2, sym3, sym4, tempTriple, sym5, sym6)
+    return action567(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14891,9 +17676,21 @@ internal fun action603(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym4.first
     val end0 = sym4.third
-    val temp0 = action191(text, sym4)
+    val temp0 = action191(
+        text,
+        sym4,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action568(text, sym0, sym1, sym2, sym3, tempTriple, sym5, sym6)
+    return action568(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -14911,9 +17708,22 @@ internal fun action604(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym3.third
     val end0 = sym4.first
-    val temp0 = action192(text, start0, end0)
+    val temp0 = action192(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action568(text, sym0, sym1, sym2, sym3, tempTriple, sym4, sym5)
+    return action568(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        tempTriple,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -14925,9 +17735,15 @@ internal fun action605(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action146(text, sym0)
+    val temp0 = action146(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action384(text, tempTriple)
+    return action384(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -14940,9 +17756,16 @@ internal fun action606(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action147(text, start0, end0)
+    val temp0 = action147(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action384(text, tempTriple)
+    return action384(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -14955,9 +17778,16 @@ internal fun action607(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action146(text, sym1)
+    val temp0 = action146(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action385(text, sym0, tempTriple)
+    return action385(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -14969,9 +17799,17 @@ internal fun action608(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Lifetime> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action147(text, start0, end0)
+    val temp0 = action147(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action385(text, sym0, tempTriple)
+    return action385(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -14987,9 +17825,18 @@ internal fun action609(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action146(text, sym1)
+    val temp0 = action146(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action330(text, sym0, tempTriple, sym2, sym3)
+    return action330(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -15004,9 +17851,19 @@ internal fun action610(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action147(text, start0, end0)
+    val temp0 = action147(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action330(text, sym0, tempTriple, sym1, sym2)
+    return action330(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -15021,9 +17878,17 @@ internal fun action611(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action146(text, sym1)
+    val temp0 = action146(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action331(text, sym0, tempTriple, sym2)
+    return action331(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+    )
 }
 
 /**
@@ -15037,9 +17902,18 @@ internal fun action612(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action147(text, start0, end0)
+    val temp0 = action147(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action331(text, sym0, tempTriple, sym1)
+    return action331(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+    )
 }
 
 // === lrgrammar.rs:32814-34162 — `___action613`..`___action656` ===
@@ -15054,9 +17928,15 @@ internal fun action613(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action275(text, sym0)
+    val temp0 = action275(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action388(text, tempTriple)
+    return action388(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -15070,9 +17950,16 @@ internal fun action614(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action276(text, start0, end0)
+    val temp0 = action276(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action388(text, tempTriple)
+    return action388(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -15086,9 +17973,16 @@ internal fun action615(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action275(text, sym1)
+    val temp0 = action275(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action389(text, sym0, tempTriple)
+    return action389(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -15101,9 +17995,17 @@ internal fun action616(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action276(text, start0, end0)
+    val temp0 = action276(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action389(text, sym0, tempTriple)
+    return action389(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -15116,9 +18018,15 @@ internal fun action617(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action251(text, sym0)
+    val temp0 = action251(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action392(text, tempTriple)
+    return action392(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -15132,9 +18040,16 @@ internal fun action618(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action252(text, start0, end0)
+    val temp0 = action252(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action392(text, tempTriple)
+    return action392(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -15149,9 +18064,16 @@ internal fun action619(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action251(text, sym1)
+    val temp0 = action251(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action393(text, sym0, tempTriple)
+    return action393(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -15164,9 +18086,17 @@ internal fun action620(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalString> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action252(text, start0, end0)
+    val temp0 = action252(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action393(text, sym0, tempTriple)
+    return action393(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -15179,9 +18109,15 @@ internal fun action621(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action285(text, sym0)
+    val temp0 = action285(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action396(text, tempTriple)
+    return action396(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -15195,9 +18131,16 @@ internal fun action622(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action286(text, start0, end0)
+    val temp0 = action286(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action396(text, tempTriple)
+    return action396(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -15212,9 +18155,16 @@ internal fun action623(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action285(text, sym1)
+    val temp0 = action285(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action397(text, sym0, tempTriple)
+    return action397(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -15227,9 +18177,17 @@ internal fun action624(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action286(text, start0, end0)
+    val temp0 = action286(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action397(text, sym0, tempTriple)
+    return action397(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -15248,9 +18206,22 @@ internal fun action625(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action573(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action573(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15269,9 +18240,21 @@ internal fun action626(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action573(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action573(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -15289,9 +18272,21 @@ internal fun action627(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action574(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action574(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15309,9 +18304,20 @@ internal fun action628(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action574(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action574(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15329,9 +18335,21 @@ internal fun action629(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action575(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action575(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15349,9 +18367,20 @@ internal fun action630(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action575(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action575(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15367,9 +18396,20 @@ internal fun action631(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action576(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action576(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -15386,9 +18426,19 @@ internal fun action632(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action576(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action576(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15405,9 +18455,21 @@ internal fun action633(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action577(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action577(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15425,9 +18487,20 @@ internal fun action634(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action577(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action577(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15443,9 +18516,20 @@ internal fun action635(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action578(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action578(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -15462,9 +18546,19 @@ internal fun action636(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action578(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action578(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15480,9 +18574,20 @@ internal fun action637(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action579(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action579(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -15499,9 +18604,19 @@ internal fun action638(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action579(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action579(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15516,9 +18631,19 @@ internal fun action639(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action580(text, tempTriple, sym0, sym1, sym2)
+    return action580(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -15534,9 +18659,18 @@ internal fun action640(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action580(text, tempTriple, sym1, sym2, sym3)
+    return action580(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -15556,9 +18690,23 @@ internal fun action641(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action581(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action581(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -15579,9 +18727,22 @@ internal fun action642(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action581(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action581(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -15600,9 +18761,22 @@ internal fun action643(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action582(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action582(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15622,9 +18796,21 @@ internal fun action644(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action582(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action582(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -15643,9 +18829,22 @@ internal fun action645(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action583(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action583(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15665,9 +18864,21 @@ internal fun action646(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action583(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action583(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -15685,9 +18896,21 @@ internal fun action647(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action584(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action584(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15706,9 +18929,20 @@ internal fun action648(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action584(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action584(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15727,9 +18961,22 @@ internal fun action649(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action585(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action585(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15749,9 +18996,21 @@ internal fun action650(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action585(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action585(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -15769,9 +19028,21 @@ internal fun action651(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action586(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action586(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15790,9 +19061,20 @@ internal fun action652(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action586(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action586(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15810,9 +19092,21 @@ internal fun action653(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action587(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action587(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -15831,9 +19125,20 @@ internal fun action654(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action587(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action587(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15850,9 +19155,20 @@ internal fun action655(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action588(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action588(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -15869,9 +19185,19 @@ internal fun action656(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action588(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action588(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 // === lrgrammar.rs:34163-35282 — `___action657`..`___action688` ===
@@ -15898,9 +19224,23 @@ internal fun action657(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action589(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action589(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -15921,9 +19261,22 @@ internal fun action658(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action589(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action589(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -15942,9 +19295,22 @@ internal fun action659(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action590(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action590(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -15964,9 +19330,21 @@ internal fun action660(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action590(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action590(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -15985,9 +19363,22 @@ internal fun action661(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action591(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action591(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16007,9 +19398,21 @@ internal fun action662(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action591(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action591(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16027,9 +19430,21 @@ internal fun action663(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action592(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action592(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -16048,9 +19463,20 @@ internal fun action664(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action592(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action592(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16069,9 +19495,22 @@ internal fun action665(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action593(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action593(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16091,9 +19530,21 @@ internal fun action666(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action593(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action593(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16111,9 +19562,21 @@ internal fun action667(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action594(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action594(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -16132,9 +19595,20 @@ internal fun action668(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action594(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action594(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16152,9 +19626,21 @@ internal fun action669(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action595(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action595(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -16173,9 +19659,20 @@ internal fun action670(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action595(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action595(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16192,9 +19689,20 @@ internal fun action671(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action596(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action596(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -16211,9 +19719,19 @@ internal fun action672(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action596(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action596(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -16234,9 +19752,24 @@ internal fun action673(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action597(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action597(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -16258,9 +19791,23 @@ internal fun action674(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action597(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7, sym8)
+    return action597(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /**
@@ -16280,9 +19827,23 @@ internal fun action675(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action598(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action598(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16303,9 +19864,22 @@ internal fun action676(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action598(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action598(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -16325,9 +19899,23 @@ internal fun action677(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action599(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action599(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16348,9 +19936,22 @@ internal fun action678(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action599(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action599(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -16369,9 +19970,22 @@ internal fun action679(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action600(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action600(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16391,9 +20005,21 @@ internal fun action680(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action600(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action600(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16413,9 +20039,23 @@ internal fun action681(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action601(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action601(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16436,9 +20076,22 @@ internal fun action682(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action601(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action601(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -16457,9 +20110,22 @@ internal fun action683(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action602(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action602(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16479,9 +20145,21 @@ internal fun action684(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action602(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action602(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16500,9 +20178,22 @@ internal fun action685(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action603(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action603(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -16522,9 +20213,21 @@ internal fun action686(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action603(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action603(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -16542,9 +20245,21 @@ internal fun action687(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action203(text, start0, end0)
+    val temp0 = action203(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action604(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action604(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -16562,9 +20277,20 @@ internal fun action688(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action204(text, sym0)
+    val temp0 = action204(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action604(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action604(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 // === lrgrammar.rs:35283-36490 — `___action689`..`___action732` ===
@@ -16587,9 +20313,16 @@ internal fun action689(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action156(text, start0, end0)
+    val temp0 = action156(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action54(text, tempTriple)
+    return action54(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16602,9 +20335,15 @@ internal fun action690(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action157(text, sym0)
+    val temp0 = action157(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action54(text, tempTriple)
+    return action54(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16617,9 +20356,15 @@ internal fun action691(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action261(text, sym0)
+    val temp0 = action261(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action400(text, tempTriple)
+    return action400(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16633,9 +20378,16 @@ internal fun action692(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action262(text, start0, end0)
+    val temp0 = action262(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action400(text, tempTriple)
+    return action400(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16649,9 +20401,16 @@ internal fun action693(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action261(text, sym1)
+    val temp0 = action261(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action401(text, sym0, tempTriple)
+    return action401(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16664,9 +20423,17 @@ internal fun action694(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action262(text, start0, end0)
+    val temp0 = action262(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action401(text, sym0, tempTriple)
+    return action401(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16682,9 +20449,18 @@ internal fun action695(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple {
     val start0 = sym2.first
     val end0 = sym2.third
-    val temp0 = action148(text, sym2)
+    val temp0 = action148(
+        text,
+        sym2,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action478(text, sym0, sym1, tempTriple, sym3)
+    return action478(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym3,
+    )
 }
 
 /**
@@ -16700,9 +20476,19 @@ internal fun action696(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple {
     val start0 = sym1.third
     val end0 = sym2.first
-    val temp0 = action149(text, start0, end0)
+    val temp0 = action149(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action478(text, sym0, sym1, tempTriple, sym2)
+    return action478(
+        text,
+        sym0,
+        sym1,
+        tempTriple,
+        sym2,
+    )
 }
 
 /**
@@ -16715,9 +20501,15 @@ internal fun action697(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action226(text, sym0)
+    val temp0 = action226(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action406(text, tempTriple)
+    return action406(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16731,9 +20523,16 @@ internal fun action698(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action227(text, start0, end0)
+    val temp0 = action227(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action406(text, tempTriple)
+    return action406(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16747,9 +20546,16 @@ internal fun action699(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action226(text, sym1)
+    val temp0 = action226(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action407(text, sym0, tempTriple)
+    return action407(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16762,9 +20568,17 @@ internal fun action700(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action227(text, start0, end0)
+    val temp0 = action227(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action407(text, sym0, tempTriple)
+    return action407(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16777,9 +20591,15 @@ internal fun action701(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action236(text, sym0)
+    val temp0 = action236(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action410(text, tempTriple)
+    return action410(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16793,9 +20613,16 @@ internal fun action702(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action237(text, start0, end0)
+    val temp0 = action237(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action410(text, tempTriple)
+    return action410(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16809,9 +20636,16 @@ internal fun action703(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action236(text, sym1)
+    val temp0 = action236(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action411(text, sym0, tempTriple)
+    return action411(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16824,9 +20658,17 @@ internal fun action704(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action237(text, start0, end0)
+    val temp0 = action237(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action411(text, sym0, tempTriple)
+    return action411(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16839,9 +20681,15 @@ internal fun action705(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action213(text, sym0)
+    val temp0 = action213(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action414(text, tempTriple)
+    return action414(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16855,9 +20703,16 @@ internal fun action706(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action214(text, start0, end0)
+    val temp0 = action214(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action414(text, tempTriple)
+    return action414(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16871,9 +20726,16 @@ internal fun action707(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action213(text, sym1)
+    val temp0 = action213(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action415(text, sym0, tempTriple)
+    return action415(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16886,9 +20748,17 @@ internal fun action708(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeParameter> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action214(text, start0, end0)
+    val temp0 = action214(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action415(text, sym0, tempTriple)
+    return action415(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16901,9 +20771,15 @@ internal fun action709(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action231(text, sym0)
+    val temp0 = action231(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action418(text, tempTriple)
+    return action418(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16917,9 +20793,16 @@ internal fun action710(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action232(text, start0, end0)
+    val temp0 = action232(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action418(text, tempTriple)
+    return action418(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16933,9 +20816,16 @@ internal fun action711(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action231(text, sym1)
+    val temp0 = action231(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action419(text, sym0, tempTriple)
+    return action419(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16948,9 +20838,17 @@ internal fun action712(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action232(text, start0, end0)
+    val temp0 = action232(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action419(text, sym0, tempTriple)
+    return action419(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -16963,9 +20861,15 @@ internal fun action713(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action266(text, sym0)
+    val temp0 = action266(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action422(text, tempTriple)
+    return action422(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16979,9 +20883,16 @@ internal fun action714(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = lookbehind
     val end0 = lookahead
-    val temp0 = action267(text, start0, end0)
+    val temp0 = action267(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action422(text, tempTriple)
+    return action422(
+        text,
+        tempTriple,
+    )
 }
 
 /**
@@ -16995,9 +20906,16 @@ internal fun action715(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action266(text, sym1)
+    val temp0 = action266(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action423(text, sym0, tempTriple)
+    return action423(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -17010,9 +20928,17 @@ internal fun action716(
 ): List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
     val start0 = sym0.third
     val end0 = sym0.third
-    val temp0 = action267(text, start0, end0)
+    val temp0 = action267(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action423(text, sym0, tempTriple)
+    return action423(
+        text,
+        sym0,
+        tempTriple,
+    )
 }
 
 /**
@@ -17030,9 +20956,21 @@ internal fun action717(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action625(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action625(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17051,9 +20989,20 @@ internal fun action718(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action625(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action625(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17073,9 +21022,22 @@ internal fun action719(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action626(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action626(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17095,9 +21057,21 @@ internal fun action720(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action626(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action626(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -17114,9 +21088,20 @@ internal fun action721(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action627(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action627(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17134,9 +21119,19 @@ internal fun action722(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action627(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action627(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17155,9 +21150,21 @@ internal fun action723(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action628(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action628(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17176,9 +21183,20 @@ internal fun action724(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action628(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action628(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17195,9 +21213,20 @@ internal fun action725(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action629(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action629(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17215,9 +21244,19 @@ internal fun action726(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action629(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action629(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17236,9 +21275,21 @@ internal fun action727(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action630(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action630(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17257,9 +21308,20 @@ internal fun action728(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action630(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action630(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17275,9 +21337,19 @@ internal fun action729(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action631(text, tempTriple, sym0, sym1, sym2)
+    return action631(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -17294,9 +21366,18 @@ internal fun action730(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action631(text, tempTriple, sym1, sym2, sym3)
+    return action631(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17314,9 +21395,20 @@ internal fun action731(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action632(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action632(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17334,9 +21426,19 @@ internal fun action732(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action632(text, sym0, tempTriple, sym2, sym3, sym4)
+    return action632(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 // === lrgrammar.rs:36491-38024 — `___action733`..`___action780` ===
@@ -17358,9 +21460,20 @@ internal fun action733(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action633(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action633(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17378,9 +21491,19 @@ internal fun action734(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action633(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action633(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17398,9 +21521,21 @@ internal fun action735(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action634(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action634(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17419,9 +21554,20 @@ internal fun action736(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action634(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action634(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17437,9 +21583,19 @@ internal fun action737(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action635(text, tempTriple, sym0, sym1, sym2)
+    return action635(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -17456,9 +21612,18 @@ internal fun action738(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action635(text, tempTriple, sym1, sym2, sym3)
+    return action635(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17475,9 +21640,20 @@ internal fun action739(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action636(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action636(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17495,9 +21671,19 @@ internal fun action740(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action636(text, sym0, tempTriple, sym2, sym3, sym4)
+    return action636(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17513,9 +21699,19 @@ internal fun action741(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action637(text, tempTriple, sym0, sym1, sym2)
+    return action637(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -17532,9 +21728,18 @@ internal fun action742(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action637(text, tempTriple, sym1, sym2, sym3)
+    return action637(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17552,9 +21757,20 @@ internal fun action743(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action638(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action638(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17572,9 +21788,19 @@ internal fun action744(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action638(text, sym0, tempTriple, sym2, sym3, sym4)
+    return action638(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17589,9 +21815,18 @@ internal fun action745(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action639(text, tempTriple, sym0, sym1)
+    return action639(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+    )
 }
 
 /**
@@ -17607,9 +21842,17 @@ internal fun action746(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action639(text, tempTriple, sym1, sym2)
+    return action639(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -17626,9 +21869,19 @@ internal fun action747(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action640(text, sym0, tempTriple, sym1, sym2)
+    return action640(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -17645,9 +21898,18 @@ internal fun action748(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action640(text, sym0, tempTriple, sym2, sym3)
+    return action640(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17667,9 +21929,22 @@ internal fun action749(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action641(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action641(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17689,9 +21964,21 @@ internal fun action750(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action641(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action641(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -17712,9 +21999,23 @@ internal fun action751(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action642(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action642(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -17735,9 +22036,22 @@ internal fun action752(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action642(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action642(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /**
@@ -17755,9 +22069,21 @@ internal fun action753(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action643(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action643(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17776,9 +22102,20 @@ internal fun action754(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action643(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action643(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17798,9 +22135,22 @@ internal fun action755(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action644(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action644(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17820,9 +22170,21 @@ internal fun action756(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action644(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action644(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -17840,9 +22202,21 @@ internal fun action757(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action645(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action645(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17861,9 +22235,20 @@ internal fun action758(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action645(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action645(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17883,9 +22268,22 @@ internal fun action759(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action646(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action646(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -17905,9 +22303,21 @@ internal fun action760(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action646(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action646(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -17925,9 +22335,20 @@ internal fun action761(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action647(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action647(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -17945,9 +22366,19 @@ internal fun action762(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action647(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action647(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17966,9 +22397,21 @@ internal fun action763(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action648(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action648(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -17987,9 +22430,20 @@ internal fun action764(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action648(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action648(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -18008,9 +22462,21 @@ internal fun action765(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action649(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action649(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -18029,9 +22495,20 @@ internal fun action766(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action649(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action649(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -18051,9 +22528,22 @@ internal fun action767(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action650(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action650(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -18073,9 +22563,21 @@ internal fun action768(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action650(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action650(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /**
@@ -18093,9 +22595,20 @@ internal fun action769(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action651(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action651(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -18113,9 +22626,19 @@ internal fun action770(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action651(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action651(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -18134,9 +22657,21 @@ internal fun action771(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action652(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action652(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -18155,9 +22690,20 @@ internal fun action772(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action652(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action652(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -18175,9 +22721,20 @@ internal fun action773(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action653(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action653(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -18195,9 +22752,19 @@ internal fun action774(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action653(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action653(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -18216,9 +22783,21 @@ internal fun action775(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action654(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action654(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /**
@@ -18237,9 +22816,20 @@ internal fun action776(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action654(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action654(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /**
@@ -18256,9 +22846,19 @@ internal fun action777(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action655(text, tempTriple, sym0, sym1, sym2)
+    return action655(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /**
@@ -18275,9 +22875,18 @@ internal fun action778(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action655(text, tempTriple, sym1, sym2, sym3)
+    return action655(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -18295,9 +22904,20 @@ internal fun action779(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action656(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action656(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /**
@@ -18315,9 +22935,19 @@ internal fun action780(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action656(text, sym0, tempTriple, sym2, sym3, sym4)
+    return action656(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 // === lrgrammar.rs:38025-39656 — `___action781`..`___action828` ===
@@ -18339,9 +22969,22 @@ internal fun action781(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action657(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action657(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action782` — forward to `___action657` (identity leading items). */
@@ -18357,9 +23000,21 @@ internal fun action782(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action657(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action657(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action783` — forward to `___action658` (attrs + empty leading items). */
@@ -18375,9 +23030,23 @@ internal fun action783(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action658(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action658(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action784` — forward to `___action658` (attrs + identity leading items). */
@@ -18394,9 +23063,22 @@ internal fun action784(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action658(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action658(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /** `___action785` — forward to `___action659` (Attribute + TypeParameter + Parameter, no WhereClause; empty leading items). */
@@ -18410,9 +23092,21 @@ internal fun action785(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action659(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action659(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action786` — forward to `___action659` (identity leading items). */
@@ -18427,9 +23121,20 @@ internal fun action786(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action659(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action659(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action787` — forward to `___action660` (attrs + empty leading items). */
@@ -18444,9 +23149,22 @@ internal fun action787(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action660(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action660(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action788` — forward to `___action660` (attrs + identity leading items). */
@@ -18462,9 +23180,21 @@ internal fun action788(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action660(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action660(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action789` — forward to `___action661` (Attribute + Parameter + WhereClause, no TypeParameter; empty leading items). */
@@ -18478,9 +23208,21 @@ internal fun action789(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action661(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action661(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action790` — forward to `___action661` (identity leading items). */
@@ -18495,9 +23237,20 @@ internal fun action790(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action661(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action661(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action791` — forward to `___action662` (attrs + empty leading items). */
@@ -18512,9 +23265,22 @@ internal fun action791(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action662(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action662(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action792` — forward to `___action662` (attrs + identity leading items). */
@@ -18530,9 +23296,21 @@ internal fun action792(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action662(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action662(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action793` — forward to `___action663` (Attribute + Parameter, no TypeParameter, no WhereClause; empty leading items). */
@@ -18545,9 +23323,20 @@ internal fun action793(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action663(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action663(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /** `___action794` — forward to `___action663` (identity leading items). */
@@ -18561,9 +23350,19 @@ internal fun action794(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action663(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action663(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action795` — forward to `___action664` (attrs + empty leading items). */
@@ -18577,9 +23376,21 @@ internal fun action795(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action664(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action664(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action796` — forward to `___action664` (attrs + identity leading items). */
@@ -18594,9 +23405,20 @@ internal fun action796(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action664(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action664(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action797` — forward to `___action665` (Attribute + TypeParameter + WhereClause, no Parameter; empty leading items). */
@@ -18610,9 +23432,21 @@ internal fun action797(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action665(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action665(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action798` — forward to `___action665` (identity leading items). */
@@ -18627,9 +23461,20 @@ internal fun action798(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action665(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action665(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action799` — forward to `___action666` (attrs + empty leading items). */
@@ -18644,9 +23489,22 @@ internal fun action799(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action666(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action666(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action800` — forward to `___action666` (attrs + identity leading items). */
@@ -18662,9 +23520,21 @@ internal fun action800(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action666(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action666(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action801` — forward to `___action667` (Attribute + TypeParameter, no Parameter, no WhereClause; empty leading items). */
@@ -18677,9 +23547,20 @@ internal fun action801(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action667(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action667(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /** `___action802` — forward to `___action667` (identity leading items). */
@@ -18693,9 +23574,19 @@ internal fun action802(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action667(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action667(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action803` — forward to `___action668` (attrs + empty leading items). */
@@ -18709,9 +23600,21 @@ internal fun action803(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action668(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action668(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action804` — forward to `___action668` (attrs + identity leading items). */
@@ -18726,9 +23629,20 @@ internal fun action804(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action668(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action668(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action805` — forward to `___action669` (Attribute + WhereClause, no TypeParameter, no Parameter; empty leading items). */
@@ -18741,9 +23655,20 @@ internal fun action805(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action669(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action669(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /** `___action806` — forward to `___action669` (identity leading items). */
@@ -18757,9 +23682,19 @@ internal fun action806(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action669(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action669(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action807` — forward to `___action670` (attrs + empty leading items). */
@@ -18773,9 +23708,21 @@ internal fun action807(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action670(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action670(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action808` — forward to `___action670` (attrs + identity leading items). */
@@ -18790,9 +23737,20 @@ internal fun action808(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action670(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action670(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action809` — forward to `___action671` (Attribute only, no TypeParameter, no Parameter, no WhereClause; empty leading items). */
@@ -18804,9 +23762,19 @@ internal fun action809(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action671(text, tempTriple, sym0, sym1, sym2)
+    return action671(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+    )
 }
 
 /** `___action810` — forward to `___action671` (identity leading items). */
@@ -18819,9 +23787,18 @@ internal fun action810(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action671(text, tempTriple, sym1, sym2, sym3)
+    return action671(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /** `___action811` — forward to `___action672` (attrs + empty leading items). */
@@ -18834,9 +23811,20 @@ internal fun action811(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action672(text, sym0, tempTriple, sym1, sym2, sym3)
+    return action672(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /** `___action812` — forward to `___action672` (attrs + identity leading items). */
@@ -18850,9 +23838,19 @@ internal fun action812(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action672(text, sym0, tempTriple, sym2, sym3, sym4)
+    return action672(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action813` — forward to `___action673` (Attribute + all quantifiers + trailing GrammarItems; empty leading items). */
@@ -18868,9 +23866,23 @@ internal fun action813(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action673(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action673(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action814` — forward to `___action673` (identity leading items). */
@@ -18887,9 +23899,22 @@ internal fun action814(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action673(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action673(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /** `___action815` — forward to `___action674` (attrs + empty leading items). */
@@ -18906,9 +23931,24 @@ internal fun action815(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action674(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action674(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /** `___action816` — forward to `___action674` (attrs + identity leading items). */
@@ -18926,9 +23966,23 @@ internal fun action816(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action674(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7, sym8)
+    return action674(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+        sym8,
+    )
 }
 
 /** `___action817` — forward to `___action675` (Attribute + TypeParameter + Parameter + trailing GrammarItems, no WhereClause; empty leading items). */
@@ -18943,9 +23997,22 @@ internal fun action817(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action675(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action675(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action818` — forward to `___action675` (identity leading items). */
@@ -18961,9 +24028,21 @@ internal fun action818(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action675(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action675(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action819` — forward to `___action676` (attrs + empty leading items). */
@@ -18979,9 +24058,23 @@ internal fun action819(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action676(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action676(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action820` — forward to `___action676` (attrs + identity leading items). */
@@ -18998,9 +24091,22 @@ internal fun action820(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action676(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action676(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /** `___action821` — forward to `___action677` (Attribute + Parameter + WhereClause + trailing GrammarItems, no TypeParameter; empty leading items). */
@@ -19015,9 +24121,22 @@ internal fun action821(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action677(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action677(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action822` — forward to `___action677` (identity leading items). */
@@ -19033,9 +24152,21 @@ internal fun action822(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action677(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action677(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action823` — forward to `___action678` (attrs + empty leading items). */
@@ -19051,9 +24182,23 @@ internal fun action823(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action678(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action678(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action824` — forward to `___action678` (attrs + identity leading items). */
@@ -19070,9 +24215,22 @@ internal fun action824(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action678(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action678(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /** `___action825` — forward to `___action679` (Attribute + Parameter + trailing GrammarItems, no TypeParameter, no WhereClause; empty leading items). */
@@ -19086,9 +24244,21 @@ internal fun action825(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action679(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action679(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action826` — forward to `___action679` (identity leading items). */
@@ -19103,9 +24273,20 @@ internal fun action826(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action679(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action679(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action827` — forward to `___action680` (attrs + empty leading items). */
@@ -19120,9 +24301,22 @@ internal fun action827(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action680(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action680(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action828` — forward to `___action680` (attrs + identity leading items). */
@@ -19138,9 +24332,21 @@ internal fun action828(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action680(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action680(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 // === lrgrammar.rs:39657-40200 — `___action829`..`___action844` ===
@@ -19157,9 +24363,22 @@ internal fun action829(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action681(text, tempTriple, sym0, sym1, sym2, sym3, sym4, sym5)
+    return action681(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action830` — forward to `___action681` (attrs + identity leading items). */
@@ -19175,9 +24394,21 @@ internal fun action830(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action681(text, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action681(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action831` — forward to `___action682` (Use prefix + attrs + empty leading items). */
@@ -19193,9 +24424,23 @@ internal fun action831(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action682(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5, sym6)
+    return action682(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action832` — forward to `___action682` (Use prefix + attrs + identity leading items). */
@@ -19212,9 +24457,22 @@ internal fun action832(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action682(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6, sym7)
+    return action682(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+        sym7,
+    )
 }
 
 /** `___action833` — forward to `___action683` (attrs + empty leading items; no WhereClause). */
@@ -19228,9 +24486,21 @@ internal fun action833(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action683(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action683(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action834` — forward to `___action683` (attrs + identity leading items; no WhereClause). */
@@ -19245,9 +24515,20 @@ internal fun action834(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action683(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action683(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action835` — forward to `___action684` (Use prefix + attrs + empty leading items; no WhereClause). */
@@ -19262,9 +24543,22 @@ internal fun action835(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action684(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action684(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action836` — forward to `___action684` (Use prefix + attrs + identity leading items; no WhereClause). */
@@ -19280,9 +24574,21 @@ internal fun action836(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action684(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action684(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action837` — forward to `___action685` (attrs + empty leading items; no TypeParameter). */
@@ -19296,9 +24602,21 @@ internal fun action837(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action685(text, tempTriple, sym0, sym1, sym2, sym3, sym4)
+    return action685(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action838` — forward to `___action685` (attrs + identity leading items; no TypeParameter). */
@@ -19313,9 +24631,20 @@ internal fun action838(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action685(text, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action685(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action839` — forward to `___action686` (Use prefix + attrs + empty leading items; no TypeParameter). */
@@ -19330,9 +24659,22 @@ internal fun action839(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action686(text, sym0, tempTriple, sym1, sym2, sym3, sym4, sym5)
+    return action686(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 /** `___action840` — forward to `___action686` (Use prefix + attrs + identity leading items; no TypeParameter). */
@@ -19348,9 +24690,21 @@ internal fun action840(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action686(text, sym0, tempTriple, sym2, sym3, sym4, sym5, sym6)
+    return action686(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+        sym6,
+    )
 }
 
 /** `___action841` — forward to `___action687` (attrs + empty leading items; no TypeParameter/WhereClause). */
@@ -19363,9 +24717,20 @@ internal fun action841(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action687(text, tempTriple, sym0, sym1, sym2, sym3)
+    return action687(
+        text,
+        tempTriple,
+        sym0,
+        sym1,
+        sym2,
+        sym3,
+    )
 }
 
 /** `___action842` — forward to `___action687` (attrs + identity leading items; no TypeParameter/WhereClause). */
@@ -19379,9 +24744,19 @@ internal fun action842(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action202(text, sym0)
+    val temp0 = action202(
+        text,
+        sym0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action687(text, tempTriple, sym1, sym2, sym3, sym4)
+    return action687(
+        text,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action843` — forward to `___action688` (Use prefix + attrs + empty leading items; no TypeParameter/WhereClause). */
@@ -19395,9 +24770,21 @@ internal fun action843(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym0.third
     val end0 = sym1.first
-    val temp0 = action201(text, start0, end0)
+    val temp0 = action201(
+        text,
+        start0,
+        end0,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action688(text, sym0, tempTriple, sym1, sym2, sym3, sym4)
+    return action688(
+        text,
+        sym0,
+        tempTriple,
+        sym1,
+        sym2,
+        sym3,
+        sym4,
+    )
 }
 
 /** `___action844` — forward to `___action688` (Use prefix + attrs + identity leading items; no TypeParameter/WhereClause). */
@@ -19412,9 +24799,20 @@ internal fun action844(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
     val start0 = sym1.first
     val end0 = sym1.third
-    val temp0 = action202(text, sym1)
+    val temp0 = action202(
+        text,
+        sym1,
+    )
     val tempTriple = Triple(start0, temp0, end0)
-    return action688(text, sym0, tempTriple, sym2, sym3, sym4, sym5)
+    return action688(
+        text,
+        sym0,
+        tempTriple,
+        sym2,
+        sym3,
+        sym4,
+        sym5,
+    )
 }
 
 // === lrgrammar.rs:40202-40219 ===
@@ -27786,11 +33184,27 @@ internal fun action431(
     val end0 = sym0.first
     val start1 = sym1.third
     val end1 = sym2.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    val temp1 = action198(text, start1, end1)
+    val temp1 = action198(
+        text,
+        start1,
+        end1,
+    )
     val temp1Triple = Triple(start1, temp1, end1)
-    return action102(text, temp0Triple, sym0, sym1, temp1Triple, sym2, sym3)
+    return action102(
+        text,
+        temp0Triple,
+        sym0,
+        sym1,
+        temp1Triple,
+        sym2,
+        sym3,
+    )
 }
 
 /** `___action439` — forward to `___action96` with empty leading slots. */
@@ -27804,11 +33218,26 @@ internal fun action439(
     val end0 = sym0.first
     val start1 = sym0.third
     val end1 = sym1.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    val temp1 = action198(text, start1, end1)
+    val temp1 = action198(
+        text,
+        start1,
+        end1,
+    )
     val temp1Triple = Triple(start1, temp1, end1)
-    return action96(text, temp0Triple, sym0, temp1Triple, sym1, sym2)
+    return action96(
+        text,
+        temp0Triple,
+        sym0,
+        temp1Triple,
+        sym1,
+        sym2,
+    )
 }
 
 /** `___action444` — forward to `___action127` with empty leading slot. */
@@ -27818,9 +33247,17 @@ internal fun action444(
 ): Result<String> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    return action127(text, temp0Triple, sym0)
+    return action127(
+        text,
+        temp0Triple,
+        sym0,
+    )
 }
 
 /** `___action445` — forward to `___action126` with empty leading slot. */
@@ -27830,9 +33267,17 @@ internal fun action445(
 ): Result<io.github.kotlinmania.lalrpop_kotlin.Atom> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action198(text, start0, end0)
+    val temp0 = action198(
+        text,
+        start0,
+        end0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    return action126(text, temp0Triple, sym0)
+    return action126(
+        text,
+        temp0Triple,
+        sym0,
+    )
 }
 
 /** `___action459` — forward to `___action431` with trailing lookbehind slot. */
@@ -27844,9 +33289,19 @@ internal fun action459(
 ): Result<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym2.third
     val end0 = sym2.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    return action431(text, sym0, sym1, sym2, temp0Triple)
+    return action431(
+        text,
+        sym0,
+        sym1,
+        sym2,
+        temp0Triple,
+    )
 }
 
 /** `___action467` — forward to `___action439` with trailing lookbehind slot. */
@@ -27857,9 +33312,18 @@ internal fun action467(
 ): Result<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val start0 = sym1.third
     val end0 = sym1.third
-    val temp0 = action197(text, start0, end0)
+    val temp0 = action197(
+        text,
+        start0,
+        end0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    return action439(text, sym0, sym1, temp0Triple)
+    return action439(
+        text,
+        sym0,
+        sym1,
+        temp0Triple,
+    )
 }
 
 /** `___action501` — forward to `___action459` with empty leading attrs. */
@@ -27870,9 +33334,18 @@ internal fun action501(
 ): Result<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym0.first
     val end0 = sym0.first
-    val temp0 = action199(text, start0, end0)
+    val temp0 = action199(
+        text,
+        start0,
+        end0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    return action459(text, temp0Triple, sym0, sym1)
+    return action459(
+        text,
+        temp0Triple,
+        sym0,
+        sym1,
+    )
 }
 
 /** `___action502` — forward to `___action459` with the attrs from sym0. */
@@ -27884,9 +33357,17 @@ internal fun action502(
 ): Result<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val start0 = sym0.first
     val end0 = sym0.third
-    val temp0 = action200(text, sym0)
+    val temp0 = action200(
+        text,
+        sym0,
+    )
     val temp0Triple = Triple(start0, temp0, end0)
-    return action459(text, temp0Triple, sym1, sym2)
+    return action459(
+        text,
+        temp0Triple,
+        sym1,
+        sym2,
+    )
 }
 
 // === lrgrammar.rs:6681-8366 — `___reduce` dispatcher ===
