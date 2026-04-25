@@ -6640,9 +6640,7 @@ internal fun accepts(
     optInteger: Int?,
 ): Boolean {
     val states = baseStates.toMutableList()
-    if (errorState != null) {
-        states.add(errorState)
-    }
+    if (errorState != null) states.add(errorState)
     while (true) {
         var statesLen = states.size
         var top = states[statesLen - 1]
@@ -6650,12 +6648,8 @@ internal fun accepts(
             null -> EOF_ACTION[top.toInt()]
             else -> action(top, optInteger)
         }
-        if (act.toInt() == 0) {
-            return false
-        }
-        if (act > 0) {
-            return true
-        }
+        if (act.toInt() == 0) return false
+        if (act > 0) return true
         val sim = simulateReduce(
             (-(act + 1)).toShort(),
         )
@@ -7907,16 +7901,18 @@ internal fun action6(
     sym9: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     items: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem>, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar(
-        prefix = "__", // adjusted by `parseGrammar`
-        span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        typeParameters = (tps.second ?: emptyList()).toMutableList(),
-        parameters = (parameters.second ?: emptyList()).toMutableList(),
-        whereClauses = (whereClauses.second ?: emptyList()).toMutableList(),
-        items = (uses.second + items.second).toMutableList(),
-        attributes = attributes.second.toMutableList(),
-        moduleAttributes = moduleAttributes.second.toMutableList(),
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Grammar(
+            prefix = "__", // adjusted by `parseGrammar`
+            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            typeParameters = (tps.second ?: emptyList()).toMutableList(),
+            parameters = (parameters.second ?: emptyList()).toMutableList(),
+            whereClauses = (whereClauses.second ?: emptyList()).toMutableList(),
+            items = (uses.second + items.second).toMutableList(),
+            attributes = attributes.second.toMutableList(),
+            moduleAttributes = moduleAttributes.second.toMutableList(),
+        )
+    }
 }
 
 internal fun action7(
@@ -8166,17 +8162,19 @@ internal fun action33(
     sym6: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     a: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative>, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.Nonterminal(
-        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalData(
-            visibility = v.second,
-            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-            name = n.second.first,
-            attributes = attributes.second.toMutableList(),
-            args = n.second.second.toMutableList(),
-            typeDecl = t.second,
-            alternatives = a.second.toMutableList(),
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.Nonterminal(
+            io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.NonterminalData(
+                visibility = v.second,
+                span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+                name = n.second.first,
+                attributes = attributes.second.toMutableList(),
+                args = n.second.second.toMutableList(),
+                typeDecl = t.second,
+                alternatives = a.second.toMutableList(),
+            )
         )
-    )
+    }
 }
 
 internal fun action34(
@@ -8196,11 +8194,13 @@ internal fun action35(
     arg: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg?, Int>,
     hi: Triple<Int, Int, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute(
-        idSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        id = id.second,
-        arg = arg.second ?: io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg.default(),
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Attribute(
+            idSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            id = id.second,
+            arg = arg.second ?: io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AttributeArg.default(),
+        )
+    }
 }
 
 internal fun action36(
@@ -8271,13 +8271,15 @@ internal fun action43(
     a: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind?, Int>,
     hi: Triple<Int, Int, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
-        span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        expr = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = s.second.toMutableList()),
-        condition = c.second,
-        action = a.second,
-        attributes = attr.second.toMutableList(),
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
+            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            expr = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = s.second.toMutableList()),
+            condition = c.second,
+            action = a.second,
+            attributes = attr.second.toMutableList(),
+        )
+    }
 }
 
 internal fun action44(
@@ -8287,13 +8289,15 @@ internal fun action44(
     a: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ActionKind, Int>,
     hi: Triple<Int, Int, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
-        span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        expr = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = mutableListOf()),
-        condition = c.second,
-        action = a.second,
-        attributes = mutableListOf(),
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Alternative(
+            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            expr = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExprSymbol(symbols = mutableListOf()),
+            condition = c.second,
+            action = a.second,
+            attributes = mutableListOf(),
+        )
+    }
 }
 
 internal fun action45(
@@ -8332,12 +8336,14 @@ internal fun action49(
     b: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.Atom, Int>,
     hi: Triple<Int, Int, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition(
-        span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        lhs = a.second,
-        rhs = b.second,
-        op = op.second,
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Condition(
+            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            lhs = a.second,
+            rhs = b.second,
+            op = op.second,
+        )
+    }
 }
 
 internal fun action50(
@@ -8568,9 +8574,11 @@ internal fun action73(
     sym4: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     hi: Triple<Int, Int, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple.new(
-        (tuples.second + listOfNotNull(e.second)).toMutableList()
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Tuple.new(
+            (tuples.second + listOfNotNull(e.second)).toMutableList()
+        )
+    }
 }
 
 internal fun action74(
@@ -8614,7 +8622,9 @@ internal fun action78(
     sym1: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Symbol, Int>,
     sym2: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.OfSymbol(sym1.second.kind)
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef.OfSymbol(sym1.second.kind)
+    }
 }
 
 internal fun action79(
@@ -8720,10 +8730,12 @@ internal fun action87(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path {
     val ids = h.second.toMutableList()
     ids.add(t.second)
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path(
-        absolute = a.second != null,
-        ids = ids,
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Path(
+            absolute = a.second != null,
+            ids = ids,
+        )
+    }
 }
 
 /** `___action88`: `GrammarItem::ExternToken` with associated types and an enum_token. */
@@ -8740,13 +8752,15 @@ internal fun action88(
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
     val associated = a0.second.toMutableList()
     associated.addAll(a1.second)
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.ExternToken(
-        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExternToken(
-            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-            associatedTypes = associated,
-            enumToken = et.second,
-        ),
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.ExternToken(
+            io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExternToken(
+                span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+                associatedTypes = associated,
+                enumToken = et.second,
+            ),
+        )
+    }
 }
 
 /** `___action89`: `GrammarItem::ExternToken` without an enum_token. */
@@ -8759,13 +8773,15 @@ internal fun action89(
     a0: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType>, Int>,
     sym5: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.ExternToken(
-        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExternToken(
-            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-            associatedTypes = a0.second.toMutableList(),
-            enumToken = null,
-        ),
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.GrammarItem.ExternToken(
+            io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.ExternToken(
+                span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+                associatedTypes = a0.second.toMutableList(),
+                enumToken = null,
+            ),
+        )
+    }
 }
 
 /** `___action90`: wrap `MatchToken` as `GrammarItem::MatchToken`. */
@@ -8854,13 +8870,15 @@ internal fun action96(
 ): Result<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem> {
     val to = io.github.kotlinmania.lalrpop_kotlin.parser.parseMatchMapping(p.second, start.second + 2)
         .getOrElse { return Result.failure(it) }
-    return Result.success(
-        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.Mapped(
-            symbol = from.second,
-            mapping = to,
-            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        ),
-    )
+    return run {
+        Result.success(
+            io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.MatchItem.Mapped(
+                symbol = from.second,
+                mapping = to,
+                span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            ),
+        )
+    }
 }
 
 /** `___action97`: identity `TerminalLiteral`. */
@@ -8899,11 +8917,13 @@ internal fun action100(
     c: Triple<Int, List<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion>, Int>,
     sym6: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken(
-        typeName = t.second,
-        typeSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        conversions = c.second.toMutableList(),
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.EnumToken(
+            typeName = t.second,
+            typeSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            conversions = c.second.toMutableList(),
+        )
+    }
 }
 
 /** `___action101`: `AssociatedType { type_span, type_name, type_ref }`. */
@@ -8917,11 +8937,13 @@ internal fun action101(
     t: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef, Int>,
     sym6: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType(
-        typeSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        typeName = n.second,
-        typeRef = t.second,
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.AssociatedType(
+            typeSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            typeName = n.second,
+            typeRef = t.second,
+        )
+    }
 }
 
 // === lrgrammar.rs:21208-21230 — `___action102` ===
@@ -8941,14 +8963,16 @@ internal fun action102(
 ): Result<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion> {
     val pattern = io.github.kotlinmania.lalrpop_kotlin.parser.parsePattern(p.second, start.second + 2)
         .getOrElse { return Result.failure(it) }
-    return Result.success(
-        io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion(
-            span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-            attributes = attributes.second.toMutableList(),
-            from = from.second,
-            to = pattern,
-        ),
-    )
+    return run {
+        Result.success(
+            io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Conversion(
+                span = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+                attributes = attributes.second.toMutableList(),
+                from = from.second,
+                to = pattern,
+            ),
+        )
+    }
 }
 
 /** `___action103`: wrap a `PatternKind<TypeRef>` in a `Pattern { span, kind }`. */
@@ -9085,11 +9109,13 @@ internal fun action114(
     sym3: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>,
     pat: Triple<Int, io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef>, Int>,
 ): io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern(
-        fieldSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
-        fieldName = id.second,
-        pattern = pat.second,
-    )
+    return run {
+        io.github.kotlinmania.lalrpop_kotlin.grammar.pattern.FieldPattern(
+            fieldSpan = io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span(lo.second, hi.second),
+            fieldName = id.second,
+            pattern = pat.second,
+        )
+    }
 }
 
 /** `___action115`: `NonterminalString(Atom::from(i))` for raw identifiers. */
@@ -25962,8 +25988,9 @@ internal class LrParseErrorException(val parseError: LrParseError) : RuntimeExce
  * become top-level extension functions whose receiver types discriminate
  * the incoming shape.
  */
-internal fun Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>.toTriple():
-    Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>> = Result.success(this)
+internal fun Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>.toTriple(): Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>> {
+    return Result.success(this)
+}
 
 /**
  * Fallible-lexer case: lexer errors are mapped to the user-error variant
@@ -25975,15 +26002,9 @@ internal fun Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>.toTr
  * We unwrap it here and rewrap as an [LrParseErrorException] so callers
  * can observe the user-error variant via [LrParseErrorException.parseError].
  */
-internal fun Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>>.toTriple():
-    Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>> = fold(
+internal fun Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>>.toTriple(): Result<Triple<Int, io.github.kotlinmania.lalrpop_kotlin.tok.Tok, Int>> = fold(
     onSuccess = { Result.success(it) },
-    onFailure = { err ->
-        val tokErr = (err as? io.github.kotlinmania.lalrpop_kotlin.tok.TokError)?.err
-            ?: return@fold Result.failure(err)
-        Result.failure(LrParseErrorException(io.github.kotlinmania.lalrpop_kotlin.runtime.ParseError.User(error = tokErr)))
-    },
-)
+    onFailure = { err -> Result.failure((err as? io.github.kotlinmania.lalrpop_kotlin.tok.TokError)?.err?.let { LrParseErrorException(io.github.kotlinmania.lalrpop_kotlin.runtime.ParseError.User(error = it)) } ?: err) })
 
 
 // === lrgrammar.rs:9493-19691 — `___reduce0`..`___reduce534` ===
