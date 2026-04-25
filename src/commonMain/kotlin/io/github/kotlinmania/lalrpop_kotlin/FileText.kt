@@ -1,0 +1,136 @@
+// port-lint: source src/file_text.rs
+package io.github.kotlinmania.lalrpop_kotlin
+
+/*
+ * Copyright 2019 The Starlark in Rust Authors.
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ * Copyright (c) 2025 Sydney Renee, The Solace Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import io.github.kotlinmania.lalrpop_kotlin.grammar.parseTree.Span
+
+class FileText(
+    private val path: String,
+    private val inputStr: String,
+    private val newlines: List<Int>,
+) {
+    companion object {
+        fun fromPath(path: String): FileText {
+            // Rust: std::fs::File::open + read_to_string
+            // commonMain has no filesystem; callers that need disk I/O
+            // should supply the content from a platform-specific source
+            // and invoke `new` directly.
+            throw UnsupportedOperationException(
+                "FileText.fromPath is not available in commonMain; use FileText.new(path, inputStr)",
+            )
+        }
+
+        fun new(path: String, inputStr: String): FileText {
+            val newlineIndices: List<Int> = buildList {
+                add(0)
+                // Kotlin tokenizer locations are reported as String indices,
+                // so we track newline boundaries in the same coordinate space.
+                for ((i, ch) in inputStr.withIndex()) {
+                    if (ch == '\n') {
+                        add(i + 1) // index of first char in the line
+                    }
+                }
+            }
+
+            return FileText(
+                path = path,
+                inputStr = inputStr,
+                newlines = newlineIndices,
+            )
+        }
+
+        // #[cfg(test)]
+        fun test(): FileText = new("test.lalrpop", "")
+    }
+
+    fun text(): String = inputStr
+
+    fun spanStr(span: Span): String {
+        val (startLine, startCol) = lineCol(span.start)
+        val (endLine, endCol) = lineCol(span.end)
+        return "$path:${startLine + 1}:${startCol + 1}: ${endLine + 1}:$endCol"
+    }
+
+    fun lineCol(pos: Int): Pair<Int, Int> {
+        val numLines = newlines.size
+        val nextLine = newlines.indexOfFirst { it > pos }
+        val line = if (nextLine >= 0) nextLine - 1 else numLines - 1
+
+        // offset of the first character in `line`
+        val lineOffset = newlines[line]
+
+        // find the column; use `saturating_sub` in case `pos` is the
+        // newline itself, which we'll call column 0
+        val col = pos - lineOffset
+
+        return Pair(line, col)
+    }
+
+    private fun lineText(lineNum: Int): String {
+        val startOffset = newlines[lineNum]
+        return if (lineNum == newlines.size - 1) {
+            inputStr.substring(startOffset)
+        } else {
+            val endOffset = newlines[lineNum + 1]
+            inputStr.substring(startOffset, endOffset - 1)
+        }
+    }
+
+    fun spanText(span: Span): String = inputStr.substring(span.start, span.end)
+
+    fun highlight(span: Span, out: StringBuilder) {
+        val (startLine, startCol) = lineCol(span.start)
+        val (endLine, endCol) = lineCol(span.end)
+
+        // (*) use `saturating_sub` since the start line could be the newline
+        // itself, in which case we'll call it column zero
+
+        // span is within one line:
+        if (startLine == endLine) {
+            val text = lineText(startLine)
+            out.appendLine("  $text")
+
+            if (endCol - startCol <= 1) {
+                out.appendLine("  ${Repeat(' ', startCol)}^")
+            } else {
+                val width = endCol - startCol
+                out.appendLine("  ${Repeat(' ', startCol)}~${Repeat('~', saturatingSub(width, 2))}~")
+            }
+        } else {
+            // span is across many lines, find the maximal width of any of those
+            val lineStrs: List<String> = (startLine..endLine).map { i -> lineText(i) }
+            val maxLen = lineStrs.maxOf { it.length }
+            out.appendLine("  ${Repeat(' ', startCol)}${Repeat('~', maxLen - startCol)}~+")
+            for (line in lineStrs.subList(0, lineStrs.size - 1)) {
+                out.appendLine("| ${line.padEnd(maxLen)} |")
+            }
+            out.appendLine("| ${lineStrs[lineStrs.size - 1]}")
+            out.appendLine("+~${Repeat('~', endCol)}")
+        }
+    }
+}
+
+private fun saturatingSub(a: Int, b: Int): Int = if (a >= b) a - b else 0
+
+private class Repeat(private val ch: Char, private val count: Int) {
+    override fun toString(): String = buildString {
+        repeat(count) { append(ch) }
+    }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "port",
+  "name": "lalrpop-kotlin",
+  "source": {
+    "path": "tmp/lalrpop-rs/lalrpop/src",
+    "lang": "rust"
+  },
+  "target": {
+    "path": "src/commonMain/kotlin/io/github/kotlinmania/lalrpop_kotlin",
+    "lang": "kotlin"
+  },
+  "checks": {
+    "deep": true,
+    "missing": true,
+    "todos": true,
+    "lint": true
+  }
+}

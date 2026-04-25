@@ -1,0 +1,32 @@
+lalrpop-kotlin
+==============
+
+A Kotlin Multiplatform port of LALRPOP.
+
+Copyright 2015-2025 The LALRPOP Project Developers (original Rust implementation)
+  Principal author: Niko Matsakis <niko@alum.mit.edu>
+  Upstream:         https://github.com/lalrpop/lalrpop
+
+Copyright (c) 2026 Sydney Renee, The Solace Project (Kotlin port)
+  Maintainer:       Sydney Renee <sydney@solace.ofharmony.ai>
+  Fork:             https://github.com/KotlinMania/lalrpop-kotlin
+
+This product includes software developed by the LALRPOP Project Developers
+and relicensed here under the same dual Apache-2.0 OR MIT terms as the
+upstream project. The Kotlin translation is a derivative work; all design
+credit for the grammar language, LR(1) table construction, macro expansion,
+and code-generation architecture belongs to the upstream authors.
+
+Licensed under either of
+
+  - Apache License, Version 2.0 (see LICENSE-APACHE or
+    http://www.apache.org/licenses/LICENSE-2.0)
+  - MIT license (see LICENSE-MIT or
+    http://opensource.org/licenses/MIT)
+
+at your option.
+
+Unless you explicitly state otherwise, any contribution intentionally
+submitted for inclusion in this work by you, as defined in the Apache-2.0
+license, shall be dual licensed as above, without any additional terms or
+conditions.

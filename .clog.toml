@@ -1,6 +1,0 @@
-[clog]
-repository = "https://github.com/lalrpop/lalrpop"
-
-changelog = "RELEASES.md"
-
-from-latest-tag = true

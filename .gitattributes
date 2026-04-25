@@ -1,3 +1,0 @@
-* text=auto
-
-lalrpop/src/parser/lrgrammar.lalrpop text eol=lf

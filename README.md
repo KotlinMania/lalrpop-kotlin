@@ -1,64 +1,40 @@
-# LALRPOP
+# lalrpop-kotlin
 
-[![Join the chat at https://gitter.im/lalrpop/Lobby](https://badges.gitter.im/lalrpop/Lobby.svg)](https://gitter.im/lalrpop/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+A Kotlin Multiplatform port of [LALRPOP], the Rust LR(1) parser generator.
 
-[![Deploy](https://github.com/lalrpop/lalrpop/actions/workflows/deploy.yml/badge.svg)](https://github.com/lalrpop/lalrpop/actions/workflows/deploy.yml)
+This project aims to bring LALRPOP's grammar-driven parser generation to the JVM, Native, and JS ecosystems. The long-term goal is a Gradle plugin that consumes `.lalrpop` grammar files and emits Kotlin parser code at build time — the same role LALRPOP's `build.rs` integration plays in Rust.
 
-LALRPOP is a Rust parser generator framework with *usability* as its
-primary goal. You should be able to write compact, DRY, readable
-grammars. To this end, LALRPOP offers a number of nifty features:
+## Status
 
-0. Nice error messages in case parser constructor fails.
-1. Macros that let you extract common parts of your grammar. This
-   means you can go beyond simple repetition like `Id*` and define
-   things like `Comma<Id>` for a comma-separated list of identifiers.
-2. Macros can also create subsets, so that you easily do something
-   like `Expr<"all">` to represent the full range of expressions, but
-   `Expr<"if">` to represent the subset of expressions that can appear
-   in an `if` expression.
-3. Builtin support for operators like `*` and `?`.
-4. Compact defaults so that you can avoid writing action code much of the
-   time.
-5. Type inference so you can often omit the types of nonterminals.
+Early work. Rust sources from upstream LALRPOP live under [tmp/lalrpop-rs/](tmp/lalrpop-rs/) as the translation reference. Kotlin code lives under `src/` (forthcoming).
 
-Despite its name, LALRPOP in fact uses LR(1) by default (though you
-can opt for LALR(1)), and really I hope to eventually move to
-something general that can handle all CFGs (like GLL, GLR, LL(\*),
-etc).
+## Why
 
-### Documentation
+Kotlin projects that port grammar-driven Rust crates (for example, [starlark-kotlin]) currently carry committed parser tables — the output of running LALRPOP once in Rust and transliterating its 20k+-line output by hand. That output is awkward to maintain, awkward to audit, and diverges from upstream every time the grammar changes.
 
-[The LALRPOP book] covers all things LALRPOP -- or at least it intends
-to! Here are some tips:
+A native Kotlin LALRPOP lets `.lalrpop` files be the single source of truth on the Kotlin side as well.
 
-- The [tutorial] covers the basics of setting up a LALRPOP parser.
-- For the impatient, you may prefer the [quick start guide] section, which describes
-  how to add LALRPOP to your `Cargo.toml`.
-- Returning users of LALRPOP may benefit from the [cheat sheet].
-- The [advanced setup] chapter shows how to configure other aspects of LALRPOP's
-  preprocessing.
-- docs.rs API documentation for [lalrpop](https://docs.rs/lalrpop/latest/lalrpop/) and [lalrpop-util]
-- If you have any questions join our [gitter lobby].
+## Layout
 
-### Example Uses
+- `tmp/lalrpop-rs/lalrpop/` — the generator crate (the bulk of the port surface)
+- `tmp/lalrpop-rs/lalrpop-util/` — runtime used by generated parsers
+- `tmp/lalrpop-rs/lalrpop-test/` — conformance tests (used to validate the Kotlin port)
+- `src/` — Kotlin implementation (forthcoming)
 
-- [LALRPOP] is itself implemented in LALRPOP.
-- [Gluon] is a statically typed functional programming language.
-- [RustPython] is Python 3.5+ rewritten in Rust
-- [Solang] is Ethereum Solidity rewritten in Rust
+## Acknowledgements
 
-[The LALRPOP book]: https://lalrpop.github.io/lalrpop/
-[quick start guide]: https://lalrpop.github.io/lalrpop/quick_start_guide.html
-[advanced setup]: https://lalrpop.github.io/lalrpop/advanced_setup.html
-[cheat sheet]: https://lalrpop.github.io/lalrpop/cheatsheet.html
-[tutorial]: https://lalrpop.github.io/lalrpop/tutorial/index.html
-[LALRPOP]: https://github.com/lalrpop/lalrpop/blob/master/lalrpop/src/parser/lrgrammar.lalrpop
-[Gluon]: https://github.com/gluon-lang/gluon/blob/master/parser/src/grammar.lalrpop
-[RustPython]: https://github.com/RustPython/Parser/blob/main/parser/src/python.lalrpop
-[Solang]: https://github.com/hyperledger/solang/blob/main/solang-parser/src/solidity.lalrpop
-[gitter lobby]: https://gitter.im/lalrpop/Lobby
-[lalrpop-util]: https://docs.rs/lalrpop-util/latest/lalrpop_util/
+LALRPOP is the work of [Niko Matsakis] and the LALRPOP contributors. This fork exists only because their design is worth translating — all credit for the architecture, grammar language, and LR(1) machinery belongs upstream. See the original project at <https://github.com/lalrpop/lalrpop>.
 
-### Contributing
+## License
 
-You **really** should read `CONTRIBUTING.md` if you intend to change LALRPOP's own grammar.
+Dual-licensed under **Apache-2.0 OR MIT**, matching upstream. See [LICENSE-APACHE](LICENSE-APACHE), [LICENSE-MIT](LICENSE-MIT), and [NOTICE](NOTICE).
+
+## Maintainer
+
+Sydney Renee `<sydney@solace.ofharmony.ai>` — The Solace Project.
+
+Repository: <https://github.com/KotlinMania/lalrpop-kotlin>
+
+[LALRPOP]: https://github.com/lalrpop/lalrpop
+[starlark-kotlin]: https://github.com/KotlinMania/starlark-kotlin
+[Niko Matsakis]: https://github.com/nikomatsakis

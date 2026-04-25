@@ -1,4 +1,32 @@
-target
-*~
-TAGS
-**/*.bak
+/target/
+Cargo.lock
+*.wasm
+rust-source/
+
+# Kotlin/Gradle build artifacts
+build/
+.gradle/
+*.class
+*.jar
+*.war
+*.ear
+
+# Keep the Gradle wrapper jar checked in so CI can run `./gradlew`.
+!gradle/wrapper/gradle-wrapper.jar
+.idea/
+*.iml
+out/
+tmp/
+
+# AST distance tool reports
+port_status_report.md
+high_priority_ports.md
+
+# AST distance agent state and lock files
+.cache/
+*.lock
+
+# AST distance compiled binary (CMake output, rebuild from source)
+tools/ast_distance/ast_distance
+tools/ast_distance/ast_distance.real
+tools/ast_distance/build/

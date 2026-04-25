@@ -218,16 +218,32 @@ public:
         fs::path rel_base = root_path;
         roots_to_scan.push_back(root_path);
         if (language == "kotlin") {
-            const std::string marker = "/src/commonMain/kotlin/";
-            const auto pos = root_path.find(marker);
+            // Accept either a leading-slash or bare `src/commonMain/kotlin/`
+            // segment, since callers often pass the root as a relative path.
+            const std::string leading = "src/commonMain/kotlin/";
+            size_t pos = std::string::npos;
+            size_t skip = 0;
+            if (root_path.rfind(leading, 0) == 0) {
+                pos = 0;
+                skip = 0;
+            } else {
+                const std::string embedded = "/" + leading;
+                size_t found = root_path.find(embedded);
+                if (found != std::string::npos) {
+                    pos = found;
+                    skip = 1;  // skip the leading '/'
+                }
+            }
             if (pos != std::string::npos) {
                 const std::string repo_root = root_path.substr(0, pos);
-                const std::string suffix = root_path.substr(pos + marker.size());
-                const fs::path test_root = fs::path(repo_root) / "src" / "commonTest" / "kotlin" / suffix;
+                const std::string suffix = root_path.substr(pos + skip + leading.size());
+                fs::path test_root = repo_root.empty()
+                    ? fs::path("src") / "commonTest" / "kotlin" / suffix
+                    : fs::path(repo_root) / "src" / "commonTest" / "kotlin" / suffix;
                 if (fs::exists(test_root) && fs::is_directory(test_root)) {
                     roots_to_scan.push_back(test_root);
                     // Use repo root for relative paths so commonMain/commonTest remain distinct.
-                    rel_base = repo_root;
+                    rel_base = repo_root.empty() ? fs::path(".") : fs::path(repo_root);
                 }
             }
         }
@@ -590,6 +606,12 @@ public:
         bool is_stub = false;
         bool matched_by_header = false;  // True if matched via "Transliterated from:"
 
+        // Additional target files that explicitly point to the same source via
+        // port-lint / transliterated_from headers (e.g. `commonTest` test ports
+        // pointing back to the commonMain source). Their file-system paths are
+        // pooled into function-parity extraction so tests count toward parity.
+        std::vector<std::string> additional_target_paths;
+
         // Function parity (name-based) within a file. Used to prevent "signature-only" stubs.
         int source_function_count = 0;
         int target_function_count = 0;
@@ -886,6 +908,45 @@ public:
             matched_targets.insert(tgt_path);
         }
 
+        // Pool extra targets that explicitly point at an already-matched source
+        // (typically commonTest FooTest.kt files declaring `// port-lint: source
+        // src/foo/bar.rs`). This must run before name-based matching so the
+        // test file doesn't get consumed by a weak stem match to some
+        // unrelated Rust file.
+        {
+            std::map<std::string, Match*> match_by_src;
+            for (auto& m : matches) match_by_src[m.source_path] = &m;
+
+            for (const auto& [tgt_path, tgt_file] : target.files) {
+                if (matched_targets.count(tgt_path)) continue;
+                if (tgt_file.transliterated_from.empty()) continue;
+
+                Match* best = nullptr;
+                float best_score = 0.0f;
+                for (auto& [src_path, src_file] : source.files) {
+                    auto mit = match_by_src.find(src_path);
+                    if (mit == match_by_src.end()) continue;
+                    float score = 0.0f;
+                    if (tgt_file.transliterated_from.find(src_file.relative_path) != std::string::npos) {
+                        score = 1.0f;
+                    } else if (tgt_file.transliterated_from.ends_with("/" + src_file.filename) ||
+                               tgt_file.transliterated_from == src_file.filename) {
+                        score = 0.9f;
+                    }
+                    if (score > best_score) {
+                        best_score = score;
+                        best = mit->second;
+                    }
+                }
+                if (best != nullptr) {
+                    for (const auto& p : tgt_file.paths) {
+                        best->additional_target_paths.push_back(p);
+                    }
+                    matched_targets.insert(tgt_path);
+                }
+            }
+        }
+
         // Second pass: Name-based matching for remaining files
         std::vector<std::tuple<float, std::string, std::string>> candidates;
 
@@ -971,6 +1032,7 @@ public:
                 unmatched_target.push_back(tgt_path);
             }
         }
+
     }
 
     /**
@@ -1436,8 +1498,12 @@ public:
                     // reduce the score even if the file-level shape looks similar.
                     auto source_functions = parser.extract_function_infos_from_files(
                         src_file.paths, src_lang);
+                    std::vector<std::string> target_fn_paths = tgt_file.paths;
+                    for (const auto& p : m.additional_target_paths) {
+                        target_fn_paths.push_back(p);
+                    }
                     auto target_functions = parser.extract_function_infos_from_files(
-                        tgt_file.paths, tgt_lang);
+                        target_fn_paths, tgt_lang);
                     auto fn_cov = function_name_coverage_with_lang(
                         source_functions, target_functions, src_lang, tgt_lang);
 
