@@ -262,58 +262,59 @@ Start with leaf modules (few dependencies) and build upward:
 
 Use `ast_distance --missing` once the tool is wired up to confirm priority order.
 
-## The Generator Emits Kotlin
+## Generator Backend Phases
 
 Upstream LALRPOP emits Rust source code (`src/rust/mod.rs` and
-`src/lr1/codegen/{ascent,parse_table}.rs` are its back-end). Faithfully
-transliterating those modules verbatim would leave us with a
-Kotlin-native tool that still produces Rust — useless to every consumer
-in the kotlinmania ecosystem.
+`src/lr1/codegen/{ascent,parse_table}.rs` are its back-end). The final
+goal of lalrpop-kotlin is Kotlin source emission, but the backend is a
+special case where we need two explicit phases.
 
-**The generator must emit Kotlin.** This is the explicit goal of
-lalrpop-kotlin, not a post-parity nice-to-have. The parser-table layout,
-the LR(1) construction, the AST normalization, the macro expansion —
-all of that is faithful translation. The **back-end** is where we
-diverge from upstream by design: instead of writing Rust syntax to the
-output stream, the back-end writes Kotlin syntax to the output stream.
+### Phase 1: Rust-output parity witness
+
+First, transliterate the upstream backend so the Kotlin port can produce
+the same Rust-shaped output as upstream LALRPOP for the same grammar.
+This is intentional, not a failure of the port. Keeping a Rust emitter
+during phase 1 gives us a strong parity witness for table layout, state
+machine shape, production/reduction ordering, symbol variant numbering,
+and error paths before the emitted language changes.
 
 What this means in practice:
 
-- **`src/rust/mod.rs` → `src/commonMain/.../rust/Rust.kt`**: the
-  upstream `RustWrite` helper produces Rust tokens (`pub fn`, `match`,
-  `impl`, etc.). Our port replaces these with the Kotlin equivalents
-  (`fun`, `when`, `class`, etc.). The *shape* of the helper (push/pop
-  indentation, write_table_row, emit comments) is preserved from the
-  Rust source — only the literal output strings change. Keep the
-  `// port-lint: source src/rust/mod.rs` header.
-- **`src/lr1/codegen/ascent.rs` and `parse_table.rs`**: same rule. The
-  control flow, the state-machine layout, the action/goto tables — all
-  ported faithfully. The `write!` / `writeln!` calls that produce Rust
-  syntax (`return Ok(...)`, `try!(...)`, struct literals, lifetime
-  parameters) are replaced with calls that produce Kotlin syntax
-  (`return Result.success(...)`, `try { ... }`, data class
-  constructors, generic parameters). Keep the port-lint headers.
-- **A `lalrpop-runtime-kotlin` module** holds the runtime types the
-  emitted parsers depend on (`ParseError`, `Lexer`, action enums,
-  symbol stack). Upstream LALRPOP has a `lalrpop-util` crate for the
-  same purpose — port that to Kotlin alongside the generator.
+- **`src/rust/mod.rs` → `src/commonMain/.../rust/Rust.kt`**: preserve the
+  upstream writer semantics and Rust output tokens (`pub fn`, `match`,
+  `impl`, etc.) while transliterating the implementation into Kotlin.
+  Keep the `// port-lint: source src/rust/mod.rs` header.
+- **`src/lr1/codegen/ascent.rs` and `parse_table.rs`**: preserve the
+  backend control flow and the emitted Rust syntax during phase 1. The
+  `write!` / `writeln!` calls should become Kotlin calls that still write
+  the corresponding Rust text.
+- Phase-1 backend work should be judged by generated Rust-output parity,
+  not by whether the string literals already contain Kotlin syntax.
 
-The two-pass discipline still holds for *everything except the
-literal output strings*: read the Rust source, port the surrounding
-logic line-by-line, and only at the leaves (where Rust syntax tokens
-are written) substitute Kotlin syntax. Document each substitution
-inline so a future reader can audit what changed and why:
+### Phase 2: Kotlin output backend
 
-```kotlin
-// Rust:  write!(w, "pub fn {}<{}>(...)", name, type_params)?;
-// Kotlin emits `fun` instead of `pub fn` and uses `<>` for generics.
-write(w, "fun $name<$typeParams>(...)")
-```
+After phase 1 can prove parity, add a Kotlin-emitting backend and make
+that backend the project default. Do not overwrite the phase-1 Rust
+emitter blindly: keep it quarantined as a reference/debug backend unless
+the user explicitly approves its removal.
 
-This keeps provenance auditable: every Kotlin emission decision is
-traceable back to the Rust line it replaces, and `ast_distance` can
-still score the surrounding control flow even though the output
-literals diverge.
+Recommended structure:
+
+- Keep the Rust-output backend under an explicit namespace such as
+  `codegen.rustTarget` or `rustTarget` so it cannot be mistaken for the
+  default Kotlin backend.
+- Add a Kotlin-output backend under a distinct namespace such as
+  `codegen.kotlinTarget`; prefer names like `KotlinWriter` or
+  `KotlinOutput` over a bare `Kotlin.kt` name.
+- In phase 2 only, replace output leaves that write Rust syntax
+  (`return Ok(...)`, `try!(...)`, struct literals, lifetime parameters)
+  with Kotlin syntax (`return Result.success(...)`, Kotlin constructors,
+  generic parameters, `when`, etc.).
+
+The two-pass discipline still holds: read the Rust source, port the
+surrounding logic line-by-line, and only change emitted syntax in the
+phase-2 Kotlin backend. Document each phase-2 substitution inline so a
+future reader can audit what changed and why.
 
 ### Consumers
 

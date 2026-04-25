@@ -3296,10 +3296,10 @@ internal class StateMachine(
         Int,
         io.github.kotlinmania.lalrpop_kotlin.tok.Tok,
         io.github.kotlinmania.lalrpop_kotlin.tok.Error,
-    >? = reduce(text, reduceIndex, startLocation, states, symbols)
+    >? = io.github.kotlinmania.lalrpop_kotlin.parser.reduce(text, reduceIndex, startLocation, states, symbols)
 
     override fun simulateReduce(action: Short): io.github.kotlinmania.lalrpop_kotlin.runtime.SimulatedReduce<Int> =
-        simulateReduce(action)
+        io.github.kotlinmania.lalrpop_kotlin.parser.simulateReduce(action)
 }
 
 // === lrgrammar.rs:3304-3374 — `___token_to_integer` ===

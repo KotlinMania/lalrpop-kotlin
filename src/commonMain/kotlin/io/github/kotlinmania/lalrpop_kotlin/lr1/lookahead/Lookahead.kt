@@ -260,7 +260,7 @@ class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet> {
 
     fun isIntersecting(other: TokenSet): Boolean = !isDisjoint(other)
 
-    fun iter(): TokenSetIter = TokenSetIter(bitSet.iterator())
+    fun iter(): TokenSetIter = TokenSetIter(bitSet.sorted().iterator())
 
     fun clone(): TokenSet {
         val result = TokenSet()
