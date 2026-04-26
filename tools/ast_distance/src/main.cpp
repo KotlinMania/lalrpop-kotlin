@@ -4,6 +4,7 @@
 #include "codebase.hpp"
 #include "porting_utils.hpp"
 #include "transliteration_similarity.hpp"
+#include "reexport_config.hpp"
 #include "task_manager.hpp"
 #include "symbol_analysis.hpp"
 #include "symbol_extraction.hpp"
@@ -57,6 +58,7 @@ struct GuardrailsContext {
 };
 
 static GuardrailsContext g_guardrails;
+static ReexportConfig g_reexport_config;
 
 static std::optional<std::chrono::seconds> file_age_seconds(const std::string& path) {
     try {
@@ -210,6 +212,36 @@ const char* language_name(Language lang) {
     return "Unknown";
 }
 
+const char* language_config_name(Language lang) {
+    switch (lang) {
+        case Language::RUST: return "rust";
+        case Language::KOTLIN: return "kotlin";
+        case Language::CPP: return "cpp";
+        case Language::PYTHON: return "python";
+    }
+    return "unknown";
+}
+
+static std::string current_project_name() {
+    try {
+        return std::filesystem::current_path().filename().string();
+    } catch (...) {
+        return "ast-distance-port";
+    }
+}
+
+static void write_missing_config_after_comparison(const ConfigEndpoint& source,
+                                                  const ConfigEndpoint& target) {
+    const std::string path = default_reexport_config_path();
+    if (g_reexport_config.loaded || std::filesystem::exists(path)) return;
+    if (write_ast_distance_config_stub(path, current_project_name(), source, target)) {
+        std::cerr << "Info: wrote " << path
+                  << " from this comparison; add reexport_modules entries there as needed.\n";
+    } else {
+        std::cerr << "Warning: could not write " << path << ".\n";
+    }
+}
+
 static std::string lowercase_ascii(std::string s) {
     for (char& c : s) {
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
@@ -322,6 +354,7 @@ void print_usage(const char* program) {
     std::cerr << "Usage:\n";
     std::cerr << "  " << program << " [--agent <number>] [--task-file <tasks.json>] [--override] <command>\n";
     std::cerr << "      Guardrails: when a task system is initialized, commands require --agent.\n\n";
+    std::cerr << "      Loads .ast_distance_config.json when present; comparison commands create a stub when absent.\n\n";
     std::cerr << "  " << program << " <file1> <lang1> <file2> <lang2>\n";
     std::cerr << "      Compare AST similarity between two files\n\n";
     std::cerr << "  " << program << " --compare-functions <file1> <lang1> <file2> <lang2>\n";
@@ -3465,6 +3498,18 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    {
+        std::string cfg_path = default_reexport_config_path();
+        if (load_reexport_config(cfg_path, g_reexport_config)) {
+            if (!g_reexport_config.patterns.empty()) {
+                std::cerr << "Info: loaded " << g_reexport_config.patterns.size()
+                          << " reexport-module pattern"
+                          << (g_reexport_config.patterns.size() == 1 ? "" : "s")
+                          << " from " << cfg_path << ".\n";
+            }
+        }
+    }
+
     std::vector<char*> argv_rebased;
     argv_rebased.reserve(rest.size() + 1);
     argv_rebased.push_back(argv[0]);
@@ -3544,9 +3589,11 @@ int main(int argc, char* argv[]) {
 
         } else if (mode == "--rank" && argc >= 6) {
             cmd_rank(argv[2], argv[3], argv[4], argv[5]);
+            write_missing_config_after_comparison({argv[2], argv[3]}, {argv[4], argv[5]});
 
         } else if (mode == "--deep" && argc >= 6) {
             cmd_deep(argv[2], argv[3], argv[4], argv[5]);
+            write_missing_config_after_comparison({argv[2], argv[3]}, {argv[4], argv[5]});
 
         } else if (mode == "--numpy-mlx" && argc >= 4) {
             cmd_numpy_mlx(argv[2], argv[3]);
@@ -3556,6 +3603,7 @@ int main(int argc, char* argv[]) {
 
         } else if (mode == "--missing" && argc >= 6) {
             cmd_missing(argv[2], argv[3], argv[4], argv[5]);
+            write_missing_config_after_comparison({argv[2], argv[3]}, {argv[4], argv[5]});
 
         } else if (mode == "--todos" && argc >= 3) {
             bool verbose = true;
@@ -3611,6 +3659,9 @@ int main(int argc, char* argv[]) {
                 }
             }
             cmd_symbol_parity(argv[2], argv[3], options);
+            write_missing_config_after_comparison(
+                {argv[2], "rust"},
+                {argv[3], "kotlin"});
 
         } else if (mode == "--import-map" && argc >= 3) {
             ImportMapOptions options;
@@ -3997,6 +4048,9 @@ int main(int argc, char* argv[]) {
                     std::cout << "\n";
                 }
             }
+            write_missing_config_after_comparison(
+                {file1, language_config_name(lang1)},
+                {file2, language_config_name(lang2)});
 
         } else if (mode[0] != '-' && argc >= 5) {
             // Default: compare two files with explicit languages
@@ -4262,6 +4316,9 @@ int main(int argc, char* argv[]) {
                       << (doc_weighted * 100.0f) << "%\n";
             std::cout << "Unique doc words:     " << comments1.word_freq.size()
                       << " vs " << comments2.word_freq.size() << "\n";
+            write_missing_config_after_comparison(
+                {file1, language_config_name(lang1)},
+                {file2, language_config_name(lang2)});
 
         } else {
             print_usage(argv[0]);
