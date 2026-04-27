@@ -28,15 +28,15 @@ package io.github.kotlinmania.btree
 // is permitted per AGENTS.md "compile-time-incomplete files are OK in
 // early phases".
 //
-// Allocator parameter: upstream `A: Allocator + Clone` is dropped — Kotlin's
+// Allocator parameter: upstream `A: Allocator + Clone` is dropped — Kotlin
 // GC supersedes manual deallocation, matching the convention already
 // established in Node.kt (e.g. `mergeTrackingChildEdge` has no `alloc`).
 
 /**
  * Removes a key-value pair from the tree, and returns that pair, as well as
- * the leaf edge corresponding to that former pair. It's possible this empties
+ * the leaf edge corresponding to that former pair. It possible this empties
  * a root node that is internal, which the caller should pop from the map
- * holding the tree. The caller should also decrement the map's length.
+ * holding the tree. The caller should also decrement the map length.
  */
 internal fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.LeafOrInternal>, Marker.KV>.removeKvTracking(
     handleEmptiedInternalRoot: () -> Unit,
@@ -92,7 +92,7 @@ private fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Leaf>, Marker.KV>.rem
         // Only if we merged, the parent (if any) has shrunk, but skipping
         // the following step otherwise does not pay off in benchmarks.
         //
-        // SAFETY: We won't destroy or rearrange the leaf where `pos` is at
+        // SAFETY: We will not destroy or rearrange the leaf where `pos` is at
         // by handling its parent recursively; at worst we will destroy or
         // rearrange the parent through the grandparent, thus change the
         // link to the parent inside the leaf.

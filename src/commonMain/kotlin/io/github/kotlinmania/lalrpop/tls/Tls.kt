@@ -20,7 +20,7 @@ import io.github.kotlinmania.lalrpop.FileText
 import io.github.kotlinmania.lalrpop.Session
 
 /**
- * Mirrors Rust's `struct TlsFields { session: Rc<Session>, file_text: Rc<FileText> }`.
+ * Mirrors the upstream `struct TlsFields { session: Rc<Session>, fileText: Rc<FileText> }`.
  *
  * Visible at `internal` so the per-platform [TlsStorage] actual files
  * can hold a reference; the type itself is otherwise private to this
@@ -32,8 +32,8 @@ internal data class TlsFields(
 )
 
 /**
- * Per-thread backing store for [Tls]. Direct port of upstream's
- * `thread_local! { static THE_TLS_FIELDS: RefCell<Option<TlsFields>> = ... }`.
+ * Per-thread backing store for [Tls]. Direct port of the upstream
+ * `threadLocal! { static THE_TLS_FIELDS: RefCell<Option<TlsFields>> = ... }`.
  *
  * `expect` so each platform supplies a thread-local implementation:
  *  * Native: `@kotlin.native.concurrent.ThreadLocal` annotation on the
@@ -54,28 +54,30 @@ internal expect object TlsStorage {
 }
 
 /**
- * Direct port of upstream `pub struct Tls { _dummy: () }` plus the
- * `impl Drop for Tls { ... THE_TLS_FIELDS.with(... = None) }` block.
+ * Direct port of upstream `class Tls { _dummy: () }` plus the
+ * `implementation Drop for Tls { ... THE_TLS_FIELDS.with(... = None) }` block.
  * In Kotlin we model `Drop` as [AutoCloseable] / [close]; callers should
  * always wrap installation in `use { ... }` or call [close] from a
- * `finally` block to mirror Rust's deterministic drop.
+ * `finally` block to mirror the deterministic drop semantics.
  */
 class Tls private constructor() : AutoCloseable {
 
-    override fun close() {
+    fun drop() {
         TlsStorage.current = null
     }
 
+    override fun close() = drop()
+
     companion object {
         /**
-         * Direct port of upstream `#[cfg(test)] pub fn test()`. Installs a
+         * Direct port of upstream `(cfg(test)) fun test()`. Installs a
          * test-flavoured [Session] and an empty [FileText] and returns
          * the guard.
          */
         fun test(): Tls = install(Session.test(), FileText.test())
 
         /**
-         * Direct port of upstream `#[cfg(test)] pub fn test_string(text: &str)`.
+         * Direct port of upstream `(cfg(test)) fun testString(text: &str)`.
          * Installs a test-flavoured [Session] paired with a [FileText]
          * sourced from the supplied string.
          */

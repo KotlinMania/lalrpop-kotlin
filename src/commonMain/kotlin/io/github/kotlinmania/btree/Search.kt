@@ -10,11 +10,11 @@ package io.github.kotlinmania.btree
 //
 // Result<T, E> translation choice for [searchTreeForBifurcation]:
 // Upstream returns `Result<Bifurcation<...>, Handle<..., Marker.Leaf, Marker.Edge>>`.
-// AGENTS.md's default is "throw E, return T", but Kotlin/Native disallows
+// AGENTS.md default is "throw E, return T", but Kotlin/Native disallows
 // type-parameterized subclasses of `Throwable`, and the leaf-edge handle
 // carries three generic parameters (`BorrowType, K, V`). We therefore
 // switch to the closer-to-source pattern: return a sealed [BifurcationResult]
-// with `Ok(value)` and `LeafEdge(handle)` variants, mirroring Rust's
+// with `Ok(value)` and `LeafEdge(handle)` variants, mirroring the upstream
 // `Result::Ok` / `Result::Err`. This is the more transliteration-faithful
 // of the two valid Kotlin/Native workarounds (see PORTING.md row).
 
@@ -82,7 +82,7 @@ internal sealed class IndexResult {
  * `Result<Bifurcation<...>, Handle<NodeRef<..., Marker.Leaf>, Marker.Edge>>`
  * for [searchTreeForBifurcation]. Kotlin/Native rejects subclasses of
  * `Throwable` that carry type parameters, so the AGENTS.md default
- * (throw `E`, return `T`) doesn't apply here; the next-most-faithful
+ * (throw `E`, return `T`) does not apply here; the next-most-faithful
  * pattern is the sealed-class-of-Ok-or-Err shape Rust itself uses.
  */
 internal sealed class BifurcationResult<BorrowType, K, V, Q> {
@@ -101,7 +101,7 @@ internal sealed class BifurcationResult<BorrowType, K, V, Q> {
 
 /**
  * Tuple holding the bifurcation result of [searchTreeForBifurcation]: the
- * node at which the range's lower and upper edges diverge, the edge indices
+ * node at which the range lower and upper edges diverge, the edge indices
  * delimiting the range, and the bounds to continue with in any child node.
  */
 internal data class Bifurcation<BorrowType, K, V, Q>(
@@ -159,7 +159,7 @@ internal fun <BorrowType : Marker.BorrowType, K, V, Q : Comparable<Q>> NodeRef<B
  * The result is meaningful only if the tree is ordered by key.
  *
  * `inline` + `reified V` is required so the [isSetVal] static-dispatch
- * overload (matching Rust's `V::is_set_val()`) resolves at the call
+ * overload (matching the upstream `V::isSetVal()`) resolves at the call
  * site rather than needing a sample `V` from the receiver. This
  * cascades to callers; once Phase-4 map.rs lands its callers must also
  * be `inline reified V`.
@@ -172,7 +172,7 @@ internal inline fun <BorrowType : Marker.BorrowType, K, reified V, Q : Comparabl
 /**
  * Explicit-`isSet` variant of [searchTreeForBifurcation] for callers that
  * cannot be `inline reified V` themselves — notably class methods on
- * `BTreeMap<K, V>` and `BTreeSet<T>` whose `V` is the class's own type
+ * `BTreeMap<K, V>` and `BTreeSet<T>` whose `V` is the class own type
  * parameter (not reified). The boolean is passed in directly; callers
  * obtain it from a sentinel KV value or from the static knowledge that
  * they are constructing a Set vs. a Map.
@@ -234,7 +234,7 @@ internal fun <BorrowType : Marker.BorrowType, K, V, Q : Comparable<Q>, R : Range
                 ),
             )
         }
-        check(lowerEdgeIdx == upperEdgeIdx) // debug_assert_eq!(lower_edge_idx, upper_edge_idx);
+        check(lowerEdgeIdx == upperEdgeIdx) // debugAssertEq(lowerEdgeIdx, upperEdgeIdx);
         // SAFETY: `lowerEdgeIdx` is a valid edge index for `self`.
         val commonEdge = Handle.newEdge(self, lowerEdgeIdx)
         when (val forced = commonEdge.force()) {
@@ -314,9 +314,9 @@ private fun <BorrowType, K, V, Type, Q : Comparable<Q>> NodeRef<BorrowType, K, V
     where K : Comparable<Q> {
     val node = this.reborrow()
     val keys = node.keys()
-    check(startIndex <= keys.size) // debug_assert!(start_index <= keys.len());
+    check(startIndex <= keys.size) // debugAssert(startIndex <= keys.len());
     // SAFETY: `startIndex <= keys.size`, so the slice from `startIndex` is in bounds.
-    // Iterate by index rather than allocating a sublist; matches `keys.get_unchecked(start..)`.
+    // Iterate by index rather than allocating a sublist; matches `keys.getUnchecked(start..)`.
     for (offset in 0 until (keys.size - startIndex)) {
         val k = keys[startIndex + offset]
         // `key.cmp(k.borrow())` -> `key.compareTo(k)`, with the convention that

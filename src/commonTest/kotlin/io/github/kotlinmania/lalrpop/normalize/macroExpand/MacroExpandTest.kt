@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/macro_expand/test.rs
+// port-lint: source src/normalize/macroExpand/test.rs
 package io.github.kotlinmania.lalrpop.normalize.macroExpand
 
 /*
@@ -145,7 +145,7 @@ grammar;
             // ok
         }
 
-        // Rust's `grammar2.clone()` is a deep clone; in Kotlin we re-parse to
+        // the upstream `grammar2.clone()` is a deep clone; in Kotlin we re-parse to
         // get a fresh tree because the parse-tree types share mutable inner
         // state and `data class.copy()` is only shallow.
         val grammar2Source = """
@@ -163,7 +163,7 @@ grammar;
             // ok
         }
 
-        // expand_macros(grammar2, 3).is_ok()
+        // expandMacros(grammar2, 3).isOk()
         expandMacros(parseGrammar(grammar2Source).getOrThrow(), 3)
     }
 }

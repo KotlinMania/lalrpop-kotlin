@@ -1,5 +1,5 @@
 // port-lint: source src/tok/mod.rs
-//! A tokenizer for use in LALRPOP itself.
+//! A tokenizer for import in LALRPOP itself.
 package io.github.kotlinmania.lalrpop.tok
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
 import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
@@ -274,7 +274,7 @@ class Tokenizer(val text: String, val shift: Int) : Iterator<Spanned<Tok>> {
                 }
                 '#' -> {
                     bump()
-                    // first!: try shebang_attribute, fall back to Hash on failure
+                    // first!: try shebangAttribute, fall back to Hash on failure
                     val fallbackChars = chars
                     val fallbackLookahead = lookahead
                     val result = shebangAttribute(idx0)
@@ -420,7 +420,7 @@ class Tokenizer(val text: String, val shift: Int) : Iterator<Spanned<Tok>> {
     }
 
     fun rightArrow(idx0: Int): Result<Spanned<Tok>> {
-        // we've seen =>, now we have to choose between:
+        // we have seen =>, now we have to choose between:
         //
         // => code
         // =>? code
@@ -798,7 +798,7 @@ fun isIdentifierStart(c: Char): Boolean =
 fun isIdentifierContinue(c: Char): Boolean =
     isXidContinue(c) || c == '_'
 
-// Approximation of unicode_xid::UnicodeXID; LALRPOP's grammar is predominantly ASCII.
+// Approximation of unicodeXid::UnicodeXID; LALRPOP grammar is predominantly ASCII.
 private fun isXidStart(c: Char): Boolean =
     c.isLetter()
 
@@ -833,9 +833,9 @@ private object Character {
 }
 
 /**
- * Port of Rust's `str::char_indices()`. Yields `(byte_offset, char)` pairs,
- * where `byte_offset` is the position of the start of each character in the
- * string's UTF-8 encoding — matching Rust's indexing, not Kotlin's native
+ * Port of the upstream `str::charIndices()`. Yields `(byteOffset, char)` pairs,
+ * where `byteOffset` is the position of the start of each character in the
+ * string UTF-8 encoding — matching the upstream indexing, not Kotlin native
  * UTF-16 code-unit indexing. Surrogate pairs are collapsed so one `next()`
  * call produces one code point; the emitted `Char` loses any supplementary
  * plane info but the byte offset still advances by 4 bytes.
@@ -881,7 +881,7 @@ fun applyStringEscapes(code: String, idx0: Int): Result<String> {
             var ch = pair.second
             if (ch == '\\') {
                 // The parser should never have accepted an ill-formed string
-                // literal, so we know it can't end in a backslash.
+                // literal, so we know it cannot end in a backslash.
                 val (offset, nextCh) = iter.next()!!
                 ch = when (nextCh) {
                     '\\', '"' -> nextCh

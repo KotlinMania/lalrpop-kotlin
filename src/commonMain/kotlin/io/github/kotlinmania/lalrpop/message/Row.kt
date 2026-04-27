@@ -1,4 +1,4 @@
-// port-lint: source external/ascii_canvas/row
+// port-lint: source external/asciiCanvas/row
 package io.github.kotlinmania.lalrpop.message
 
 import io.github.kotlinmania.lalrpop.Style

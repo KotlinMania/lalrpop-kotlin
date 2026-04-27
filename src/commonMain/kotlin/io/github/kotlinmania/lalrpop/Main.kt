@@ -4,9 +4,9 @@ package io.github.kotlinmania.lalrpop
 import io.github.kotlinmania.lalrpop.api.Configuration
 
 /**
- * Direct port of upstream `const VERSION: &str = env!("CARGO_PKG_VERSION");`.
+ * Direct port of upstream `const VERSION: &str = env("CARGO_PKG_VERSION");`.
  *
- * Rust's `env!` macro substitutes `CARGO_PKG_VERSION` at compile time from
+ * the upstream `env!` macro substitutes `CARGO_PKG_VERSION` at compile time from
  * Cargo.toml. Kotlin has no equivalent of cargo metadata at compile time,
  * so we mirror the upstream value used at the time of porting. Bump in
  * lockstep with the Cargo.toml version when re-syncing from upstream.
@@ -35,15 +35,15 @@ const val USAGE: String = "" +
     "    --report             Generate report files."
 
 /**
- * Direct port of upstream `#[derive(Debug)] struct Args { ... }`.
+ * Direct port of upstream `(derive(Debug)) struct Args { ... }`.
  *
- * Rust's `OsString` (`arg_inputs`) is modelled here as `String`: Kotlin
+ * the upstream `OsString` (`argInputs`) is modelled here as `String`: Kotlin
  * `Array<String>` (the `main` argv) is already decoded by the platform,
- * matching what `Arguments::from_env`/`from_vec` produces.
+ * matching what `Arguments::fromEnv`/`fromVec` produces.
  *
- * `flag_out_dir` (Rust `Option<PathBuf>`) → `String?` since Kotlin lacks a
+ * `flagOutDir` (Rust `Option<PathBuf>`) → `String?` since Kotlin lacks a
  * dedicated `PathBuf`; conversion to a filesystem path happens at the
- * `Configuration::set_out_dir` boundary.
+ * `Configuration::setOutDir` boundary.
  */
 internal data class Args(
     val argInputs: List<String>,
@@ -60,7 +60,7 @@ internal data class Args(
 )
 
 /**
- * Direct port of upstream `#[derive(...)] enum LevelFlag { Quiet, Info, Verbose, Debug }`.
+ * Direct port of upstream `(derive(...)) enum LevelFlag { Quiet, Info, Verbose, Debug }`.
  */
 internal enum class LevelFlag {
     Quiet,
@@ -70,8 +70,8 @@ internal enum class LevelFlag {
 
     companion object {
         /**
-         * Direct port of upstream `impl FromStr for LevelFlag { fn from_str(...) }`.
-         * Returns `Result<LevelFlag>` mirroring Rust's `Result<LevelFlag, String>`.
+         * Direct port of upstream `implementation FromStr for LevelFlag { function fromStr(...) }`.
+         * Returns `Result<LevelFlag>` mirroring the upstream `Result<LevelFlag, String>`.
          */
         fun fromStr(s: String): Result<LevelFlag> = when (s) {
             "quiet" -> Result.success(Quiet)
@@ -84,15 +84,15 @@ internal enum class LevelFlag {
 }
 
 /**
- * Tiny hand-rolled translation of Rust's `pico_args::Arguments` covering
- * exactly the surface `parseArgs` uses: `opt_value_from_fn`,
- * `opt_value_from_str`, `contains`, and `finish`. Upstream's `pico_args`
+ * Tiny hand-rolled translation of the upstream `picoArgs::Arguments` covering
+ * exactly the surface `parseArgs` uses: `optValueFromFn`,
+ * `optValueFromStr`, `contains`, and `finish`. Upstream `picoArgs`
  * is not a project dependency and the AGENTS.md "no new deps" rule
  * forbids adding one; this is the minimum faithful equivalent.
  *
  * `contains` and `optValueFrom*` consume matching tokens (and any
  * required option-argument) from the internal buffer; `finish` returns
- * the remaining positional inputs, matching pico_args's contract.
+ * the remaining positional inputs, matching picoArgs contract.
  */
 internal class Arguments(args: List<String>) {
     private val args: MutableList<String> = args.toMutableList()
@@ -136,7 +136,7 @@ internal class Arguments(args: List<String>) {
 }
 
 /**
- * Direct port of upstream `fn parse_args(mut args: Arguments) -> Result<Args, pico_args::Error>`.
+ * Direct port of upstream `function parseArgs(mut args: Arguments) -> Result<Args, picoArgs::Error>`.
  * Field-evaluation order matches the Rust struct literal.
  */
 internal fun parseArgs(args: Arguments): Result<Args> {
@@ -172,12 +172,12 @@ internal fun parseArgs(args: Arguments): Result<Args> {
 }
 
 /**
- * Direct port of upstream `fn main() -> Result<(), Box<dyn std::error::Error>>`.
+ * Direct port of upstream `function main() -> Result<(), Box<dyn std::error::Error>>`.
  *
  * Returns the exit code instead of relying on `process::exit`; per-target
  * `main(args: Array<String>)` thunks call this and feed the result into
  * `kotlin.system.exitProcess`. This split is the same shape Atom.kt /
- * FileText.kt use for native-specific glue: keep the logic in commonMain,
+ * FileText.kt import for native-specific glue: keep the logic in commonMain,
  * keep the platform plumbing per-target.
  */
 fun main(args: Array<String>): Int {
@@ -241,9 +241,9 @@ fun main(args: Array<String>): Int {
     }
 
     for (arg in parsedArgs.argInputs) {
-        val result = config.processFile(arg)
-        if (result.isFailure) {
-            val err = result.exceptionOrNull()
+        try {
+            config.processFile(arg)
+        } catch (err: Throwable) {
             println("Error encountered processing `$arg`: ${err?.message ?: err}")
             return 1
         }

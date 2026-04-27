@@ -1,4 +1,4 @@
-// port-lint: source external/ascii_canvas/style.rs
+// port-lint: source external/asciiCanvas/style.rs
 // The `Style` type is a simplified view of the various
 // attributes offered by the `term` library. These are
 // enumerated as bits so they can be easily or'd together
@@ -55,19 +55,19 @@ interface Terminal {
     fun attr(attr: TermAttr): Result<Unit>
 }
 
-/** `pub struct Style { bits: u64 }` */
+/** `class Style { bits: u64 }` */
 class Style private constructor(private val bits: Long) {
-    /** `pub fn with(self, other_style: Style) -> Style` */
+    /** `fun with(self, otherStyle: Style) -> Style` */
     fun with(otherStyle: Style): Style = Style(bits or otherStyle.bits)
 
-    /** `pub fn contains(self, other_style: Style) -> bool` */
+    /** `fun contains(self, otherStyle: Style) -> bool` */
     fun contains(otherStyle: Style): Boolean = this.with(otherStyle) == this
 
     override fun equals(other: Any?): Boolean = other is Style && other.bits == bits
     override fun hashCode(): Int = bits.hashCode()
 
     /**
-     * `pub fn apply<T: Terminal + ?Sized>(self, term: &mut T) -> term::Result<()>`
+     * `fun apply<T: Terminal + ?Sized>(self, term: &mut T) -> term::Result<()>`
      *
      * Attempts to apply the given style to the given terminal. If the style is
      * not supported, either there is no effect or else a similar, substitute
@@ -76,7 +76,7 @@ class Style private constructor(private val bits: Long) {
     fun apply(term: Terminal): Result<Unit> {
         term.reset().getOrElse { return Result.failure(it) }
 
-        // `fg_color!` macro expansion, one per FG color.
+        // `fgColor!` macro expansion, one per FG color.
         fun fgColor(color: Style, termColor: Int): Result<Unit> {
             if (this.contains(color) && term.supportsColor()) {
                 return term.fg(termColor)
@@ -101,7 +101,7 @@ class Style private constructor(private val bits: Long) {
         fgColor(FG_WHITE, TermColor.WHITE).getOrElse { return Result.failure(it) }
         fgColor(FG_YELLOW, TermColor.YELLOW).getOrElse { return Result.failure(it) }
 
-        // `bg_color!` macro expansion, one per BG color.
+        // `bgColor!` macro expansion, one per BG color.
         fun bgColor(color: Style, termColor: Int): Result<Unit> {
             if (this.contains(color) && term.supportsColor()) {
                 return term.bg(termColor)
@@ -149,13 +149,13 @@ class Style private constructor(private val bits: Long) {
     override fun toString(): String = "Style($bits)"
 
     companion object {
-        /** `pub fn new() -> Style` — `Style::default()`. */
+        /** `fun new() -> Style` — `Style::default()`. */
         fun new(): Style = DEFAULT
 
-        /** `pub const DEFAULT: Style = Style { bits: 0 };` */
+        /** `public const DEFAULT: Style = Style { bits: 0 };` */
         val DEFAULT: Style = Style(0)
 
-        // Expansion of `declare_styles!` — one `Style` constant per bit.
+        // Expansion of `declareStyles!` — one `Style` constant per bit.
         private var nextBit: Long = 0
         private fun bit(): Style {
             val s = Style(1L shl nextBit.toInt())
@@ -212,17 +212,17 @@ class Style private constructor(private val bits: Long) {
 }
 
 /**
- * `pub struct StyleCursor<'term, T: ?Sized + Terminal>` — tracks the
- * currently applied style so `set_style` can skip redundant apply calls.
+ * `class StyleCursor<'term, T: ?Sized + Terminal>` — tracks the
+ * currently applied style so `setStyle` can skip redundant apply calls.
  */
 class StyleCursor private constructor(
     private var currentStyle: Style,
     private val terminal: Terminal,
 ) {
-    /** `pub fn term(&mut self) -> &mut T` */
+    /** `fun term(&mut self) -> &mut T` */
     fun term(): Terminal = terminal
 
-    /** `pub fn set_style(&mut self, style: Style) -> term::Result<()>` */
+    /** `fun setStyle(&mut self, style: Style) -> term::Result<()>` */
     fun setStyle(style: Style): Result<Unit> {
         if (style != currentStyle) {
             style.apply(terminal).getOrElse { return Result.failure(it) }
@@ -232,7 +232,7 @@ class StyleCursor private constructor(
     }
 
     companion object {
-        /** `pub fn new(term: &'term mut T) -> term::Result<StyleCursor<'term, T>>` */
+        /** `fun new(term: &'term mut T) -> term::Result<StyleCursor<'term, T>>` */
         fun new(term: Terminal): Result<StyleCursor> {
             val currentStyle = Style.DEFAULT
             currentStyle.apply(term).getOrElse { return Result.failure(it) }

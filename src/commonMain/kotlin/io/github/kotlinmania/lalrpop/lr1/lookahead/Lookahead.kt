@@ -80,15 +80,15 @@ class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
 }
 
 /**
- * I have semi-arbitrarily decided to use the term "token" to mean
+ * I have semi-arbitrarily decided to import the term "token" to mean
  * either one of the terminals of our language, or else the
  * pseudo-symbol EOF that represents "end of input".
  */
 sealed class Token : Comparable<Token> {
     /**
-     * Rust: `impl Display for Token`. Each variant overrides
+     * Rust: `implementation Display for Token`. Each variant overrides
      * `toString()` explicitly so that delegating dispatchers
-     * (e.g. `Debug for Token` which is `write!(fmt, "{self}")`)
+     * (e.g. `Debug for Token` which is `write(fmt, "{self}")`)
      * produce the same formatted text as upstream. Without per-variant
      * overrides, `object Eof` would print `io.github.kotlinmania...Token.Eof@<hash>`
      * and a `data class Terminal` would auto-generate
@@ -243,7 +243,7 @@ class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInter
     }
 
     fun reserve(len: Int) {
-        // bit_set.reserve_len(len) — MutableSet has no reserve; no-op
+        // bitSet.reserveLen(len) — MutableSet has no reserve; no-op
     }
 
     fun len(): Int = bitSet.size

@@ -1,7 +1,7 @@
 // port-lint: source src/lr1/codegen/ascent.rs
 //! A compiler from an LR(1) table to a [recursive ascent] parser.
 //!
-//! [recursive ascent]: https://en.wikipedia.org/wiki/Recursive_ascent_parser
+//! [recursive ascent]: https://en.wikipedia.org/wiki/RecursiveAscentParser
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Escape
@@ -87,7 +87,7 @@ class RecursiveAscent(
  * |    |
  * |  Optional (will be popped after the fixed portion)
  * |
- * Prefix (stuff we don't know about that is also on the stack
+ * Prefix (stuff we do not know about that is also on the stack
  * ```
  *
  * The idea of an "optional" member is not that it may or may not be
@@ -214,7 +214,7 @@ private fun CodeGenerator<RecursiveAscent>.writeReturnTypeDefn() {
     rust(this.out, "}")
 }
 
-// Generates a function `parse_Foo` that will parse an entire
+// Generates a function `parseFoo` that will parse an entire
 // input as `Foo`. An error is reported if the entire input is not
 // consumed.
 private fun CodeGenerator<RecursiveAscent>.writeStartFn() {
@@ -276,8 +276,8 @@ private fun CodeGenerator<RecursiveAscent>.writeStateFn(thisIndex: StateIndex) {
         rust(this.out, "//     FixedInputs = ${inputs.fixed()}")
         rust(this.out, "//     WillPushLen = ${thisState.willPush().size}")
         rust(this.out, "//     WillPush = ${thisState.willPush()}")
-        // Mirror Rust's `Debug for Option<T>`: `None` for null, `Some(x)`
-        // for non-null. Kotlin's `null.toString()` would emit `null`.
+        // Mirror the upstream `Debug for Option<T>`: `None` for null, `Some(x)`
+        // for non-null. Kotlin `null.toString()` would emit `null`.
         val willProduce = thisState.willProduce()
         val willProduceStr = if (willProduce == null) "None" else "Some($willProduce)"
         rust(this.out, "//     WillProduce = $willProduceStr")
@@ -374,7 +374,7 @@ private fun CodeGenerator<RecursiveAscent>.writeStateFn(thisIndex: StateIndex) {
     }
     rust(this.out, "];")
 
-    // check if we've found an unrecognized token or EOF
+    // check if we have found an unrecognized token or EOF
     rust(this.out, "return Err(")
     rust(this.out, "match ${this.prefix}lookahead {")
 
@@ -446,7 +446,7 @@ private fun CodeGenerator<RecursiveAscent>.writeStateFn(thisIndex: StateIndex) {
         //
         // Now if we see a `"0"` this *could* be the start of a `B
         // = "0" "1"` or it could be the continuation of `X = A
-        // "0"`. We won't know until we see the *next* character
+        // "0"`. We will not know until we see the *next* character
         // (which will either be `"0"` or `"."`). If it turns out to be
         // `X = A "0"`, then the state handling the `"0"` will reduce
         // and consume the `A` and the `"0"`. But otherwise it will shift
@@ -507,7 +507,7 @@ private fun CodeGenerator<RecursiveAscent>.writeStateFn(thisIndex: StateIndex) {
         rust(this.out, "return Ok(${this.prefix}result);")
     }
 
-    rust(this.out, "}") // fn
+    rust(this.out, "}") // function }
 }
 
 private fun CodeGenerator<RecursiveAscent>.emitStateFnHeader(
@@ -559,7 +559,7 @@ private fun CodeGenerator<RecursiveAscent>.emitStateFnHeader(
 // Each of them will be given an argument like `sym3: &mut
 // Option<Sym3>` where `Sym3` is the type of the symbol.
 //
-// Returns a list of argument names and a flag if this fn resulted
+// Returns a list of argument names and a flag if this function resulted
 // from pushing a terminal (in which case the lookahead must be
 // computed internally).
 private fun CodeGenerator<RecursiveAscent>.fnArgs(
@@ -611,7 +611,7 @@ private fun CodeGenerator<RecursiveAscent>.fnArgs(
 /**
  * Examine the states that we may transition to. Unless this is
  * the start state, we will always take at least 1 fixed input:
- * the most recently pushed symbol (let's call it `symX`), and we
+ * the most recently pushed symbol (let call it `symX`), and we
  * may have others as well. But if this state can transition to
  * another state can takes some of those inputs as optional
  * parameters, we need to convert them them options. This
@@ -645,7 +645,7 @@ private fun CodeGenerator<RecursiveAscent>.adjustInputs(
     // If we find a successor that may optionally consume the top
     // of our stack, convert our fixed inputs into optional ones.
     //
-    // (Here we convert *all* fixed inputs. Honestly, I can't
+    // (Here we convert *all* fixed inputs. Honestly, I cannot
     // remember if this is necessary, or just for simplicity. I
     // suspect the latter. --nmatsakis)
     if (topOpt) {
@@ -851,7 +851,7 @@ private fun CodeGenerator<RecursiveAscent>.emitReduceAction(
     )
 }
 
-/** Emit a pattern that matches `id` but doesn't extract any data. */
+/** Emit a pattern that matches `id` but does not extract any data. */
 private fun CodeGenerator<RecursiveAscent>.matchTerminalPattern(id: TerminalString): String {
     val pattern = this.grammar.pattern(id).map { "_" }
     val patternStr = "$pattern"

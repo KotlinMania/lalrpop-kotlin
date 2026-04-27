@@ -23,14 +23,14 @@ internal actual fun apiSetCurrentDir(path: String) {
     // `user.dir` so subsequent `apiCurrentDir()` calls reflect the
     // change; relative File operations on the JVM resolve against the
     // process CWD captured at startup, so the api/test.rs port should
-    // use absolute paths derived from this property where possible.
+    // import absolute paths derived from this property where possible.
     System.setProperty("user.dir", path)
 }
 
 internal actual fun apiSetEnvVar(name: String, value: String) {
     // The JVM does not expose a portable setter for the process
     // environment.  System properties are a reasonable surrogate for
-    // the `OUT_DIR` use case in the api/test.rs port: production code
+    // the `OUT_DIR` import case in the api/test.rs port: production code
     // reads via `apiEnvVar`, which on JVM consults `System.getenv`.
     // We additionally publish to system properties so test fixtures
     // that need to override `OUT_DIR` have a hook.

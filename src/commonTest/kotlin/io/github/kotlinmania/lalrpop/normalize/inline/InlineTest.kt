@@ -53,7 +53,7 @@ class InlineTest {
         //          E
         //
         // to some extent this may be a false conflict, in that inlined
-        // rules would address it, but it's an interesting one for
+        // rules would address it, but it an interesting one for
         // producing a useful error message.
 
         val grammar = inlinedGrammar(

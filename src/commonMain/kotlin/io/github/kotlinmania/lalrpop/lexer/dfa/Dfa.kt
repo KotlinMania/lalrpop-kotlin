@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.lexer.re.Regex
 data class Dfa(val states: List<State>)
 
 /**
- * Mirrors `#[deprecated(...)] pub type DFA = Dfa;` from the upstream
+ * Mirrors `(deprecated(...)) public type DFA = Dfa;` from the upstream
  * Rust source. Kept for parity with the Rust API.
  */
 @Deprecated("use `Dfa` instead", ReplaceWith("Dfa"))
@@ -42,7 +42,7 @@ sealed class DfaConstructionError {
 class DfaConstructionException(val error: DfaConstructionError) : RuntimeException(error.toString())
 
 /**
- * Mirrors `#[deprecated(...)] pub type DFAConstructionError = DfaConstructionError;`.
+ * Mirrors `(deprecated(...)) public type DFAConstructionError = DfaConstructionError;`.
  */
 @Deprecated(
     "use `DfaConstructionError` instead",
@@ -140,7 +140,7 @@ private class DfaBuilder(
 
             testEdges.sortWith(compareBy({ it.first }, { it.second }))
 
-            // Consider what there is some character that doesn't meet
+            // Consider what there is some character that does not meet
             // any of the tests. In this case, we can just ignore all
             // the test edges for each of the items and just union all
             // the "other" edges -- because if it were one of those
@@ -246,7 +246,7 @@ data class NfaIndex(val value: Int) : Comparable<NfaIndex> {
     override fun toString(): String = "NfaIndex($value)"
 }
 
-/** Mirrors `#[deprecated(...)] pub type NFAIndex = NfaIndex;`. */
+/** Mirrors `(deprecated(...)) public type NFAIndex = NfaIndex;`. */
 @Deprecated("use `NfaIndex` instead", ReplaceWith("NfaIndex"))
 typealias NFAIndex = NfaIndex
 
@@ -256,13 +256,13 @@ data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
     override fun toString(): String = "Dfa$value"
 }
 
-/** Mirrors `#[deprecated(...)] pub type DFAStateIndex = DfaStateIndex;`. */
+/** Mirrors `(deprecated(...)) public type DFAStateIndex = DfaStateIndex;`. */
 @Deprecated("use `DfaStateIndex` instead", ReplaceWith("DfaStateIndex"))
 typealias DFAStateIndex = DfaStateIndex
 
 /**
- * Mirrors `type Index = DfaStateIndex;` from `impl Kernel for DfaItemSet`.
- * Kotlin doesn't have associated types on interface implementations,
+ * Mirrors `type Index = DfaStateIndex;` from `implementation Kernel for DfaItemSet`.
+ * Kotlin does not have associated types on interface implementations,
  * so the binding is exposed as a top-level typealias for parity.
  */
 typealias Index = DfaStateIndex

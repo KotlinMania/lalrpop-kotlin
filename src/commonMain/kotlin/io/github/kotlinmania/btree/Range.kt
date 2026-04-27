@@ -7,13 +7,13 @@ package io.github.kotlinmania.btree
 // (plus its default `contains` method) are translated. The concrete
 // `Range<T>`, `RangeFrom<T>`, `RangeTo<T>`, `RangeInclusive<T>`,
 // `RangeToInclusive<T>`, `RangeFull`, and `(Bound<T>, Bound<T>)`
-// implementations are out of scope for this port — Kotlin's stdlib has
+// implementations are out of scope for this port — Kotlin stdlib has
 // its own range types and the BTreeMap port only consumes the trait
-// interface (Search.kt's `searchTreeForBifurcation` calls `startBound()`
+// interface (Search.kt `searchTreeForBifurcation` calls `startBound()`
 // / `endBound()`). Concrete adapters can be wired later in Phase 4 when
 // `BTreeMap::range` lands and a public surface needs them.
 //
-// Lifetime translation: Rust's `fn start_bound(&self) -> Bound<&T>`
+// Lifetime translation: the upstream `function startBound(&self) -> Bound<&T>`
 // borrows the inner T. Kotlin has no shared-borrow vocabulary, so the
 // port returns `Bound<T>` directly. Implementations are free to return
 // the stored T as-is.
@@ -21,10 +21,10 @@ package io.github.kotlinmania.btree
 /**
  * `Bound<T>` mirrors `core::ops::Bound`. An endpoint of a range of keys.
  *
- * Translates Rust's `pub enum Bound<T> { Included(T), Excluded(T), Unbounded }`.
+ * Translates the upstream `enum Bound<T> { Included(T), Excluded(T), Unbounded }`.
  * Per AGENTS.md "Sum types" guidance this is rendered as a sealed class
  * with three variants and per-subclass `toString()` matching the upstream
- * `#[derive(Debug)]` rendering.
+ * `(derive(Debug))` rendering.
  */
 sealed class Bound<out T> {
     /** An inclusive bound. */
@@ -44,13 +44,13 @@ sealed class Bound<out T> {
 }
 
 /**
- * `RangeBounds<T>` mirrors `core::ops::RangeBounds`. Implemented by Rust's
+ * `RangeBounds<T>` mirrors `core::ops::RangeBounds`. Implemented by the upstream
  * built-in range types, produced by range syntax like `..`, `a..`, `..b`,
  * `..=c`, `d..e`, or `f..=g`.
  *
- * Translates the upstream `pub trait RangeBounds<T: ?Sized>`. The
- * `?Sized` bound is irrelevant in Kotlin and is dropped. Rust's
- * `start_bound(&self) -> Bound<&T>` becomes `startBound(): Bound<T>`
+ * Translates the upstream `interface RangeBounds<T: ?Sized>`. The
+ * `?Sized` bound is irrelevant in Kotlin and is dropped. the upstream
+ * `startBound(&self) -> Bound<&T>` becomes `startBound(): Bound<T>`
  * (no shared-borrow vocabulary in Kotlin — see file header).
  */
 interface RangeBounds<T> {
@@ -67,12 +67,12 @@ interface RangeBounds<T> {
     /**
      * Returns `true` if `item` is contained in the range.
      *
-     * Translates Rust's
-     * `fn contains<U>(&self, item: &U) -> bool where T: PartialOrd<U>, U: ?Sized + PartialOrd<T>`.
+     * Translates the upstream
+     * `function contains<U>(&self, item: &U) -> bool where T: PartialOrd<U>, U: ?Sized + PartialOrd<T>`.
      * The Kotlin port narrows U to T and requires the bound values to be
      * `Comparable<T>` (asserted via a runtime cast — Kotlin interface
-     * methods cannot impose extra constraints on the interface's own
-     * type parameter beyond what's declared on the interface). Cross-type
+     * methods cannot impose extra constraints on the interface own
+     * type parameter beyond what declared on the interface). Cross-type
      * partial ordering has no Kotlin equivalent.
      */
     fun contains(item: T): Boolean {

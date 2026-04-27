@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lane_table/table/context_set/mod.rs
+// port-lint: source src/lr1/laneTable/table/contextSet/mod.rs
 //! A key part of the lane-table algorithm is the idea of a CONTEXT
 //! SET (my name, the paper has no name for this). Basically it
 //! represents the LR1 context under which a given conflicting action
@@ -18,7 +18,7 @@
 //! - `S0 = { * B x, * C y, B = * z, C = * z }`
 //! - `S1 = { B = z *, C = z * }`
 //!
-//! This second state has two conflicting items. Let's call them
+//! This second state has two conflicting items. Let call them
 //! conflicts 0 and 1 respectively. The conflict set would then have
 //! two entries (one for each conflict) and it would map each of them
 //! to a TokenSet supplying context. So when we trace everything
@@ -29,7 +29,7 @@
 //! In general, you want to ensure that the token sets of all
 //! conflicting items are pairwise-disjoint, or else if you get to a
 //! state that has both of those items (which, by definition, does
-//! arise) you won't know which to take. In this case, we're all set,
+//! arise) you will not know which to take. In this case, we are all set,
 //! because item 0 occurs only with lookahead `x` and item 1 with
 //! lookahead `y`.
 package io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet
@@ -111,7 +111,7 @@ object OverlappingLookaheadException : RuntimeException() {
 }
 
 /**
- * Marker type matching the upstream Rust `pub struct OverlappingLookahead;` --
+ * Marker type matching the upstream Rust `class OverlappingLookahead;` --
  * a unit struct used as an `Err` payload. The Kotlin port models the
  * error as the [OverlappingLookaheadException] singleton; this
  * typealias preserves the original Rust name for parity tooling.

@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/norm_util.rs
+// port-lint: source src/normalize/normUtil.rs
 package io.github.kotlinmania.lalrpop.normalize.normUtil
 
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
@@ -19,7 +19,7 @@ sealed class Symbols {
 }
 
 fun analyzeAction(alt: Alternative): AlternativeAction {
-    // We can't infer types for alternatives with actions
+    // We cannot infer types for alternatives with actions
     val code = alt.action
     if (code != null) {
         return AlternativeAction.User(code)
@@ -60,7 +60,7 @@ fun analyzeExpr(expr: ExprSymbol): Symbols {
         return Symbols.Anon(chosenSymbolTypes)
     }
 
-    // If they didn't choose anything with `<>`, make a tuple of everything.
+    // If they did not choose anything with `<>`, make a tuple of everything.
     return Symbols.Anon(expr.symbols.withIndex().map { (idx, sym) -> Pair(idx, sym) }.toList())
 }
 
@@ -81,8 +81,8 @@ fun checkBetweenBraces(action: String): Presence {
             Pair(rawBefore.trim(), rawAfter.trim())
         }
 
-        // If we have an odd number of quotes on both sides, we're inside a string, and therefore,
-        // this is a format arg, not a struct.  That's considered "Normal" here, because this is
+        // If we have an odd number of quotes on both sides, we are inside a string, and therefore,
+        // this is a format arg, not a struct.  That considered "Normal" here, because this is
         // detecting if our expansion is for a struct definition.
         val beforeQuotes = before.count { c -> c == '"' }
         val afterQuotes = after.count { c -> c == '"' }

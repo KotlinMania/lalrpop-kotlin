@@ -33,7 +33,7 @@ sealed class ParseTree {
 }
 
 /**
- * Minimal port of `rand::rngs::ChaCha20Rng` — only the `random_range`
+ * Minimal port of `rand::rngs::ChaCha20Rng` — only the `randomRange`
  * usage in this file is required. Callers provide any deterministic
  * RNG satisfying this interface.
  */

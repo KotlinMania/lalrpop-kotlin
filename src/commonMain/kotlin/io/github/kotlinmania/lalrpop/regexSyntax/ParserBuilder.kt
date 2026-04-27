@@ -1,12 +1,12 @@
-// port-lint: helper crate-regex_syntax
-// Helper: escape() and ParserBuilder match the `regex_syntax` crate's
-// public surface that LALRPOP's lexer/re/mod.rs consumes. The parse
+// port-lint: helper crate-regexSyntax
+// Helper: escape() and ParserBuilder match the `regexSyntax` crate
+// public surface that LALRPOP lexer/re/mod.rs consumes. The parse
 // implementation lives in Parser.kt.
 package io.github.kotlinmania.lalrpop.regexSyntax
 
 /**
  * Escape all regex metacharacters in `s` so that the result matches `s`
- * literally when parsed as a regex. Mirrors `regex_syntax::escape`.
+ * literally when parsed as a regex. Mirrors `regexSyntax::escape`.
  */
 fun escape(s: String): String {
     val sb = StringBuilder(s.length)
@@ -23,10 +23,10 @@ private fun isMetacharacter(c: Char): Boolean = when (c) {
 }
 
 /**
- * Builder for a regex parser. Mirrors `regex_syntax::ParserBuilder`.
+ * Builder for a regex parser. Mirrors `regexSyntax::ParserBuilder`.
  *
- * LALRPOP sets `utf8(enable_unicode)` and `unicode(enable_unicode)` where
- * `enable_unicode = cfg!(feature = "unicode")`. In the Kotlin port we
+ * LALRPOP sets `utf8(enableUnicode)` and `unicode(enableUnicode)` where
+ * `enableUnicode = cfg(feature = "unicode")`. In the Kotlin port we
  * default both to `true`; the flags are retained for API parity.
  */
 class ParserBuilder {
@@ -40,8 +40,8 @@ class ParserBuilder {
 }
 
 /**
- * A regex parser. Mirrors `regex_syntax::Parser`. The `parse` method
- * returns a [Result] mirroring Rust's `Result<Hir, Error>`.
+ * A regex parser. Mirrors `regexSyntax::Parser`. The `parse` method
+ * returns a [Result] mirroring the upstream `Result<Hir, Error>`.
  */
 class Parser internal constructor(
     private val utf8: Boolean,

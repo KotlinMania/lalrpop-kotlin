@@ -100,7 +100,7 @@ private fun LowerState.lower(session: Session, grammar: PtGrammar): RGrammar {
 
             is GrammarItem.MatchToken -> {
                 // The declarations in the match token are handled
-                // fully by the `token_check` when it constructs the
+                // fully by the `tokenCheck` when it constructs the
                 //  `InternToken` -- there is nothing left to do here.
             }
 
@@ -390,9 +390,9 @@ private fun LowerState.actionFn(
         }
     }
 
-    // Note that the action fn takes ALL of the symbols in `expr`
+    // Note that the action function takes ALL of the symbols in `expr`
     // as arguments, and some of them are simply dropped based on
-    // the user's selections.
+    // the user selections.
 
     // The set of argument types is thus the type of all symbols:
     val argTypes: MutableList<TypeRepr> =
@@ -446,7 +446,7 @@ private fun LowerState.actionFn(
             val occurrences = resolvedAction.split("<>").size - 1
             val finalAction: String = if (occurrences > 1) {
                 if (occurrences != names.size) {
-                    // Here the error span will be based on the anon_symbols
+                    // Here the error span will be based on the anonSymbols
                     // since that is what I have the span information for.
 
                     // Alternatively, one could pass in the action span

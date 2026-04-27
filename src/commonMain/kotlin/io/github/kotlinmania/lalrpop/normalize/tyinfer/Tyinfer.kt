@@ -101,7 +101,7 @@ private fun makeTypes(grammar: Grammar): Types {
         ?.typeRef?.typeRepr()
 
     // Determine location type and enum type. If using an internal
-    // token, that's specified by us, not user.
+    // token, that specified by us, not user.
     val internToken = grammar.internToken()
     return if (internToken != null) {
         val locType = // usize
@@ -234,7 +234,7 @@ private fun TypeInferencer.nonterminalType(id: NonterminalString): TypeRepr {
             }
         }
 
-        // and use that type
+        // and import that type
         alternativeTypes.removeAt(alternativeTypes.size - 1)
     }
 

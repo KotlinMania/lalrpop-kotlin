@@ -8,15 +8,15 @@ package io.github.kotlinmania.lalrpop.parser
 // Rust file structure (line numbers refer to lrgrammar.rs):
 //   1-37     imports + `mod ___parse___Top` opener   (translated: package + comments)
 //   38-142   `___Symbol` enum (102 variants)         (translated below)
-//   143-1400 `___ACTION` const + `___action` fn      (translated below)
+//   143-1400 `___ACTION` const + `___action` function (translated below)
 //   1401-1403  `___action` lookup                    (translated below)
 //   1404-2661  `___EOF_ACTION` const                 (translated below)
-//   2662-3115  `___goto` fn                          (translated below)
+//   2662-3115  `___goto` function (translated below)
 //   3117-3176  `___TERMINAL` const                   (translated below)
-//   3178-3187  `___expected_tokens` fn               (translated below)
-//   3188-3202  `___expected_tokens_from_states` fn   (translated below)
+//   3178-3187  `___expected_tokens` function (translated below)
+//   3188-3202  `___expected_tokens_from_states` function (translated below)
 //   3203-3208  `___StateMachine` struct                (translated below)
-//   3209-3303  `ParserDefinition` impl on StateMachine (translated below as
+//   3209-3303  `ParserDefinition` implementation on StateMachine (translated below as
 //                                                      `StateMachineDefinition`)
 //   3304-3374  `___token_to_integer`                   (translated below)
 //   3375-3391  `___token_to_symbol`                    (translated below)
@@ -58,7 +58,7 @@ package io.github.kotlinmania.lalrpop.parser
 // alphabet size and must stay in lockstep with the Symbol enum.
 
 // === lrgrammar.rs:38-142 — `___Symbol` enum ===
-/** Translation of `pub(crate) enum ___Symbol<'input>` from lrgrammar.rs:38. */
+/** Translation of `public(crate) enum ___Symbol<'input>` from lrgrammar.rs:38. */
 /** Renamed `LrSymbol` to avoid colliding with `grammar.parseTree.Symbol` (Variant32). */
 internal sealed class LrSymbol {
     data class Variant0(val v: io.github.kotlinmania.lalrpop.tok.Tok) : LrSymbol()
@@ -2689,7 +2689,7 @@ internal val EOF_ACTION: ShortArray = shortArrayOf(
 -486,
 )
 
-// === lrgrammar.rs:2662-3115 — `___goto` fn ===
+// === lrgrammar.rs:2662-3115 — `___goto` function ===
 // Rust `match` -> Kotlin `when`; or-patterns (`a | b`) become
 // comma-separated literals; inclusive ranges (`a..=b`) are expanded
 // since Kotlin `when` does not allow mixing literals and `in` clauses
@@ -3216,7 +3216,7 @@ internal val TERMINAL: Array<String> = arrayOf(
     "\"StartGrammarWhereClauses\"",
 )
 
-// === lrgrammar.rs:3178-3187 — `___expected_tokens` fn ===
+// === lrgrammar.rs:3178-3187 — `___expected_tokens` function ===
 /** `___expected_tokens(state)`. */
 internal fun expectedTokens(state: Short): List<String> {
     return TERMINAL.mapIndexedNotNull { index, terminal ->
@@ -3229,8 +3229,8 @@ internal fun expectedTokens(state: Short): List<String> {
     }
 }
 
-// === lrgrammar.rs:3212-3221 — associated-type bindings on the ParserDefinition impl ===
-// The Rust source binds these inside the `impl ParserDefinition for ___StateMachine`
+// === lrgrammar.rs:3212-3221 — associated-type bindings on the ParserDefinition implementation ===
+// The Rust source binds these inside the `implementation ParserDefinition for ___StateMachine`
 // block (one `type Foo = Bar;` line each, lines 3212-3221). The Kotlin port
 // realises them as concrete generic arguments on the StateMachine class
 // declaration below, but to keep symbol-parity we ALSO surface each binding as
@@ -3242,12 +3242,12 @@ internal typealias TokenIndex = Int
 internal typealias ReduceIndex = Short
 internal typealias NonterminalIndex = Int
 
-// === lrgrammar.rs:3203-3303 — `___StateMachine` struct + `ParserDefinition` impl ===
+// === lrgrammar.rs:3203-3303 — `___StateMachine` struct + `ParserDefinition` implementation ===
 // The Rust struct holds `text: &'input str` plus a phantom marker; in
 // Kotlin we drop the lifetime entirely and keep just the input text. The
-// `impl ___state_machine::ParserDefinition for ___StateMachine` block is
+// `implementation ___state_machine::ParserDefinition for ___StateMachine` block is
 // realised directly on the class — each method forwards to the free
-// function that the Rust impl also delegates to.
+// function that the Rust implementation also delegates to.
 internal class StateMachine(
     internal val text: String,
 ) : io.github.kotlinmania.lalrpop.runtime.ParserDefinition<
@@ -3337,7 +3337,7 @@ internal class StateMachine(
 
 // === lrgrammar.rs:3304-3374 — `___token_to_integer` ===
 // Maps a token to its column in the ACTION/EOF_ACTION tables.
-// Returns null when the token is not a recognised terminal (LALRPOP's
+// Returns null when the token is not a recognised terminal (LALRPOP
 // `___token_to_integer` returns `None` for the same case).
 internal
 fun tokenToInteger(
@@ -3435,7 +3435,7 @@ internal fun tokenToSymbol(tokenIndex: Int, token: io.github.kotlinmania.lalrpop
 }
 
 // === lrgrammar.rs:3392-6613 — `___simulate_reduce` ===
-/** `___simulate_reduce(reduce_index)`. */
+/** `___simulate_reduce(reduceIndex)`. */
 internal fun simulateReduce
 (
     reduceIndex: Short,
@@ -6720,7 +6720,7 @@ internal fun expectedTokensFromStates(
 // Each `___pop_VariantN` pops the top of the symbol stack, asserts that the
 // symbol is `LrSymbol.VariantN`, and returns its payload value tagged with
 // the surrounding (left, right) location markers. Variant9 carries no
-// payload (Rust's unit `()`); the Kotlin port returns `Unit`.
+// payload (the upstream unit `()`); the Kotlin port returns `Unit`.
 internal fun symbolTypeMismatch(): Nothing {
     error("symbol type mismatch")
 }
@@ -7849,8 +7849,8 @@ internal fun popVariant1(
 }
 
 // The 5 LALRPOP "start" actions. Each Rust grammar entry point
-// `parse_grammar`, `parse_pattern`, `parse_match_mapping`,
-// `parse_type_ref`, `parse_where_clauses` is wired through one of these
+// `parseGrammar`, `parsePattern`, `parseMatchMapping`,
+// `parseTypeRef`, `parseWhereClauses` is wired through one of these
 // reductions, which strip the synthetic Start* sentinel terminal that
 // the lexer emits to disambiguate which top-level rule to parse, then
 // wrap the inner result in the corresponding `Top` variant.
@@ -8145,7 +8145,7 @@ fun action22
 // Productions for `Parameter`, `GrammarItem` (Use / Nonterminal),
 // `Visibility`, `Attribute` / `AttributeArg`, `NonterminalString`,
 // `Alternative`, `ActionKind`, `Condition`, `ConditionOp`. The
-// alternative-list helpers (___action41/42) match the Rust grammar's
+// alternative-list helpers (___action41/42) match the the grammar in
 // `Alternative ";"` and `"{" Alternative+ "}" ";"?` productions.
 internal
 fun action23
@@ -9430,8 +9430,8 @@ fun action125
     return io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral.Regex(s.second)
 }
 
-// Both call `tok::apply_string_escapes(s, lo+1)?` and the macro-expanded
-// ParseError::User. `apply_string_escapes` lives at `tok/Tok.kt:853` and
+// Both call `tok::applyStringEscapes(s, lo+1)?` and the macro-expanded
+// ParseError::User. `applyStringEscapes` lives at `tok/Tok.kt:853` and
 // returns a `Result<String>` whose failure carries a [TokError]; we unwrap
 // it into an [LrParseErrorException] inline so the whole action travels
 // through `kotlin.Result`.
@@ -9776,7 +9776,7 @@ fun action156
 
 //
 // This block is dominated by mechanical optional/list/identity helpers
-// generated by LALRPOP's `Some<T>`, `None<T>`, `(<T> ",")*`, etc. macros.
+// generated by LALRPOP `Some<T>`, `None<T>`, `(<T> ",")*`, etc. macros.
 // Each kept its source line range and the body matches Rust verbatim.
 
 internal
@@ -11542,7 +11542,7 @@ internal fun action321(
 // `Triple(start, value, end)` triple, and forwards to a higher-arity
 // action. The Rust source uses `&___start0`/`&___end0` borrows for the
 // lookbehind/lookahead overloads; Kotlin passes the same `Int` values
-// directly. No semantic difference — Rust's references are erased.
+// directly. No semantic difference — the upstream references are erased.
 
 internal
 fun action322
@@ -24041,7 +24041,7 @@ fun action780
 
 // Attribute-carrying Grammar forwarders: same 4-variant template as chunk 7
 // (empty/identity leading items × no-attrs/attrs), but the target now sits
-// in the attr-list block (action657..action680) and the forwarder's sym
+// in the attr-list block (action657..action680) and the forwarder sym
 // stream contains a `Vec<Attribute>` placed immediately after the optional
 // leading `Vec<GrammarItem>` / attrs.
 
@@ -26032,12 +26032,12 @@ fun action844
 // === lrgrammar.rs:40202-40219 ===
 
 /**
- * Translation of `pub trait ___ToTriple<'input>` (lrgrammar.rs:40203).
+ * Translation of `interface ___ToTriple<'input>` (lrgrammar.rs:40203).
  *
- * Upstream uses ad-hoc trait dispatch on the input iterator's item type
+ * Upstream uses ad-hoc trait dispatch on the input iterator item type
  * to pick between the bare-triple and fallible-lexer conversions. Kotlin
- * has no equivalent (you cannot retroactively impl a trait for an
- * existing concrete type), so the two `impl` blocks (lines 40208 / 40214)
+ * has no equivalent (you cannot retroactively implementation a trait for an
+ * existing concrete type), so the two `implementation` blocks (lines 40208 / 40214)
  * dissolve into the two `toTriple` extension functions defined below.
  *
  * The trait declaration itself is preserved here (with no abstract
@@ -26045,7 +26045,7 @@ fun action844
  * check sees a `ToTriple` declaration corresponding to the Rust trait.
  * Callers do not implement this interface; they call `.toTriple()` on
  * the receiver, which resolves to one of the two extension functions
- * via Kotlin's overload resolution on receiver type.
+ * via Kotlin overload resolution on receiver type.
  */
 @Suppress("unused")
 interface ToTriple
@@ -26053,7 +26053,7 @@ interface ToTriple
 /**
  * Exception adapter wrapping an [LrParseError] so it can flow through
  * [kotlin.Result], whose failure slot accepts only [Throwable]. The
- * wrapped error is recovered by the parser's `parse` entry point
+ * wrapped error is recovered by the parser `parse` entry point
  * when converting a lexer failure into the user-error variant.
  */
 internal class LrParseErrorException(val parseError: LrParseError) : RuntimeException()
@@ -37259,7 +37259,7 @@ internal fun reduce530(
     return Pair(2, 175)
 }
 
-/** `___reduce531` — Visibility = "pub", "(", Path, ")" => ActionFn(29); */
+/** `___reduce531` — Visibility = "public", "(", Path, ")" => ActionFn(29); */
 internal fun reduce531(
     text: String,
     lookaheadStart: Int?,
@@ -37267,7 +37267,7 @@ internal fun reduce531(
         io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
     >,
 ): Pair<Int, Int> {
-    // Visibility = "pub", "(", Path, ")" => ActionFn(29);
+    // Visibility = "public", "(", Path, ")" => ActionFn(29);
     check(
         symbols.size >= 4,
     )
@@ -37282,7 +37282,7 @@ internal fun reduce531(
     return Pair(4, 176)
 }
 
-/** `___reduce532` — Visibility = "pub", "(", "in", Path, ")" => ActionFn(30); */
+/** `___reduce532` — Visibility = "public", "(", "in", Path, ")" => ActionFn(30); */
 internal fun reduce532(
     text: String,
     lookaheadStart: Int?,
@@ -37290,7 +37290,7 @@ internal fun reduce532(
         io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
     >,
 ): Pair<Int, Int> {
-    // Visibility = "pub", "(", "in", Path, ")" => ActionFn(30);
+    // Visibility = "public", "(", "in", Path, ")" => ActionFn(30);
     check(
         symbols.size >= 5,
     )
@@ -37306,7 +37306,7 @@ internal fun reduce532(
     return Pair(5, 176)
 }
 
-/** `___reduce533` — Visibility = "pub" => ActionFn(31); */
+/** `___reduce533` — Visibility = "public" => ActionFn(31); */
 internal
 fun reduce533(
     text: String,
@@ -37316,7 +37316,7 @@ fun reduce533(
     >,
 ): Pair<Int, Int>
 {
-    // Visibility = "pub" => ActionFn(31);
+    // Visibility = "public" => ActionFn(31);
     val sym0 = popVariant0(symbols)
     val start = sym0.first
     val end = sym0.third
@@ -37567,7 +37567,7 @@ fun action502
 
 // === lrgrammar.rs:6681-8366 — `___reduce` dispatcher ===
 /**
- * Translation of `fn ___reduce<'input>(...)` from lrgrammar.rs:6681. Looks up
+ * Translation of `function ___reduce<'input>(...)` from lrgrammar.rs:6681. Looks up
  * the i16 action code, delegates to the matching infallible `reduceN`, or
  * inlines the five fallible cases that must short-circuit on error. Returns
  * a non-null [ParseResult] only when the parse is complete (case 535) or when
@@ -39261,7 +39261,7 @@ internal fun reduce(
 }
 
 /**
- * Translation of `pub struct TopParser` and its `parse()` entry point
+ * Translation of `class TopParser` and its `parse()` entry point
  * (lrgrammar.rs:6614). The Rust `___TOKEN: ___ToTriple` bound is realised
  * on the Kotlin side by taking an iterator whose items have already been
  * passed through one of the [toTriple] extension functions — i.e. an

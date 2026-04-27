@@ -9,7 +9,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Parameter
 import io.github.kotlinmania.lalrpop.tls.Tls
 
 /**
- * Rust: `pub const fn assert_rust_write<W>(_: &RustWrite<W>) {}`.
+ * Rust: `public const function assertRustWrite<W>(_: &RustWrite<W>) {}`.
  *
  * Compile-time guard that the `rust!` macro is being invoked on a
  * `RustWrite`. In Kotlin the corresponding type check is enforced by
@@ -17,15 +17,15 @@ import io.github.kotlinmania.lalrpop.tls.Tls
  * preserved for parity with the upstream Rust source.
  */
 fun assertRustWrite(@Suppress("UNUSED_PARAMETER") w: RustWrite) {
-    // intentionally empty; see Rust source comment about #[cfg(debug_assertions)]
+    // intentionally empty; see Rust source comment about (cfg(debugAssertions))
 }
 
 /**
  * Like [`std::writeln!`], but for writing Rust code to a [`RustWrite`], which handles indentation.
  *
- * The Rust source defines this via `macro_rules!`. In Kotlin we expose it as a
+ * The Rust source defines this via `macroRules!`. In Kotlin we expose it as a
  * top-level function: `rust(w, "fmt %s", arg)` is equivalent to
- * `rust!(w, "fmt {}", arg)` in the Rust code.
+ * `rust(w, "fmt {}", arg)` in the Rust code.
  */
 fun rust(w: RustWrite, fmt: String = "", vararg args: Any?) {
     assertRustWrite(w)
@@ -91,7 +91,7 @@ internal fun format(fmt: String, vararg args: Any?): String {
  * rustfmt tool.
  *
  * ```ignore
- * fn foo(
+ * function foo(
  * arg1: Type1,
  * arg2: Type2,
  * arg3: Type3)
@@ -140,22 +140,22 @@ class RustWrite private constructor(
                 first = false
             }
         }
-        // Mirrors the trailing `writeln!(self.write)` in upstream
-        // `write_table_row` — it lives outside the if/else so it
+        // Mirrors the trailing `writeln(self.write)` in upstream
+        // `writeTableRow` — it lives outside the if/else so it
         // appends a blank line after the row regardless of whether
         // comments are on. The previous Kotlin port had it only on
         // the no-comments branch, which left state-debug ACTION rows
-        // glued together without the upstream's per-row blank-line
+        // glued together without the upstream per-row blank-line
         // separator.
         this.write.append('\n')
     }
 
     /**
-     * Mirrors `pub fn write_fmt(&mut self, args: fmt::Arguments<'_>) -> io::Result<()>`
+     * Mirrors `fun writeFmt(&mut self, args: fmt::Arguments<'_>) -> io::Result<()>`
      * from the upstream Rust source. The Kotlin port consumes a
      * pre-formatted [String] (see [format]) and forwards to
      * [writeLine], which performs the indentation accounting that
-     * upstream's `write_fmt` performs inline.
+     * upstream `writeFmt` performs inline.
      */
     fun writeFmt(buf: String) {
         writeLine(buf)
@@ -163,7 +163,7 @@ class RustWrite private constructor(
 
     /**
      * Writes a single fully-formatted line, handling indentation. The
-     * Rust equivalent is `write_fmt` driven by the `rust!` macro and
+     * Rust equivalent is `writeFmt` driven by the `rust!` macro and
      * expects the line to end in `\n`.
      */
     fun writeLine(buf: String) {
@@ -220,7 +220,7 @@ class RustWrite private constructor(
 
     fun writeStandardUses(prefix: String) {
         // Stuff that we plan to use.
-        // Occasionally we happen to not use it after all, hence the allow.
+        // Occasionally we happen to not import it after all, hence the allow.
         rust(this, "#[allow(unused_extern_crates)]")
         rust(this, "extern crate lalrpop_util as ${prefix}lalrpop_util;")
         rust(this, "#[allow(unused_imports)]")
@@ -301,7 +301,7 @@ class FnHeader private constructor(
     }
 
     /**
-     * Emit fn header -- everything up to the opening `{` for the
+     * Emit function header -- everything up to the opening `{` for the
      * body.
      */
     fun emit() {
@@ -334,14 +334,14 @@ class FnHeader private constructor(
 }
 
 /**
- * Rust: `pub trait ParameterDisplay { fn to_parameter_string(self) -> String; }`.
+ * Rust: `interface ParameterDisplay { function toParameterString(self) -> String; }`.
  *
  * The Rust code uses this trait to accept either a bare `String` or a
- * `&repr::Parameter` in the generic `fn_header` writer. Kotlin's port
+ * `&repr::Parameter` in the generic `fnHeader` writer. Kotlin port
  * keeps the trait shape so that parity tooling sees the symbol; the
  * actual dispatch is done via the `Any.toParameterString()` extension
- * below, which mirrors `impl ParameterDisplay for String` and
- * `impl ParameterDisplay for &repr::Parameter`.
+ * below, which mirrors `implementation ParameterDisplay for String` and
+ * `implementation ParameterDisplay for &repr::Parameter`.
  */
 interface ParameterDisplay {
     fun toParameterString(): String

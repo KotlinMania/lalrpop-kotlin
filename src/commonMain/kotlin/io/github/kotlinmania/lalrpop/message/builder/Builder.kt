@@ -50,7 +50,7 @@ class MessageBuilder(
 
 class HeadingCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
     // Mirrors the `type End = MessageBuilder;` line in the Rust
-    // `impl Character for HeadingCharacter` block (builder.rs:52).
+    // `implementation Character for HeadingCharacter` block (builder.rs:52).
     internal typealias End = MessageBuilder
 
     override fun end(items: MutableList<Content>): MessageBuilder {
@@ -61,7 +61,7 @@ class HeadingCharacter(internal val message: MessageBuilder) : Character<Message
 
 class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
     // Mirrors the `type End = MessageBuilder;` line in the Rust
-    // `impl Character for BodyCharacter` block (builder.rs:65).
+    // `implementation Character for BodyCharacter` block (builder.rs:65).
     internal typealias End = MessageBuilder
 
     override fun end(items: MutableList<Content>): MessageBuilder {
@@ -78,9 +78,9 @@ class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBui
 
 class InlineBuilder : Character<Content> {
     // Mirrors the `type End = Box<dyn Content>;` line in the Rust
-    // `impl Character for InlineBuilder` block (builder.rs:93). Kotlin
+    // `implementation Character for InlineBuilder` block (builder.rs:93). Kotlin
     // reifies the trait object as the bare interface — `Content` here
-    // is the equivalent of Rust's `Box<dyn Content>`.
+    // is the equivalent of the upstream `Box<dyn Content>`.
     internal typealias End = Content
 
     companion object {
@@ -103,7 +103,7 @@ class InlineBuilder : Character<Content> {
  * called `push`, and it simply pushes a new child of the current
  * parent.
  *
- * Methods whose name like `begin_foo` are used to create a new
+ * Methods whose name like `beginFoo` are used to create a new
  * multi-part child; they return a fresh builder corresponding to the
  * child. When the child is completely constructed, call `end` to
  * finish the child builder and return to the parent builder.
@@ -114,9 +114,9 @@ class InlineBuilder : Character<Content> {
  *
  * Example:
  *
- * ```no_compile
+ * ```noCompile
  * let node = InlineBuilder::new()
- * .begin_lines() // starts a child builder for adjacent lines
+ * .beginLines() // starts a child builder for adjacent lines
  * .text("foo")   // add a text node "foo" to the child builder
  * .text("bar")   // add a text node "bar" to the child builder
  * .end()         // finish the lines builder, return to the parent
@@ -178,7 +178,7 @@ class Builder<End>(
 
     /**
      * Take the item just pushed and makes some text adjacent to it.
-     * E.g. `builder.wrap().text("foo").adjacent_text(".").end()`
+     * E.g. `builder.wrap().text("foo").adjacentText(".").end()`
      * result in `"foo."` being printed without any wrapping in
      * between.
      */
@@ -220,8 +220,8 @@ class HorizCharacter<C>(
     internal val separate: Int,
 ) : Character<Builder<C>> {
     // Mirrors the `type End = Builder<C>;` line in the Rust
-    // `impl<C: Character> Character for HorizCharacter<C>` block (builder.rs:261).
-    // Kotlin nested typealiases cannot capture the outer class's type
+    // `implementation<C: Character> Character for HorizCharacter<C>` block (builder.rs:261).
+    // Kotlin nested typealiases cannot capture the outer class type
     // parameter, so the binding here uses a star-projection — the upstream
     // semantic shape (`Builder<C>`) is preserved on the supertype declaration
     // above, and the typealias exists to surface the symbol for parity checks.
@@ -236,7 +236,7 @@ class VertCharacter<C>(
     internal val separate: Int,
 ) : Character<Builder<C>> {
     // Mirrors the `type End = Builder<C>;` line in the Rust
-    // `impl<C: Character> Character for VertCharacter<C>` block (builder.rs:276).
+    // `implementation<C: Character> Character for VertCharacter<C>` block (builder.rs:276).
     internal typealias End = Builder<*>
 
     override fun end(items: MutableList<Content>): Builder<C> =
@@ -247,7 +247,7 @@ class WrapCharacter<C>(
     internal val base: Builder<C>,
 ) : Character<Builder<C>> {
     // Mirrors the `type End = Builder<C>;` line in the Rust
-    // `impl<C: Character> Character for WrapCharacter<C>` block (builder.rs:290).
+    // `implementation<C: Character> Character for WrapCharacter<C>` block (builder.rs:290).
     internal typealias End = Builder<*>
 
     override fun end(items: MutableList<Content>): Builder<C> =

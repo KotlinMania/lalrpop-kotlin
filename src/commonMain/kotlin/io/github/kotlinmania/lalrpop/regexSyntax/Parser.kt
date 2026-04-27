@@ -1,10 +1,10 @@
-// port-lint: helper crate-regex_syntax
+// port-lint: helper crate-regexSyntax
 // Helper: recursive-descent regex parser producing the Hir shape defined
 // in Hir.kt. Covers the subset of regex syntax LALRPOP grammar terminals
 // use: literals, escapes, character classes, shorthand classes (\d \w \s
 // and negations), repetitions, groups (capturing, non-capturing, named),
 // alternation, `.`, and `^`/`$` anchors. Lookaround is recognized only as
-// `^`/`$` (emitted as `HirKind.Look`, which LALRPOP's Nfa builder rejects).
+// `^`/`$` (emitted as `HirKind.Look`, which LALRPOP Nfa builder rejects).
 package io.github.kotlinmania.lalrpop.regexSyntax
 
 internal class RegexParser(
@@ -14,7 +14,7 @@ internal class RegexParser(
 ) {
     private var pos: Int = 0
 
-    // Inline flag state. Mirrors regex-syntax's `ast::Flag`:
+    // Inline flag state. Mirrors regex-syntax `ast::Flag`:
     // `i` (CaseInsensitive), `m` (MultiLine), `s` (DotMatchesNewLine),
     // `U` (SwapGreed), `u` (Unicode), `R` (CRLF), `x` (IgnoreWhitespace).
     // Only `i` actually changes emitted HIR in this port — the rest are
@@ -147,7 +147,7 @@ internal class RegexParser(
                 // Inline flags: `(?flags)` applies flags to the rest of the
                 // current enclosing group; `(?flags:regex)` is a scoped
                 // non-capturing group with flags active only inside.
-                // Corresponds to regex-syntax `parse_group`'s flag handling.
+                // Corresponds to regex-syntax `parseGroup`'s flag handling.
                 isFlagChar() || peek('-') -> return parseInlineFlags()
                 else -> throw RegexSyntaxError("unsupported group prefix at position $pos", pos)
             }
@@ -161,7 +161,7 @@ internal class RegexParser(
     /**
      * Parse `(?flags)` or `(?flags:regex)` starting after the leading `?`.
      * Mirrors the `SetFlags` vs `Group::NonCapturing(flags)` branches in
-     * regex-syntax's `parse_group`.
+     * regex-syntax `parseGroup`.
      */
     private fun parseInlineFlags(): Hir {
         val (setI, clearI) = parseFlags()
@@ -191,7 +191,7 @@ internal class RegexParser(
 
     /**
      * Parse a sequence of flag chars with optional `-` negation, mirroring
-     * `parse_flags` in regex-syntax/src/ast/parse.rs. Returns (set, clear)
+     * `parseFlags` in regex-syntax/src/ast/parse.rs. Returns (set, clear)
      * booleans for the `i` flag — the only flag that changes our emitted
      * HIR. Unknown flag chars raise `RegexSyntaxError`. Other recognized
      * flags (`m`, `s`, `U`, `u`, `R`, `x`) are accepted and ignored.
@@ -374,11 +374,11 @@ internal class RegexParser(
     }
 
     private fun spaceClass(negate: Boolean): Hir {
-        // Mirror `regex_syntax`'s `\s` expansion in Unicode mode: the
+        // Mirror `regexSyntax`'s `\s` expansion in Unicode mode: the
         // full Unicode-property whitespace class. Without these the
         // emitted Rust source for `r"\s*"` is `[\t-\r ]*` (ASCII only)
         // while upstream emits the full Unicode whitespace ranges.
-        // Sourced from `regex_syntax/src/unicode_tables/perl_space.rs`.
+        // Sourced from `regexSyntax/src/unicodeTables/perlSpace.rs`.
         val base = listOf(
             ClassUnicodeRange('\t', '\r'),                          // 0x09–0x0D: TAB LF VT FF CR
             ClassUnicodeRange(' ', ' '),                            // 0x20: SPACE
@@ -405,9 +405,9 @@ internal class RegexParser(
 
     private fun literalOfChar(c: Char): Hir {
         if (caseInsensitive) {
-            // regex-syntax's HIR translator replaces each case-insensitive
+            // regex-syntax HIR translator replaces each case-insensitive
             // literal with a character class containing the case-folded
-            // alternatives (see `regex_syntax::hir::translate` under the
+            // alternatives (see `regexSyntax::hir::translate` under the
             // `unicode-case` feature). For the ASCII subset LALRPOP lexes,
             // the closure is {lowercase(c), uppercase(c)}.
             val lower = c.lowercaseChar()
@@ -420,7 +420,7 @@ internal class RegexParser(
                 return Hir(HirKind.Class(RegexClass.Unicode(ranges)))
             }
         }
-        // Store in UTF-8 bytes to match regex_syntax's Literal semantics.
+        // Store in UTF-8 bytes to match regexSyntax Literal semantics.
         val bytes = charToUtf8(c)
         return Hir(HirKind.Literal(RegexLiteral(bytes)))
     }

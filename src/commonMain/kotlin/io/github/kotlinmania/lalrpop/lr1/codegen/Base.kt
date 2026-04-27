@@ -28,7 +28,7 @@ class CodeGenerator<C>(
     /** the complete grammar */
     val grammar: Grammar,
 
-    /** some suitable prefix to separate our identifiers from the user's */
+    /** some suitable prefix to separate our identifiers from the user */
     val prefix: String,
 
     /** types from the grammar */
@@ -86,7 +86,7 @@ class CodeGenerator<C>(
          * of return values from any nonterminal (and, in some cases,
          * terminals). These types need to carry generic parameters from
          * the grammar, since the nonterminals may include generic
-         * parameters -- but we don't want them to carry *all* the
+         * parameters -- but we do not want them to carry *all* the
          * generic parameters, since that can be unnecessarily
          * restrictive.
          *
@@ -97,14 +97,14 @@ class CodeGenerator<C>(
          * ```
          *
          * Here, we likely do not want the `'a` in the type of `buffer` to appear
-         * in the nonterminal result. That's because, if it did, then the
+         * in the nonterminal result. That because, if it did, then the
          * action functions will have a signature like:
          *
          * ```ignore
-         * fn foo<'a, T>(x: &'a mut Vec<T>) -> Result<'a> { ... }
+         * function foo<'a, T>(x: &'a mut Vec<T>) -> Result<'a> { ... }
          * ```
          *
-         * In that case, we would only be able to call one action fn and
+         * In that case, we would only be able to call one action function and
          * will in fact get borrowck errors, because Rust would think we
          * were potentially returning this `&'a mut Vec<T>`.
          *
@@ -238,13 +238,13 @@ class CodeGenerator<C>(
         rust(this.out, "}")
         rust(this.out, "")
 
-        // Start default impl
+        // Start default implementation
         rust(
             this.out,
             "impl Default for ${this.userStartSymbol}Parser { fn default() -> Self { Self::new() } }",
         )
 
-        // Start parser impl
+        // Start parser implementation
         rust(this.out, "impl ${this.userStartSymbol}Parser {")
         rust(
             this.out,
@@ -307,8 +307,7 @@ class CodeGenerator<C>(
     }
 
     fun endParserFn() {
-        rust(this.out, "}") // fn
-        rust(this.out, "}") // impl
+        rust(this.out, "}") // function         rust(this.out, "}") // implementation
     }
 
     /**

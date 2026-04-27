@@ -9,9 +9,9 @@ typealias Entry<K, V> = io.github.kotlinmania.btree.Entry<K, V>
  * In general, we avoid coding directly against any particular map,
  * but rather build against `util::Map` (and `util::map` to construct
  * an instance). This should be a deterministic map, such that two
- * runs of LALRPOP produce the same output, but otherwise it doesn't
+ * runs of LALRPOP produce the same output, but otherwise it does not
  * matter much. I'd probably prefer to use `HashMap` with an
- * alternative hasher, but that's not stable.
+ * alternative hasher, but that not stable.
  */
 typealias Map<K, V> = BTreeMap<K, V>
 

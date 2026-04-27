@@ -1,4 +1,4 @@
-// port-lint: source src/file_text.rs
+// port-lint: source src/fileText.rs
 package io.github.kotlinmania.lalrpop
 
 /*
@@ -22,7 +22,7 @@ class FileText(
 ) {
     companion object {
         fun fromPath(path: String): FileText {
-            // Rust: std::fs::File::open + read_to_string
+            // Rust: std::fs::File::open + readToString
             // commonMain has no filesystem; callers that need disk I/O
             // should supply the content from a platform-specific source
             // and invoke `new` directly.
@@ -69,8 +69,8 @@ class FileText(
         // offset of the first character in `line`
         val lineOffset = newlines[line]
 
-        // find the column; use `saturating_sub` in case `pos` is the
-        // newline itself, which we'll call column 0
+        // find the column; use `saturatingSub` in case `pos` is the
+        // newline itself, which we will call column 0
         val col = pos - lineOffset
 
         return Pair(line, col)
@@ -92,8 +92,8 @@ class FileText(
         val (startLine, startCol) = lineCol(span.start)
         val (endLine, endCol) = lineCol(span.end)
 
-        // (*) use `saturating_sub` since the start line could be the newline
-        // itself, in which case we'll call it column zero
+        // (*) use `saturatingSub` since the start line could be the newline
+        // itself, in which case we will call it column zero
 
         // span is within one line:
         if (startLine == endLine) {

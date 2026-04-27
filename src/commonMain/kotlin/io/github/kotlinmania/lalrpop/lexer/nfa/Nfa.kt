@@ -10,8 +10,8 @@ import io.github.kotlinmania.lalrpop.regexSyntax.ClassUnicodeRange
 import io.github.kotlinmania.lalrpop.regexSyntax.HirKind
 import io.github.kotlinmania.lalrpop.regexSyntax.RegexClass
 
-// Mirrors Rust's `pub const ACCEPT/REJECT/START: NfaStateIndex = ...`
-// (mod.rs lines 110-112). Kotlin's compile-time `const val` is limited
+// Mirrors the upstream `public const ACCEPT/REJECT/START: NfaStateIndex = ...`
+// (mod.rs lines 110-112). Kotlin compile-time `const val` is limited
 // to primitives/Strings, so the typed [NfaStateIndex] constants are
 // plain top-level `val`s. SAFETY: callers treat them as effectively
 // constant — they are immutable and the NfaStateIndex value type is
@@ -54,7 +54,7 @@ class Nfa private constructor(
     // Public methods for querying an Nfa
 
     /**
-     * `pub fn edges<L: EdgeLabel>(&self, from: NfaStateIndex) -> EdgeIterator<'_, L>`.
+     * `fun edges<L: EdgeLabel>(&self, from: NfaStateIndex) -> EdgeIterator<'_, L>`.
      *
      * Rust dispatches via the type parameter `L`; in Kotlin we
      * dispatch on the variant of [EdgeLabel] passed by the caller.
@@ -114,7 +114,7 @@ class Nfa private constructor(
     internal fun newState(kind: StateKind): NfaStateIndex {
         val index = states.size
 
-        // these edge indices will be patched later by patch_edges()
+        // these edge indices will be patched later by patchEdges()
         states.add(NfaState(
             kind = kind,
             firstNoopEdge = UNSET,
@@ -220,13 +220,13 @@ class Nfa private constructor(
             }
         }
 
-        // currently we don't support any boundaries because
+        // currently we do not support any boundaries because
         // I was too lazy to code them up or think about them
         // Akin to anchors or wordboundaries
         is HirKind.Look -> throw NfaConstructionException(NfaConstructionError.LookAround)
 
         // currently we treat all capture groups the same, whether they
-        // capture or not; but we don't permit named groups,
+        // capture or not; but we do not permit named groups,
         // in case we want to give them significance in the future
         is HirKind.Capture -> {
             val c = expr.capture
@@ -385,11 +385,11 @@ class Nfa private constructor(
     }
 
     /**
-     * Mirrors `impl Display for Nfa` (line 616 of mod.rs).
+     * Mirrors `implementation Display for Nfa` (line 616 of mod.rs).
      *
-     * SAFETY: upstream Rust's `mod.rs` has only `Debug` impls for
+     * SAFETY: upstream the upstream `mod.rs` has only `Debug` impls for
      * `Test`, `NfaStateIndex`, and `Edge<L>`; the `fmt` at line 616 is
-     * `impl<L: Debug> Debug for Edge<L>`. We surface a higher-level
+     * `implementation<L: Debug> Debug for Edge<L>`. We surface a higher-level
      * `toString()` on the Nfa itself for ergonomics; the real per-edge
      * Debug body is reproduced on [Edge.toString].
      */
@@ -423,7 +423,7 @@ data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
     fun isChar(): Boolean = length() == 1u
 
     fun length(): UInt {
-        // The reason we don't have a RangeInclusive::len is because it panics if the range is 0..=u32::max
+        // The reason we do not have a RangeInclusive::len is because it panics if the range is 0..=u32::max
         // Akin to https://github.com/rust-lang/rust/issues/36386
         // Plus one because the range is inclusive
         return end() + 1u - start()
@@ -470,7 +470,7 @@ data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
         fun from(range: ClassBytesRange): Test =
             inclusiveByteRange(range.start(), range.end())
 
-        // `impl EdgeLabel for Test` — four associated trait fns.
+        // `implementation EdgeLabel for Test` — four associated trait fns.
         // Kotlin has no trait dispatch on a type parameter, so these
         // are companion-object methods called directly by `Nfa`.
         fun vecMut(nfa: Edges): MutableList<Edge<Test>> = nfa.testEdges
@@ -505,7 +505,7 @@ data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
 object Noop {
     override fun toString(): String = "Noop"
 
-    // `impl EdgeLabel for Noop`
+    // `implementation EdgeLabel for Noop`
     fun vecMut(nfa: Edges): MutableList<Edge<Noop>> = nfa.noopEdges
     fun vec(nfa: Edges): List<Edge<Noop>> = nfa.noopEdges
     fun firstMut(state: NfaState): Int = state.firstNoopEdge
@@ -516,7 +516,7 @@ object Noop {
 object Other {
     override fun toString(): String = "Other"
 
-    // `impl EdgeLabel for Other`
+    // `implementation EdgeLabel for Other`
     fun vecMut(nfa: Edges): MutableList<Edge<Other>> = nfa.otherEdges
     fun vec(nfa: Edges): List<Edge<Other>> = nfa.otherEdges
     fun firstMut(state: NfaState): Int = state.firstOtherEdge
@@ -524,9 +524,9 @@ object Other {
 }
 
 /**
- * `pub trait EdgeLabel` translated as a sealed sum type: each
+ * `interface EdgeLabel` translated as a sealed sum type: each
  * variant carries the corresponding edge-label payload (or none, in
- * the Noop/Other case). The `vec/vec_mut/first/first_mut` trait
+ * the Noop/Other case). The `vec/vecMut/first/firstMut` trait
  * methods live on the concrete companion objects of [Test], [Noop],
  * and [Other] above; this sealed class exists so that callers can
  * pass a single [EdgeLabel] value and dispatch on it.
@@ -569,13 +569,13 @@ data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
     override fun compareTo(other: NfaStateIndex): Int = value.compareTo(other.value)
 
     /**
-     * Mirrors `impl Debug for NfaStateIndex` (mod.rs:609-613):
-     * `fn fmt(&self, fmt: &mut Formatter<'_>) -> Result<(), FmtError> {
-     *      write!(fmt, "Nfa{}", self.0)
+     * Mirrors `implementation Debug for NfaStateIndex` (mod.rs:609-613):
+     * `function fmt(&self, fmt: &mut Formatter<'_>) -> Result<(), FmtError> {
+     *      write(fmt, "Nfa{}", self.0)
      *  }`.
      *
      * Translated as a string-builder write; [toString] delegates to it
-     * so Kotlin's standard `print`/`"$x"` interpolation goes through
+     * so Kotlin standard `print`/`"$x"` interpolation goes through
      * the same path.
      */
     fun fmt(out: StringBuilder): StringBuilder = out.append("Nfa").append(value)
@@ -599,15 +599,15 @@ class Edges {
     // test
     val testEdges: MutableList<Edge<Test>> = mutableListOf()
 
-    // fallback rules if no test_edge applies
+    // fallback rules if no testEdge applies
     val otherEdges: MutableList<Edge<Other>> = mutableListOf()
 }
 
 /**
- * Mirrors `pub struct Edge<L>` plus the `impl<L: Debug> Debug for
+ * Mirrors `class Edge<L>` plus the `implementation<L: Debug> Debug for
  * Edge<L>` body (line 615-618). It used to be a `data class` but we
  * lift it to a regular class so the explicit [toString] override
- * tracks Rust's `write!(fmt, "{:?} -{:?}-> {:?}", ...)` line-by-line.
+ * tracks the upstream `write(fmt, "{:?} -{:?}-> {:?}", ...)` line-by-line.
  */
 class Edge<L>(
     val from: NfaStateIndex,
@@ -625,7 +625,7 @@ class Edge<L>(
         h = 31 * h + to.hashCode()
         return h
     }
-    /** `impl<L: Debug> Debug for Edge<L>`: `"{:?} -{:?}-> {:?}"`. */
+    /** `implementation<L: Debug> Debug for Edge<L>`: `"{:?} -{:?}-> {:?}"`. */
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append(from).append(" -").append(label).append("-> ").append(to)
@@ -634,8 +634,8 @@ class Edge<L>(
 }
 
 /**
- * Mirrors `pub struct EdgeIterator<'nfa, L: EdgeLabel>` plus the
- * `Iterator` impl at line 483.
+ * Mirrors `class EdgeIterator<'nfa, L: EdgeLabel>` plus the
+ * `Iterator` implementation at line 483.
  */
 class EdgeIterator<L>(
     private val edges: List<Edge<L>>,
@@ -646,7 +646,7 @@ class EdgeIterator<L>(
     private var advanced: Boolean = false
 
     private fun advance(): Edge<L>? {
-        // line-for-line port of `fn next(&mut self)` from line 486:
+        // line-for-line port of `function next(&mut self)` from line 486:
         val current = index
         if (current == UNSET) {
             return null
@@ -700,12 +700,12 @@ enum class NfaConstructionError {
 /** Exception carrier for [NfaConstructionError] — thrown across the expr walk. */
 class NfaConstructionException(val error: NfaConstructionError) : RuntimeException(error.name)
 
-// Mirrors upstream `pub type NFA = Nfa;` (lexer/nfa/mod.rs:27),
-// `pub type NFAStateIndex = NfaStateIndex;` (line 83), and
-// `pub type NFAConstructionError = NfaConstructionError;` (line 123).
-// These are real `pub type` aliases in upstream, so per AGENTS.md they
+// Mirrors upstream `public type NFA = Nfa;` (lexer/nfa/mod.rs:27),
+// `public type NFAStateIndex = NfaStateIndex;` (line 83), and
+// `public type NFAConstructionError = NfaConstructionError;` (line 123).
+// These are real `public type` aliases in upstream, so per AGENTS.md they
 // translate as Kotlin `typealias` (the only typealias case the project
-// permits — non-re-export, on a literal upstream `pub type`).
+// permits — non-re-export, on a literal upstream `public type`).
 typealias NFA = Nfa
 typealias NFAStateIndex = NfaStateIndex
 typealias NFAConstructionError = NfaConstructionError

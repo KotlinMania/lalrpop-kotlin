@@ -15,8 +15,10 @@ package io.github.kotlinmania.lalrpop.api
 
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.pointed
+import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.toKString
 import platform.posix.S_IFDIR
@@ -34,7 +36,7 @@ import platform.posix.stat
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiTempDir(): String {
-    // Mirror of std::env::temp_dir(): consult TMPDIR / TMP / TEMP, else /tmp.
+    // Mirror of std::env::tempDir(): consult TMPDIR / TMP / TEMP, else /tmp.
     for (name in listOf("TMPDIR", "TMP", "TEMP")) {
         val raw = getenv(name) ?: continue
         val s = raw.toKString()

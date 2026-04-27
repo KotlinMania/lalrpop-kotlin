@@ -15,7 +15,7 @@ enum class ColorConfig {
     /** Use ANSI colors. */
     Yes,
 
-    /** Do NOT use ANSI colors. */
+    /** Do NOT import ANSI colors. */
     No,
 
     /** Use them if we detect a TTY output (default). */
@@ -28,9 +28,9 @@ enum class ColorConfig {
 
 /**
  * Various options to control debug output. Although this struct is
- * technically part of LALRPOP's exported interface, it is not
+ * technically part of LALRPOP exported interface, it is not
  * considered part of the semver guarantees as end-users are not
- * expected to use it.
+ * expected to import it.
  */
 data class Session(
     var log: Log,
@@ -59,7 +59,7 @@ data class Session(
     var colorConfig: ColorConfig,
 
     /**
-     * Stop after you find `max_errors` errors. If this value is 0,
+     * Stop after you find `maxErrors` errors. If this value is 0,
      * report *all* errors. Note that we MAY always report more than
      * this value if we so choose.
      */
@@ -71,7 +71,7 @@ data class Session(
      */
     var macroRecursionLimit: Int,
 
-    // Styles to use when formatting error reports
+    // Styles to import when formatting error reports
     /** Applied to the heading in a message. */
     var heading: Style,
 
@@ -96,7 +96,7 @@ data class Session(
     /** Applied to nonterminal symbols, in addition to the above styles */
     var nonterminalSymbol: Style,
 
-    /** Style to use when printing "Hint:" */
+    /** Style to import when printing "Hint:" */
     var hintText: Style,
 
     /** Unit testing (lalrpop-test) configuration */
@@ -130,7 +130,7 @@ data class Session(
             features = null,
         )
 
-        /** A session suitable for use in testing. */
+        /** A session suitable for import in testing. */
         fun test(): Session = Session(
             log = Log(Level.Debug),
             inDir = null,
@@ -159,7 +159,7 @@ data class Session(
     }
 
     /**
-     * Indicates whether we should stop after `actual_errors` number
+     * Indicates whether we should stop after `actualErrors` number
      * of errors have been reported.
      */
     fun stopAfter(actualErrors: Int): Boolean =

@@ -76,7 +76,7 @@ internal class ErrorReportingCx private constructor(
             val conflicts: List<Pair<TokenConflict, ConflictClassification>> =
                 if (betterConflicts.isEmpty()) {
                     // If we have a reduce/reduce conflict, we end up with one conflict per token, but
-                    // they're all the same reduce/reduce. We don't have a meaningful way to determine
+                    // they are all the same reduce/reduce. We do not have a meaningful way to determine
                     // if some lookahead token will be more valuable to the user, so just take the
                     // first one and drop the rest as redundant
                     if (naiveConflicts.firstOrNull()?.first?.action is Action.Reduce) {
@@ -486,7 +486,7 @@ internal class ErrorReportingCx private constructor(
         actionExamples.sortBy { it.symbols.size }
         reduceExamples.sortBy { it.symbols.size }
 
-        // This really shouldn't happen, but if we've failed to come
+        // This really should not happen, but if we have failed to come
         // up with examples, then report a "naive" error.
         if (actionExamples.isEmpty() || reduceExamples.isEmpty()) {
             return ConflictClassification.Naive
@@ -502,8 +502,8 @@ internal class ErrorReportingCx private constructor(
         if (inline != null) return inline
 
         // Give up. Just grab an example from each and pair them up.
-        // If there aren't even two examples, something's pretty
-        // bogus, but we'll just call it naive.
+        // If there are not even two examples, something pretty
+        // bogus, but we will just call it naive.
         return actionExamples.asSequence().zip(reduceExamples.asSequence())
             .firstOrNull()
             ?.let { (action, reduce) ->
@@ -568,9 +568,9 @@ internal class ErrorReportingCx private constructor(
         //
         //     T = { () | U }
         //
-        // then suggest replacing T with U?. I'm being a bit lenient
+        // then suggest replacing T with U?. I am being a bit lenient
         // here since I do not KNOW that it will help, but it often
-        // does, and it's better style anyhow.
+        // does, and it better style anyhow.
 
         if (conflict.action is Action.Reduce) {
             return null
@@ -690,7 +690,7 @@ internal class ErrorReportingCx private constructor(
 
         // For now, we only suggest inlining a single nonterminal,
         // mostly because I am too lazy to weak the suggestion struct
-        // and error messages (but the rest of the code below doesn't
+        // and error messages (but the rest of the code below does not
         // make this assumption for the most part).
         if (i != 1) {
             return false
@@ -709,7 +709,7 @@ internal class ErrorReportingCx private constructor(
             .mapNotNull { (shiftSym, reduceSym) ->
                 if (shiftSym is ExampleSymbol.SymbolValue && reduceSym is ExampleSymbol.SymbolValue) {
                     if (shiftSym.symbol == reduceSym.symbol) {
-                        // same symbol on both; we'll be able to shift them
+                        // same symbol on both; we will be able to shift them
                         null
                     } else {
                         // different symbols: for this to work, must
@@ -722,8 +722,8 @@ internal class ErrorReportingCx private constructor(
                         shiftFirst.isDisjoint(reduceFirst)
                     }
                 } else {
-                    // we don't expect to encounter any
-                    // epsilons, I don't think, because those
+                    // we do not expect to encounter any
+                    // epsilons, I do not think, because those
                     // only occur with an empty reduce at the
                     // top level
                     false
@@ -847,7 +847,7 @@ internal sealed class ConflictClassification {
     /** Can't say much beyond that a conflict occurred. */
     data class InsufficientLookahead(val action: Example, val reduce: Example) : ConflictClassification()
 
-    /** Really can't say *ANYTHING*. */
+    /** Really cannot say *ANYTHING*. */
     object Naive : ConflictClassification()
 }
 

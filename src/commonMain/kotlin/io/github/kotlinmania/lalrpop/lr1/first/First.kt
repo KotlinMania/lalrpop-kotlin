@@ -88,7 +88,7 @@ data class FirstSets(
     fun first1(symbols: Iterable<Symbol>, lookahead: TokenSet): TokenSet {
         val set = first0(symbols)
 
-        // we use EOF as the signal that `symbols` derives epsilon:
+        // we import EOF as the signal that `symbols` derives epsilon:
         val epsilon = set.takeEof()
 
         if (epsilon) {

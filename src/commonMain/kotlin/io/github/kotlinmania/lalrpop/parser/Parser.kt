@@ -16,13 +16,13 @@ import io.github.kotlinmania.lalrpop.tok.Error as TokError
 // neighbouring `LrGrammar.kt` and `ParserTest.kt` files in this package.
 
 /**
- * Translation of `pub enum Top` from `parser/mod.rs:23`.
+ * Translation of `enum Top` from `parser/mod.rs:23`.
  *
  * Doc comment from the Rust source:
  * > The TypeRef and GrammarWhereClauses variants have data that is only
- * > read under `cfg(test)` (the `parse_type_ref()` and
- * > `parse_where_clauses()` functions lower in this file). Those
- * > functions use the `parser!()` macro, which expects all variants to
+ * > read under `cfg(test)` (the `parseTypeRef()` and
+ * > `parseWhereClauses()` functions lower in this file). Those
+ * > functions import the `parser()` macro, which expects all variants to
  * > have a single data field. They are set in the parser. So to have
  * > those fields only in the test configuration requires changes at
  * > multiple code points across several files to define both a
@@ -37,11 +37,11 @@ sealed class Top {
     data class GrammarWhereClauses(val whereClauses: List<WhereClause<TypeRef>>) : Top()
 }
 
-/** `pub type ParseError<'input> = lalrpop_util::ParseError<usize, tok::Tok<'input>, tok::Error>;` */
+/** `public type ParseError<'input> = lalrpopUtil::ParseError<usize, tok::Tok<'input>, tok::Error>;` */
 typealias LrParseError = ParseError<Int, Tok, TokError>
 
 /**
- * Builds the iterator of `Result<(Int, Tok, Int)>` that Rust's `parser!` macro
+ * Builds the iterator of `Result<(Int, Tok, Int)>` that the upstream `parser!` macro
  * constructs by chaining a synthetic start sentinel with the real tokenizer
  * output. Mirrors `iter::once(Ok((0, tok::Tok::$tok, 0))).chain(...)` from
  * `parser/mod.rs:36`.
@@ -66,9 +66,9 @@ private fun startPrefixed(start: Tok, offset: Int, input: String): Iterator<Resu
 }
 
 /**
- * Translation of `pub fn parse_grammar(input: &str)` from `parser/mod.rs:48`.
+ * Translation of `fun parseGrammar(input: &str)` from `parser/mod.rs:48`.
  * Parses a full `.lalrpop` file. After a successful parse, extends the
- * grammar's `prefix` until it is unique within the input — matching the Rust
+ * grammar `prefix` until it is unique within the input — matching the Rust
  * loop at `mod.rs:51-53`.
  */
 fun parseGrammar(
@@ -86,7 +86,7 @@ fun parseGrammar(
 }
 
 /**
- * Translation of `fn parse_pattern(input: &str, offset: usize)` from
+ * Translation of `function parsePattern(input: &str, offset: usize)` from
  * `parser/mod.rs:58`. Used by `___action102` to parse the `=> pattern` body of
  * a Conversion.
  */
@@ -102,7 +102,7 @@ internal fun parsePattern(
 }
 
 /**
- * Translation of `fn parse_match_mapping(input: &str, offset: usize)` from
+ * Translation of `function parseMatchMapping(input: &str, offset: usize)` from
  * `parser/mod.rs:62`. Used by `___action96` to parse the `=> mapping` body of
  * a MatchItem.
  */
@@ -118,7 +118,7 @@ internal fun parseMatchMapping(
 }
 
 /**
- * Translation of `pub fn parse_type_ref(input: &str)` from `parser/mod.rs:68`.
+ * Translation of `fun parseTypeRef(input: &str)` from `parser/mod.rs:68`.
  * Marked `cfg(test)` in Rust because only the test harness invokes it; in the
  * Kotlin port we leave it accessible to the same tests.
  */
@@ -131,7 +131,7 @@ fun parseTypeRef(input: String): Result<TypeRef> {
 }
 
 /**
- * Translation of `pub fn parse_where_clauses(input: &str)` from
+ * Translation of `fun parseWhereClauses(input: &str)` from
  * `parser/mod.rs:72`. `cfg(test)` in Rust; see [parseTypeRef] for the porting
  * rationale.
  */

@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/state_graph.rs
+// port-lint: source src/lr1/stateGraph.rs
 package io.github.kotlinmania.lalrpop.lr1.stateGraph
 
 import io.github.kotlinmania.lalrpop.EdgeDirection
@@ -49,8 +49,8 @@ class StateGraph(
 
     /**
      * Given a list of symbols `[X, Y, Z]`, traces back from
-     * `initial_state_index` to find the set of states whence we
-     * could have arrived at `initial_state_index` after pushing `X`,
+     * `initialStateIndex` to find the set of states whence we
+     * could have arrived at `initialStateIndex` after pushing `X`,
      * `Y`, and `Z`.
      */
     fun traceBack(

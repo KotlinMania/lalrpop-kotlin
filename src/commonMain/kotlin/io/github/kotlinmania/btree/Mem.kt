@@ -14,7 +14,7 @@ package io.github.kotlinmania.btree
  * `intrinsics::abort` so a panic mid-transition can never expose a moved-out
  * slot. In Kotlin there is no `&mut` to a stack value and no moved-out state
  * to hide — the caller assigns the returned value back. If `change` throws,
- * the caller's binding keeps its previous value, which is the safe outcome
+ * the caller binding keeps its previous value, which is the safe outcome
  * the panic-guard was simulating.
  */
 @Suppress("unused") // keep as illustration and for future use

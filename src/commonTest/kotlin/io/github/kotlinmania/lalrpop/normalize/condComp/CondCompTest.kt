@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/cond_comp/test.rs
+// port-lint: source src/normalize/condComp/test.rs
 package io.github.kotlinmania.lalrpop.normalize.condComp
 
 /*

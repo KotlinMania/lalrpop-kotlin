@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lane_table/construct/merge.rs
+// port-lint: source src/lr1/laneTable/construct/merge.rs
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
@@ -8,6 +8,8 @@ import io.github.kotlinmania.lalrpop.collections.set.Set
 import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
@@ -98,7 +100,7 @@ class Merge internal constructor(
                     patchLinks(state, successor, existingClone)
                     walk(existingClone)
                 } else {
-                    // if we don't find one, we have to make a new clone
+                    // if we do not find one, we have to make a new clone
                     val successor1 = clone(successor)
                     if (this.contextSets.union(state, successor1)) {
                         patchLinks(state, successor, successor1)
@@ -118,9 +120,9 @@ class Merge internal constructor(
         val newState = oldState.copy(
             index = newIndex,
             items = oldState.items.copy(vec = oldState.items.vec.toMutableList()),
-            shifts = oldState.shifts.toMutableMap(),
+            shifts = map<TerminalString, StateIndex>().also { it.putAll(oldState.shifts) },
             reductions = oldState.reductions.toMutableList(),
-            gotos = oldState.gotos.toMutableMap(),
+            gotos = map<NonterminalString, StateIndex>().also { it.putAll(oldState.gotos) },
         )
         this.states.add(newState)
 

@@ -1,4 +1,4 @@
-// port-lint: source src/kernel_set.rs
+// port-lint: source src/kernelSet.rs
 package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.collections.map.Map

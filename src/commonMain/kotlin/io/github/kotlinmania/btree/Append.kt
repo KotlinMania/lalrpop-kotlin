@@ -13,16 +13,16 @@ package io.github.kotlinmania.btree
 // (PORTING.md tracks this cross-file dependency.)
 //
 // Translation notes:
-//   - The upstream `impl<K, V> Root<K, V> { fn bulk_push... }` becomes a
+//   - The upstream `implementation<K, V> Root<K, V> { function bulkPush... }` becomes a
 //     Kotlin extension function on the `Root<K, V>` typealias from Node.kt
 //     (`Root<K, V> = NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>`).
 //   - The `length: &mut usize` out-parameter is preserved as an `IntArray`
-//     of size 1 — Kotlin can't pass a primitive by reference, and the
-//     caller (Map.kt's `append`) needs the side-effect of "increment per
-//     iteration so a panicking iterator doesn't leak the appended pairs".
+//     of size 1 — Kotlin cannot pass a primitive by reference, and the
+//     caller (Map.kt `append`) needs the side-effect of "increment per
+//     iteration so a panicking iterator does not leak the appended pairs".
 //     A single-element IntArray is the smallest faithful translation; the
 //     caller reads `length[0]` after the call.
-//   - The `alloc: A` parameter dissolves: Kotlin's heap is GC-managed and
+//   - The `alloc: A` parameter dissolves: Kotlin heap is GC-managed and
 //     the `pushInternalLevel` / `Root::new` ports take no allocator.
 //   - `unsafe { ... }` blocks (none in this file upstream) would dissolve
 //     to `// SAFETY:` comments.

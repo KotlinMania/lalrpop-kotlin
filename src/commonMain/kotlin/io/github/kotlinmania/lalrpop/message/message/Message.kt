@@ -12,9 +12,9 @@ interface Content {
     fun emit(view: AsciiView)
 
     /**
-     * Creates a canvas at least `min_width` in width (it may be
+     * Creates a canvas at least `minWidth` in width (it may be
      * larger if the content requires that) and fills it with the
-     * current content. Returns the canvas. Typically `min_width`
+     * current content. Returns the canvas. Typically `minWidth`
      * would be 80 or the width of the current terminal.
      */
     fun emitToCanvas(minWidth: Int): AsciiCanvas {
@@ -44,7 +44,7 @@ interface Content {
 
 /**
  * Helper function: convert `content` into wrap items and then map
- * those with `op`, appending the final result into `wrap_items`.
+ * those with `op`, appending the final result into `wrapItems`.
  * Useful for "modifier" content items like `Styled` that do not
  * affect wrapping.
  */

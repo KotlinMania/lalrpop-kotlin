@@ -1,9 +1,9 @@
-// port-lint: source src/lexer/intern_token/mod.rs
+// port-lint: source src/lexer/internToken/mod.rs
 //! Generates an iterator type `Matcher` that emits a state-machine-based
 //! tokenizer.
 //!
 //! Per the project rule against translating `mod.rs` files as a single
-//! `Mod.kt`, the `compile` function from upstream `lexer/intern_token/mod.rs`
+//! `Mod.kt`, the `compile` function from upstream `lexer/internToken/mod.rs`
 //! lives here as a top-level function. Callers from `build/...` invoke it
 //! by name.
 package io.github.kotlinmania.lalrpop.lexer.internToken
@@ -18,9 +18,9 @@ import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
 /**
- * Direct port of upstream `lexer::intern_token::compile`. Emits an
- * `<prefix>intern_token` Rust module that builds a `MatcherBuilder`
- * from the grammar's regex set.
+ * Direct port of upstream `lexer::internToken::compile`. Emits an
+ * `<prefix>internToken` Rust module that builds a `MatcherBuilder`
+ * from the grammar regex set.
  */
 fun compileInternToken(
     grammar: Grammar,
@@ -40,7 +40,7 @@ fun compileInternToken(
     )
 
     // create a sequence of (regex, skip) pairs in the order the grammar
-    // gave us, mirroring upstream's chained `.map(...)` pipeline.
+    // gave us, mirroring upstream chained `.map(...)` pipeline.
     val regexStrings: Sequence<Pair<String, Boolean>> = internToken.matchEntries.asSequence()
         .map { matchEntry ->
             val regex = when (val literal = matchEntry.matchLiteral) {
@@ -55,7 +55,7 @@ fun compileInternToken(
         }
         .map { (regex, skip) -> regex.toString() to skip }
         .map { (regexStr, skip) ->
-            // Rust's `format!("{regex_str:?}")` adds quotes and escapes; the
+            // the upstream `format("{regexStr:?}")` adds quotes and escapes; the
             // Kotlin equivalent is rustDebugQuote which mirrors `<&str as Debug>::fmt`.
             rustDebugQuote(regexStr) to skip
         }
@@ -82,15 +82,14 @@ fun compileInternToken(
         prefix,
     )
 
-    rust(out, "}") // fn
-    rust(out, "}") // mod
+    rust(out, "}") // function     rust(out, "}") // mod
 }
 
 /**
- * Mirrors Rust's `<&str as Debug>::fmt`: the result is the input string
+ * Mirrors the upstream `<&str as Debug>::fmt`: the result is the input string
  * wrapped in double quotes with control characters and embedded quotes
  * escaped using Rust escape syntax. Used to produce the
- * `format!("{regex_str:?}")` literal that upstream emits into generated
+ * `format("{regexStr:?}")` literal that upstream emits into generated
  * code.
  */
 internal fun rustDebugQuote(s: String): String = buildString {
@@ -105,7 +104,7 @@ internal fun rustDebugQuote(s: String): String = buildString {
             cp == 0x09 -> append("\\t")
             cp == 0x00 -> append("\\0")
             cp < 0x20 || cp == 0x7F -> append("\\x").append(cp.toString(16).padStart(2, '0'))
-            // Mirror Rust's `<&str as Debug>::fmt` for non-ASCII Unicode:
+            // Mirror the upstream `<&str as Debug>::fmt` for non-ASCII Unicode:
             // characters outside the printable ASCII range are escaped
             // as `\u{HH..}`. Without this, the upstream-emitted regex
             // source for `r"\s"` (which contains raw NEL / NBSP / etc.

@@ -20,11 +20,11 @@ import io.github.kotlinmania.lalrpop.Session
 
 /**
  * Configure various aspects of how LALRPOP works.
- * Intended for use within a `build.rs` script.
+ * Intended for import within a `build.rs` script.
  * To get the default configuration, use `Configuration::new`.
  *
- * Mirrors `pub struct Configuration { session: Session }` from
- * upstream `src/api/mod.rs`. The `#[derive(Clone, Default)]` is
+ * Mirrors `class Configuration { session: Session }` from
+ * upstream `src/api/mod.rs`. The `(derive(Clone, Default))` is
  * realised by [copy] (via [Session.copy]) and the [new] / [default]
  * companion factories.
  */
@@ -32,7 +32,7 @@ class Configuration internal constructor(
     internal var session: Session,
 ) {
     /**
-     * Always use ANSI colors in output, even if output does not appear to be a TTY.
+     * Always import ANSI colors in output, even if output does not appear to be a TTY.
      */
     fun alwaysUseColors(): Configuration {
         session.colorConfig = ColorConfig.Yes
@@ -40,7 +40,7 @@ class Configuration internal constructor(
     }
 
     /**
-     * Never use ANSI colors in output, even if output appears to be a TTY.
+     * Never import ANSI colors in output, even if output appears to be a TTY.
      */
     fun neverUseColors(): Configuration {
         session.colorConfig = ColorConfig.No
@@ -72,7 +72,7 @@ class Configuration internal constructor(
     }
 
     /**
-     * Specify a custom directory to use when writing output files.
+     * Specify a custom directory to import when writing output files.
      *
      * By default, the output directory is the same as the input
      * directory.
@@ -99,7 +99,7 @@ class Configuration internal constructor(
      *
      * If this option is enabled, you have to load the parser as a module:
      *
-     * ```no_compile
+     * ```noCompile
      * mod parser; // synthesized from parser.lalrpop
      * ```
      *
@@ -197,7 +197,7 @@ class Configuration internal constructor(
      *
      * As lalrpop is resolving a macro, it may discover new macros uses in the
      * macro definition to resolve.  Typically deep recursion indicates a
-     * recursive macro use that is non-resolvable.  The default resolution
+     * recursive macro import that is non-resolvable.  The default resolution
      * depth is 200.
      */
     fun setMacroRecursionLimit(`val`: Int): Configuration {
@@ -206,7 +206,7 @@ class Configuration internal constructor(
     }
 
     /**
-     * Sets the features used during compilation, disables the use of cargo features.
+     * Sets the features used during compilation, disables the import of cargo features.
      * (Default: Loaded from `CARGO_FEATURE_{}` environment variables).
      */
     fun setFeatures(iterable: Iterable<String>): Configuration {
@@ -241,9 +241,9 @@ class Configuration internal constructor(
         processDir(apiCurrentDir())
     }
 
-    // The user should only use setInDir() with process(), not process_*() functions which
-    // specify an input.  Check for misuse of that and return an error if in_dir was set.
-    // dir_path here is specifically a dir, so processFile() should call this with None
+    // The user should only import setInDir() with process(), not process_*() functions which
+    // specify an input.  Check for misuse of that and return an error if inDir was set.
+    // dirPath here is specifically a dir, so processFile() should call this with None
     internal fun verifyNoInDirConflict(dirPath: String?) {
         if (session.inDir != null && session.inDir != dirPath) {
             apiEPrintln("Error: \"process_*()\" contradicts previously set in_dir")
@@ -260,7 +260,7 @@ class Configuration internal constructor(
         verifyNoInDirConflict(path)
         sessionCopy.inDir = path
 
-        // If out dir is empty, use cargo conventions by default.
+        // If out dir is empty, import cargo conventions by default.
         // See https://github.com/lalrpop/lalrpop/issues/280
         if (sessionCopy.outDir == null) {
             val outDir = apiEnvVar("OUT_DIR") ?: throw IllegalStateException("missing OUT_DIR variable")
@@ -287,7 +287,7 @@ class Configuration internal constructor(
     fun processFile(path: String) {
         val sessionCopy = session.copy()
         // path is a file, so we send in None instead of path.  That will always fail
-        // the check if in_dir was set.
+        // the check if inDir was set.
         verifyNoInDirConflict(null)
         apiBuildProcessFile(sessionCopy, path)
     }
@@ -311,7 +311,7 @@ class Configuration internal constructor(
  * If your project only builds one crate and your files are in a ./src directory, you should use
  * [processSrc] instead
  *
- * Equivalent to `Configuration::new().process_current_dir()`.
+ * Equivalent to `Configuration::new().processCurrentDir()`.
  */
 fun processRoot() {
     Configuration.new().processCurrentDir()
@@ -347,17 +347,17 @@ fun processRootUnconditionally() {
 }
 
 // ---------------------------------------------------------------------------
-// Platform glue: Rust's `std::env` / `std::fs` / `std::path` use
-// (`current_dir`, `env::var`, `env::vars`, `eprintln!`) and the upstream
-// `crate::build::{process_dir, process_file}` functions perform real
-// filesystem I/O. Kotlin Multiplatform's commonMain has no portable
+// Platform glue: the upstream `std::env` / `std::fs` / `std::path` use
+// (`currentDir`, `env::var`, `env::vars`, `eprintln!`) and the upstream
+// `crate::build::{processDir, processFile}` functions perform real
+// filesystem I/O. Kotlin Multiplatform commonMain has no portable
 // filesystem; the actuals live in `nativeMain` (kotlinx.cinterop posix
 // bindings), `androidMain` (java.io / java.lang.System), and the JS-family
 // targets which raise UnsupportedOperationException because filesystem
-// access in those runtimes is not part of the lalrpop build-script use case.
+// access in those runtimes is not part of the lalrpop build-script import case.
 // ---------------------------------------------------------------------------
 
-/** Mirror of `std::env::current_dir()`. */
+/** Mirror of `std::env::currentDir()`. */
 internal expect fun apiCurrentDir(): String
 
 /** Mirror of `std::env::var(name).ok()` — returns `null` when unset. */
@@ -370,14 +370,14 @@ internal expect fun apiEnvVars(): Sequence<Pair<String, String>>
 internal expect fun apiEPrintln(message: String)
 
 /**
- * Mirror of `crate::build::process_dir(session, path)`. Recursively
+ * Mirror of `crate::build::processDir(session, path)`. Recursively
  * scans [path] for `.lalrpop` files and processes each one. Throws
  * on filesystem or codegen failure.
  */
 internal expect fun apiBuildProcessDir(session: Session, path: String)
 
 /**
- * Mirror of `crate::build::process_file(session, path)`. Processes
+ * Mirror of `crate::build::processFile(session, path)`. Processes
  * a single `.lalrpop` file. Throws on filesystem or codegen failure.
  */
 internal expect fun apiBuildProcessFile(session: Session, path: String)

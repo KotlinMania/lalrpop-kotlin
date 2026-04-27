@@ -15,33 +15,33 @@ package io.github.kotlinmania.lalrpop.api
 
 // ---------------------------------------------------------------------------
 // Filesystem and environment glue used by the api/test.rs port. Upstream
-// uses `std::env::{temp_dir, set_current_dir, set_var}` and
-// `std::fs::{exists, create_dir, create_dir_all, remove_dir_all,
-// remove_file}`. Kotlin Multiplatform commonMain has no portable
+// uses `std::env::{tempDir, setCurrentDir, setVar}` and
+// `std::fs::{exists, createDir, createDirAll, removeDirAll,
+// removeFile}`. Kotlin Multiplatform commonMain has no portable
 // filesystem; the actuals live alongside the production Api.kt actuals
 // per-platform. JS/wasmJs raise UnsupportedOperationException, mirroring
 // the production behaviour.
 // ---------------------------------------------------------------------------
 
-/** Mirror of `std::env::temp_dir()`. Returns the absolute path to the system temp dir. */
+/** Mirror of `std::env::tempDir()`. Returns the absolute path to the system temp dir. */
 internal expect fun apiTempDir(): String
 
-/** Mirror of `std::env::set_current_dir(path)`. */
+/** Mirror of `std::env::setCurrentDir(path)`. */
 internal expect fun apiSetCurrentDir(path: String)
 
-/** Mirror of `std::env::set_var(name, value)`. */
+/** Mirror of `std::env::setVar(name, value)`. */
 internal expect fun apiSetEnvVar(name: String, value: String)
 
 /** Mirror of `std::fs::exists(path).unwrap()`. */
 internal expect fun apiPathExists(path: String): Boolean
 
-/** Mirror of `std::fs::create_dir(path).unwrap()`. */
+/** Mirror of `std::fs::createDir(path).unwrap()`. */
 internal expect fun apiCreateDir(path: String)
 
-/** Mirror of `std::fs::remove_dir_all(path).unwrap()`. */
+/** Mirror of `std::fs::removeDirAll(path).unwrap()`. */
 internal expect fun apiRemoveDirAll(path: String)
 
-/** Mirror of `std::fs::remove_file(path).unwrap()`. */
+/** Mirror of `std::fs::removeFile(path).unwrap()`. */
 internal expect fun apiRemoveFile(path: String)
 
 /**

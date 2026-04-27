@@ -76,7 +76,7 @@ enum class Assoc {
         }
 
         /**
-         * Mirrors `impl FromStr for Assoc { fn from_str(s: &str) -> Result<Assoc, ParseAssocError> }`.
+         * Mirrors `implementation FromStr for Assoc { function fromStr(s: &str) -> Result<Assoc, ParseAssocError> }`.
          * Returns `Result.success(Assoc)` for a valid associativity
          * keyword and `Result.failure(ParseAssocError)` otherwise.
          */
@@ -167,7 +167,7 @@ private fun expandNonterm(nonterm: NonterminalData): List<GrammarItem> {
     nonterm.alternatives.clear()
 
     // Thanks to prevalidation, the first alternative must have a precedence attribute that
-    // will set last_lvl to an initial value
+    // will set lastLvl to an initial value
     var lastLvl: UInt = 0u
     var lastAssoc: Assoc = Assoc.default
     for (altOrig in draining) {

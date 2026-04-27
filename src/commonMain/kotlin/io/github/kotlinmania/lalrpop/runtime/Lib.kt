@@ -147,7 +147,7 @@ sealed class ParseError<L, T, E> {
         mapIntern({ it }, { it }, op)
 
     /**
-     * Mirrors Rust's `core::error::Error::description` which is required for
+     * Mirrors the upstream `core::error::Error::description` which is required for
      * trait coherence; deprecated upstream but retained for parity.
      */
     val description: String
@@ -191,6 +191,6 @@ data class ErrorRecovery<L, T, E>(
     val droppedTokens: List<Triple<L, T, L>>,
 )
 
-// Rust's `path_separator!` and `lalrpop_mod!` macros are specific to how Rust
+// the upstream `pathSeparator!` and `lalrpopMod!` macros are specific to how Rust
 // includes generated source files at build time; the Kotlin port uses normal
 // package imports, so there is no equivalent.

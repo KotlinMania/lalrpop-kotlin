@@ -87,7 +87,7 @@ class NfaTest {
 
     @Test
     fun literal() {
-        // This test requires regex's unicode case support
+        // This test requires regex unicode case support
         val num = parseRegex("""(?i:aBCdeF)""").getOrThrow()
         val nfa = Nfa.fromRe(num).getOrThrow()
         assertEquals("abcdef", interpret(nfa, "abcdef"))

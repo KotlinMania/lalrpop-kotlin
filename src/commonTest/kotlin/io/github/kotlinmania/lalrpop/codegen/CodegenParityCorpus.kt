@@ -20,7 +20,7 @@ object CodegenParityCorpus {
         matchAlternatives,
     )
 
-    // ---- use_super_internal_tok --------------------------------------
+    // ---- useSuperInternalTok --------------------------------------
 
     private val useSuperInternalTok: CodegenParityEntry
         get() = CodegenParityEntry(
@@ -798,7 +798,7 @@ impl<'input, > __ToTriple<'input, > for Result<(usize, Token<'input>, usize), &'
             status = ParityStatus.Matching,
         )
 
-    // ---- zero_length_match -------------------------------------------
+    // ---- zeroLengthMatch -------------------------------------------
 
     private val zeroLengthMatch: CodegenParityEntry
         get() = CodegenParityEntry(
@@ -1577,7 +1577,7 @@ impl<'input, > __ToTriple<'input, > for Result<(usize, Token<'input>, usize), &'
             status = ParityStatus.Matching,
         )
 
-    // ---- dyn_argument ------------------------------------------------
+    // ---- dynArgument ------------------------------------------------
 
     private val dynArgument: CodegenParityEntry
         get() = CodegenParityEntry(
@@ -2384,7 +2384,7 @@ impl<'input, > __ToTriple<'input, > for Result<(usize, Token<'input>, usize), &'
             status = ParityStatus.Matching,
         )
 
-    // ---- match_alternatives ------------------------------------------
+    // ---- matchAlternatives ------------------------------------------
 
     private val matchAlternatives: CodegenParityEntry
         get() = CodegenParityEntry(
@@ -2524,10 +2524,10 @@ mod __parse__File {
             //     WillPush = []
             //     WillProduce = None
             //
-            //     File = (*) bare_key bool [bare_key, bool, Eof]
-            //     __File = (*) File [bare_key, bool, Eof]
+            //     File = (*) bareKey bool [bareKey, bool, Eof]
+            //     __File = (*) File [bareKey, bool, Eof]
             //
-            //   bare_key -> S2
+            //   bareKey -> S2
             //
             //     File -> S1
             fn __state0<
@@ -2592,7 +2592,7 @@ mod __parse__File {
             //     WillPush = []
             //     WillProduce = Some(__File)
             //
-            //     __File = File (*) [bare_key, bool, Eof]
+            //     __File = File (*) [bareKey, bool, Eof]
             //
             //   [Eof] -> __File = File => ActionFn(0);
             //
@@ -2647,14 +2647,14 @@ mod __parse__File {
             }
 
             // State 2
-            //     AllInputs = [bare_key]
+            //     AllInputs = [bareKey]
             //     OptionalInputs = []
-            //     FixedInputs = [bare_key]
+            //     FixedInputs = [bareKey]
             //     WillPushLen = 1
             //     WillPush = [bool]
             //     WillProduce = Some(File)
             //
-            //     File = bare_key (*) bool [bare_key, bool, Eof]
+            //     File = bareKey (*) bool [bareKey, bool, Eof]
             //
             //   bool -> S3
             //
@@ -2707,16 +2707,16 @@ mod __parse__File {
             }
 
             // State 3
-            //     AllInputs = [bare_key, bool]
+            //     AllInputs = [bareKey, bool]
             //     OptionalInputs = []
-            //     FixedInputs = [bare_key, bool]
+            //     FixedInputs = [bareKey, bool]
             //     WillPushLen = 0
             //     WillPush = []
             //     WillProduce = Some(File)
             //
-            //     File = bare_key bool (*) [bare_key, bool, Eof]
+            //     File = bareKey bool (*) [bareKey, bool, Eof]
             //
-            //   [Eof] -> File = bare_key, bool => ActionFn(1);
+            //   [Eof] -> File = bareKey, bool => ActionFn(1);
             //
             fn __state3<
                 'input,
@@ -2797,24 +2797,24 @@ mod __parse__File {
             }
             const __ACTION: &[i8] = &[
                 // State 0
-                //     File = (*) bare_key bool [bare_key, bool, Eof]
-                //     __File = (*) File [bare_key, bool, Eof]
-                3,  // on bare_key, goto 2
+                //     File = (*) bareKey bool [bareKey, bool, Eof]
+                //     __File = (*) File [bareKey, bool, Eof]
+                3,  // on bareKey, goto 2
                 0,  // on bool, error
 
                 // State 1
-                //     __File = File (*) [bare_key, bool, Eof]
-                0,  // on bare_key, error
+                //     __File = File (*) [bareKey, bool, Eof]
+                0,  // on bareKey, error
                 0,  // on bool, error
 
                 // State 2
-                //     File = bare_key (*) bool [bare_key, bool, Eof]
-                0,  // on bare_key, error
+                //     File = bareKey (*) bool [bareKey, bool, Eof]
+                0,  // on bareKey, error
                 4,  // on bool, goto 3
 
                 // State 3
-                //     File = bare_key bool (*) [bare_key, bool, Eof]
-                0,  // on bare_key, error
+                //     File = bareKey bool (*) [bareKey, bool, Eof]
+                0,  // on bareKey, error
                 0,  // on bool, error
 
             ];
@@ -2832,7 +2832,7 @@ mod __parse__File {
                 0,  // on Eof, error
 
                 // State 3
-                -1,  // on Eof, reduce `File = bare_key, bool => ActionFn(1);`
+                -1,  // on Eof, reduce `File = bareKey, bool => ActionFn(1);`
 
             ];
             fn __goto(state: i8, nt: usize) -> i8 {
@@ -3010,7 +3010,7 @@ mod __parse__File {
             ) -> __state_machine::SimulatedReduce<__StateMachine<'input>>
             {
                 match __reduce_index {
-                    // simulate File = bare_key, bool => ActionFn(1);
+                    // simulate File = bareKey, bool => ActionFn(1);
                     0 => {
                         __state_machine::SimulatedReduce::Reduce {
                             states_to_pop: 2,
@@ -3155,7 +3155,7 @@ mod __parse__File {
                 _: core::marker::PhantomData<(&'input ())>,
             ) -> (usize, usize)
             {
-                // File = bare_key, bool => ActionFn(1);
+                // File = bareKey, bool => ActionFn(1);
                 assert!(__symbols.len() >= 2);
                 let __sym1 = __pop_Variant0(__symbols);
                 let __sym0 = __pop_Variant0(__symbols);

@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/codegen/parse_table.rs
+// port-lint: source src/lr1/codegen/parseTable.rs
 //! A compiler from an LR(1) table to a traditional table driven parser.
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
@@ -57,9 +57,9 @@ fun compileParseTable(
 
 sealed class Comment<T> {
     /**
-     * Mirrors `impl<T: fmt::Display> fmt::Display for Comment<'_, T>`.
+     * Mirrors `implementation<T: fmt::Display> fmt::Display for Comment<'_, T>`.
      * Each variant overrides `toString()` so dispatchers like
-     * `format!("{}", comment)` produce the same text as upstream.
+     * `format("{}", comment)` produce the same text as upstream.
      * Without these overrides the parse-table emitter wrote
      * `Goto(token=Terminal(terminalString="b"), newState=2)` into the
      * generated Rust source instead of ` // on "b", goto 2`.
@@ -118,7 +118,7 @@ private fun newTableDriven(
 
     val machine = MachineParameters.new(grammar)
 
-    // Assign each production a unique index to use as the values for reduce
+    // Assign each production a unique index to import as the values for reduce
     // actions in the ACTION and EOF_ACTION tables.
     val reduceIndices: MutableMap<Production, Int> = map()
     var idx = 0
@@ -504,12 +504,12 @@ private fun <K, K2, T> emitGotoMatch(
     rust(out, "match $kName {")
 
     for ((kIndex, k) in iter.withIndex()) {
-        // Build enumerated (index, (next_state, comment)) then group consecutive indices by
-        // next_state so we can compress them as a..=b
+        // Build enumerated (index, (nextState, comment)) then group consecutive indices by
+        // nextState so we can compress them as a..=b
         val enumerated: List<Pair<Int, Pair<Int?, Comment<T>>>> =
             iter2.withIndex().map { (i, k2) -> Pair(i, stateLookup(k, k2)) }
 
-        // chunk_by: group CONSECUTIVE items with same next_state
+        // chunkBy: group CONSECUTIVE items with same nextState
         val row: MutableList<Pair<Int?, MutableList<Pair<Int, Pair<Int?, Comment<T>>>>>> =
             mutableListOf()
         for (entry in enumerated) {
@@ -522,24 +522,24 @@ private fun <K, K2, T> emitGotoMatch(
             }
         }
 
-        // If the row was all errors we don't need to emit it
+        // If the row was all errors we do not need to emit it
         if (row.size == 1 && row[0].first == null) {
             continue
         }
 
         row.sortBy { it.first }
 
-        // Since the parser will always select a non-error (non-zero) next_state we can use the
+        // Since the parser will always select a non-error (non-zero) nextState we can import the
         // catch all in the match to represent the largest variant
         var largestVariantIndex = 0
         var largestVariant = 0
 
-        // Group by next_state
+        // Group by nextState
         val filtered: List<Pair<Int, MutableList<Pair<Int, Pair<Int?, Comment<T>>>>>> = row
             // We always emit a catch-all for 0 error states (which will never be hit)
             .mapNotNull { (opt, group) -> opt?.let { Pair(it, group) } }
             .let { flat ->
-                // chunk_by next_state
+                // chunkBy nextState
                 val chunks: MutableList<Pair<Int, MutableList<Pair<Int, Pair<Int?, Comment<T>>>>>> =
                     mutableListOf()
                 for ((ns, group) in flat) {
@@ -557,8 +557,8 @@ private fun <K, K2, T> emitGotoMatch(
             .mapIndexed { i, (nextState, groupGroup) ->
                 var comment: Comment<T>? = null
                 val vec: MutableList<Pair<Int, Int?>> = mutableListOf()
-                // groupGroup is already flat list of (index, (next_state, comment)); but the rust
-                // code treats it as an iterator of (index, group) pairs from chunk_by; since our
+                // groupGroup is already flat list of (index, (nextState, comment)); but the rust
+                // code treats it as an iterator of (index, group) pairs from chunkBy; since our
                 // earlier chunking already flattened, each consecutive-index run from the original
                 // row is preserved in order. Re-group consecutive indices here:
                 val runs: MutableList<MutableList<Pair<Int, Pair<Int?, Comment<T>>>>> =
@@ -926,8 +926,7 @@ private fun CodeGenerator<TableDriven>.emitReduceAction(production: Production) 
     val transferSyms: List<String> = (0 until production.symbols.size)
         .map { i -> "${this.prefix}sym$i" }
 
-    // Execute the action fn
-    // identify the "start" and "end" location for this production; this
+    // Execute the action function     // identify the "start" and "end" location for this production; this
     // is typically the start of the first symbol and end of the last symbol we are
     // reducing; but in the case of an empty production, it will come from the
     // lookahead
@@ -985,7 +984,7 @@ private fun CodeGenerator<TableDriven>.emitReduceAction(production: Production) 
         "${this.prefix}symbols.push((${this.prefix}start, ${this.prefix}Symbol::$name(${this.prefix}nt), ${this.prefix}end));",
     )
 
-    // produce the index that we will use to extract the next state
+    // produce the index that we will import to extract the next state
     // from GOTO array
     val index = this.custom.allNonterminals.indexOfFirst { x -> x == production.nonterminal }
     rust(this.out, "(${production.symbols.size}, $index)")
@@ -1102,10 +1101,10 @@ private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
  * The `accepts` function
  *
  * ```ignore
- * fn __accepts() {
- * error_state: Option<i32>,
+ * function __accepts() {
+ * errorState: Option<i32>,
  * states: &Vec<i32>,
- * opt_integer: Option<usize>,
+ * optInteger: Option<usize>,
  * ) -> bool {
  * ...
  * }
@@ -1119,14 +1118,14 @@ private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
  * - the lookahead is eventually shifted
  * - we reduce to the end state successfully (in the case of EOF).
  *
- * If we used the pure LR(1) algorithm, we wouldn't need this
+ * If we used the pure LR(1) algorithm, we would not need this
  * function, because we would be guaranteed to error immediately
  * (and not after some number of reductions). But with an LALR
  * (or Lane Table) generated automaton, it is possible to reduce
  * some number of times before encountering an error. Failing to
  * take this into account can lead error recovery into an
- * infinite loop (see the `error_recovery_lalr_loop` test) or
- * produce crappy results (see `error_recovery_lock_in`).
+ * infinite loop (see the `errorRecoveryLalrLoop` test) or
+ * produce crappy results (see `errorRecoveryLockIn`).
  */
 private fun CodeGenerator<TableDriven>.writeAcceptsFn() {
     val phantomDataExpr = this.phantomDataExpr()
@@ -1218,7 +1217,7 @@ private fun CodeGenerator<TableDriven>.writeAcceptsFn() {
     rust(this.out, "${this.prefix}states.push(${this.prefix}next_state);")
 
     rust(this.out, "}") // end loop
-    rust(this.out, "}") // end fn
+    rust(this.out, "}") // end function }
 }
 
 private fun CodeGenerator<TableDriven>.symbolType(): String =
@@ -1229,7 +1228,7 @@ private fun CodeGenerator<TableDriven>.spannedSymbolType(): String {
     return "($locType,${this.symbolType()},$locType)"
 }
 
-/** Emit the array of terminal tokens for use in generating error output */
+/** Emit the array of terminal tokens for import in generating error output */
 private fun CodeGenerator<TableDriven>.emitTerminalReprList() {
     rust(this.out, "#[allow(clippy::needless_raw_string_hashes)]")
     rust(this.out, "const ${this.prefix}TERMINAL: &[&str] = &[")

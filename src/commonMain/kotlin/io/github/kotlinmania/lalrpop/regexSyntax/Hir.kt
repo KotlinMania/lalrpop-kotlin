@@ -1,6 +1,6 @@
-// port-lint: helper crate-regex_syntax
-// Helper: minimal port of the Rust `regex_syntax` crate, scoped to the
-// subset of the Hir API that LALRPOP's lexer/nfa builder traverses. This
+// port-lint: helper crate-regexSyntax
+// Helper: minimal port of the Rust `regexSyntax` crate, scoped to the
+// subset of the Hir API that LALRPOP lexer/nfa builder traverses. This
 // crate is a compilation dependency of LALRPOP that has no Kotlin analog;
 // the full crate is out-of-scope for line-by-line translation, so this
 // helper stands in as an equivalent-shape library. Consumers:
@@ -12,16 +12,16 @@ package io.github.kotlinmania.lalrpop.regexSyntax
 /**
  * High-level intermediate representation of a regular expression.
  *
- * Mirrors `regex_syntax::hir::Hir`. An `Hir` is a thin wrapper around a
+ * Mirrors `regexSyntax::hir::Hir`. An `Hir` is a thin wrapper around a
  * `HirKind`; the Nfa builder switches on `.kind()` to traverse.
  */
 data class Hir(private val kindValue: HirKind) {
     fun kind(): HirKind = kindValue
 
     /**
-     * Mirrors `regex_syntax::hir::Hir`'s `Display` impl: returns the
+     * Mirrors `regexSyntax::hir::Hir`'s `Display` implementation: returns the
      * regex pattern source the Hir was parsed from. LALRPOP relies on
-     * this in `intern_token::compile` to round-trip regexes through
+     * this in `internToken::compile` to round-trip regexes through
      * Rust string-debug formatting. Without it the data-class
      * auto-generated `toString` would leak `Hir(kindValue=...)` into
      * the generated Rust source.
@@ -30,12 +30,12 @@ data class Hir(private val kindValue: HirKind) {
 }
 
 /**
- * The variant of [Hir]. Mirrors `regex_syntax::hir::HirKind`. LALRPOP's Nfa
+ * The variant of [Hir]. Mirrors `regexSyntax::hir::HirKind`. LALRPOP Nfa
  * builder handles every variant listed here; `Look` causes a construction
- * error because LALRPOP doesn't support look-around or anchors.
+ * error because LALRPOP does not support look-around or anchors.
  */
 sealed class HirKind {
-    // Mirrors `regex_syntax::hir::HirKind`'s `Display` impl. Each
+    // Mirrors `regexSyntax::hir::HirKind`'s `Display` implementation. Each
     // variant overrides `toString()` explicitly because the
     // `data class`-generated toString would otherwise shadow any
     // override on the sealed parent and emit `Literal(literal=...)`
@@ -69,7 +69,7 @@ sealed class HirKind {
     }
 
     data class Alternation(val exprs: List<Hir>) : HirKind() {
-        // Mirrors `regex_syntax::hir::Hir`'s `Display` impl for
+        // Mirrors `regexSyntax::hir::Hir`'s `Display` implementation for
         // alternation: each branch is wrapped in `(?:...)` and the
         // whole thing wrapped again. So `false|true` round-trips as
         // `(?:(?:false)|(?:true))`. Without the per-branch wrapper the
@@ -82,7 +82,7 @@ sealed class HirKind {
 
 /**
  * A sequence of bytes representing a literal match. Mirrors
- * `regex_syntax::hir::Literal`. The Nfa builder iterates the bytes in
+ * `regexSyntax::hir::Literal`. The Nfa builder iterates the bytes in
  * reverse to build a chain of single-byte test edges.
  */
 data class RegexLiteral(val bytes: ByteArray) {
@@ -94,10 +94,10 @@ data class RegexLiteral(val bytes: ByteArray) {
     override fun hashCode(): Int = bytes.contentHashCode()
 
     /**
-     * Mirrors `regex_syntax::hir::Literal`'s `Display` impl. ASCII bytes
+     * Mirrors `regexSyntax::hir::Literal`'s `Display` implementation. ASCII bytes
      * pass through verbatim; bytes that are special in regex syntax
      * (`. \ + * ? ( ) | [ ] { } ^ $ #`) are backslash-escaped; non-ASCII
-     * bytes are emitted as `\xNN` hex escapes — matching upstream's
+     * bytes are emitted as `\xNN` hex escapes — matching upstream
      * `Display::fmt` cases.
      */
     override fun toString(): String = buildString {
@@ -121,7 +121,7 @@ data class RegexLiteral(val bytes: ByteArray) {
 }
 
 /**
- * A character class. Mirrors `regex_syntax::hir::Class`, which is either
+ * A character class. Mirrors `regexSyntax::hir::Class`, which is either
  * a unicode class (iterating `ClassUnicodeRange`) or a bytes class
  * (iterating `ClassBytesRange`). LALRPOP supports both.
  */
@@ -129,12 +129,12 @@ sealed class RegexClass {
     abstract val ranges: List<Any>
 
     // Each subclass overrides toString explicitly. Mirrors
-    // `regex_syntax::hir::Class`'s `Display` impl: emits the
+    // `regexSyntax::hir::Class`'s `Display` implementation: emits the
     // bracket-delimited character-class regex source.
     data class Unicode(override val ranges: List<ClassUnicodeRange>) : RegexClass() {
-        // Mirror `regex_syntax::hir::Class`'s `Display` impl: emit raw
-        // characters in the regex source string. `intern_token::compile`
-        // wraps this string in Rust's Debug formatting (`format!("{:?}",
+        // Mirror `regexSyntax::hir::Class`'s `Display` implementation: emit raw
+        // characters in the regex source string. `internToken::compile`
+        // wraps this string in the upstream Debug formatting (`format("{:?}",
         // regex)`), which is what produces the `\t`, `\r`, `\u{HH}`
         // escape sequences in the generated Rust source. Emitting
         // pre-escaped sequences here would lead to double-escaping
@@ -168,20 +168,20 @@ data class ClassBytesRange(val startValue: UByte, val endValue: UByte) {
 }
 
 /**
- * A capture group. Mirrors `regex_syntax::hir::Capture`.
+ * A capture group. Mirrors `regexSyntax::hir::Capture`.
  *
  * LALRPOP rejects named captures (`NamedCaptures` error) but passes
  * through unnamed captures transparently to the inner expression.
  */
 data class RegexCapture(val name: String?, val sub: Hir) {
-    /** `regex_syntax::hir::Capture::Display`: emits `(?P<name>sub)` or `(sub)`. */
+    /** `regexSyntax::hir::Capture::Display`: emits `(?P<name>sub)` or `(sub)`. */
     override fun toString(): String =
         if (name != null) "(?P<$name>$sub)" else "($sub)"
 }
 
 /**
  * A repetition (quantifier) such as `a*`, `a+`, `a?`, `a{n,m}`.
- * Mirrors `regex_syntax::hir::Repetition`. LALRPOP rejects non-greedy
+ * Mirrors `regexSyntax::hir::Repetition`. LALRPOP rejects non-greedy
  * repetitions (`NonGreedy` error) since its matcher always picks the
  * longest match.
  */
@@ -192,7 +192,7 @@ data class RegexRepetition(
     val sub: Hir,
 ) {
     /**
-     * `regex_syntax::hir::Repetition::Display`: emits `sub*`, `sub+`,
+     * `regexSyntax::hir::Repetition::Display`: emits `sub*`, `sub+`,
      * `sub?`, or `sub{n,m}` according to `(min, max)`. The `?` suffix
      * is appended when `!greedy`.
      */
@@ -216,10 +216,10 @@ data class RegexRepetition(
  * are present for API completeness but not meaningfully distinguished.
  */
 /**
- * Mirrors the `Display` shape of `regex_syntax::hir::Look` for the
- * subset of patterns LALRPOP doesn't reject. None of these emit through
+ * Mirrors the `Display` shape of `regexSyntax::hir::Look` for the
+ * subset of patterns LALRPOP does not reject. None of these emit through
  * the codegen path (LALRPOP rejects look-around at Nfa construction),
- * so the strings here are placeholders that match upstream's symbols.
+ * so the strings here are placeholders that match upstream symbols.
  */
 internal fun LookKind.regexSource(): String = when (this) {
     LookKind.StartLine -> "(?m:^)"
@@ -261,7 +261,7 @@ enum class LookKind {
 
 /**
  * Parsing error raised by [ParserBuilder.parse]. Mirrors
- * `regex_syntax::Error`. LALRPOP wraps this in a `Box<Error>` aliased as
+ * `regexSyntax::Error`. LALRPOP wraps this in a `Box<Error>` aliased as
  * `RegexError` — see `lexer/re/mod.rs`.
  */
 class RegexSyntaxError(message: String, val position: Int = -1) : RuntimeException(message)

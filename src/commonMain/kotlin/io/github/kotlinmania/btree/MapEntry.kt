@@ -4,26 +4,26 @@
 package io.github.kotlinmania.btree
 
 // Translation notes:
-//   - Upstream `pub enum Entry<'a, K, V, A> { Vacant(...), Occupied(...) }` is
+//   - Upstream `enum Entry<'a, K, V, A> { Vacant(...), Occupied(...) }` is
 //     rendered as a sealed class with two subclass shapes (data classes
 //     would discard the per-subclass `toString()` mandate from AGENTS.md).
 //   - The allocator parameter `A: Allocator + Clone = Global` is dropped on
 //     all three of `Entry`, `VacantEntry`, `OccupiedEntry`, and `OccupiedError`
-//     — Kotlin's GC supersedes manual deallocation, matching the convention
+//     — Kotlin GC supersedes manual deallocation, matching the convention
 //     established in Node.kt / Navigate.kt for the rest of the port.
 //   - `'a` lifetime parameters drop entirely.
 //   - `DormantMutRef<BTreeMap<K, V, A>>` survives 1:1: it just holds a regular
 //     reference, with the awaken/reborrow methods spelling out the borrow
-//     gymnastics that Kotlin's GC otherwise hides.
-//   - `OccupiedError` is `#[unstable]` (`map_try_insert` feature) but is
-//     reachable through the also-unstable `BTreeMap::try_insert` which we do
+//     gymnastics that Kotlin GC otherwise hides.
+//   - `OccupiedError` is `(unstable)` (`mapTryInsert` feature) but is
+//     reachable through the also-unstable `BTreeMap::tryInsert` which we do
 //     port for completeness; both sit behind comments noting their unstable
 //     upstream status.
-//   - `mem::replace(self.get_mut(), value)` in `OccupiedEntry::insert`
+//   - `mem::replace(self.getMut(), value)` in `OccupiedEntry::insert`
 //     translates per the AGENTS.md "return-the-new-value" pattern, except
 //     here we have direct write access to the slot, so the whole helper
 //     dissolves to a read-then-write.
-//   - `Default::default()` for `Entry::or_default` requires a `V: Default`
+//   - `Default::default()` for `Entry::orDefault` requires a `V: Default`
 //     bound. Kotlin has no `Default` trait — the public surface accepts a
 //     `default: () -> V` factory instead, matching how callers usually phrase
 //     this on the JVM.
@@ -85,7 +85,7 @@ sealed class Entry<K : Comparable<K>, V> {
         }
     }
 
-    /** Returns a reference to this entry's key. */
+    /** Returns a reference to this entry key. */
     fun key(): K = when (this) {
         is Occupied -> entry.key()
         is Vacant -> entry.key()
@@ -99,7 +99,7 @@ sealed class Entry<K : Comparable<K>, V> {
         when (this) {
             is Occupied -> {
                 // Upstream signature: `f: FnOnce(&mut V)`. The closure mutates
-                // the value through `&mut`. Since Kotlin lambdas can't take
+                // the value through `&mut`. Since Kotlin lambdas cannot take
                 // `&mut V`, we model this as "compute the new value from the
                 // old and write it back" — semantically equivalent.
                 val old = entry.get()
@@ -124,7 +124,7 @@ sealed class Entry<K : Comparable<K>, V> {
      * Ensures a value is in the entry by inserting the value supplied by
      * [default] if empty, and returns the value in the entry.
      *
-     * Upstream's `or_default` requires `V: Default`. Kotlin has no `Default`
+     * Upstream `orDefault` requires `V: Default`. Kotlin has no `Default`
      * trait — callers pass an explicit factory instead. Method named
      * `orDefault` to match upstream spelling; the factory parameter is the
      * Kotlin-side accommodation.
@@ -170,7 +170,7 @@ class VacantEntry<K : Comparable<K>, V> internal constructor(
                     map.root = NodeRef.newLeaf<K, V>().forgetType()
                 }
                 val root = map.root!!
-                // SAFETY: We *just* created the root as a leaf, and we're
+                // SAFETY: We *just* created the root as a leaf, and we are
                 // stacking the new handle on the original borrow lifetime.
                 val leaf = root.borrowMut().castToLeafUnchecked()
                 val pushed = leaf.pushWithHandle(this.key, value)
@@ -178,14 +178,14 @@ class VacantEntry<K : Comparable<K>, V> internal constructor(
             } else {
                 h.insertRecursing(this.key, value) { ins ->
                     // drop(ins.left) — Kotlin GC; nothing to do.
-                    // SAFETY: Pushing a new root node doesn't invalidate
+                    // SAFETY: Pushing a new root node does not invalidate
                     // handles to existing nodes.
                     val map = dormantMap.reborrow()
                     val root = map.root!! // same as ins.left
                     root.pushInternalLevel().push(ins.kv.first, ins.kv.second, ins.right)
                 }.forgetNodeTypeKv()
             }
-        // SAFETY: modifying the length doesn't invalidate handles to existing nodes.
+        // SAFETY: modifying the length does not invalidate handles to existing nodes.
         dormantMap.reborrow().length += 1
 
         return OccupiedEntry(handle = newHandle, dormantMap = dormantMap)
@@ -220,9 +220,9 @@ class OccupiedEntry<K : Comparable<K>, V> internal constructor(
     fun intoMut(): V = handle.intoValMut()
 
     /**
-     * Sets the value of the entry, and returns the entry's old value.
+     * Sets the value of the entry, and returns the entry old value.
      *
-     * Upstream uses `mem::replace(self.get_mut(), value)`. The Kotlin port
+     * Upstream uses `mem::replace(self.getMut(), value)`. The Kotlin port
      * dissolves that to a read-then-write since we have direct slot access.
      */
     fun insert(value: V): V {
@@ -259,7 +259,7 @@ class OccupiedEntry<K : Comparable<K>, V> internal constructor(
  * The error returned by [BTreeMap.tryInsert] when the key already exists.
  *
  * Contains the occupied entry, and the value that was not inserted. Mirrors
- * upstream's `#[unstable(map_try_insert)]` `OccupiedError` struct.
+ * upstream `(unstable(mapTryInsert))` `OccupiedError` struct.
  */
 class OccupiedError<K : Comparable<K>, V> internal constructor(
     /** The entry in the map that was already occupied. */

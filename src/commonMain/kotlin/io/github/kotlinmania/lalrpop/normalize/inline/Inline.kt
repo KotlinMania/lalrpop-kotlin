@@ -53,7 +53,7 @@ private fun inlineNt(grammar: Grammar, inlineNt: NonterminalString) {
 }
 
 private class Inliner(
-    /** Action fn defns */
+    /** Action function defns */
     val actionFnDefns: List<ActionFnDefn>,
 
     /** The nonterminal `A` being inlined */
@@ -87,13 +87,13 @@ private class Inliner(
     /** The output vector of all productions for `X` that we have created */
     val newProductions: MutableList<Production>,
 
-    /** Vector of all action fn defns from the grammar. */
+    /** Vector of all action function defns from the grammar. */
     val newActionFnDefns: MutableList<ActionFnDefn>,
 )
 
 private fun Inliner.inline(intoSymbols: List<Symbol>) {
     if (intoSymbols.isEmpty()) {
-        // create an action fn for the result of inlining
+        // create an action function for the result of inlining
         val intoAction = this.intoProduction.action
         val intoFallible = this.actionFnDefns[intoAction.index()].fallible
         val intoRetType = this.actionFnDefns[intoAction.index()].retType
@@ -133,7 +133,7 @@ private fun Inliner.inline(intoSymbols: List<Symbol>) {
         when {
             nextSymbol is Symbol.Nonterminal && nextSymbol.nt == this.inlineNonterminal -> {
                 // Replace the current symbol with each of the
-                // `inline_productions` in turn.
+                // `inlineProductions` in turn.
                 for (inlineProduction in this.inlineProductions) {
                     // If this production is fallible, increment
                     // count of fallible actions.

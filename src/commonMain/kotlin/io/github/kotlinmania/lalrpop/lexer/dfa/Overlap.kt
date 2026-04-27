@@ -55,7 +55,7 @@ private fun addRange(range: Test, startIndex: Int, disjointRanges: MutableList<T
         return
     }
 
-    // Find first overlapping range in `disjoint_ranges`, if any.
+    // Find first overlapping range in `disjointRanges`, if any.
     val relativeIndex = (startIndex until disjointRanges.size).firstOrNull { i ->
         disjointRanges[i].intersects(range)
     }
@@ -64,7 +64,7 @@ private fun addRange(range: Test, startIndex: Int, disjointRanges: MutableList<T
         val index = relativeIndex
         val overlappingRange = disjointRanges[index]
 
-        // If the range we are trying to add already exists, we're all done.
+        // If the range we are trying to add already exists, we are all done.
         if (overlappingRange == range) {
             return
         }
@@ -77,12 +77,12 @@ private fun addRange(range: Test, startIndex: Int, disjointRanges: MutableList<T
         val midMax = minOf(range.end(), overlappingRange.end())
         val maxMax = maxOf(range.end(), overlappingRange.end())
         // When working with inclusive ranges, we need to be sure to not double count
-        // the meeting points of low-mid_range and mid-max_range.
-        // So we adjust the end of the low_range and start of max_range as these elements are already included in the start of their corresponding next ranges.
+        // the meeting points of low-midRange and mid-maxRange.
+        // So we adjust the end of the lowRange and start of maxRange as these elements are already included in the start of their corresponding next ranges.
 
         val lowRange = if (midMin == 0u) {
             // This is an edgecase where both ranges start at the null character
-            // In this case we don't want to create a range from 0 to -1
+            // In this case we do not want to create a range from 0 to -1
             // Thus we create an empty range
             Test.new(1u, 0u)
         } else {
@@ -97,7 +97,7 @@ private fun addRange(range: Test, startIndex: Int, disjointRanges: MutableList<T
 
         // Replace the existing range with the low range, and then
         // add the mid and max ranges in. (The low range may be
-        // empty, but we'll prune that out later.)
+        // empty, but we will prune that out later.)
         disjointRanges[index] = lowRange
         addRange(midRange, index + 1, disjointRanges)
         addRange(maxRange, index + 1, disjointRanges)

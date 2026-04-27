@@ -41,7 +41,7 @@ data class FieldPattern<T>(
 
 sealed class PatternKind<T> {
     /**
-     * Mirrors `impl<T: Display> Display for PatternKind<T>`.
+     * Mirrors `implementation<T: Display> Display for PatternKind<T>`.
      * Each subclass overrides toString() explicitly: a `data class`
      * auto-generates its own toString that shadows any override placed
      * on the sealed parent. Without these overrides the codegen

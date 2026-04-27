@@ -7,9 +7,9 @@ import io.github.kotlinmania.lalrpop.collections.set.Set
 import io.github.kotlinmania.lalrpop.collections.set.set
 
 /**
- * Mirrors `type IntoIter = btree_map::IntoIter<K, C>;` from
- * `impl<K: Ord, C: Collection> IntoIterator for Multimap<K, C>`.
- * Kotlin doesn't have associated types on interface implementations,
+ * Mirrors `type IntoIter = btreeMap::IntoIter<K, C>;` from
+ * `implementation<K: Ord, C: Collection> IntoIterator for Multimap<K, C>`.
+ * Kotlin does not have associated types on interface implementations,
  * so we expose the binding as a top-level typealias for parity.
  */
 typealias IntoIter<K, C> = Iterator<Pair<K, C>>
@@ -17,10 +17,10 @@ typealias IntoIter<K, C> = Iterator<Pair<K, C>>
 class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
     private val collectionFactory: () -> C,
 ) : Iterable<Pair<K, C>> {
-    // The K : Comparable<K> bound mirrors upstream's
-    // `impl<K: Ord, C: Collection> Multimap<K, C>` block — Rust hangs
-    // the bound on the impl rather than the struct, but Kotlin field
-    // initializers can't carry their own bound, so we lift it onto the
+    // The K : Comparable<K> bound mirrors upstream
+    // `implementation<K: Ord, C: Collection> Multimap<K, C>` block — Rust hangs
+    // the bound on the implementation rather than the struct, but Kotlin field
+    // initializers cannot carry their own bound, so we lift it onto the
     // class. Every Multimap instantiated by the rest of the codebase
     // already keys on a Comparable type (Production, Lr0Item,
     // StateIndex, Symbol, Atom, NonterminalString).
@@ -93,7 +93,7 @@ class VecCollection<T> : Collection<T> {
 }
 
 class SetCollection<T : Comparable<T>> : Collection<T> {
-    // Mirrors `impl<T: Ord> Default for Set<T>` — Rust adds the bound
+    // Mirrors `implementation<T: Ord> Default for Set<T>` — Rust adds the bound
     // implicitly via `BTreeSet<T>: Default` requiring `T: Ord`.
     private val inner: Set<T> = set()
 

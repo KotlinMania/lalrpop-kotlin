@@ -58,7 +58,7 @@ private fun Tracer.traceReduceItem(itemState: StateIndex, item: Lr0Item) {
 //
 //     Z = ... (*) Y ...s
 //
-// If we find that `...s` is potentially empty, then we haven't
+// If we find that `...s` is potentially empty, then we have not
 // actually found any context, and so we may have to keep
 // searching.
 private fun Tracer.traceReduceFromState(

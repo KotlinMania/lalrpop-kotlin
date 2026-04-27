@@ -1,8 +1,8 @@
-// port-lint: source ../lalrpop-util/src/state_machine.rs
+// port-lint: source ../lalrpop-util/src/stateMachine.rs
 package io.github.kotlinmania.lalrpop.runtime
 
 /**
- * State machine for use by lalrpop generated parsers.
+ * State machine for import by lalrpop generated parsers.
  *
  * This provides grammar-independent state machine support for generated
  * parsers. It is intended to be linked by the generated parser, not used
@@ -22,7 +22,7 @@ private inline fun debug(msg: () -> String) {
 /**
  * Result of a parse: either a fully reduced success value, or a parse error.
  *
- * Mirrors Rust's `Result<Success<D>, ParseError<D>>` since Kotlin's built-in
+ * Mirrors the upstream `Result<Success<D>, ParseError<D>>` since Kotlin built-in
  * `Result` type only accepts `Throwable` errors.
  */
 sealed class ParseResult<S, L, T, E> {
@@ -34,7 +34,7 @@ sealed class ParseResult<S, L, T, E> {
  * Result of pulling a token from the input iterator: either a token triple or
  * a parse error.
  *
- * Mirrors Rust's `Result<TokenTriple<D>, ParseError<D>>`.
+ * Mirrors the upstream `Result<TokenTriple<D>, ParseError<D>>`.
  */
 sealed class TokResult<L, T, E> {
     data class Ok<L, T, E>(val value: Triple<L, T, L>) : TokResult<L, T, E>()
@@ -50,7 +50,7 @@ typealias SymbolTriple<L, S> = Triple<L, S, L>
 /**
  * The core trait implemented by every LALRPOP-generated parser.
  *
- * Each of Rust's associated types is promoted to a distinct generic type
+ * Each of the upstream associated types is promoted to a distinct generic type
  * parameter, because Kotlin interfaces have no associated-type facility.
  */
 interface ParserDefinition<
@@ -72,12 +72,12 @@ interface ParserDefinition<
     fun startState(): StateIndex
 
     /**
-     * Converts the user's tokens into an internal index; this index is then
+     * Converts the user tokens into an internal index; this index is then
      * used to index into actions and the like. When using an internal
      * tokenizer, these indices are directly produced. When using an
      * **external** tokenizer, however, this function matches against the
      * patterns given by the user: it is fallible therefore as these patterns
-     * may not be exhaustive. If a token value is found that doesn't match any
+     * may not be exhaustive. If a token value is found that does not match any
      * of the patterns the user supplied, then this function returns `null`,
      * which is translated into a parse error by LALRPOP ("unrecognized
      * token").
@@ -93,13 +93,13 @@ interface ParserDefinition<
     /**
      * Returns the action to take if an error occurs in the given state. This
      * function is the same as the ordinary [action], except that it applies
-     * not to the user's terminals but to the "special terminal" `!`.
+     * not to the user terminals but to the "special terminal" `!`.
      */
     fun errorAction(state: StateIndex): Action
 
     /**
      * Action to take if EOF occurs in the given state. This function is the
-     * same as the ordinary [action], except that it applies not to the user's
+     * same as the ordinary [action], except that it applies not to the user
      * terminals but to the "special terminal" `$`.
      */
     fun eofAction(state: StateIndex): Action
@@ -170,7 +170,7 @@ interface ParserDefinition<
 /**
  * An action produced by a parse table: shift, reduce, or error.
  *
- * Rust's version is parameterised by the entire `ParserDefinition`; in Kotlin
+ * the upstream version is parameterised by the entire `ParserDefinition`; in Kotlin
  * we only need the two index types that actually appear in the method
  * signatures.
  */
@@ -199,9 +199,9 @@ sealed class SimulatedReduce<out NonterminalIndex> {
 /**
  * The LR(1) driver loop used by generated parsers.
  *
- * Rust's `Parser<D, I>` carries the iterator as a second type parameter; in
+ * the upstream `Parser<D, I>` carries the iterator as a second type parameter; in
  * Kotlin we accept any [Iterator] over [TokResult] values, which mirrors
- * Rust's `Iterator<Item = Result<TokenTriple<D>, ParseError<D>>>`.
+ * the upstream `Iterator<Item = Result<TokenTriple<D>, ParseError<D>>>`.
  */
 class Parser<
     Location,
@@ -382,8 +382,8 @@ class Parser<
                 debug { "\\\\\\ action = $action" }
                 val errorState = action.asShift()
                 if (errorState != null) {
-                    // If action is a shift that takes us into `error_state`,
-                    // and `error_state` can accept this lookahead, we are done.
+                    // If action is a shift that takes us into `errorState`,
+                    // and `errorState` can accept this lookahead, we are done.
                     if (accepts(errorState, states.subList(0, candidate + 1), optTokenIndex)) {
                         debug { "\\\\\\ accepted!" }
                         foundTop = candidate
@@ -399,12 +399,12 @@ class Parser<
                 break@findState
             }
 
-            // Otherwise, if we couldn't find a state that would — after
+            // Otherwise, if we could not find a state that would — after
             // shifting the error token — accept the lookahead, then drop the
             // lookahead and advance to next token in the input.
             val currentLookahead = optLookahead
             if (currentLookahead == null) {
-                // If the lookahead is EOF, we can't drop any more tokens,
+                // If the lookahead is EOF, we cannot drop any more tokens,
                 // abort error recovery and just report the original error
                 // (it might be nice if we would propagate back the dropped
                 // tokens, though).
@@ -442,7 +442,7 @@ class Parser<
         // this first, before we pop any symbols off the stack. There are
         // several possibilities, in order of preference.
         //
-        // For the **start** of the message, we prefer to use the start of
+        // For the **start** of the message, we prefer to import the start of
         // any popped states. This represents parts of the input we had
         // consumed but had to roll back and ignore.
         //
@@ -452,7 +452,7 @@ class Parser<
         //              ^ start point is here, since this `+` will be popped off
         //
         // If there are no popped states, but there *are* dropped tokens, we
-        // can use the start of those.
+        // can import the start of those.
         //
         // Example:
         //
@@ -460,7 +460,7 @@ class Parser<
         //                  ^ start point would be here
         //
         // Finally, if there are no popped states *nor* dropped tokens, we
-        // can use the end of the top-most state.
+        // can import the end of the top-most state.
         val start: Location = if (top < symbols.size) {
             symbols[top].first
         } else if (droppedTokens.isNotEmpty()) {
@@ -473,7 +473,7 @@ class Parser<
 
         // For the end span, here are the possibilities:
         //
-        // We prefer to use the end of the last dropped token.
+        // We prefer to import the end of the last dropped token.
         //
         // Examples:
         //
@@ -482,7 +482,7 @@ class Parser<
         //       a + (b c)
         //              -
         //
-        // But, if there are no dropped tokens, we will use the end of the
+        // But, if there are no dropped tokens, we will import the end of the
         // popped states, if any:
         //
         //       a + /
@@ -536,13 +536,13 @@ class Parser<
      * - the lookahead is eventually shifted
      * - we reduce to the end state successfully (in the case of EOF).
      *
-     * If we used the pure LR(1) algorithm, we wouldn't need this function,
+     * If we used the pure LR(1) algorithm, we would not need this function,
      * because we would be guaranteed to error immediately (and not after
      * some number of reductions). But with an LALR (or Lane Table) generated
      * automaton, it is possible to reduce some number of times before
      * encountering an error. Failing to take this into account can lead
-     * error recovery into an infinite loop (see the `error_recovery_lalr_loop`
-     * test) or produce crappy results (see `error_recovery_lock_in`).
+     * error recovery into an infinite loop (see the `errorRecoveryLalrLoop`
+     * test) or produce crappy results (see `errorRecoveryLockIn`).
      */
     private fun accepts(
         errorState: StateIndex,
@@ -659,7 +659,7 @@ private sealed class NextToken<Location, Token, TokenIndex, Success, Error> {
     ) : NextToken<Location, Token, TokenIndex, Success, Error>()
 }
 
-/** Mirrors Rust's `Vec::truncate`. */
+/** Mirrors the upstream `Vec::truncate`. */
 private fun <T> truncate(list: MutableList<T>, newLen: Int) {
     if (list.size > newLen) {
         list.subList(newLen, list.size).clear()
@@ -667,14 +667,14 @@ private fun <T> truncate(list: MutableList<T>, newLen: Int) {
 }
 
 //
-// `integral_indices!` macro expanded for i8, i16, i32.
+// `integralIndices!` macro expanded for i8, i16, i32.
 //
 // In LALRPOP-generated rules, we actually use `Int`, `Short`, or `Byte` to
-// represent all of the various indices (we use the smallest one that will
+// represent all of the various indices (we import the smallest one that will
 // fit). So implement `ParserAction` for each of those.
 //
 
-/** `integral_indices!(i8)` — `Byte`-indexed state/reduce action. */
+/** `integralIndices(i8)` — `Byte`-indexed state/reduce action. */
 data class ByteAction(val value: Byte) : ParserAction<Byte, Byte> {
     override fun asShift(): Byte? = if (value > 0) (value - 1).toByte() else null
     override fun asReduce(): Byte? = if (value < 0) (-(value + 1)).toByte() else null
@@ -683,7 +683,7 @@ data class ByteAction(val value: Byte) : ParserAction<Byte, Byte> {
     override fun isError(): Boolean = value.toInt() == 0
 }
 
-/** `integral_indices!(i16)` — `Short`-indexed state/reduce action. */
+/** `integralIndices(i16)` — `Short`-indexed state/reduce action. */
 data class ShortAction(val value: Short) : ParserAction<Short, Short> {
     override fun asShift(): Short? = if (value > 0) (value - 1).toShort() else null
     override fun asReduce(): Short? = if (value < 0) (-(value + 1)).toShort() else null
@@ -692,7 +692,7 @@ data class ShortAction(val value: Short) : ParserAction<Short, Short> {
     override fun isError(): Boolean = value.toInt() == 0
 }
 
-/** `integral_indices!(i32)` — `Int`-indexed state/reduce action. */
+/** `integralIndices(i32)` — `Int`-indexed state/reduce action. */
 data class IntAction(val value: Int) : ParserAction<Int, Int> {
     override fun asShift(): Int? = if (value > 0) value - 1 else null
     override fun asReduce(): Int? = if (value < 0) -(value + 1) else null

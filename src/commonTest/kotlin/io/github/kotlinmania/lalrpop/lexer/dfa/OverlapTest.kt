@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Helper that mirrors Rust's `macro_rules! test!` in `overlap.rs`: collect a
+ * Helper that mirrors the upstream `macroRules! test!` in `overlap.rs`: collect a
  * set of inclusive `Char` ranges, call [removeOverlap], and map the resulting
  * [Test]s back into `CharRange`s for readable comparison.
  */

@@ -1,7 +1,7 @@
 // port-lint: source external/petgraph/graph
 // Minimal port of `petgraph::graph::Graph` — directed graph with
 // node indices and typed edge weights. Only the methods referenced
-// from LALRPOP's `state_graph` are provided.
+// from LALRPOP `stateGraph` are provided.
 package io.github.kotlinmania.lalrpop
 
 data class NodeIndex(private val value: Int) : Comparable<NodeIndex> {

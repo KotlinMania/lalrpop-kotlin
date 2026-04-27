@@ -16,7 +16,7 @@ import io.github.kotlinmania.lalrpop.normalize.returnErr
  * Computes the proper order to inline the various nonterminals in
  * `grammar`. Reports an error if there is an inline
  * cycle. Otherwise, yields an ordering such that we inline X before
- * Y if Y references X.  I actually think it doesn't matter what
+ * Y if Y references X.  I actually think it does not matter what
  * order we do the inlining, really, but this order seems better
  * somehow. :) (That is, inline into something before we inline it.)
  */

@@ -1,4 +1,4 @@
-// port-lint: source src/grammar/free_variables/mod.rs
+// port-lint: source src/grammar/freeVariables/mod.rs
 package io.github.kotlinmania.lalrpop.grammar.freeVariables
 
 import io.github.kotlinmania.lalrpop.Atom
@@ -21,7 +21,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause as ReprWhereClause
  * Kotlin port preserves the trait as an interface and ALSO exposes
  * the same functionality as a family of overloaded extension
  * functions (because Kotlin sealed-class members cannot retroactively
- * gain interface implementations the way Rust's free-standing `impl`
+ * gain interface implementations the way the upstream free-standing `implementation`
  * blocks can on foreign types).
  */
 interface FreeVariables {
@@ -45,7 +45,7 @@ private fun freeType(typeParameters: List<TypeParameter>, id: Atom): List<TypePa
 
 /**
  * Same as above: really, the only lifetime where this is relevant is
- * `'static`, but it doesn't hurt to be careful.
+ * `'static`, but it does not hurt to be careful.
  */
 private fun freeLifetime(typeParameters: List<TypeParameter>, lt: Lifetime): List<TypeParameter> {
     val tp = TypeParameter.LifetimeTp(lt)
@@ -90,7 +90,7 @@ fun ReprWhereClause.freeVariables(typeParameters: List<TypeParameter>): List<Typ
 fun Path.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> {
     // A path like `foo::Bar` is considered no free variables; a
     // single identifier like `T` is a free variable `T`. Note
-    // that we can't distinguish type parameters from random names
+    // that we cannot distinguish type parameters from random names
     // like `String`.
     val id = this.asId()
     return if (id != null) {

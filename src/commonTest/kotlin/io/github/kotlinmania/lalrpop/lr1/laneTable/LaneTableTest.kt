@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lane_table/test.rs
+// port-lint: source src/lr1/laneTable/test.rs
 package io.github.kotlinmania.lalrpop.lr1.laneTable
 
 /*
@@ -61,7 +61,7 @@ private fun traverse(states: List<Lr0State>, tokens: Array<out String>): StateIn
 }
 
 /**
- * A simplified version of the paper's initial grammar; this version
+ * A simplified version of the paper initial grammar; this version
  * only has one inconsistent state (the same state they talk about in
  * the paper).
  */
@@ -197,7 +197,7 @@ class LaneTableTest {
             try {
                 val table = buildTable(grammar, "G", arrayOf("e"))
                 println("$table")
-                // conflicting_actions={
+                // conflictingActions={
                 //     Shift("e") // C0
                 //     Reduce(X = "e" => ActionFn(4)) // C1
                 //     Reduce(Y = "e" => ActionFn(6)) // C2
@@ -224,7 +224,7 @@ class LaneTableTest {
             try {
                 val table = buildTable(grammar, "G", arrayOf("a", "e"))
                 println("$table")
-                // conflicting_actions={
+                // conflictingActions={
                 //     Shift("e") // C0
                 //     Reduce(X = "e" => ActionFn(6)) // C1
                 //     Reduce(Y = "e" => ActionFn(8)) // C2
@@ -350,7 +350,7 @@ class LaneTableTest {
                 val table = buildTable(grammar, "G", arrayOf("x", "s", "k", "t"))
                 println("$table")
 
-                // conflicting_actions={
+                // conflictingActions={
                 //     Shift("s") // C0
                 //     Reduce(U = U "k" "t") // C1
                 //     Reduce(X = "k" "t") // C2
@@ -376,7 +376,7 @@ class LaneTableTest {
                 // ^^ This differs in some particulars from what appears in the
                 // paper, but I believe it to be correct, and the paper to be wrong.
                 //
-                // Here is the table using the state names from the paper. I've
+                // Here is the table using the state names from the paper. I have
                 // marked the differences with `(*)`. Note that the paper does not
                 // include the C0 column (the shift).
                 //
@@ -396,7 +396,7 @@ class LaneTableTest {
                 // those states, as we have already acquired the necessary token
                 // of context earlier. I can imagine a distinct lane tracing
                 // algorithm that considers *sets* of conflicts and only
-                // terminates when all sets have context, but it's much more
+                // terminates when all sets have context, but it much more
                 // complex to implement, and seems to add little value.
                 //
                 // *2 - the paper does not list this context, and yet it seems to

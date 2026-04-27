@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lane_table/construct/state_set.rs
+// port-lint: source src/lr1/laneTable/construct/stateSet.rs
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet
 
 import io.github.kotlinmania.lalrpop.UnifyKey
@@ -6,7 +6,7 @@ import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
 
 /**
  * Mirrors the Rust `type Value = ContextSet;` associated type from
- * `impl UnifyKey for StateSet`. Kotlin doesn't have associated types
+ * `implementation UnifyKey for StateSet`. Kotlin does not have associated types
  * on interface implementations, so we expose the binding as a
  * top-level typealias.
  */
@@ -34,7 +34,7 @@ data class StateSet(
         // find some other way to associate a `ContextSet` with a state set
         // (for example, we could have each state set be associated with an
         // index that maps to a `ContextSet`), and do the merging ourselves.
-        // But this is easier for now, and cloning a `ContextSet` isn't THAT
+        // But this is easier for now, and cloning a `ContextSet` is not THAT
         // expensive, right? :)
         fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
             try {

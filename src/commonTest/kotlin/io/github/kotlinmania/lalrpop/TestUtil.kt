@@ -1,4 +1,4 @@
-// port-lint: source src/test_util.rs
+// port-lint: source src/testUtil.rs
 package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Span

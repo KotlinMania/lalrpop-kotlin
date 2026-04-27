@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/macro_expand/mod.rs
+// port-lint: source src/normalize/macroExpand/mod.rs
 package io.github.kotlinmania.lalrpop.normalize.macroExpand
 
 import io.github.kotlinmania.lalrpop.Atom
@@ -33,6 +33,7 @@ import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeExpr
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.lalrpop.collections.map.map
 
 fun expandMacros(input: Grammar, recursionLimit: Int): Grammar {
     val inputResolved = resolve(input)
@@ -97,7 +98,7 @@ private fun MacroExpander.expand(items: MutableList<GrammarItem>, recursionLimit
 
         if (loopCounter > recursionLimit) {
             // Too much recursion
-            // We know unwrap() is safe, because we just checked is_empty()
+            // We know unwrap() is safe, because we just checked isEmpty()
             val sym = this.expansionStack.removeAt(this.expansionStack.size - 1)
             returnErr(
                 sym.span,
@@ -219,15 +220,15 @@ private fun MacroExpander.expandMacroSymbol(span: Span, msym: MacroSymbol): Gram
         )
     }
 
-    val args: MutableMap<NonterminalString, SymbolKind> = mdef
-        .args
-        .zip(msym.args.map { it.kind })
-        .toMap()
-        .toMutableMap()
+    val args: Map<NonterminalString, SymbolKind> = map<NonterminalString, SymbolKind>().also { out ->
+        for ((name, kind) in mdef.args.zip(msym.args.map { it.kind })) {
+            out[name] = kind
+        }
+    }
 
     val typeDecl = mdef.typeDecl?.let { tr -> this.macroExpandTypeRef(args, tr) }
 
-    // due to the use of `?`, it's a bit awkward to write this with an iterator
+    // due to the import of `?`, it a bit awkward to write this with an iterator
     val alternatives: MutableList<Alternative> = mutableListOf()
 
     for (alternative in mdef.alternatives) {

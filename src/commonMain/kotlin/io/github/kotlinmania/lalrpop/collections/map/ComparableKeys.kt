@@ -7,7 +7,7 @@
 package io.github.kotlinmania.lalrpop.collections.map
 
 /**
- * Hand-rolled stand-in for Rust's auto-derived `Ord` on
+ * Hand-rolled stand-in for the upstream auto-derived `Ord` on
  * `Vec<T: Ord>`: lexicographic compare with shorter-list-first when
  * one is a prefix of the other. Used as a key when the upstream Rust
  * code keys on `Vec<T>` directly.
@@ -28,7 +28,7 @@ data class ComparableList<T : Comparable<T>>(
 }
 
 /**
- * Hand-rolled stand-in for Rust's auto-derived `Ord` on
+ * Hand-rolled stand-in for the upstream auto-derived `Ord` on
  * `(A: Ord, B: Ord)`: compare `first`, then `second`. Used as a key
  * when the upstream Rust code keys on a 2-tuple directly.
  */

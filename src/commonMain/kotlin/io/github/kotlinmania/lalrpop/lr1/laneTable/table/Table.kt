@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lane_table/table/mod.rs
+// port-lint: source src/lr1/laneTable/table/mod.rs
 //! The "Lane Table". In the paper, this is depicted like so:
 //!
 //! ```text
@@ -37,7 +37,7 @@ class LaneTable(
     private val conflicts: Int,
     // Upstream: `Map<(StateIndex, ConflictIndex), TokenSet>` (BTreeMap
     // with auto-derived `Ord` on tuples). We use [ComparablePair] so
-    // the Kotlin BTreeMap orders pairs the same way Rust's
+    // the Kotlin BTreeMap orders pairs the same way the upstream
     // `(A, B): Ord` does (compare `first`, then `second`).
     private val lookaheads: Map<ComparablePair<StateIndex, ConflictIndex>, TokenSet> = map(),
     private val successors: Multimap<StateIndex, SetCollection<StateIndex>, StateIndex> =

@@ -9,16 +9,16 @@ package io.github.kotlinmania.btree
 // =============================
 //
 // - Upstream `BTreeMap<K, V, A: Allocator + Clone = Global>` -> `BTreeMap<K, V>`.
-//   The allocator parameter `A` is dropped on every type and method — Kotlin's
+//   The allocator parameter `A` is dropped on every type and method — Kotlin
 //   GC supersedes manual deallocation, matching the convention established
 //   throughout Phases 1-3.
 // - `'a` lifetime parameters drop on every iterator and entry type.
 // - `K: Ord` -> `K : Comparable<K>` on the class parameter; per-method `Q`
-//   bounds use the AGENTS.md "Borrow" pattern (`K : Comparable<Q>`,
+//   bounds import the AGENTS.md "Borrow" pattern (`K : Comparable<Q>`,
 //   `Q : Comparable<Q>`).
 // - `BTreeMap<K, V>` implements [MutableMap] for Kotlin-side ergonomics; that
 //   wires `entries`, `keys`, `values`, `get`, `put`, `remove`, etc. into the
-//   stdlib's collection contract for free, and downstream `BTreeSet` can lean
+//   stdlib collection contract for free, and downstream `BTreeSet` can lean
 //   on the Kotlin Set interface in turn.
 // - Public iterator types ([Iter], [IterMut], [Keys], [Values], [ValuesMut],
 //   [IntoIter], [IntoKeys], [IntoValues], [Range], [RangeMut]) are nested
@@ -31,17 +31,17 @@ package io.github.kotlinmania.btree
 //   matching upstream so consumers spell them the same. The `unsafe`
 //   methods translate to plain methods with `// SAFETY:` comments
 //   preserving the upstream invariants.
-// - `extract_if` / `ExtractIf` / `ExtractIfInner`: the `Drop` impl on
+// - `extractIf` / `ExtractIf` / `ExtractIfInner`: the `Drop` implementation on
 //   `ExtractIf` upstream re-walks the iterator on panic. In Kotlin we rely
 //   on GC and document that consumers must consume the iterator if they
 //   care about removal happening atomically with iteration progress.
-// - `range` / `range_mut` are `inline reified V` because they thread into
-//   Search.kt's `searchTreeForBifurcation`; this cascades from Phase 3.
-// - `Index<&Q>` (Rust's `map[&q]`) translates to Kotlin's `operator get`,
+// - `range` / `rangeMut` are `inline reified V` because they thread into
+//   Search.kt `searchTreeForBifurcation`; this cascades from Phase 3.
+// - `Index<&Q>` (the upstream `map[&q]`) translates to Kotlin `operator get`,
 //   which throws `NoSuchElementException` on a missing key (matching
 //   `expect("no entry found for key")`).
 // - `BTreeMap<K, SetValZst>` overloads `replace` and `getOrInsertWith` per
-//   upstream's set-internal helpers; these are `internal` so Set.kt (Phase 5)
+//   upstream set-internal helpers; these are `internal` so Set.kt (Phase 5)
 //   can call them.
 // - `Hash`, `PartialEq`/`Eq`, `PartialOrd`/`Ord`, `Debug` impls become
 //   `hashCode` / `equals` / `compareTo` / `toString` overrides on
@@ -57,7 +57,7 @@ package io.github.kotlinmania.btree
  * Minimum number of elements in a node that is not a root.
  * We might temporarily have fewer elements during methods.
  *
- * Mirrors upstream `pub(super) const MIN_LEN: usize = node::MIN_LEN_AFTER_SPLIT;`.
+ * Mirrors upstream `public(super) const MIN_LEN: usize = node::MIN_LEN_AFTER_SPLIT;`.
  * Imported by Fix.kt and Remove.kt through the flat `btree` package.
  */
 internal const val MIN_LEN: Int = MIN_LEN_AFTER_SPLIT
@@ -69,14 +69,14 @@ internal const val MIN_LEN: Int = MIN_LEN_AFTER_SPLIT
 /**
  * An ordered map based on a B-Tree.
  *
- * Translation of upstream `pub struct BTreeMap<K, V, A: Allocator + Clone = Global>`.
+ * Translation of upstream `class BTreeMap<K, V, A: Allocator + Clone = Global>`.
  * The allocator parameter is dropped (GC supersedes manual deallocation).
  *
- * Implements [MutableMap] so consumers can use the Kotlin collections idioms
- * for free; instance methods that mirror upstream's surface (e.g. [insert],
+ * Implements [MutableMap] so consumers can import the Kotlin collections idioms
+ * for free; instance methods that mirror upstream surface (e.g. [insert],
  * [removeEntry], [firstKeyValue]) coexist with the [MutableMap] contract.
  *
- * `K : Comparable<K>` mirrors `where K: Ord` on every Rust impl — the type
+ * `K : Comparable<K>` mirrors `where K: Ord` on every Rust implementation — the type
  * system enforces it once at the class parameter rather than at every method.
  */
 class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
@@ -84,13 +84,13 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     internal var length: Int = 0
 
     /**
-     * `true` if this map's `V` slot is the [SetValZst] sentinel (i.e. the
+     * `true` if this map `V` slot is the [SetValZst] sentinel (i.e. the
      * map is being used as the storage of a `BTreeSet`). Search-bifurcation
      * paths consult this to render error messages with "BTreeSet" rather
      * than "BTreeMap".
      *
      * Translation note: upstream uses Rust trait specialization
-     * (`V::is_set_val()`) to obtain this fact at compile time; the Kotlin
+     * (`V::isSetVal()`) to obtain this fact at compile time; the Kotlin
      * port has no static dispatch on a non-reified type parameter, so we
      * carry the bit at runtime. Phase-5 `BTreeSet` will set this to `true`
      * via the [internalIsSet] field at construction.
@@ -100,7 +100,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     /**
      * Makes a new, empty `BTreeMap`. Does not allocate anything on its own.
      *
-     * Mirrors `pub const fn new() -> BTreeMap<K, V>`. `const` doesn't
+     * Mirrors `public const function new() -> BTreeMap<K, V>`. `const` does not
      * translate to Kotlin (compile-time evaluation only applies to
      * `const val` of primitive types), so we keep the body identical and
      * drop the const.
@@ -109,8 +109,8 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
 
     // ---- Drop semantics -----------------------------------------------------
     //
-    // Upstream's `unsafe impl Drop for BTreeMap { fn drop ... }` walks the
-    // tree via IntoIter to drop K and V instances in order. Kotlin's GC
+    // Upstream `unsafe implementation Drop for BTreeMap { function drop ... }` walks the
+    // tree via IntoIter to drop K and V instances in order. Kotlin GC
     // supersedes that; nothing to do.
 
     // ---- size / isEmpty / clear --------------------------------------------
@@ -122,7 +122,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     /** Clears the map, removing all elements. */
     override fun clear() {
         // Upstream uses `drop(BTreeMap { root: mem::replace(&mut self.root, None), ... })`
-        // to defer deallocation to the temporary's Drop. Kotlin GC handles
+        // to defer deallocation to the temporary Drop. Kotlin GC handles
         // the dropped tree; we simply null out the fields.
         root = null
         length = 0
@@ -133,7 +133,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     /**
      * Returns the value corresponding to [key], or `null` if absent.
      *
-     * Mirrors upstream `pub fn get<Q>(&self, key: &Q) -> Option<&V>`. `MutableMap.get`
+     * Mirrors upstream `fun get<Q>(&self, key: &Q) -> Option<&V>`. `MutableMap.get`
      * accepts `Any?`; we narrow to `K` via `as? K` so non-matching types
      * return `null` rather than triggering a class cast inside `searchTree`.
      */
@@ -162,7 +162,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     /** Returns `true` if the map contains [key]. */
     override fun containsKey(key: K): Boolean = get(key) != null
 
-    /** Returns `true` if any entry's value equals [value]. */
+    /** Returns `true` if any entry value equals [value]. */
     override fun containsValue(value: V): Boolean {
         for (entry in this) {
             if (entry.value == value) return true
@@ -175,7 +175,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     /**
      * Returns the first key-value pair in the map. The key is the minimum.
      *
-     * Mirrors `pub fn first_key_value(&self) -> Option<(&K, &V)>`.
+     * Mirrors `fun firstKeyValue(&self) -> Option<(&K, &V)>`.
      */
     fun firstKeyValue(): Pair<K, V>? {
         val rootNode = root?.reborrow() ?: return null
@@ -250,7 +250,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
      * value on success, or [Result.failure] containing an [OccupiedError] if
      * the key already existed.
      *
-     * Mirrors the unstable `pub fn try_insert(...) -> Result<&mut V, OccupiedError<...>>`.
+     * Mirrors the unstable `fun tryInsert(...) -> Result<&mut V, OccupiedError<...>>`.
      * Translation: Kotlin `Result<V>` for the success path, with the
      * occupied-error branch threading through `OccupiedError`. `Result<&mut V, ...>`
      * upstream returns by mutable reference; the Kotlin port returns the
@@ -298,7 +298,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
      * `false`. The elements are visited in ascending key order.
      */
     fun retain(f: (K, V) -> Boolean) {
-        // Upstream calls `self.extract_if(.., |k, v| !f(k, v)).for_each(drop)`.
+        // Upstream calls `self.extractIf(.., |k, v| !f(k, v)).forEach(drop)`.
         // We do the same.
         val it = extractIf(unbounded<K>()) { k, v -> !f(k, v) }
         while (it.hasNext()) it.next()
@@ -314,7 +314,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
      * from [other].
      */
     fun append(other: BTreeMap<K, V>) {
-        // Upstream: `let other = mem::replace(other, Self::new_in(...))`. We
+        // Upstream: `let other = mem::replace(other, Self::newIn(...))`. We
         // empty `other` after taking its contents, mirroring the consumed-by-
         // value semantics.
         val taken = BTreeMap<K, V>()
@@ -330,9 +330,9 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
      *
      * If a key from [other] is already present in this map, the [conflict]
      * closure is used to compute the value retained in this map. The
-     * closure receives this map's key, this map's value, and [other]'s value.
+     * closure receives this map key, this map value, and [other]'s value.
      *
-     * Mirrors the unstable `pub fn merge(&mut self, ...)` upstream.
+     * Mirrors the unstable `fun merge(&mut self, ...)` upstream.
      */
     fun merge(other: BTreeMap<K, V>, conflict: (K, V, V) -> V) {
         if (other.isEmpty()) return
@@ -370,7 +370,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
                     }
                 }
                 cmp > 0 -> {
-                    // SAFETY: other_key < self_key, sorted order preserved.
+                    // SAFETY: otherKey < selfKey, sorted order preserved.
                     selfCursor.insertBeforeUnchecked(firstOtherKey, firstOtherVal)
                 }
                 else -> error("unreachable: Cursor's peek_next should return None.")
@@ -399,7 +399,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
                             break
                         }
                         cmp > 0 -> {
-                            // SAFETY: self_key > other_key, insert preserves order.
+                            // SAFETY: selfKey > otherKey, insert preserves order.
                             selfCursor.insertBeforeUnchecked(otherKey, otherVal)
                             break
                         }
@@ -419,8 +419,8 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
 
     // ---- range / rangeMut --------------------------------------------------
     //
-    // Non-reified path: BTreeMap's `V` is a class type parameter and cannot
-    // itself be `reified`. Instead we delegate to Search/Navigate's
+    // Non-reified path: BTreeMap `V` is a class type parameter and cannot
+    // itself be `reified`. Instead we delegate to Search/Navigate
     // `*Explicit` overloads that take the `isSet` flag directly. The flag
     // comes from [internalIsSet], which Phase-5 `BTreeSet` will set when it
     // wraps a `BTreeMap<T, SetValZst>`.
@@ -428,7 +428,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     /**
      * Constructs a double-ended iterator over a sub-range of elements.
      *
-     * Translation note: upstream's `R: RangeBounds<T>` where `K: Borrow<T>`
+     * Translation note: upstream `R: RangeBounds<T>` where `K: Borrow<T>`
      * lets the caller pass any borrowed-from-K range type. The Kotlin port
      * accepts `RangeBounds<K>` directly — no `Borrow` machinery, callers
      * supply bounds that are concrete `K` instances. This matches the
@@ -461,7 +461,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     // ---- entry --------------------------------------------------------------
 
     /**
-     * Gets the given key's corresponding entry in the map for in-place manipulation.
+     * Gets the given key corresponding entry in the map for in-place manipulation.
      */
     fun entry(key: K): Entry<K, V> {
         val (mapRef, dormantMap) = DormantMutRef.new(this)
@@ -575,7 +575,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     /**
      * Returns an owning iterator over the entries of the map. Upstream is
      * implemented through the `IntoIterator` trait; the Kotlin port keeps
-     * it as a regular method since Kotlin's iterator protocol doesn't have
+     * it as a regular method since Kotlin iterator protocol does not have
      * a `IntoIterator`-style consume.
      *
      * After calling, the map is left empty.
@@ -603,8 +603,8 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
 
     companion object {
         /**
-         * Makes a `BTreeMap` from a sorted iterator. Mirrors upstream's
-         * `pub(crate) fn bulk_build_from_sorted_iter<I>`.
+         * Makes a `BTreeMap` from a sorted iterator. Mirrors upstream
+         * `public(crate) function bulkBuildFromSortedIter<I>`.
          */
         internal fun <K : Comparable<K>, V> bulkBuildFromSortedIter(
             iter: Iterator<Pair<K, V>>,
@@ -622,7 +622,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
         fun <K : Comparable<K>, V> fromIterable(items: Iterable<Pair<K, V>>): BTreeMap<K, V> {
             val list = items.toMutableList()
             if (list.isEmpty()) return BTreeMap()
-            // Stable sort to preserve insertion order on ties (matches upstream `sort_by`).
+            // Stable sort to preserve insertion order on ties (matches upstream `sortBy`).
             list.sortWith(Comparator { a, b -> a.first.compareTo(b.first) })
             return bulkBuildFromSortedIter(list.iterator())
         }
@@ -633,13 +633,13 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
         }
     }
 
-    // ---- lower_bound / lower_bound_mut / upper_bound / upper_bound_mut -----
+    // ---- lowerBound / lowerBoundMut / upperBound / upperBoundMut -----
 
     /**
      * Returns a [Cursor] pointing at the gap before the smallest key greater
      * than the given bound.
      *
-     * Mirrors upstream `pub fn lower_bound<Q>(&self, bound: Bound<&Q>) -> Cursor<...>`.
+     * Mirrors upstream `fun lowerBound<Q>(&self, bound: Bound<&Q>) -> Cursor<...>`.
      */
     fun lowerBound(bound: Bound<K>): Cursor<K, V> {
         val rootNode = this.root?.reborrow() ?: return Cursor(current = null, root = null)
@@ -716,7 +716,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     }
 
     override fun hashCode(): Int {
-        // Mirrors the upstream `Hash` impl: prefix length, then iterate.
+        // Mirrors the upstream `Hash` implementation: prefix length, then iterate.
         var h = size
         for (entry in this) {
             h = 31 * h + entry.key.hashCode()
@@ -744,7 +744,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
 // ============================================================================
 
 /**
- * Mirrors upstream `impl<K, A> BTreeMap<K, SetValZST, A> { pub(super) fn replace(...) }`.
+ * Mirrors upstream `implementation<K, A> BTreeMap<K, SetValZST, A> { public(super) function replace(...) }`.
  *
  * Not on the public surface; called from `BTreeSet::replace` once Phase 5 lands.
  */
@@ -770,16 +770,16 @@ internal fun <K : Comparable<K>> BTreeMap<K, SetValZst>.replaceSetVal(key: K): K
 }
 
 /**
- * Mirrors upstream `impl<K, A> BTreeMap<K, SetValZST, A> { pub(super) fn get_or_insert_with(...) }`.
+ * Mirrors upstream `implementation<K, A> BTreeMap<K, SetValZST, A> { public(super) function getOrInsertWith(...) }`.
  *
- * Not on the public surface; called from `BTreeSet::get_or_insert_with` once
+ * Not on the public surface; called from `BTreeSet::getOrInsertWith` once
  * Phase 5 lands.
  *
  * Translation note: upstream takes a `Q: ?Sized + Ord` and a `K : Borrow<Q>`
  * key type. The Kotlin port specialises Q to K (the most common case in
- * `BTreeSet`) — the cross-type-borrow form is unrepresentable when Kotlin's
- * `where K : Comparable<Q>` clashes with the receiver's pre-existing
- * `K : Comparable<K>` constraint. Set.kt's wrapper can rebox `Q` -> `K` at
+ * `BTreeSet`) — the cross-type-borrow form is unrepresentable when Kotlin
+ * `where K : Comparable<Q>` clashes with the receiver pre-existing
+ * `K : Comparable<K>` constraint. Set.kt wrapper can rebox `Q` -> `K` at
  * the call site if it wants the cross-type form back.
  */
 @Suppress("UNCHECKED_CAST")
@@ -827,7 +827,7 @@ class Iter<K, V> internal constructor(
         return ReadOnlyEntry(k, v)
     }
 
-    /** Mirrors `DoubleEndedIterator::next_back`. */
+    /** Mirrors `DoubleEndedIterator::nextBack`. */
     fun nextBack(): MutableMap.MutableEntry<K, V>? {
         if (length == 0) return null
         length -= 1
@@ -878,7 +878,7 @@ class IterMut<K : Comparable<K>, V> internal constructor(
         return MutEntry(map, k, v)
     }
 
-    /** Mirrors `DoubleEndedIterator::next_back`. */
+    /** Mirrors `DoubleEndedIterator::nextBack`. */
     fun nextBack(): MutableMap.MutableEntry<K, V>? {
         if (length == 0) return null
         length -= 1
@@ -895,7 +895,7 @@ class IterMut<K : Comparable<K>, V> internal constructor(
     /**
      * `MutableIterator.remove` removes the last-yielded entry from the map.
      * Tracks the last key seen so we can re-locate it; this is slower than
-     * upstream's in-place remove but Kotlin's `MutableIterator` contract
+     * upstream in-place remove but Kotlin `MutableIterator` contract
      * insists on a parameterless [remove].
      */
     override fun remove() {
@@ -909,7 +909,7 @@ class IterMut<K : Comparable<K>, V> internal constructor(
 
 /**
  * A mutable entry that writes through to the underlying [BTreeMap] via
- * [BTreeMap.put]. The entry's `value` field is a snapshot at the time of
+ * [BTreeMap.put]. The entry `value` field is a snapshot at the time of
  * iteration; [setValue] returns the previous value, matching the contract
  * of `MutableMap.MutableEntry`.
  */
@@ -984,7 +984,7 @@ class IntoIter<K, V> internal constructor(
 
     /**
      * Returns an immutable iterator of references over the remaining items.
-     * Mirrors upstream `pub(super) fn iter(&self) -> Iter<'_, K, V>`.
+     * Mirrors upstream `public(super) function iter(&self) -> Iter<'_, K, V>`.
      *
      * Note: yields `ReadOnlyEntry` views over the still-walked tree; the
      * dying tree must not be mutated through this view, only read.
@@ -1070,7 +1070,7 @@ class Range<K, V> internal constructor(
         return ReadOnlyEntry(out.first, out.second)
     }
 
-    /** Mirrors `DoubleEndedIterator::next_back_checked`. */
+    /** Mirrors `DoubleEndedIterator::nextBackChecked`. */
     fun nextBack(): MutableMap.MutableEntry<K, V>? {
         val kv = inner.nextBackCheckedImmut() ?: return null
         return ReadOnlyEntry(kv.first, kv.second)
@@ -1096,7 +1096,7 @@ class RangeMut<K, V> internal constructor(
         return out
     }
 
-    /** Mirrors `DoubleEndedIterator::next_back_checked`. */
+    /** Mirrors `DoubleEndedIterator::nextBackChecked`. */
     fun nextBack(): Pair<K, V>? = inner.nextBackCheckedValMut()
 
     override fun toString(): String = "RangeMut(...)"
@@ -1108,11 +1108,11 @@ class RangeMut<K, V> internal constructor(
 
 /**
  * Iterator that extracts elements matching a predicate from a sub-range of
- * a `BTreeMap`. Mirrors upstream `pub struct ExtractIf<...>`.
+ * a `BTreeMap`. Mirrors upstream `class ExtractIf<...>`.
  *
  * Removed elements are yielded in ascending key order; non-removed elements
  * remain in the map. If iteration short-circuits, the remaining matching
- * elements stay in the map. (Upstream's `Drop` impl re-walks; Kotlin GC
+ * elements stay in the map. (Upstream `Drop` implementation re-walks; Kotlin GC
  * supersedes that, and the user is expected to consume the iterator.)
  */
 class ExtractIf<K : Comparable<K>, V, Q : Comparable<Q>> internal constructor(
@@ -1182,10 +1182,10 @@ internal class ExtractIfInner<K : Comparable<K>, V, Q : Comparable<Q>>(
             // need only check the right bound to decide whether to stop.
             // SAFETY: K is Comparable<K>; the runtime contract for Q is that
             // K is comparable to it (the static `K : Comparable<Q>` constraint
-            // can't be expressed here because Kotlin doesn't allow a class
+            // cannot be expressed here because Kotlin does not allow a class
             // type parameter to be re-bounded against a method-level Q).
             // The cast `(end.value as Comparable<Any?>).compareTo(k)` would
-            // also work; we use the K-side compareTo via an unchecked cast.
+            // also work; we import the K-side compareTo via an unchecked cast.
             @Suppress("UNCHECKED_CAST")
             val withinRange = when (val end = range.endBound()) {
                 is Bound.Included -> (k as Comparable<Q>).compareTo(end.value) <= 0
@@ -1352,7 +1352,7 @@ class CursorMut<K : Comparable<K>, V> internal constructor(
  * A cursor over a `BTreeMap` with editing operations and mutable-key access.
  *
  * Mutating keys can violate the `BTreeMap` invariants. The caller is
- * responsible for keeping the tree in valid state. See upstream's
+ * responsible for keeping the tree in valid state. See upstream
  * `# Safety` block for details.
  */
 class CursorMutKey<K : Comparable<K>, V> internal constructor(
@@ -1437,9 +1437,9 @@ class CursorMutKey<K : Comparable<K>, V> internal constructor(
             // Tree is empty, allocate a new root.
             // SAFETY: We have no other reference to the tree.
             val map = dormantMap.reborrow()
-            check(map.root == null) // debug_assert!(root.is_none())
+            check(map.root == null) // debugAssert(root.isNone())
             val node = NodeRef.newLeaf<K, V>()
-            // SAFETY: We don't touch the root while the handle is alive.
+            // SAFETY: We do not touch the root while the handle is alive.
             val handle = node.borrowMut().pushWithHandle(key, value)
             map.root = node.forgetType()
             map.length += 1
@@ -1451,7 +1451,7 @@ class CursorMutKey<K : Comparable<K>, V> internal constructor(
         val handle = edge.insertRecursing(key, value) { ins ->
             // drop(ins.left) — Kotlin GC, nothing to do.
             // SAFETY: The handle to the newly inserted value is always on a
-            // leaf node, so adding a new root node doesn't invalidate it.
+            // leaf node, so adding a new root node does not invalidate it.
             val map = dormantMap.reborrow()
             val r = map.root!! // same as ins.left
             r.pushInternalLevel().push(ins.kv.first, ins.kv.second, ins.right)
@@ -1476,7 +1476,7 @@ class CursorMutKey<K : Comparable<K>, V> internal constructor(
             if (map.root == null) {
                 // Tree is empty, allocate a new root.
                 val node = NodeRef.newLeaf<K, V>()
-                // SAFETY: We don't touch the root while the handle is alive.
+                // SAFETY: We do not touch the root while the handle is alive.
                 val handle = node.borrowMut().pushWithHandle(key, value)
                 map.root = node.forgetType()
                 map.length += 1
@@ -1531,7 +1531,7 @@ class CursorMutKey<K : Comparable<K>, V> internal constructor(
     fun removeNext(): Pair<K, V>? {
         val cur = current ?: return null
         current = null
-        // First check whether next_kv exists at all (can fail if cursor is at end).
+        // First check whether nextKv exists at all (can fail if cursor is at end).
         if (cur.reborrow().nextKv() is NextKvResult.Err) {
             current = cur
             return null

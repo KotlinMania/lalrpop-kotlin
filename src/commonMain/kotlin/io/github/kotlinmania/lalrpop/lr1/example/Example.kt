@@ -171,7 +171,7 @@ data class Example(
             val numSyms = end - start
             check(numSyms > 0)
 
-            // Let's use the expansion from above as our running example.
+            // Let import the expansion from above as our running example.
             // We start out with positions like this:
             //
             //    A1 B2 C3 D4 E5 F6
@@ -194,7 +194,7 @@ data class Example(
             val endPosition = positions[end] - 1
 
             // We need space to draw `+-Label-+` between
-            // start_position and end_position.
+            // startPosition and endPosition.
             val requiredLen = ntLen + 4 // here, 15
             val actualLen = endPosition - startPosition // here, 10
             if (requiredLen < actualLen) {
@@ -220,7 +220,7 @@ data class Example(
                 // (which maybe ought to be rendered slightly
                 // differently).
                 //
-                // But if there are multiple symbols, we're not quite
+                // But if there are multiple symbols, we are not quite
                 // done, because there would be an unsightly gap:
                 //
                 //       (gaps)
@@ -405,7 +405,7 @@ private class ExamplePicture(
     }
 
     /**
-     * Mirrors `impl Debug for ExamplePicture`, which delegates to
+     * Mirrors `implementation Debug for ExamplePicture`, which delegates to
      * `Debug::fmt(&self.example, fmt)`.
      */
     override fun toString(): String = example.toString()

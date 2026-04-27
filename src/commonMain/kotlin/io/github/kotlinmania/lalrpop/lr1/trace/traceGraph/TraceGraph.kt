@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/trace/trace_graph/mod.rs
+// port-lint: source src/lr1/trace/traceGraph/mod.rs
 package io.github.kotlinmania.lalrpop.lr1.trace.traceGraph
 
 import io.github.kotlinmania.lalrpop.EdgeDirection
@@ -136,7 +136,7 @@ sealed class TraceGraphNode : Comparable<TraceGraphNode> {
     }
 }
 
-// This just exists to help with the `Debug` impl
+// This just exists to help with the `Debug` implementation
 private data class TraceGraphEdge(
     val from: TraceGraphNode,
     val to: TraceGraphNode,
@@ -153,7 +153,7 @@ private data class TraceGraphEdge(
 // The path enumerator walks a trace graph searching for paths that
 // start at a given item and terminate at another item. If such a path
 // is found, you can then find the complete list of symbols by calling
-// `symbols_and_cursor` and also get access to the state.
+// `symbolsAndCursor` and also get access to the state.
 
 class PathEnumerator internal constructor(
     internal val graph: TraceGraph,

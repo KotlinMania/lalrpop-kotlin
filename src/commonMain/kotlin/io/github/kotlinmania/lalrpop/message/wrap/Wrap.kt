@@ -27,7 +27,7 @@ class Wrap private constructor(
         for (item in this.items) {
             val len = item.minWidth()
 
-            // If we don't have enough space for this content,
+            // If we do not have enough space for this content,
             // then move to the next line.
             if (column + len > columns) {
                 column = 0

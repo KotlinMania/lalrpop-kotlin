@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/token_check/test.rs
+// port-lint: source src/normalize/tokenCheck/test.rs
 package io.github.kotlinmania.lalrpop.normalize.tokenCheck
 
 /*
@@ -59,11 +59,11 @@ private fun checkInternToken(grammar: String, expectedTokens: List<Pair<String, 
 }
 
 /**
- * Mirror Rust's `format!("{:?}", actual_user_name)` for an
+ * Mirror the upstream `format("{:?}", actualUserName)` for an
  * `Option<(&MatchMapping, &str)>`. The `MatchMapping::Terminal` `Debug`
- * impl prints the underlying terminal literal (already quoted for
+ * implementation prints the underlying terminal literal (already quoted for
  * `"foo"` or `r#"foo"#`); the `&str` half is rendered with surrounding
- * double quotes the way Rust's `{:?}` does for strings.
+ * double quotes the way the upstream `{:?}` does for strings.
  */
 private fun formatRustDebug(actual: Pair<MatchMapping, String>?): String {
     if (actual == null) return "None"
@@ -146,8 +146,8 @@ class TokenCheckTest {
     }
 
     /** Basic test for match mappings. */
-    // This test requires regex's unicode case support
-    // #[cfg_attr(not(feature = "unicode"), ignore)]
+    // This test requires regex unicode case support
+    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun matchMappings() {
         checkInternToken(
@@ -164,8 +164,8 @@ class TokenCheckTest {
      * Match mappings, exercising precedence. Here the ID regex *would*
      * be ambiguous with the begin regex.
      */
-    // This test requires regex's unicode case support
-    // #[cfg_attr(not(feature = "unicode"), ignore)]
+    // This test requires regex unicode case support
+    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun matchPrecedence() {
         checkInternToken(
@@ -199,17 +199,17 @@ class TokenCheckTest {
     }
 
     /** Test that, with a catch-all, the previous two examples work. */
-    // This test requires regex's unicode case support
-    // #[cfg_attr(not(feature = "unicode"), ignore)]
+    // This test requires regex unicode case support
+    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun matchCatchAll() {
         val grammar = """grammar; match { r"(?i)begin" => "BEGIN", _ } X = { "foo", r"foo" };"""
-        // assert!(validate_grammar(grammar).is_ok())
+        // assert(validateGrammar(grammar).isOk())
         validateGrammar(grammar)
     }
 
     /**
-     * Test that a `catch-all` can be use in the first `match` arm.
+     * Test that a `catch-all` can be import in the first `match` arm.
      * Before the pull request to close [issue 325](https://github.com/lalrpop/lalrpop/issues/325),
      * the usage of the `catch-all` symbol was not allowed in the first arm of a `match` block.
      */
@@ -240,8 +240,8 @@ class TokenCheckTest {
         )
     }
 
-    // This test requires regex's unicode case support
-    // #[cfg_attr(not(feature = "unicode"), ignore)]
+    // This test requires regex unicode case support
+    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun complexMatch() {
         val grammar = """
@@ -255,7 +255,7 @@ class TokenCheckTest {
             "ABC" BEGIN => String::from("Success")
         };
 """
-        // assert!(validate_grammar(grammar).is_ok())
+        // assert(validateGrammar(grammar).isOk())
         validateGrammar(grammar)
     }
 
@@ -263,8 +263,8 @@ class TokenCheckTest {
      * Test that overlapping regular expressions are still forbidden within one level
      * of a match declaration.
      */
-    // This test requires regex's unicode case support
-    // #[cfg_attr(not(feature = "unicode"), ignore)]
+    // This test requires regex unicode case support
+    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun ambiguityWithinMatch() {
         checkErr(

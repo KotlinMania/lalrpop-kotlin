@@ -140,12 +140,12 @@ private class Machine<L : LookaheadInterpret<L>>(
 
 class InterpretErrorException(val state: State<*>, val token: Token) : RuntimeException()
 
-/** impl Debug for ParseTree { fn fmt(...) { Display::fmt(self, fmt) } } */
+/** implementation Debug for ParseTree { function fmt(...) { Display::fmt(self, fmt) } } */
 fun ParseTree.fmt(fmt: StringBuilder) {
     fmtDisplay(fmt)
 }
 
-/** impl Display for ParseTree { fn fmt(...) { ... } } */
+/** implementation Display for ParseTree { function fmt(...) { ... } } */
 fun ParseTree.fmtDisplay(fmt: StringBuilder) {
     when (this) {
         is ParseTree.Nonterminal -> fmt.append("[$nt: ${io.github.kotlinmania.lalrpop.Sep(", ", trees)}]")

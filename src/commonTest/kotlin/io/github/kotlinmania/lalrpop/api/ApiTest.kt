@@ -43,7 +43,7 @@ private class TestState(
             TestState(origDir, lock)
     }
 
-    // Equivalent of Rust's `Drop for TestState`. Kotlin lacks
+    // Equivalent of the upstream `Drop for TestState`. Kotlin lacks
     // deterministic destructors, so each test calls [drop] from a
     // `try { ... } finally { ... }` block.
     fun drop() {
@@ -56,7 +56,7 @@ private class TestState(
     }
 }
 
-// Set up for API tests.  The directory structure in test_files
+// Set up for API tests.  The directory structure in testFiles
 // is:
 //
 // outer.lalrpop
@@ -74,7 +74,7 @@ private fun setup(): TestState {
     // drop.  So we check that and clear the mutex poison to resume processing
     val lock = API_TEST_MUTEX.lock(onPoisoned = {
         if (apiPathExists(outDir)) {
-            // Uh oh, we didn't clean up after all
+            // Uh oh, we did not clean up after all
             error("This test was started in an unclean state because another test failed but didn't manage to clean up test state")
         }
         API_TEST_MUTEX.clearPoison()
@@ -91,13 +91,13 @@ private fun setup(): TestState {
     apiCreateDir(outDir)
 
     // Safety note:
-    // set_var is marked as unsafe starting in the 2025 rust edition.  This is because C calls to
+    // setVar is marked as unsafe starting in the 2025 rust edition.  This is because C calls to
     // set and read environmental variables are not thread safe.  Specifically, reading an
     // environmental variable while it is being written to can result in unspecified data being
     // read.  In rust alone, these calls are protected via a mutex in the standard library, but if
     // we call into C code (e.g. via libc in a dependency), we do not get those protections.
     //
-    // In practice for us, we do have libc in some of our dependencies, and we can't necessarily
+    // In practice for us, we do have libc in some of our dependencies, and we cannot necessarily
     // know or predict where they might read environmental variables.  These tests are under a
     // mutex for the tests in this file only, but may run concurrently with other tests.
     //
@@ -119,7 +119,7 @@ private fun setup(): TestState {
     return TestState.new(origDir, lock)
 }
 
-// Assumes CWD is test_files
+// Assumes CWD is testFiles
 private fun removeLocalGeneratedFiles() {
     for (f in listOf("src.rs", "other.rs", "outer.rs")) {
         for (loc in listOf(".", "src", "other")) {
@@ -137,7 +137,7 @@ private fun removeLocalGeneratedFiles() {
 
 // This is maybe a little nonintuitive at first.  We verify that the file exists where we expect
 // it, and nowhere else.  So fs::exists().unwrap() for a given location must be equal to our
-// expectation that it's in that location.
+// expectation that it in that location.
 private fun verifyFile(filename: String, expectedLocation: GenFileLoc) {
     println("Checking the location of $filename")
     assertEquals(
@@ -213,8 +213,8 @@ class ApiTest {
     fun test_process_file() {
         val state = setup()
         try {
-            // This test is noting that with cargo_dir_conventions, "src/src.lalrpop"
-            // will work, but prepending "../test_files" does not as it is an unexpected
+            // This test is noting that with cargoDirConventions, "src/src.lalrpop"
+            // will work, but prepending "../testFiles" does not as it is an unexpected
             // file prefix.
             assertFails {
                 Configuration.new()
@@ -270,7 +270,7 @@ class ApiTest {
 }
 
 // ---------------------------------------------------------------------------
-// Mutex transliteration. Rust's `std::sync::Mutex<i32>` carries a "poison"
+// Mutex transliteration. the upstream `std::sync::Mutex<i32>` carries a "poison"
 // flag that is set when the holder of the lock panics. The Kotlin port
 // uses a simple recursion-tolerant lock built on a top-level mutable
 // flag — kotlin.test runs tests serially within a single JVM/process by

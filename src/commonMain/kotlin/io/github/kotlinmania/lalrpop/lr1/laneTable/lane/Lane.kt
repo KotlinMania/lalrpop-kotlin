@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lane_table/lane/mod.rs
+// port-lint: source src/lr1/laneTable/lane/mod.rs
 //! Code to trace out a single lane, collecting information into the
 //! lane table as we go.
 package io.github.kotlinmania.lalrpop.lr1.laneTable.lane
@@ -81,7 +81,7 @@ class LaneTracer<L : Lookahead<L>>(
         item: Lr0Item,
         visited: Set<ComparablePair<StateIndex, Lr0Item>>,
     ) {
-        // debug!("continue_trace:  state={:?}, index={:?}", state, item.index);
+        // debug("continueTrace:  state={:?}, index={:?}", state, item.index);
         if (!visited.add(ComparablePair(state, item))) {
             return
         }
@@ -142,7 +142,7 @@ class LaneTracer<L : Lookahead<L>>(
 
         // NB: Under the normal LR terms, the start nonterminal will
         // only have one production like `X' = X`, in which case this
-        // loop is useless, but sometimes in tests we don't observe
+        // loop is useless, but sometimes in tests we do not observe
         // that restriction, so do it anyway.
         for (predItem in stateItems.filter { it.canShiftNonterminal(nonterminal) }) {
             val symbolSets = predItem.symbolSets()

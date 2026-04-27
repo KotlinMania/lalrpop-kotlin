@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lane_table/construct/mod.rs
+// port-lint: source src/lr1/laneTable/construct/mod.rs
 //! Generate rust parser code using the lane table algorithm
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct
 
@@ -63,7 +63,7 @@ class LaneTableConstruct(
             // (#240).
             //
             // Since we want to behave as a LR(1) parser
-            // would, we'll just go ahead and run the
+            // would, we will just go ahead and run the
             // algorithm.
             buildLr0States(grammar, startNt)
         } catch (e: TableConstructionErrorException) {

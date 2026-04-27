@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/build_lalr/mod.rs
+// port-lint: source src/lr1/buildLalr/mod.rs
 //! Mega naive LALR(1) generation algorithm.
 package io.github.kotlinmania.lalrpop.lr1.buildLalr
 
@@ -48,7 +48,7 @@ fun buildLalrStates(grammar: Grammar, start: NonterminalString): Lr1Result {
         return lrStates
     }
 
-    // profile! { &Tls::session(), "LALR(1) state collapse", collapse_to_lalr_states(&lr_states) }
+    // profile! { &Tls::session(), "LALR(1) state collapse", collapseToLalrStates(&lrStates) }
     return collapseToLalrStates(lrStates)
 }
 

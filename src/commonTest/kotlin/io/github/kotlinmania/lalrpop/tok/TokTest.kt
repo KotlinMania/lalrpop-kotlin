@@ -775,7 +775,7 @@ class TokTest {
             Error(location = 68, code = ErrorCode.UnrecognizedEscape),
             (applyStringEscapes("\u0192\\oo", 65).exceptionOrNull() as TokError).err,
         )
-        // LALRPOP doesn't support the other Rust escape sequences.
+        // LALRPOP does not support the other Rust escape sequences.
         assertEquals(
             Error(location = 112, code = ErrorCode.UnrecognizedEscape),
             (applyStringEscapes("""star: \u{2a}""", 105).exceptionOrNull() as TokError).err,

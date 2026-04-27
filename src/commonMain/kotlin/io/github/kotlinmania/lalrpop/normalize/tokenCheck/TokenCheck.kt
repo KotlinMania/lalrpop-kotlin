@@ -1,9 +1,9 @@
-// port-lint: source src/normalize/token_check/mod.rs
+// port-lint: source src/normalize/tokenCheck/mod.rs
 //! If an extern token is provided, then this pass validates that
 //! terminal IDs have conversions. Otherwise, it generates a
 //! tokenizer. This can only be done after macro expansion because
 //! some macro arguments never make it into an actual production and
-//! are only used in `if` conditions; we use string literals for
+//! are only used in `if` conditions; we import string literals for
 //! those, but they do not have to have a defined conversion.
 package io.github.kotlinmania.lalrpop.normalize.tokenCheck
 
@@ -69,7 +69,7 @@ fun validate(grammar: Grammar): Grammar {
 
     when (mode) {
         is TokenMode.Extern -> {
-            // If using an external tokenizer, we're all done at this point.
+            // If using an external tokenizer, we are all done at this point.
         }
         is TokenMode.Internal -> {
             // Otherwise, construct the `InternToken` item.
@@ -84,7 +84,7 @@ fun validate(grammar: Grammar): Grammar {
 // Validation phase -- this phase walks the grammar and visits all
 // terminals. If using an external set of tokens, it checks that all
 // terminals have a defined conversion to some pattern. Otherwise,
-// it collects all terminals into the `all_literals` set for later use.
+// it collects all terminals into the `allLiterals` set for later use.
 
 private class Validator(
     val grammar: Grammar,
@@ -102,9 +102,9 @@ private sealed class TokenMode {
 
     /**
      * Otherwise, we are synthesizing the tokenizer. In that case,
-     * `match_block` summarizes the data from the `match { ... }`
+     * `matchBlock` summarizes the data from the `match { ... }`
      * section, if any. If there was no `match` section, or the
-     * section contains a wildcard, the user can also use additional
+     * section contains a wildcard, the user can also import additional
      * terminals in the grammar.
      */
     data class Internal(val matchBlock: MatchBlock) : TokenMode()
@@ -129,7 +129,7 @@ private class MatchBlock(
 
     /**
      * For each terminal literal that we have to match, the span
-     * where it appeared in user's source.  This can either be in the
+     * where it appeared in user source.  This can either be in the
      * `match { }` section or else in the grammar somewhere (if added
      * due to a catch-all, or there is no match section).
      */
@@ -191,7 +191,7 @@ private class MatchBlock(
             returnErr(span, "multiple match entries for `$sym`")
         }
 
-        // NB: It's legal for multiple regex to produce same terminal.
+        // NB: It legal for multiple regex to produce same terminal.
         if (userName is MatchMapping.Terminal) {
             matchUserNames.add(userName.terminal)
         }

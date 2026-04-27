@@ -39,10 +39,13 @@ private object TERMINALS {
 
 class Lr1Tls private constructor(
     private var oldValue: TerminalSet?,
-) {
+) : AutoCloseable {
+
     fun drop() {
         TERMINALS.with { s -> s.borrowMut().replace(oldValue) }
     }
+
+    override fun close() = drop()
 
     companion object {
         fun install(terminals: TerminalSet): Lr1Tls {

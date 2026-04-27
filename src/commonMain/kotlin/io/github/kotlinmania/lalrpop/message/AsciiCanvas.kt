@@ -1,4 +1,4 @@
-// port-lint: source external/ascii_canvas/lib
+// port-lint: source external/asciiCanvas/lib
 //! An "ASCII Canvas" allows us to draw lines and write text into a
 //! fixed-sized canvas and then convert that canvas into ASCII
 //! characters. ANSI styling is supported.
@@ -166,7 +166,7 @@ class ShiftedView private constructor(
     // either the base canvas or another view
     private val base: AsciiView,
     // fixed at creation: the content is always allowed to grow down,
-    // but cannot grow right more than `num_columns`
+    // but cannot grow right more than `numColumns`
     private val upperLeft: Point,
     // this is updated to track content that is emitted
     private var lowerRight: Point,

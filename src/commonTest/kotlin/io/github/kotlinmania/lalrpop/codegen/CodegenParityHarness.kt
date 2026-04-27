@@ -21,7 +21,7 @@
 //!    `src/commonTest/resources/codegen-parity/inputs/<name>.lalrpop`.
 //! 2. Drop the upstream-emitted Rust under
 //!    `src/commonTest/resources/codegen-parity/expected/<name>.expected.rs`.
-//! 3. Update `MANIFEST.md` with the entry's status.
+//! 3. Update `MANIFEST.md` with the entry status.
 //! 4. Add the entry to [CodegenParityCorpus.entries].
 //! 5. Run [CodegenParityHarness.runAll] from a `@Test` and triage diffs
 //!    leaves-up: token enum → action functions → state table → reduce
@@ -37,7 +37,7 @@ import kotlin.test.fail
  * input with the upstream-emitted oracle Rust output for the same
  * grammar.
  *
- * @param name the grammar's name, also used to locate the staged
+ * @param name the grammar name, also used to locate the staged
  *   resource files under `src/commonTest/resources/codegen-parity/`.
  * @param input the contents of `inputs/<name>.lalrpop`. Required.
  * @param expected the contents of `expected/<name>.expected.rs`.

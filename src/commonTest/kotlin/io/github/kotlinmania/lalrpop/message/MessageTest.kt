@@ -64,7 +64,7 @@ class MessageTest {
 
     /**
      * Test a case where the body in the message is longer than the
-     * header (which used to mess up the `min_width` computation).
+     * header (which used to mess up the `minWidth` computation).
      */
     @Test
     fun longBody() {

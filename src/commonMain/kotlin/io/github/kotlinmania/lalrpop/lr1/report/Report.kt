@@ -277,7 +277,7 @@ private class ReportGenerator<W : Appendable>(
 // helpers
 
 /**
- * Rust: `trait LookaheadPrinter<W: Write> { fn print(&self, out: &mut W); fn has_anything_to_print(&self) -> bool; }`.
+ * Rust: `trait LookaheadPrinter<W: Write> { function print(&self, out: &mut W); function hasAnythingToPrint(&self) -> bool; }`.
  * Kotlin: an explicit interface preserves the symbol so parity
  * tooling can see it. The generic Rust `<W: Write>` bound becomes
  * `Appendable` in Kotlin.
@@ -289,7 +289,7 @@ private interface LookaheadPrinter {
 
 /**
  * `LookaheadPrinter` for `Nil`: prints nothing and reports nothing to
- * print. Mirrors `impl<W: Write> LookaheadPrinter<W> for Nil` in
+ * print. Mirrors `implementation<W: Write> LookaheadPrinter<W> for Nil` in
  * Rust.
  */
 private object NilLookaheadPrinter : LookaheadPrinter {
@@ -302,7 +302,7 @@ private object NilLookaheadPrinter : LookaheadPrinter {
 
 /**
  * `LookaheadPrinter` for `TokenSet`: prints each terminal preceded by
- * a space. Mirrors `impl<W: Write> LookaheadPrinter<W> for TokenSet`
+ * a space. Mirrors `implementation<W: Write> LookaheadPrinter<W> for TokenSet`
  * in Rust.
  */
 private class TokenSetLookaheadPrinter(val ts: TokenSet) : LookaheadPrinter {

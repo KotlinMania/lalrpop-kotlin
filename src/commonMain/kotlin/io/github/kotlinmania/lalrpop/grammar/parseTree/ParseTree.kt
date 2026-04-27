@@ -1,5 +1,5 @@
-// port-lint: source src/grammar/parse_tree.rs
-// The "parse-tree" is what is produced by the parser. We use it do
+// port-lint: source src/grammar/parseTree.rs
+// The "parse-tree" is what is produced by the parser. We import it do
 // some pre-expansion and so forth before creating the proper AST.
 package io.github.kotlinmania.lalrpop.grammar.parseTree
 
@@ -110,7 +110,7 @@ sealed class MatchMapping : Comparable<MatchMapping> {
 
     override fun compareTo(other: MatchMapping): Int = toString().compareTo(other.toString())
 
-    // Debug impl
+    // Debug implementation
     fun debugString(): String = when (this) {
         is Terminal -> "${terminal}"
         Skip -> "{ }"
@@ -137,7 +137,7 @@ data class InternToken(
 )
 
 /**
- * In `token_check`, as we prepare to generate a tokenizer, we
+ * In `tokenCheck`, as we prepare to generate a tokenizer, we
  * combine any `match` declaration the user may have given with the
  * set of literals (e.g. `"foo"` or `r"[a-z]"`) that appear elsewhere
  * in their in the grammar to produce a series of `MatchEntry`. Each
@@ -157,9 +157,9 @@ data class InternToken(
  * ```
  *
  * This would correspond to three match entries:
- * - `MatchEntry { match_literal: r"(?i)BEGIN", user_name: "BEGIN", precedence: 2 }`
- * - `MatchEntry { match_literal: "+", user_name: "+", precedence: 3 }`
- * - `MatchEntry { match_literal: "r[a-zA-Z]+"", user_name: r"[a-zA-Z]+", precedence: 0 }`
+ * - `MatchEntry { matchLiteral: r"(?i)BEGIN", userName: "BEGIN", precedence: 2 }`
+ * - `MatchEntry { matchLiteral: "+", userName: "+", precedence: 3 }`
+ * - `MatchEntry { matchLiteral: "r[a-zA-Z]+"", userName: r"[a-zA-Z]+", precedence: 0 }`
  *
  * A couple of things to note:
  *
@@ -496,7 +496,7 @@ sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
 
 sealed class TypeParameter : Comparable<TypeParameter> {
     /**
-     * Mirrors `impl Display for TypeParameter`. Each subclass
+     * Mirrors `implementation Display for TypeParameter`. Each subclass
      * overrides toString explicitly: a `data class` auto-generates
      * its own toString that shadows any override on the sealed parent.
      * Without these per-subclass overrides the emitter produced
@@ -520,13 +520,13 @@ data class Parameter(
     var name: Atom,
     var ty: TypeRef,
 ) {
-    /** Mirrors `impl Display for Parameter` (parse_tree-side counterpart). */
+    /** Mirrors `implementation Display for Parameter` (parseTree-side counterpart). */
     override fun toString(): String = "$name: $ty"
 }
 
 sealed class Visibility {
     /**
-     * Mirrors `impl Display for Visibility`. Each subclass overrides
+     * Mirrors `implementation Display for Visibility`. Each subclass overrides
      * toString explicitly: a `data class` auto-generates its own
      * toString that shadows any override placed on the sealed parent,
      * so a single parent-level toString was being silently bypassed
@@ -571,7 +571,7 @@ data class Attribute(
     var id: Atom,
     var arg: AttributeArg,
 ) {
-    /** get the (key, value) of an attribute of the form #[key = "value"] */
+    /** get the (key, value) of an attribute of the form (key = "value") */
     fun getArgEqual(): Pair<Atom, String>? {
         val arg = this.arg
         if (arg is AttributeArg.Paren) {
@@ -724,7 +724,7 @@ data class Tuple(
 
 sealed class ArgPattern {
     /**
-     * Mirrors `impl Display for ArgPattern`. Per-subclass toString
+     * Mirrors `implementation Display for ArgPattern`. Per-subclass toString
      * — see TypeRepr / Visibility for the full explanation of the
      * data-class shadowing trap.
      */
@@ -815,7 +815,7 @@ sealed class TerminalLiteral : Comparable<TerminalLiteral> {
     }
 
     override fun toString(): String = when (this) {
-        is Quoted -> "\"${atom.asRef()}\"" // the Debug impl adds the `"` and escaping
+        is Quoted -> "\"${atom.asRef()}\"" // the Debug implementation adds the `"` and escaping
         is Regex -> "r#\"${atom.asRef()}\"#" // FIXME -- need to determine proper number of #
     }
 }

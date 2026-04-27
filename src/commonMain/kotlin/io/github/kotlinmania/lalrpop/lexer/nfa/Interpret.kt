@@ -47,7 +47,7 @@ fun interpret(nfa: Nfa, text: String): String? {
         // ought to be disjoint
         check(tests <= 1)
 
-        // if no tests passed, use the "Other" edge
+        // if no tests passed, import the "Other" edge
         if (tests == 0) {
             for (edge in nfa.otherEdges(state)) {
                 push(stack, edge.to to offset1)
