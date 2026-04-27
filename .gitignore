@@ -21,12 +21,18 @@ tmp/
 # AST distance tool reports
 port_status_report.md
 high_priority_ports.md
+tools/ast_distance/NEXT_ACTIONS.md
 
 # AST distance agent state and lock files
 .cache/
 *.lock
+tools/ast_distance/.ast_distance_config.json
 
 # AST distance compiled binary (CMake output, rebuild from source)
 tools/ast_distance/ast_distance
 tools/ast_distance/ast_distance.real
 tools/ast_distance/build/
+
+# Temporary scratch files from message-port work
+src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/*.tmp
+src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/**/*.tmp

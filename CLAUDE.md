@@ -17,10 +17,10 @@ Use file comparisons and directory-level checks instead:
 
 ```bash
 # Deep comparison over directories
-./tools/ast_distance/ast_distance --deep tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop_kotlin kotlin
+./tools/ast_distance/ast_distance --deep tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop kotlin
 
 # Rank missing/priority (if available in your ast_distance build)
-./tools/ast_distance/ast_distance --rank tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop_kotlin kotlin
+./tools/ast_distance/ast_distance --rank tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop kotlin
 ```
 
 ### 2. Port-Lint Headers (REQUIRED)
@@ -29,13 +29,13 @@ Every Kotlin file MUST start with:
 
 ```kotlin
 // port-lint: source <path-relative-to-tmp/lalrpop-rs/lalrpop>
-package io.github.kotlinmania.lalrpop_kotlin.module
+package io.github.kotlinmania.lalrpop.module
 ```
 
 Example:
 ```kotlin
 // port-lint: source src/lr1/build.rs
-package io.github.kotlinmania.lalrpop_kotlin.lr1
+package io.github.kotlinmania.lalrpop.lr1
 ```
 
 This is how `ast_distance` tracks provenance — which Rust file each Kotlin file was translated from. Without this header, the file is invisible to all port analysis tooling. Never remove, move, or alter the header unless the file is being re-targeted to a different Rust source.
@@ -47,7 +47,7 @@ After porting a file, verify with:
 ```bash
 ./tools/ast_distance/ast_distance \
   tmp/lalrpop-rs/lalrpop/src/lr1/build.rs rust \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop_kotlin/lr1/Build.kt kotlin
+  src/commonMain/kotlin/io/github/kotlinmania/lalrpop/lr1/Build.kt kotlin
 ```
 
 **Target: Similarity ≥ 0.85** (excellent port)
@@ -122,16 +122,16 @@ If a type doesn't exist yet, port the file that defines it. Don't create placeho
 
 ```bash
 # Overall progress
-./tools/ast_distance/ast_distance --deep tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop_kotlin kotlin
+./tools/ast_distance/ast_distance --deep tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop kotlin
 
 # Missing files by priority
-./tools/ast_distance/ast_distance --missing tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop_kotlin kotlin
+./tools/ast_distance/ast_distance --missing tmp/lalrpop-rs/lalrpop/src rust src/commonMain/kotlin/io/github/kotlinmania/lalrpop kotlin
 ```
 
 ## Naming Conventions
 
 - **Files:** PascalCase (e.g., `build.rs` → `Build.kt`, `first.rs` → `First.kt`)
-- **Packages:** Mirror Rust module structure (e.g., `src/lr1/build.rs` → `lalrpop_kotlin.lr1`)
+- **Packages:** Mirror Rust module structure (e.g., `src/lr1/build.rs` → `lalrpop.lr1`)
 - **Functions/Variables:** camelCase (Rust snake_case → Kotlin camelCase)
 - **Types:** PascalCase
 - **Constants:** UPPER_SNAKE_CASE
@@ -159,7 +159,7 @@ Preserve error messages and context. Use Kotlin's `Result` type or throw appropr
 
 ```
 src/
-├── commonMain/kotlin/io/github/kotlinmania/lalrpop_kotlin/
+├── commonMain/kotlin/io/github/kotlinmania/lalrpop/
 │   ├── api/         # Port of tmp/lalrpop-rs/lalrpop/src/api/
 │   ├── build/       # Port of tmp/lalrpop-rs/lalrpop/src/build/
 │   ├── collections/ # Port of tmp/lalrpop-rs/lalrpop/src/collections/
@@ -173,7 +173,7 @@ src/
 │   ├── tls/         # Port of tmp/lalrpop-rs/lalrpop/src/tls/
 │   ├── tok/         # Port of tmp/lalrpop-rs/lalrpop/src/tok/
 │   └── ...
-└── commonTest/kotlin/io/github/kotlinmania/lalrpop_kotlin/
+└── commonTest/kotlin/io/github/kotlinmania/lalrpop/
 ```
 
 ## Testing
@@ -290,6 +290,75 @@ What this means in practice:
   the corresponding Rust text.
 - Phase-1 backend work should be judged by generated Rust-output parity,
   not by whether the string literals already contain Kotlin syntax.
+
+### Phase 1 completion: finish the generator-output comparison
+
+**Phase 1 is not complete until lalrpop-kotlin's emitted Rust source is
+byte-identical (modulo deterministic whitespace) to upstream LALRPOP's
+emitted Rust source for every grammar in the test corpus.** This is the
+hard parity gate. Until this lands, do not start phase 2 — score-padding
+the Kotlin port without a parity witness loses the only ground truth we
+have for the back-end.
+
+The reference implementation lives in `tmp/lalrpop-rs/`. Treat it as the
+oracle. The `tmp/lalrpop-rs/target/lrgrammar.rs` checked into the tree
+is one such oracle artifact: it is upstream LALRPOP's Rust output for
+`lrgrammar.lalrpop`, and lalrpop-kotlin should produce the same file
+when fed the same grammar.
+
+Concrete steps to drive phase 1 to done:
+
+1. **Pick a corpus.** Start with the grammars already in
+   `tmp/lalrpop-rs/lalrpop/src/parser/lrgrammar.lalrpop` and the
+   integration grammars under `tmp/lalrpop-rs/lalrpop-test/src/`.
+   Each grammar has a known-good Rust output produced by upstream
+   LALRPOP — generate it with `cargo run -p lalrpop ...` against the
+   `tmp/lalrpop-rs/` checkout if it is not already cached.
+2. **Run lalrpop-kotlin against the same input.** Add or extend a
+   harness under `src/commonTest/kotlin/.../codegen/` that takes a
+   `.lalrpop` file, runs the Kotlin pipeline (parse → normalize → lr1
+   → emit), and writes the emitted Rust to a temp file.
+3. **Diff against the upstream output.** The harness must compare the
+   two files byte-for-byte (after stripping trailing whitespace and
+   normalizing line endings). Any divergence is a phase-1 bug; fix it
+   in lalrpop-kotlin, never in the upstream oracle.
+4. **Triage divergences from the leaves up.** When a diff shows up,
+   bisect by section: token enum, action functions, state table,
+   reduction dispatch, error recovery, header. Resolve sections in
+   order — a wrong token enum will cascade into every later section.
+5. **Lock parity in CI.** Once a grammar matches, snapshot the
+   upstream output under `src/commonTest/resources/codegen-parity/`
+   and add a regression test that re-runs the comparison on every
+   build. The snapshot is the contract; do not regenerate it from
+   lalrpop-kotlin (that would let drift hide).
+6. **Track the corpus to completion.** Maintain a checklist of
+   grammars and their parity status (matching / divergent / not yet
+   wired up). Phase 1 is done when every grammar in the checklist is
+   `matching` and a CI job blocks regressions.
+
+Rules while finishing phase 1:
+
+- **Do not edit `tmp/lalrpop-rs/`** to make a diff disappear. That
+  directory is the oracle. If upstream's output looks wrong, the bug
+  is in lalrpop-kotlin or in your understanding of the Rust source.
+- **Do not normalize away semantic differences.** Whitespace and
+  line-ending normalization is fine; renaming a generated function,
+  reordering match arms, or dropping a `#[allow(...)]` attribute is
+  not. Those are real divergences and they will bite during phase 2.
+- **Do not declare parity from a single grammar.** A toy grammar can
+  hit every code path in `parse_table.rs` and miss most of `ascent.rs`,
+  or vice versa. The corpus must exercise both back-ends.
+- **Do not skip the macro-expanded grammars.** `normalize/macro_expand`
+  produces synthetic non-terminals whose codegen ordering is the most
+  common source of subtle divergence. Include at least one grammar
+  with `#[inline]` rules, one with parameterized macros, and one with
+  precedence/associativity declarations.
+- **Do not gate phase 2 on "close enough".** Either the bytes match
+  or phase 1 is not finished. Document any deliberate, approved
+  divergence (e.g. a deterministic Kotlin-side improvement that
+  upstream cannot match) in `PORTING.md` with rationale, and exclude
+  it from the diff via a targeted normalizer — never via a
+  whole-file allowlist.
 
 ### Phase 2: Kotlin output backend
 
