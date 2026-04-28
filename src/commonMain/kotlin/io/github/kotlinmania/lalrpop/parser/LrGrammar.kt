@@ -3164,23 +3164,17 @@ internal fun expectedTokens(state: Short): List<String> {
     }
 }
 
-// The Rust source binds these inside the `implementation ParserDefinition for ___StateMachine`
-// block (one `type Foo = Bar;` line each, lines 3212-3221). The Kotlin port
-// realises them as concrete generic arguments on the StateMachine class
-// declaration below, but to keep symbol-parity we ALSO surface each binding as
-// a top-level `typealias` so the upstream `type X = Y;` lines have a
-// one-for-one Kotlin counterpart. These aliases are not used by the rest of
-// the file — they exist to preserve the upstream symbol set verbatim.
 internal typealias Location = Int
+internal typealias Error = io.github.kotlinmania.lalrpop.tok.Error
+internal typealias Token = io.github.kotlinmania.lalrpop.tok.Tok
 internal typealias TokenIndex = Int
+internal typealias Symbol = LrSymbol
+internal typealias Success = Top
+internal typealias StateIndex = Short
+internal typealias Action = Short
 internal typealias ReduceIndex = Short
 internal typealias NonterminalIndex = Int
 
-// The Rust struct holds `text: &str` plus a phantom marker; in
-// Kotlin we drop the borrow annotation entirely and keep just the input text. The
-// `implementation ___state_machine::ParserDefinition for ___StateMachine` block is
-// realised directly on the class — each method forwards to the free
-// function that the Rust implementation also delegates to.
 internal class StateMachine(
     internal val text: String,
 ) : io.github.kotlinmania.lalrpop.runtime.ParserDefinition<
@@ -7849,12 +7843,6 @@ fun action5
     return Top.GrammarWhereClauses(sym1.second)
 }
 
-// and its immediate dependencies (type parameters, where clauses, type
-// bounds, parameter lists). Sealed-class variant names diverge from the
-// Rust enum variant names where needed to dodge keyword/AST-name
-// collisions (e.g. `WhereClause::Lifetime` -> `WhereClause.LifetimeClause`,
-// `TypeBound::Lifetime` -> `TypeBound.LifetimeBound`,
-// `TypeParameter::Lifetime` -> `TypeParameter.LifetimeTp`).
 internal fun action6(
     text: String,
     moduleAttributes: Triple<Int, List<String>, Int>,
