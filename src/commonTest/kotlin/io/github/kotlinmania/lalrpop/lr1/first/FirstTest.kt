@@ -45,7 +45,6 @@ class FirstTest {
     X = "E"; // intentionally unreachable
 """,
         )
-        @Suppress("UNUSED_VARIABLE")
         val lr1Tls = Lr1Tls.install(grammar.terminals)
         try {
             val firstSets = FirstSets.new(grammar)
@@ -87,7 +86,6 @@ class FirstTest {
     X = "E"; // intentionally unreachable
 """,
         )
-        @Suppress("UNUSED_VARIABLE")
         val lr1Tls = Lr1Tls.install(grammar.terminals)
         try {
             val firstSets = FirstSets.new(grammar)
