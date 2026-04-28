@@ -24,26 +24,24 @@ fun fmt(tree: ParseTree, fmt: Formatter, error: Error): Result<Unit> {
 
 fun fmt(tree: ParseTree, fmt: Formatter): Result<Unit> {
     when (tree) {
-        is ParseTree.Nonterminal -> fmt.sb.append("[${tree.nt}: ${Sep(\", \", tree.trees)}]")
-        is ParseTree.Terminal -> fmt.sb.append("${tree.t}")
+        is ParseTree.Nonterminal -> {
+            val id = tree.nt
+            val trees = tree.trees
+            fmt.sb.append("[").append(id).append(": ").append(Sep(", ", trees)).append("]")
+        }
+        is ParseTree.Terminal -> {
+            val id = tree.t
+            fmt.sb.append(id)
+        }
     }
     return Result.success(Unit)
 }
 
-fun <L : LookaheadInterpret<L>> reduction(
-    state: State<L>,
-    token: Token,
-): Production? {
-    val pair = state.reductions.firstOrNull() ?: return null
-    val lookahead = pair.first
-
-    if (lookahead is TokenSet) {
-        @Suppress("UNCHECKED_CAST")
-        val tokenSetState = state as State<TokenSet>
-        return reduction(tokenSetState, token)
-    }
-
-    return pair.second
+fun reduction(state: State<Nil>, token: Token): Production? {
+    return state.reductions
+        .asSequence()
+        .map { (_, production) -> production }
+        .firstOrNull()
 }
 
 fun reduction(state: State<TokenSet>, token: Token): Production? {
@@ -115,7 +113,11 @@ private class Machine<L : LookaheadInterpret<L>>(
                 continue
             }
 
-            val production = reduction(state, Token.Terminal(terminal))
+            val production = if (state.reductions.firstOrNull()?.first is TokenSet) {
+                reduction(state as State<TokenSet>, Token.Terminal(terminal))
+            } else {
+                reduction(state as State<Nil>, Token.Terminal(terminal))
+            }
             if (production == null) {
                 return Result.failure(InterpretErrorException(InterpretError(state, Token.Terminal(terminal))))
             }
@@ -138,7 +140,11 @@ private class Machine<L : LookaheadInterpret<L>>(
         // drain now for EOF
         while (true) {
             val state = topState()
-            val production = reduction(state, Token.Eof)
+            val production = if (state.reductions.firstOrNull()?.first is TokenSet) {
+                reduction(state as State<TokenSet>, Token.Eof)
+            } else {
+                reduction(state as State<Nil>, Token.Eof)
+            }
             if (production == null) {
                 return Result.failure(InterpretErrorException(InterpretError(state, Token.Eof)))
             }
