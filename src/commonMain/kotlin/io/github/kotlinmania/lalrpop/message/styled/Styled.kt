@@ -27,5 +27,9 @@ class Styled private constructor(
         intoWrapItemsMap(this.content, wrapItems) { item -> Styled.new(style, item) }
     }
 
-    override fun toString(): String = "Styled { content: $content }"
+    fun fmt(fmt: StringBuilder) {
+        fmt.append("Styled { content: ").append(this.content.toString()).append(" }")
+    }
+
+    override fun toString(): String = buildString { fmt(this) }
 }
