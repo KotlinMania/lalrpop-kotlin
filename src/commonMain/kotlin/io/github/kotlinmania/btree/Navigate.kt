@@ -3,31 +3,6 @@
 // copyright The Rust Project Developers, dual-licensed Apache-2.0 / MIT.
 package io.github.kotlinmania.btree
 
-// Phase-2 dependencies satisfied by Node.kt: NodeRef, Handle, ForceResult,
-// AscendResult, EdgeKvResult, Marker, descend, ascend, force, firstEdge,
-// lastEdge, leftEdge/rightEdge/leftKv/rightKv, intoKv, intoKvValmut,
-// intoKeyVal, deallocateAndAscend, forgetType, forgetNodeTypeLeafEdge,
-// forgetNodeTypeInternalEdge. Phase-1 dependency satisfied by Mem.kt
-// (`replace`). Phase-1 RangeBounds<T>/Bound<T> from Range.kt. Phase-1
-// SearchBound, BifurcationResult, Bifurcation, findLowerBoundEdge,
-// findUpperBoundEdge, searchTreeForBifurcation from Search.kt.
-//
-// Allocator translation: upstream `A: Allocator + Clone` parameter on
-// `deallocatingNext*` / `deallocatingEnd` exists solely so manual
-// deallocation can be plumbed down the stack. Kotlin GC supersedes
-// manual deallocation, so the parameter is dropped at every call site
-// (matching the dissolution already done in Node.kt
-// `deallocateAndAscend`). Upstream `# Safety` clauses about not visiting
-// the same KV twice are preserved verbatim in KDoc — they remain
-// callers' obligations even though the GC can no longer help if violated.
-//
-// `mem::replace(&mut slot, |old| (new, ret))` translation: where the
-// upstream code threads `&mut self` into `mem::replace`, the Kotlin port
-// follows AGENTS.md "return-the-new-value" pattern — the function
-// returns `Pair<NewState, Ret>` and the caller (always a
-// `LeafRange`/`LazyLeafRange` slot here) writes the new state back into
-// its field.
-//
 // `inline reified V` cascade: [findLeafEdgesSpanningRange] /
 // [rangeSearchImmut] / [rangeSearchValMut] call into Search.kt
 // `searchTreeForBifurcation`, which requires `reified V` so the
@@ -324,9 +299,7 @@ internal class LazyLeafRange<BorrowType, K, V>(
     }
 
     /**
-     * Mirrors `unsafe function deallocatingNextUnchecked<A>(&mut self, alloc: A)` for `Dying`.
-     *
-     * The `alloc` parameter is dropped (GC supersedes). All other semantics preserved.
+     * Mirrors `unsafe function deallocatingNextUnchecked` for `Dying`.
      *
      * SAFETY: caller has previously primed `self.front` to non-null; that
      * invariant is re-checked here as a debug assertion.
@@ -355,9 +328,7 @@ internal class LazyLeafRange<BorrowType, K, V>(
     }
 
     /**
-     * Mirrors `function deallocatingEnd<A>(&mut self, alloc: A)` for `Dying`.
-     *
-     * `alloc` parameter dropped (GC supersedes manual deallocation).
+     * Mirrors `function deallocatingEnd` for `Dying`.
      */
     @Suppress("UNCHECKED_CAST")
     internal fun deallocatingEndDying() {
@@ -729,8 +700,6 @@ internal fun <BorrowType : Marker.BorrowType, K, V>
  * This implies that if no more key-value pair follows, the entire tree
  * will have been deallocated and there is nothing left to return.
  *
- * The `alloc` parameter from upstream is dropped: GC supersedes manual deallocation.
- *
  * # Safety
  * - The given edge must not have been previously returned by counterpart
  *   `deallocatingNextBack`.
@@ -801,8 +770,6 @@ internal fun <K, V>
  * both sides of the tree, and have hit the same edge. As it is intended
  * only to be called when all keys and values have been returned,
  * no cleanup is done on any of the keys or values.
- *
- * The `alloc` parameter from upstream is dropped: GC supersedes manual deallocation.
  */
 internal fun <K, V>
     Handle<NodeRef<Marker.Dying, K, V, Marker.Leaf>, Marker.Edge>.deallocatingEnd() {
@@ -905,9 +872,7 @@ internal fun <K, V>
 // ============================================================================
 
 /**
- * Mirrors `unsafe function deallocatingNextUnchecked<A>(&mut self, alloc: A)` for `Dying`.
- *
- * `alloc` parameter dropped (GC supersedes).
+ * Mirrors `unsafe function deallocatingNextUnchecked` for `Dying`.
  *
  * SAFETY:
  * - There must be another KV in the direction travelled.
