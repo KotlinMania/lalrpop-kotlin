@@ -119,6 +119,17 @@ Root-package `.kt` files that re-export types from subpackages via `typealias` c
 
 If a type doesn't exist yet, port the file that defines it. Don't create placeholder classes like `class Grammar` or `class Session` in random files — they conflict with real implementations when those files get ported.
 
+### Do NOT run scripts that edit code across multiple files.
+
+No `python -c '... os.walk ...'`, no `find ... -exec sed`, no `for f in ...; do sed ...; done`, no shelling out to a Kotlin/Python/Bash one-liner that opens more than one source file for writing. Bulk regex-rewrite passes have repeatedly destroyed real code in this repo (broken imports, mangled identifiers, self-referential typealiases, half-renamed function definitions). The damage is not always visible until a later pass tries to read the file. **Each `.kt` edit must go through the `Edit` or `Write` tool one file at a time.**
+
+`sed -i` (or equivalent) on a **single file** is allowed only when:
+1. The repository working tree is clean for that file (commit any pending changes to it first), AND
+2. The substitution is small and targeted (one specific token, not a regex over many patterns), AND
+3. You re-read the file afterward and verify the result before moving on.
+
+If you find yourself wanting to script a fix across many files, the correct response is to slow down and edit each file individually with `Edit`. The "I'll save time with a loop" reflex is exactly what created the mess that this rule exists to prevent.
+
 ## Progress Tracking
 
 ```bash
