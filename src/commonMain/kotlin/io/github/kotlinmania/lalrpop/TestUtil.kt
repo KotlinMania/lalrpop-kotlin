@@ -9,12 +9,18 @@ import io.github.kotlinmania.lalrpop.parser.parseGrammar
 
 private val SPAN: Regex = Regex("Span\\([0-9 ,\\n]*\\)")
 
-private class ExpectedDebug(private val s: String) {
-    override fun toString(): String {
-        // Ignore trailing commas in multiline Debug representation.
-        // Needed to work around rust-lang/rust#59076.
-        return s.replace(",\n", "\n")
-    }
+private class Error
+
+private class Formatter(val sb: StringBuilder = StringBuilder())
+
+private class ExpectedDebug(val s: String)
+
+fun fmt(value: ExpectedDebug, fmt: Formatter, error: Error): Result<Unit> {
+    // Ignore trailing commas in multiline Debug representation.
+    // Needed to work around rust-lang/rust#59076.
+    val s = value.s.replace(",\n", "\n")
+    fmt.sb.append(s)
+    return Result.success(Unit)
 }
 
 fun <D : Any> expectDebug(actual: D, expected: String) {
@@ -29,14 +35,14 @@ fun <D : Any, E : Any> compare(actual: D, expected: E) {
     val expectedS = expected.toString()
 
     if (normalize(actualS) != normalize(expectedS)) {
-        val a = normalize(actualS)
-        val e = normalize(expectedS)
+        val actualPretty = actual.toString()
+        val expectedPretty = expected.toString()
 
-        for (line in diffLines(a, e)) {
-            when (line) {
-                is DiffResult.Right -> println("- ${line.value}")
-                is DiffResult.Left -> println("+ ${line.value}")
-                is DiffResult.Both -> println("  ${line.left}")
+        for (diff in diffLines(normalize(actualPretty), normalize(expectedPretty))) {
+            when (diff) {
+                is DiffResult.Right -> println("- ${diff.value}")
+                is DiffResult.Left -> println("+ ${diff.value}")
+                is DiffResult.Both -> println("  ${diff.left}")
             }
         }
 
@@ -51,8 +57,9 @@ fun <D : Any, E : Any> compare(actual: D, expected: E) {
 private fun normalize(withSpans: String): String =
     SPAN.replace(withSpans, "Span(..)")
 
-fun normalizedGrammar(s: String): Grammar =
-    normalizeWithoutValidating(parseGrammar(s).getOrThrow())
+fun normalizedGrammar(s: String): Grammar {
+    return normalizeWithoutValidating(parseGrammar(s).getOrThrow())
+}
 
 fun checkNormErr(expectedErr: String, span: String, err: NormError) {
     val expected = Regex(expectedErr)
