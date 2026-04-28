@@ -1,0 +1,339 @@
+{
+  "source_root": "tmp/lalrpop-rs/lalrpop/src",
+  "target_root": "src/commonMain/kotlin/io/github/kotlinmania/lalrpop",
+  "source_lang": "rust",
+  "target_lang": "kotlin",
+  "agents_md": "",
+  "tasks": [
+    {
+      "source_path": "session.rs",
+      "source_qualified": "session",
+      "target_path": "Session.kt",
+      "dependent_count": 8,
+      "status": "pending"
+    },
+    {
+      "source_path": "collections/set.rs",
+      "source_qualified": "collections.set",
+      "target_path": "collections/Set.kt",
+      "dependent_count": 6,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/interpret.rs",
+      "source_qualified": "lr1.interpret",
+      "target_path": "lr1/Interpret.kt",
+      "dependent_count": 4,
+      "status": "pending"
+    },
+    {
+      "source_path": "test_util.rs",
+      "source_qualified": "test_util",
+      "target_path": "TestUtil.kt",
+      "dependent_count": 2,
+      "status": "pending"
+    },
+    {
+      "source_path": "file_text.rs",
+      "source_qualified": "file_text",
+      "target_path": "FileText.kt",
+      "dependent_count": 2,
+      "status": "pending"
+    },
+    {
+      "source_path": "grammar/pattern.rs",
+      "source_qualified": "grammar.pattern",
+      "target_path": "grammar/Pattern.kt",
+      "dependent_count": 2,
+      "status": "pending"
+    },
+    {
+      "source_path": "message/message.rs",
+      "source_qualified": "message.message",
+      "target_path": "message/Message.kt",
+      "dependent_count": 2,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/lookahead.rs",
+      "source_qualified": "lr1.lookahead",
+      "target_path": "lr1/Lookahead.kt",
+      "dependent_count": 2,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/lane_table/construct/state_set.rs",
+      "source_qualified": "construct.state_set",
+      "target_path": "lr1/lane_table/construct/StateSet.kt",
+      "dependent_count": 2,
+      "status": "pending"
+    },
+    {
+      "source_path": "api/test.rs",
+      "source_qualified": "api.test",
+      "target_path": "api/Test.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "collections/map.rs",
+      "source_qualified": "collections.map",
+      "target_path": "collections/Map.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "collections/multimap.rs",
+      "source_qualified": "collections.multimap",
+      "target_path": "collections/Multimap.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "message/wrap.rs",
+      "source_qualified": "message.wrap",
+      "target_path": "message/Wrap.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "message/text.rs",
+      "source_qualified": "message.text",
+      "target_path": "message/Text.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "grammar/parse_tree.rs",
+      "source_qualified": "grammar.parse_tree",
+      "target_path": "grammar/ParseTree.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "grammar/repr.rs",
+      "source_qualified": "grammar.repr",
+      "target_path": "grammar/Repr.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "message/styled.rs",
+      "source_qualified": "message.styled",
+      "target_path": "message/Styled.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "message/horiz.rs",
+      "source_qualified": "message.horiz",
+      "target_path": "message/Horiz.kt",
+      "dependent_count": 1,
+      "status": "pending"
+    },
+    {
+      "source_path": "util.rs",
+      "source_qualified": "util",
+      "target_path": "Util.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lexer/nfa/test.rs",
+      "source_qualified": "nfa.test",
+      "target_path": "lexer/nfa/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lexer/re/test.rs",
+      "source_qualified": "re.test",
+      "target_path": "lexer/re/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/codegen/ascent.rs",
+      "source_qualified": "codegen.ascent",
+      "target_path": "lr1/codegen/Ascent.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/codegen/base.rs",
+      "source_qualified": "codegen.base",
+      "target_path": "lr1/codegen/Base.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/codegen/parse_table.rs",
+      "source_qualified": "codegen.parse_table",
+      "target_path": "lr1/codegen/ParseTable.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/codegen/test_all.rs",
+      "source_qualified": "codegen.test_all",
+      "target_path": "lr1/codegen/TestAll.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lexer/nfa/interpret.rs",
+      "source_qualified": "nfa.interpret",
+      "target_path": "lexer/nfa/Interpret.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/lane_table/table/context_set/test.rs",
+      "source_qualified": "context_set.test",
+      "target_path": "lr1/lane_table/table/context_set/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/report/test.rs",
+      "source_qualified": "report.test",
+      "target_path": "lr1/report/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lexer/dfa/test.rs",
+      "source_qualified": "dfa.test",
+      "target_path": "lexer/dfa/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/trace/trace_graph/test.rs",
+      "source_qualified": "trace_graph.test",
+      "target_path": "lr1/trace/trace_graph/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "main.rs",
+      "source_qualified": "main",
+      "target_path": "Main.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "message/builder.rs",
+      "source_qualified": "message.builder",
+      "target_path": "message/Builder.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lexer/dfa/overlap.rs",
+      "source_qualified": "dfa.overlap",
+      "target_path": "lexer/dfa/Overlap.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "kernel_set.rs",
+      "source_qualified": "kernel_set",
+      "target_path": "KernelSet.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/cond_comp/test.rs",
+      "source_qualified": "cond_comp.test",
+      "target_path": "normalize/cond_comp/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/inline/graph/test.rs",
+      "source_qualified": "graph.test",
+      "target_path": "normalize/inline/graph/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/inline/test.rs",
+      "source_qualified": "inline.test",
+      "target_path": "normalize/inline/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/macro_expand/test.rs",
+      "source_qualified": "macro_expand.test",
+      "target_path": "normalize/macro_expand/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/norm_util.rs",
+      "source_qualified": "normalize.norm_util",
+      "target_path": "normalize/NormUtil.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/precedence/test.rs",
+      "source_qualified": "precedence.test",
+      "target_path": "normalize/precedence/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/token_check/test.rs",
+      "source_qualified": "token_check.test",
+      "target_path": "normalize/token_check/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "normalize/tyinfer/test.rs",
+      "source_qualified": "tyinfer.test",
+      "target_path": "normalize/tyinfer/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "parser/lrgrammar.rs",
+      "source_qualified": "parser.lrgrammar",
+      "target_path": "parser/Lrgrammar.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "parser/test.rs",
+      "source_qualified": "parser.test",
+      "target_path": "parser/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "grammar/consts.rs",
+      "source_qualified": "grammar.consts",
+      "target_path": "grammar/Consts.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "tok/test.rs",
+      "source_qualified": "tok.test",
+      "target_path": "tok/Test.kt",
+      "dependent_count": 0,
+      "status": "pending"
+    },
+    {
+      "source_path": "lr1/tls.rs",
+      "source_qualified": "lr1.tls",
+      "target_path": "lr1/Tls.kt",
+      "dependent_count": 16,
+      "status": "completed",
+      "completed_at": "2026-04-28T06:04:19"
+    }
+  ]
+}
