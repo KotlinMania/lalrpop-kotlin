@@ -21,12 +21,7 @@ import io.github.kotlinmania.lalrpop.Session
 /**
  * Configure various aspects of how LALRPOP works.
  * Intended for use within a `build.rs` script.
- * To get the default configuration, use `Configuration::new`.
- *
- * Mirrors `class Configuration { session: Session }` from
- * upstream `src/api/mod.rs`. The `(derive(Clone, Default))` is
- * realised by [copy] (via [Session.copy]) and the [new] / [default]
- * companion factories.
+ * To get the default configuration, use [Configuration.new].
  */
 class Configuration internal constructor(
     internal var session: Session,
@@ -346,38 +341,14 @@ fun processRootUnconditionally() {
     Configuration.new().forceBuild(true).processCurrentDir()
 }
 
-// ---------------------------------------------------------------------------
-// Platform glue: the upstream `std::env` / `std::fs` / `std::path` use
-// (`currentDir`, `env::var`, `env::vars`, `eprintln!`) and the upstream
-// `crate::build::{processDir, processFile}` functions perform real
-// filesystem I/O. Kotlin Multiplatform commonMain has no portable
-// filesystem; the actuals live in `nativeMain` (kotlinx.cinterop posix
-// bindings), `androidMain` (java.io / java.lang.System), and the JS-family
-// targets which raise UnsupportedOperationException because filesystem
-// access in those runtimes is not part of the lalrpop build-script import case.
-// ---------------------------------------------------------------------------
-
-/** Mirror of `std::env::currentDir()`. */
 internal expect fun apiCurrentDir(): String
 
-/** Mirror of `std::env::var(name).ok()` — returns `null` when unset. */
 internal expect fun apiEnvVar(name: String): String?
 
-/** Mirror of `std::env::vars()`. */
 internal expect fun apiEnvVars(): Sequence<Pair<String, String>>
 
-/** Mirror of `eprintln!`, writing to standard error. */
 internal expect fun apiEPrintln(message: String)
 
-/**
- * Mirror of `crate::build::processDir(session, path)`. Recursively
- * scans [path] for `.lalrpop` files and processes each one. Throws
- * on filesystem or codegen failure.
- */
 internal expect fun apiBuildProcessDir(session: Session, path: String)
 
-/**
- * Mirror of `crate::build::processFile(session, path)`. Processes
- * a single `.lalrpop` file. Throws on filesystem or codegen failure.
- */
 internal expect fun apiBuildProcessFile(session: Session, path: String)
