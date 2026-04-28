@@ -1,4 +1,4 @@
-// port-lint: source lr1/state_graph.rs
+/* port-lint: source lr1/state_graph.rs */
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.EdgeDirection
