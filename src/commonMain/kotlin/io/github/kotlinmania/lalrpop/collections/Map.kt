@@ -11,14 +11,10 @@ import io.github.kotlinmania.btree.BTreeMap
  * matter much. I would probably prefer to use [HashMap] with an
  * alternative hasher, but that is not stable.
  */
-class Map<K : Comparable<K>, V> private constructor(
-    private val inner: BTreeMap<K, V>,
-) : MutableMap<K, V> by inner {
-    companion object {
-        fun <K : Comparable<K>, V> default(): Map<K, V> = Map(BTreeMap())
-    }
-}
+class Map<K : Comparable<K>, V>(
+    private val inner: BTreeMap<K, V> = BTreeMap(),
+) : MutableMap<K, V> by inner
 
 fun <K : Comparable<K>, V> map(): Map<K, V> {
-    return Map.default()
+    return Map()
 }
