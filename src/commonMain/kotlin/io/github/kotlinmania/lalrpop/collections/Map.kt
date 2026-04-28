@@ -13,6 +13,12 @@ import io.github.kotlinmania.btree.BTreeMap
  */
 class Map<K : Comparable<K>, V>(
     internal val inner: BTreeMap<K, V> = BTreeMap(),
-) : MutableMap<K, V> by inner
+) : MutableMap<K, V> by inner {
+    companion object {
+        fun <K : Comparable<K>, V> default(): Map<K, V> = Map()
+    }
+}
 
-fun <K : Comparable<K>, V> map(): Map<K, V> = Map()
+fun <K : Comparable<K>, V> map(): Map<K, V> {
+    return Map.default<K, V>()
+}
