@@ -1,4 +1,4 @@
-// port-lint: source grammar/parseTree.rs
+// port-lint: source grammar/parse_tree.rs
 // The "parse-tree" is what is produced by the parser. We import it do
 // some pre-expansion and so forth before creating the proper AST.
 package io.github.kotlinmania.lalrpop.grammar.parseTree
@@ -247,11 +247,6 @@ data class Path(
 }
 
 sealed class TypeRef {
-    // Each subclass overrides toString explicitly. A `data class`
-    // auto-generates its own toString that shadows any override placed
-    // on the sealed parent — without these per-subclass overrides the
-    // generated Rust source emits e.g. `Ref(lifetime='a, mutable=false,
-    // referent=Id(atom=str))` instead of `&'a str`.
     // (T1, T2)
     data class Tuple(val types: MutableList<TypeRef>) : TypeRef() {
         override fun toString(): String = "(${Sep(", ", types)})"
@@ -494,14 +489,6 @@ sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
 }
 
 sealed class TypeParameter : Comparable<TypeParameter> {
-    /**
-     * Mirrors `implementation Display for TypeParameter`. Each subclass
-     * overrides toString explicitly: a `data class` auto-generates
-     * its own toString that shadows any override on the sealed parent.
-     * Without these per-subclass overrides the emitter produced
-     * `LifetimeTp(lifetime='input)` instead of `'input` in the
-     * generated Rust source.
-     */
     abstract override fun toString(): String
 
     data class LifetimeTp(val lifetime: Lifetime) : TypeParameter() {
@@ -519,19 +506,10 @@ data class Parameter(
     var name: Atom,
     var ty: TypeRef,
 ) {
-    /** Mirrors `implementation Display for Parameter` (parseTree-side counterpart). */
     override fun toString(): String = "$name: $ty"
 }
 
 sealed class Visibility {
-    /**
-     * Mirrors `implementation Display for Visibility`. Each subclass overrides
-     * toString explicitly: a `data class` auto-generates its own
-     * toString that shadows any override placed on the sealed parent,
-     * so a single parent-level toString was being silently bypassed
-     * and the codegen output leaked `Pub(path=null)` / `Priv` strings
-     * into emitted Rust source.
-     */
     abstract override fun toString(): String
 
     data class Pub(val path: Path?) : Visibility() {
@@ -722,11 +700,6 @@ data class Tuple(
 }
 
 sealed class ArgPattern {
-    /**
-     * Mirrors `implementation Display for ArgPattern`. Per-subclass toString
-     * — see TypeRepr / Visibility for the full explanation of the
-     * data-class shadowing trap.
-     */
     abstract override fun toString(): String
 
     data class NamePat(val name: io.github.kotlinmania.lalrpop.grammar.parseTree.Name) : ArgPattern() {
