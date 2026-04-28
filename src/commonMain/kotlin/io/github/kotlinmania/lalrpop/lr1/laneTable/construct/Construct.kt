@@ -29,7 +29,7 @@ import io.github.kotlinmania.lalrpop.lr1.laneTable.table.ConflictIndex
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.LaneTable
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.RowConflictException
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookaheadException
+import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookahead
 
 class LaneTableConstruct(
     private val grammar: Grammar,
@@ -212,7 +212,7 @@ class LaneTableConstruct(
             val columns = table.columns()
             columns.apply(state, actions)
             true
-        } catch (_: OverlappingLookaheadException) {
+        } catch (_: OverlappingLookahead) {
             false
         }
 
