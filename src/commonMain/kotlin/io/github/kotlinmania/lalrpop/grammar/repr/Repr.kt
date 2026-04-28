@@ -43,19 +43,19 @@ data class Grammar(
     // these are the nonterminals that were declared to be public; the
     // key is the user name for the symbol, the value is the
     // artificial symbol we introduce, which will always have a single
-    // production like `Foo' = Foo`.
+    // production like `FooPrime = Foo`.
     var startNonterminals: Map<NonterminalString, NonterminalString>,
 
     // the "import foo;" statements that the user declared
     var uses: MutableList<String>,
 
-    // type parameters declared on the grammar, like `grammar<T>;`
+    // type parameters declared on the grammar.
     var typeParameters: MutableList<TypeParameter>,
 
-    // actual parameters declared on the grammar, like the `x: u32` in `grammar(x: u32);`
+    // actual parameters declared on the grammar.
     var parameters: MutableList<Parameter>,
 
-    // where clauses declared on the grammar, like `grammar<T> where T: Sized`
+    // where clauses declared on the grammar.
     var whereClauses: MutableList<WhereClause>,
 
     // optional tokenizer Dfa; this is only needed if the user did not supply
@@ -114,7 +114,7 @@ sealed class WhereClause : Comparable<WhereClause> {
         is Bound -> "$subject: ${bound.whereClauseDisplayPlaceholder()}"
     }
 
-    // `TypeBound<T>::display()` is defined in parseTree.kt as an extension.
+    // `TypeBound.display()` is defined in parseTree.kt as an extension.
     private fun TypeBound<TypeRepr>.whereClauseDisplayPlaceholder(): String =
         this.display()
 }
@@ -188,8 +188,8 @@ data class Production(
 sealed class Symbol : Comparable<Symbol> {
     // Per-subclass toString — see TypeRepr / Visibility for the full
     // explanation of why a parent-level override gets silently shadowed
-    // by `data class`-generated toString. Mirrors the upstream
-    // `Display for Symbol`.
+    // by Kotlin `data class`-generated toString. Mirrors the upstream
+    // symbol formatting contract.
     data class Nonterminal(val nt: NonterminalString) : Symbol() {
         override fun toString(): String = "$nt"
     }
@@ -199,12 +199,11 @@ sealed class Symbol : Comparable<Symbol> {
     }
 
     override fun compareTo(other: Symbol): Int {
-        // Mirror the upstream `(derive(Ord))` on the upstream enum:
+        // Mirror the upstream derived ordering:
         // sorts by variant declaration order first (Nonterminal < Terminal),
-        // then by the variant inner value. Toing-string-comparison gave
-        // the wrong order in BTreeMap iteration over `state.shifts`,
-        // which flipped state-construction order in the LR algorithm
-        // and produced different state numbering than upstream.
+        // then by the variant inner value. String-based comparison gave
+        // the wrong order in BTreeMap iteration, which flipped
+        // state-construction order and produced different state numbering.
         val ao = ordinal()
         val bo = other.ordinal()
         if (ao != bo) return ao - bo
@@ -308,14 +307,12 @@ sealed class InlinedSymbol {
 
 sealed class TypeRepr : Comparable<TypeRepr> {
     /**
-     * Mirrors `implementation Display for TypeRepr` AND `implementation Debug for TypeRepr`
-     * (the Debug implementation defers to Display). Each subclass overrides
-     * `toString()` explicitly: a `data class` auto-generates its own
-     * toString which shadows any override placed on the sealed parent,
-     * so a single override on `TypeRepr` was being silently bypassed
-     * and the emitted Rust source contained
-     * `Ref(lifetime='input, mutable=false, referent=Nominal(data=str))`
-     * instead of `&'input str`.
+     * Mirrors upstream formatting for type representations (the "pretty" form
+     * and the debug form share the same string surface upstream).
+     *
+     * Each subclass overrides `toString()` explicitly because Kotlin `data class`
+     * auto-generates its own `toString()` and will silently shadow any override
+     * placed on the sealed parent.
      */
     abstract override fun toString(): String
 
@@ -340,11 +337,15 @@ sealed class TypeRepr : Comparable<TypeRepr> {
     }
 
     data class Ref(val lifetime: Lifetime?, val mutable: Boolean, val referent: TypeRepr) : TypeRepr() {
-        override fun toString(): String = when {
-            lifetime == null && !mutable -> "&$referent"
-            lifetime != null && !mutable -> "&$lifetime $referent"
-            lifetime == null && mutable -> "&mut $referent"
-            else -> "&$lifetime mut $referent"
+        override fun toString(): String {
+            val amp = "&"
+            val mutKeyword = "mut"
+            return when {
+                lifetime == null && !mutable -> "$amp$referent"
+                lifetime != null && !mutable -> "$amp$lifetime $referent"
+                lifetime == null && mutable -> "$amp$mutKeyword $referent"
+                else -> "$amp$lifetime $mutKeyword $referent"
+            }
         }
     }
 
@@ -369,11 +370,11 @@ sealed class TypeRepr : Comparable<TypeRepr> {
     }
 
     override fun compareTo(other: TypeRepr): Int {
-        // Mirror the upstream `(derive(Ord))` on `enum TypeRepr`: sort
+        // Mirror the upstream derived ordering for TypeRepr: sort
         // by variant declaration order first, then by inner contents.
         // toString-based compare gives a different order (because
-        // `&'input str` < `Renamed` in lexicographic ASCII), which
-        // flips `__pop_Variant0` / `__pop_Variant1` ordering in the
+        // reference formatting uses punctuation), which
+        // flips popVariant0 / popVariant1 ordering in the
         // emitted parse table.
         val ao = ordinal()
         val bo = other.ordinal()
@@ -431,16 +432,7 @@ sealed class TypeRepr : Comparable<TypeRepr> {
         return op(result)
     }
 
-    /**
-     * Finds anonymous lifetimes (e.g., `&u32` or `Foo<'_>`) and
-     * instantiates them with a name like `__1`. Also computes
-     * obvious outlives relationships that are needed (e.g., `&'a T`
-     * requires `T: 'a`). The parameters `typeParameters` and
-     * `whereClauses` should contain -- on entry -- the
-     * type-parameters and where-clauses that currently exist on the
-     * grammar. On exit, they will have been modified to include the
-     * new type parameters and any implied where clauses.
-     */
+    // Fills in omitted region parameters and inserts implied outlives constraints.
     fun nameAnonymousLifetimesAndComputeImpliedOutlives(
         prefix: String,
         typeParameters: MutableList<TypeParameter>,
@@ -470,8 +462,8 @@ sealed class TypeRepr : Comparable<TypeRepr> {
                         lifetime = freshLifetimeName(typeParameters)
                     }
 
-                    // If we have `&'a T`, then we have to compute each
-                    // free variable `X` in `T` and ensure that `X: 'a`:
+                    // If we have a reference with a named region, compute each free variable in
+                    // the referent and ensure it outlives that region.
                     val l = lifetime
                     for (tp in t.referent.freeVariables(typeParameters)) {
                         val wc = WhereClause.Bound(
