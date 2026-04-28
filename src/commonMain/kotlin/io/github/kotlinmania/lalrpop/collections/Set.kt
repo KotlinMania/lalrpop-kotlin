@@ -3,7 +3,11 @@ package io.github.kotlinmania.lalrpop.collections
 
 import io.github.kotlinmania.btree.BTreeSet
 
-/** As [io.github.kotlinmania.lalrpop.collections.map], but for sets. */
-fun <K : Comparable<K>> set(): BTreeSet<K> {
-    return BTreeSet()
+/** As [Map], but for sets. */
+class Set<K : Comparable<K>>(
+    private val inner: BTreeSet<K> = BTreeSet(),
+) : MutableSet<K> by inner
+
+fun <K : Comparable<K>> set(): Set<K> {
+    return Set()
 }
