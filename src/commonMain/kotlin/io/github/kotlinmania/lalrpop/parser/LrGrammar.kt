@@ -1,109 +1,163 @@
 // port-lint: source parser/lrgrammar.rs
 package io.github.kotlinmania.lalrpop.parser
 
+import io.github.kotlinmania.lalrpop.Atom
+import io.github.kotlinmania.lalrpop.tok.Tok
+import io.github.kotlinmania.lalrpop.tok.TokError
+import io.github.kotlinmania.lalrpop.tok.applyStringEscapes
+import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+import io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
+import io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
+import io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Condition
+import io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion
+import io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken
+import io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
+import io.github.kotlinmania.lalrpop.grammar.parseTree.ExternToken
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime
+import io.github.kotlinmania.lalrpop.grammar.parseTree.MacroSymbol
+import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents
+import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping
+import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken
+import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalData
+import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Path
+import io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp
+import io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatSymbol
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Symbol
+import io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral
+import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound
+import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter
+import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
+import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+import io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause
+import io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern
+import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
+import io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind
+import io.github.kotlinmania.lalrpop.runtime.ErrorRecovery
+import io.github.kotlinmania.lalrpop.runtime.ParseError
+import io.github.kotlinmania.lalrpop.runtime.ParseResult
+import io.github.kotlinmania.lalrpop.runtime.Parser
+import io.github.kotlinmania.lalrpop.runtime.ParserDefinition
+import io.github.kotlinmania.lalrpop.runtime.ShortAction
+import io.github.kotlinmania.lalrpop.runtime.SimulatedReduce
+import io.github.kotlinmania.lalrpop.runtime.TokResult
+import io.github.kotlinmania.lalrpop.strip
+
 internal sealed class LrSymbol {
-    data class Variant0(val v: io.github.kotlinmania.lalrpop.tok.Tok) : LrSymbol()
+    data class Variant0(val v: Tok) : LrSymbol()
     data class Variant1(val v: String) : LrSymbol()
-    data class Variant2(val v: io.github.kotlinmania.lalrpop.tok.Tok?) : LrSymbol()
-    data class Variant3(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef) : LrSymbol()
-    data class Variant4(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?) : LrSymbol()
-    data class Variant5(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant6(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?) : LrSymbol()
-    data class Variant7(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Condition) : LrSymbol()
-    data class Variant8(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?) : LrSymbol()
+    data class Variant2(val v: Tok?) : LrSymbol()
+    data class Variant3(val v: TypeRef) : LrSymbol()
+    data class Variant4(val v: TypeRef?) : LrSymbol()
+    data class Variant5(val v: List<TypeBoundParameter<TypeRef>>) : LrSymbol()
+    data class Variant6(val v: List<TypeBoundParameter<TypeRef>>?) : LrSymbol()
+    data class Variant7(val v: Condition) : LrSymbol()
+    data class Variant8(val v: Condition?) : LrSymbol()
     object Variant9 : LrSymbol()
-    data class Variant10(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative) : LrSymbol()
-    data class Variant11(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>) : LrSymbol()
-    data class Variant12(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute) : LrSymbol()
-    data class Variant13(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>) : LrSymbol()
-    data class Variant14(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion) : LrSymbol()
-    data class Variant15(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>) : LrSymbol()
-    data class Variant16(val v: io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
-    data class Variant17(val v: List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant18(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter) : LrSymbol()
-    data class Variant19(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>) : LrSymbol()
-    data class Variant20(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
-    data class Variant21(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant22(val v: io.github.kotlinmania.lalrpop.Atom) : LrSymbol()
-    data class Variant23(val v: List<io.github.kotlinmania.lalrpop.Atom>) : LrSymbol()
-    data class Variant24(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime) : LrSymbol()
-    data class Variant25(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>) : LrSymbol()
-    data class Variant26(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem) : LrSymbol()
-    data class Variant27(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>) : LrSymbol()
-    data class Variant28(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString) : LrSymbol()
-    data class Variant29(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>) : LrSymbol()
-    data class Variant30(val v: io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
-    data class Variant31(val v: List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant32(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol) : LrSymbol()
-    data class Variant33(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>) : LrSymbol()
-    data class Variant34(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern) : LrSymbol()
-    data class Variant35(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>) : LrSymbol()
-    data class Variant36(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
-    data class Variant37(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant38(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
-    data class Variant39(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant40(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter) : LrSymbol()
-    data class Variant41(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>) : LrSymbol()
-    data class Variant42(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
+    data class Variant10(val v: Alternative) : LrSymbol()
+    data class Variant11(val v: List<Alternative>) : LrSymbol()
+    data class Variant12(val v: Attribute) : LrSymbol()
+    data class Variant13(val v: List<Attribute>) : LrSymbol()
+    data class Variant14(val v: Conversion) : LrSymbol()
+    data class Variant15(val v: List<Conversion>) : LrSymbol()
+    data class Variant16(val v: FieldPattern<TypeRef>) : LrSymbol()
+    data class Variant17(val v: List<FieldPattern<TypeRef>>) : LrSymbol()
+    data class Variant18(val v: Parameter) : LrSymbol()
+    data class Variant19(val v: List<Parameter>) : LrSymbol()
+    data class Variant20(val v: WhereClause<TypeRef>) : LrSymbol()
+    data class Variant21(val v: List<WhereClause<TypeRef>>) : LrSymbol()
+    data class Variant22(val v: Atom) : LrSymbol()
+    data class Variant23(val v: List<Atom>) : LrSymbol()
+    data class Variant24(val v: Lifetime) : LrSymbol()
+    data class Variant25(val v: List<Lifetime>) : LrSymbol()
+    data class Variant26(val v: MatchItem) : LrSymbol()
+    data class Variant27(val v: List<MatchItem>) : LrSymbol()
+    data class Variant28(val v: NonterminalString) : LrSymbol()
+    data class Variant29(val v: List<NonterminalString>) : LrSymbol()
+    data class Variant30(val v: Pattern<TypeRef>) : LrSymbol()
+    data class Variant31(val v: List<Pattern<TypeRef>>) : LrSymbol()
+    data class Variant32(val v: Symbol) : LrSymbol()
+    data class Variant33(val v: List<Symbol>) : LrSymbol()
+    data class Variant34(val v: ArgPattern) : LrSymbol()
+    data class Variant35(val v: List<ArgPattern>) : LrSymbol()
+    data class Variant36(val v: TypeBound<TypeRef>) : LrSymbol()
+    data class Variant37(val v: List<TypeBound<TypeRef>>) : LrSymbol()
+    data class Variant38(val v: TypeBoundParameter<TypeRef>) : LrSymbol()
+    data class Variant39(val v: List<TypeBoundParameter<TypeRef>>) : LrSymbol()
+    data class Variant40(val v: TypeParameter) : LrSymbol()
+    data class Variant41(val v: List<TypeParameter>) : LrSymbol()
+    data class Variant42(val v: List<TypeRef>) : LrSymbol()
     data class Variant43(val v: Int) : LrSymbol()
-    data class Variant44(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind) : LrSymbol()
-    data class Variant45(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?) : LrSymbol()
-    data class Variant46(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?) : LrSymbol()
-    data class Variant47(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>) : LrSymbol()
-    data class Variant48(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType) : LrSymbol()
-    data class Variant49(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>) : LrSymbol()
-    data class Variant50(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg) : LrSymbol()
-    data class Variant51(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?) : LrSymbol()
-    data class Variant52(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?) : LrSymbol()
-    data class Variant53(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>) : LrSymbol()
-    data class Variant54(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>) : LrSymbol()
-    data class Variant55(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>) : LrSymbol()
-    data class Variant56(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant57(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>) : LrSymbol()
-    data class Variant58(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>) : LrSymbol()
-    data class Variant59(val v: List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant60(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>) : LrSymbol()
-    data class Variant61(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>) : LrSymbol()
-    data class Variant62(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
-    data class Variant63(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp) : LrSymbol()
-    data class Variant64(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?) : LrSymbol()
-    data class Variant65(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken) : LrSymbol()
-    data class Variant66(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol) : LrSymbol()
-    data class Variant67(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem) : LrSymbol()
-    data class Variant68(val v: io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?) : LrSymbol()
-    data class Variant69(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar) : LrSymbol()
-    data class Variant70(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>) : LrSymbol()
-    data class Variant71(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?) : LrSymbol()
-    data class Variant72(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?) : LrSymbol()
-    data class Variant73(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?) : LrSymbol()
-    data class Variant74(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?) : LrSymbol()
-    data class Variant75(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?) : LrSymbol()
-    data class Variant76(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?) : LrSymbol()
-    data class Variant77(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents) : LrSymbol()
-    data class Variant78(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?) : LrSymbol()
-    data class Variant79(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping) : LrSymbol()
-    data class Variant80(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral) : LrSymbol()
-    data class Variant81(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken) : LrSymbol()
-    data class Variant82(val v: Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>) : LrSymbol()
-    data class Variant83(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?) : LrSymbol()
-    data class Variant84(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Path) : LrSymbol()
-    data class Variant85(val v: io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?) : LrSymbol()
-    data class Variant86(val v: io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>) : LrSymbol()
-    data class Variant87(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>) : LrSymbol()
-    data class Variant88(val v: List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>) : LrSymbol()
-    data class Variant89(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString) : LrSymbol()
-    data class Variant90(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp) : LrSymbol()
+    data class Variant44(val v: ActionKind) : LrSymbol()
+    data class Variant45(val v: ActionKind?) : LrSymbol()
+    data class Variant46(val v: Alternative?) : LrSymbol()
+    data class Variant47(val v: List<Alternative>) : LrSymbol()
+    data class Variant48(val v: AssociatedType) : LrSymbol()
+    data class Variant49(val v: List<AssociatedType>) : LrSymbol()
+    data class Variant50(val v: AttributeArg) : LrSymbol()
+    data class Variant51(val v: AttributeArg?) : LrSymbol()
+    data class Variant52(val v: Attribute?) : LrSymbol()
+    data class Variant53(val v: List<Attribute>) : LrSymbol()
+    data class Variant54(val v: List<Conversion>) : LrSymbol()
+    data class Variant55(val v: List<Parameter>) : LrSymbol()
+    data class Variant56(val v: List<WhereClause<TypeRef>>) : LrSymbol()
+    data class Variant57(val v: List<MatchItem>) : LrSymbol()
+    data class Variant58(val v: List<NonterminalString>) : LrSymbol()
+    data class Variant59(val v: List<Pattern<TypeRef>>) : LrSymbol()
+    data class Variant60(val v: List<Symbol>) : LrSymbol()
+    data class Variant61(val v: List<TypeParameter>) : LrSymbol()
+    data class Variant62(val v: List<TypeRef>) : LrSymbol()
+    data class Variant63(val v: ConditionOp) : LrSymbol()
+    data class Variant64(val v: Conversion?) : LrSymbol()
+    data class Variant65(val v: EnumToken) : LrSymbol()
+    data class Variant66(val v: ExprSymbol) : LrSymbol()
+    data class Variant67(val v: GrammarItem) : LrSymbol()
+    data class Variant68(val v: FieldPattern<TypeRef>?) : LrSymbol()
+    data class Variant69(val v: Grammar) : LrSymbol()
+    data class Variant70(val v: List<GrammarItem>) : LrSymbol()
+    data class Variant71(val v: Parameter?) : LrSymbol()
+    data class Variant72(val v: List<Parameter>?) : LrSymbol()
+    data class Variant73(val v: List<TypeParameter>?) : LrSymbol()
+    data class Variant74(val v: WhereClause<TypeRef>?) : LrSymbol()
+    data class Variant75(val v: List<WhereClause<TypeRef>>?) : LrSymbol()
+    data class Variant76(val v: Lifetime?) : LrSymbol()
+    data class Variant77(val v: MatchContents) : LrSymbol()
+    data class Variant78(val v: MatchItem?) : LrSymbol()
+    data class Variant79(val v: MatchMapping) : LrSymbol()
+    data class Variant80(val v: TerminalLiteral) : LrSymbol()
+    data class Variant81(val v: MatchToken) : LrSymbol()
+    data class Variant82(val v: Pair<NonterminalString, List<NonterminalString>>) : LrSymbol()
+    data class Variant83(val v: NonterminalString?) : LrSymbol()
+    data class Variant84(val v: Path) : LrSymbol()
+    data class Variant85(val v: Pattern<TypeRef>?) : LrSymbol()
+    data class Variant86(val v: PatternKind<TypeRef>) : LrSymbol()
+    data class Variant87(val v: List<Lifetime>) : LrSymbol()
+    data class Variant88(val v: List<TypeBound<TypeRef>>) : LrSymbol()
+    data class Variant89(val v: TerminalString) : LrSymbol()
+    data class Variant90(val v: RepeatOp) : LrSymbol()
     data class Variant91(val v: String) : LrSymbol()
     data class Variant92(val v: List<String>) : LrSymbol()
-    data class Variant93(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?) : LrSymbol()
-    data class Variant94(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind) : LrSymbol()
-    data class Variant95(val v: io.github.kotlinmania.lalrpop.parser.Top) : LrSymbol()
-    data class Variant96(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?) : LrSymbol()
-    data class Variant97(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple) : LrSymbol()
-    data class Variant98(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?) : LrSymbol()
-    data class Variant99(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?) : LrSymbol()
-    data class Variant100(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?) : LrSymbol()
-    data class Variant101(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility) : LrSymbol()
+    data class Variant93(val v: Symbol?) : LrSymbol()
+    data class Variant94(val v: SymbolKind) : LrSymbol()
+    data class Variant95(val v: Top) : LrSymbol()
+    data class Variant96(val v: ArgPattern?) : LrSymbol()
+    data class Variant97(val v: Tuple) : LrSymbol()
+    data class Variant98(val v: TypeBound<TypeRef>?) : LrSymbol()
+    data class Variant99(val v: TypeBoundParameter<TypeRef>?) : LrSymbol()
+    data class Variant100(val v: TypeParameter?) : LrSymbol()
+    data class Variant101(val v: Visibility) : LrSymbol()
 }
 
 internal val ACTION: ShortArray = shortArrayOf(
@@ -3159,15 +3213,15 @@ internal fun expectedTokens(state: Short): List<String> {
 
 internal class StateMachine(
     internal val text: String,
-) : io.github.kotlinmania.lalrpop.runtime.ParserDefinition<
+) : ParserDefinition<
     Int,
     io.github.kotlinmania.lalrpop.tok.Error,
-    io.github.kotlinmania.lalrpop.tok.Tok,
+    Tok,
     Int,
     LrSymbol,
     Top,
     Short,
-    io.github.kotlinmania.lalrpop.runtime.ShortAction,
+    ShortAction,
     Short,
     Int,
 > {
@@ -3179,36 +3233,36 @@ internal class StateMachine(
         return 0
     }
 
-    override fun tokenToIndex(token: io.github.kotlinmania.lalrpop.tok.Tok): Int? {
+    override fun tokenToIndex(token: Tok): Int? {
         return tokenToInteger(token)
     }
 
-    override fun action(state: Short, tokenIndex: Int): io.github.kotlinmania.lalrpop.runtime.ShortAction {
-        return io.github.kotlinmania.lalrpop.runtime.ShortAction(io.github.kotlinmania.lalrpop.parser.action(state, tokenIndex))
+    override fun action(state: Short, tokenIndex: Int): ShortAction {
+        return ShortAction(action(state, tokenIndex))
     }
 
-    override fun errorAction(state: Short): io.github.kotlinmania.lalrpop.runtime.ShortAction {
-        return io.github.kotlinmania.lalrpop.runtime.ShortAction(io.github.kotlinmania.lalrpop.parser.action(state, 58))
+    override fun errorAction(state: Short): ShortAction {
+        return ShortAction(action(state, 58))
     }
 
-    override fun eofAction(state: Short): io.github.kotlinmania.lalrpop.runtime.ShortAction {
-        return io.github.kotlinmania.lalrpop.runtime.ShortAction(EOF_ACTION[state.toInt()])
+    override fun eofAction(state: Short): ShortAction {
+        return ShortAction(EOF_ACTION[state.toInt()])
     }
 
     override fun goto(state: Short, nt: Int): Short {
-        return io.github.kotlinmania.lalrpop.parser.goto(state, nt)
+        return goto(state, nt)
     }
 
-    override fun tokenToSymbol(tokenIndex: Int, token: io.github.kotlinmania.lalrpop.tok.Tok): LrSymbol {
-        return io.github.kotlinmania.lalrpop.parser.tokenToSymbol(tokenIndex, token)
+    override fun tokenToSymbol(tokenIndex: Int, token: Tok): LrSymbol {
+        return tokenToSymbol(tokenIndex, token)
     }
 
     override fun expectedTokens(state: Short): List<String> {
-        return io.github.kotlinmania.lalrpop.parser.expectedTokens(state)
+        return expectedTokens(state)
     }
 
     override fun expectedTokensFromStates(states: List<Short>): List<String> {
-        return io.github.kotlinmania.lalrpop.parser.expectedTokensFromStates(states)
+        return expectedTokensFromStates(states)
     }
 
     override fun usesErrorRecovery(): Boolean {
@@ -3216,7 +3270,7 @@ internal class StateMachine(
     }
 
     override fun errorRecoverySymbol(
-        recovery: io.github.kotlinmania.lalrpop.runtime.ErrorRecovery<Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.Error>,
+        recovery: ErrorRecovery<Int, Tok, io.github.kotlinmania.lalrpop.tok.Error>,
     ): LrSymbol
     {
         error("error recovery not enabled for this grammar")
@@ -3226,21 +3280,21 @@ internal class StateMachine(
         reduceIndex: Short,
         startLocation: Int?,
         states: MutableList<Short>,
-        symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-    ): io.github.kotlinmania.lalrpop.runtime.ParseResult<
+        symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+    ): ParseResult<
         Top,
         Int,
-        io.github.kotlinmania.lalrpop.tok.Tok,
+        Tok,
         io.github.kotlinmania.lalrpop.tok.Error,
     >? {
-        return io.github.kotlinmania.lalrpop.parser.reduce(
+        return reduce(
             text,
             reduceIndex, startLocation, states, symbols,
         )
     }
 
-    override fun simulateReduce(action: Short): io.github.kotlinmania.lalrpop.runtime.SimulatedReduce<Int> {
-        return io.github.kotlinmania.lalrpop.parser.simulateReduce(action)
+    override fun simulateReduce(action: Short): SimulatedReduce<Int> {
+        return simulateReduce(action)
     }
 }
 
@@ -3249,91 +3303,91 @@ internal class StateMachine(
 // `___token_to_integer` returns `None` for the same case).
 internal
 fun tokenToInteger(
-    token: io.github.kotlinmania.lalrpop.tok.Tok,
+    token: Tok,
 ): Int?
 {
     return when (
         token
     ) {
-        is io.github.kotlinmania.lalrpop.tok.Tok.Enum -> 0
-        is io.github.kotlinmania.lalrpop.tok.Tok.Extern -> 1
-        is io.github.kotlinmania.lalrpop.tok.Tok.Grammar -> 2
-        is io.github.kotlinmania.lalrpop.tok.Tok.Match -> 3
-        is io.github.kotlinmania.lalrpop.tok.Tok.Else -> 4
-        is io.github.kotlinmania.lalrpop.tok.Tok.If -> 5
-        is io.github.kotlinmania.lalrpop.tok.Tok.Mut -> 6
-        is io.github.kotlinmania.lalrpop.tok.Tok.Pub -> 7
-        is io.github.kotlinmania.lalrpop.tok.Tok.In -> 8
-        is io.github.kotlinmania.lalrpop.tok.Tok.Type -> 9
-        is io.github.kotlinmania.lalrpop.tok.Tok.Where -> 10
-        is io.github.kotlinmania.lalrpop.tok.Tok.For -> 11
-        is io.github.kotlinmania.lalrpop.tok.Tok.Bang -> 12
-        is io.github.kotlinmania.lalrpop.tok.Tok.Use -> 13
-        is io.github.kotlinmania.lalrpop.tok.Tok.Dyn -> 14
-        is io.github.kotlinmania.lalrpop.tok.Tok.Escape -> 15
-        is io.github.kotlinmania.lalrpop.tok.Tok.Id -> 16
-        is io.github.kotlinmania.lalrpop.tok.Tok.MacroId -> 17
-        is io.github.kotlinmania.lalrpop.tok.Tok.Lifetime -> 18
-        is io.github.kotlinmania.lalrpop.tok.Tok.StringLiteral -> 19
-        is io.github.kotlinmania.lalrpop.tok.Tok.CharLiteral -> 20
-        is io.github.kotlinmania.lalrpop.tok.Tok.RegexLiteral -> 21
-        is io.github.kotlinmania.lalrpop.tok.Tok.Ampersand -> 22
-        is io.github.kotlinmania.lalrpop.tok.Tok.BangEquals -> 23
-        is io.github.kotlinmania.lalrpop.tok.Tok.BangTilde -> 24
-        is io.github.kotlinmania.lalrpop.tok.Tok.Colon -> 25
-        is io.github.kotlinmania.lalrpop.tok.Tok.ColonColon -> 26
-        is io.github.kotlinmania.lalrpop.tok.Tok.Comma -> 27
-        is io.github.kotlinmania.lalrpop.tok.Tok.DotDot -> 28
-        is io.github.kotlinmania.lalrpop.tok.Tok.Equals -> 29
-        is io.github.kotlinmania.lalrpop.tok.Tok.EqualsEquals -> 30
-        is io.github.kotlinmania.lalrpop.tok.Tok.EqualsGreaterThanCode -> 31
-        is io.github.kotlinmania.lalrpop.tok.Tok.EqualsGreaterThanQuestionCode -> 32
-        is io.github.kotlinmania.lalrpop.tok.Tok.EqualsGreaterThanLookahead -> 33
-        is io.github.kotlinmania.lalrpop.tok.Tok.EqualsGreaterThanLookbehind -> 34
-        is io.github.kotlinmania.lalrpop.tok.Tok.GreaterThan -> 35
-        is io.github.kotlinmania.lalrpop.tok.Tok.Hash -> 36
-        is io.github.kotlinmania.lalrpop.tok.Tok.ShebangAttribute -> 37
-        is io.github.kotlinmania.lalrpop.tok.Tok.LeftBrace -> 38
-        is io.github.kotlinmania.lalrpop.tok.Tok.LeftBracket -> 39
-        is io.github.kotlinmania.lalrpop.tok.Tok.LeftParen -> 40
-        is io.github.kotlinmania.lalrpop.tok.Tok.LessThan -> 41
-        is io.github.kotlinmania.lalrpop.tok.Tok.Lookahead -> 42
-        is io.github.kotlinmania.lalrpop.tok.Tok.Lookbehind -> 43
-        is io.github.kotlinmania.lalrpop.tok.Tok.MinusGreaterThan -> 44
-        is io.github.kotlinmania.lalrpop.tok.Tok.Plus -> 45
-        is io.github.kotlinmania.lalrpop.tok.Tok.Question -> 46
-        is io.github.kotlinmania.lalrpop.tok.Tok.RightBrace -> 47
-        is io.github.kotlinmania.lalrpop.tok.Tok.RightBracket -> 48
-        is io.github.kotlinmania.lalrpop.tok.Tok.RightParen -> 49
-        is io.github.kotlinmania.lalrpop.tok.Tok.Semi -> 50
-        is io.github.kotlinmania.lalrpop.tok.Tok.Star -> 51
-        is io.github.kotlinmania.lalrpop.tok.Tok.TildeTilde -> 52
-        is io.github.kotlinmania.lalrpop.tok.Tok.Underscore -> 53
-        is io.github.kotlinmania.lalrpop.tok.Tok.StartGrammar -> 54
-        is io.github.kotlinmania.lalrpop.tok.Tok.StartPattern -> 55
-        is io.github.kotlinmania.lalrpop.tok.Tok.StartMatchMapping -> 56
-        is io.github.kotlinmania.lalrpop.tok.Tok.StartTypeRef -> 57
-        is io.github.kotlinmania.lalrpop.tok.Tok.StartGrammarWhereClauses -> 58
+        is Tok.Enum -> 0
+        is Tok.Extern -> 1
+        is Tok.Grammar -> 2
+        is Tok.Match -> 3
+        is Tok.Else -> 4
+        is Tok.If -> 5
+        is Tok.Mut -> 6
+        is Tok.Pub -> 7
+        is Tok.In -> 8
+        is Tok.Type -> 9
+        is Tok.Where -> 10
+        is Tok.For -> 11
+        is Tok.Bang -> 12
+        is Tok.Use -> 13
+        is Tok.Dyn -> 14
+        is Tok.Escape -> 15
+        is Tok.Id -> 16
+        is Tok.MacroId -> 17
+        is Tok.Lifetime -> 18
+        is Tok.StringLiteral -> 19
+        is Tok.CharLiteral -> 20
+        is Tok.RegexLiteral -> 21
+        is Tok.Ampersand -> 22
+        is Tok.BangEquals -> 23
+        is Tok.BangTilde -> 24
+        is Tok.Colon -> 25
+        is Tok.ColonColon -> 26
+        is Tok.Comma -> 27
+        is Tok.DotDot -> 28
+        is Tok.Equals -> 29
+        is Tok.EqualsEquals -> 30
+        is Tok.EqualsGreaterThanCode -> 31
+        is Tok.EqualsGreaterThanQuestionCode -> 32
+        is Tok.EqualsGreaterThanLookahead -> 33
+        is Tok.EqualsGreaterThanLookbehind -> 34
+        is Tok.GreaterThan -> 35
+        is Tok.Hash -> 36
+        is Tok.ShebangAttribute -> 37
+        is Tok.LeftBrace -> 38
+        is Tok.LeftBracket -> 39
+        is Tok.LeftParen -> 40
+        is Tok.LessThan -> 41
+        is Tok.Lookahead -> 42
+        is Tok.Lookbehind -> 43
+        is Tok.MinusGreaterThan -> 44
+        is Tok.Plus -> 45
+        is Tok.Question -> 46
+        is Tok.RightBrace -> 47
+        is Tok.RightBracket -> 48
+        is Tok.RightParen -> 49
+        is Tok.Semi -> 50
+        is Tok.Star -> 51
+        is Tok.TildeTilde -> 52
+        is Tok.Underscore -> 53
+        is Tok.StartGrammar -> 54
+        is Tok.StartPattern -> 55
+        is Tok.StartMatchMapping -> 56
+        is Tok.StartTypeRef -> 57
+        is Tok.StartGrammarWhereClauses -> 58
         else -> null
     }
 }
 
 // Wraps a recognised token into the matching `LrSymbol` variant.
-// io.github.kotlinmania.lalrpop.tok.Tok columns 0-12, 14, 22-30, 33-36, 38-58 are payload-less terminals
+// Tok columns 0-12, 14, 22-30, 33-36, 38-58 are payload-less terminals
 // stored as Variant0; columns 13, 15-21, 31, 32, 37 carry a string
 // payload stored as Variant1.
-internal fun tokenToSymbol(tokenIndex: Int, token: io.github.kotlinmania.lalrpop.tok.Tok): LrSymbol {
+internal fun tokenToSymbol(tokenIndex: Int, token: Tok): LrSymbol {
     return when (tokenIndex) {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 22, 23, 24, 25, 26, 27, 28, 29, 30,
         33, 34, 35, 36, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
         54, 55, 56, 57, 58 -> LrSymbol.Variant0(token)
         13, 15, 16, 17, 18, 19, 20, 21, 31, 32, 37 -> when (token) {
-            is io.github.kotlinmania.lalrpop.tok.Tok.Use -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop.tok.Tok.Escape -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop.tok.Tok.Id -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop.tok.Tok.MacroId -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop.tok.Tok.Lifetime -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop.tok.Tok.StringLiteral -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop.tok.Tok.CharLiteral -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop.tok.Tok.RegexLiteral -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop.tok.Tok.EqualsGreaterThanCode -> LrSymbol.Variant1(token.s); is io.github.kotlinmania.lalrpop.tok.Tok.EqualsGreaterThanQuestionCode -> LrSymbol.Variant1(token.s)
-            is io.github.kotlinmania.lalrpop.tok.Tok.ShebangAttribute -> LrSymbol.Variant1(token.s)
+            is Tok.Use -> LrSymbol.Variant1(token.s); is Tok.Escape -> LrSymbol.Variant1(token.s)
+            is Tok.Id -> LrSymbol.Variant1(token.s); is Tok.MacroId -> LrSymbol.Variant1(token.s)
+            is Tok.Lifetime -> LrSymbol.Variant1(token.s); is Tok.StringLiteral -> LrSymbol.Variant1(token.s)
+            is Tok.CharLiteral -> LrSymbol.Variant1(token.s); is Tok.RegexLiteral -> LrSymbol.Variant1(token.s)
+            is Tok.EqualsGreaterThanCode -> LrSymbol.Variant1(token.s); is Tok.EqualsGreaterThanQuestionCode -> LrSymbol.Variant1(token.s)
+            is Tok.ShebangAttribute -> LrSymbol.Variant1(token.s)
             else -> error("unreachable: tokenIndex=$tokenIndex token=$token")
         }
         else -> error("unreachable: tokenIndex=$tokenIndex")
@@ -3343,3222 +3397,3222 @@ internal fun tokenToSymbol(tokenIndex: Int, token: io.github.kotlinmania.lalrpop
 internal fun simulateReduce
 (
     reduceIndex: Short,
-): io.github.kotlinmania.lalrpop.runtime.SimulatedReduce<Int>
+): SimulatedReduce<Int>
 {
     return when (
         reduceIndex.toInt()
     ) {
         0 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 0,
             )
         }
         1 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 0,
             )
         }
         2 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 1,
             )
         }
         3 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 1,
             )
         }
         4 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 2,
             )
         }
         5 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 2,
             )
         }
         6 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 3,
             )
         }
         7 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 4,
             )
         }
         8 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 4,
             )
         }
         9 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 5,
             )
         }
         10 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 6,
             )
         }
         11 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 6,
             )
         }
         12 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 7,
             )
         }
         13 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 8,
             )
         }
         14 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 8,
             )
         }
         15 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 9,
             )
         }
         16 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 10,
             )
         }
         17 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 10,
             )
         }
         18 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 11,
             )
         }
         19 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 12,
             )
         }
         20 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 13,
             )
         }
         21 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 13,
             )
         }
         22 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 14,
             )
         }
         23 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 14,
             )
         }
         24 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 15,
             )
         }
         25 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 16,
             )
         }
         26 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 16,
             )
         }
         27 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 17,
             )
         }
         28 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 17,
             )
         }
         29 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 18,
             )
         }
         30 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 19,
             )
         }
         31 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 19,
             )
         }
         32 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 20,
             )
         }
         33 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 20,
             )
         }
         34 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 21,
             )
         }
         35 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 22,
             )
         }
         36 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 22,
             )
         }
         37 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 23,
             )
         }
         38 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 23,
             )
         }
         39 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 24,
             )
         }
         40 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 25,
             )
         }
         41 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 25,
             )
         }
         42 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 26,
             )
         }
         43 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 26,
             )
         }
         44 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 27,
             )
         }
         45 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 28,
             )
         }
         46 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 28,
             )
         }
         47 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 29,
             )
         }
         48 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 29,
             )
         }
         49 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 30,
             )
         }
         50 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 31,
             )
         }
         51 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 31,
             )
         }
         52 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 32,
             )
         }
         53 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 32,
             )
         }
         54 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 33,
             )
         }
         55 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 34,
             )
         }
         56 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 34,
             )
         }
         57 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 35,
             )
         }
         58 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 35,
             )
         }
         59 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 36,
             )
         }
         60 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 37,
             )
         }
         61 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 37,
             )
         }
         62 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 38,
             )
         }
         63 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 38,
             )
         }
         64 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 39,
             )
         }
         65 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 40,
             )
         }
         66 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 40,
             )
         }
         67 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 41,
             )
         }
         68 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 41,
             )
         }
         69 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 42,
             )
         }
         70 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 43,
             )
         }
         71 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 43,
             )
         }
         72 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 44,
             )
         }
         73 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 44,
             )
         }
         74 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 45,
             )
         }
         75 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 46,
             )
         }
         76 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 46,
             )
         }
         77 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 47,
             )
         }
         78 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 47,
             )
         }
         79 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 48,
             )
         }
         80 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 49,
             )
         }
         81 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 49,
             )
         }
         82 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 50,
             )
         }
         83 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 51,
             )
         }
         84 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 51,
             )
         }
         85 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 52,
             )
         }
         86 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 52,
             )
         }
         87 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 53,
             )
         }
         88 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 54,
             )
         }
         89 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 54,
             )
         }
         90 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 55,
             )
         }
         91 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 55,
             )
         }
         92 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 56,
             )
         }
         93 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 57,
             )
         }
         94 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 57,
             )
         }
         95 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 58,
             )
         }
         96 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 58,
             )
         }
         97 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 59,
             )
         }
         98 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 60,
             )
         }
         99 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 60,
             )
         }
         100 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 61,
             )
         }
         101 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 61,
             )
         }
         102 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 62,
             )
         }
         103 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 63,
             )
         }
         104 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 63,
             )
         }
         105 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 64,
             )
         }
         106 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 64,
             )
         }
         107 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 65,
             )
         }
         108 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 66,
             )
         }
         109 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 67,
             )
         }
         110 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 67,
             )
         }
         111 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 67,
             )
         }
         112 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 67,
             )
         }
         113 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 68,
             )
         }
         114 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 68,
             )
         }
         115 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 69,
             )
         }
         116 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 69,
             )
         }
         117 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 69,
             )
         }
         118 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 69,
             )
         }
         119 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 69,
             )
         }
         120 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 69,
             )
         }
         121 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 69,
             )
         }
         122 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 69,
             )
         }
         123 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 69,
             )
         }
         124 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 69,
             )
         }
         125 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 70,
             )
         }
         126 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 70,
             )
         }
         127 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 71,
             )
         }
         128 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 71,
             )
         }
         129 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 71,
             )
         }
         130 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 72,
             )
         }
         131 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 73,
             )
         }
         132 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 73,
             )
         }
         133 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 74,
             )
         }
         134 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 74,
             )
         }
         135 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 75,
             )
         }
         136 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 76,
             )
         }
         137 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 76,
             )
         }
         138 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 77,
             )
         }
         139 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 77,
             )
         }
         140 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 78,
             )
         }
         141 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 78,
             )
         }
         142 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 79,
             )
         }
         143 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 79,
             )
         }
         144 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 80,
             )
         }
         145 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 80,
             )
         }
         146 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 81,
             )
         }
         147 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 81,
             )
         }
         148 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 82,
             )
         }
         149 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 82,
             )
         }
         150 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 82,
             )
         }
         151 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 82,
             )
         }
         152 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 83,
             )
         }
         153 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 83,
             )
         }
         154 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 83,
             )
         }
         155 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 83,
             )
         }
         156 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 84,
             )
         }
         157 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 84,
             )
         }
         158 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 84,
             )
         }
         159 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 84,
             )
         }
         160 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 85,
             )
         }
         161 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 85,
             )
         }
         162 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 85,
             )
         }
         163 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 85,
             )
         }
         164 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 86,
             )
         }
         165 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 86,
             )
         }
         166 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 86,
             )
         }
         167 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 86,
             )
         }
         168 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 87,
             )
         }
         169 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 87,
             )
         }
         170 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 87,
             )
         }
         171 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 87,
             )
         }
         172 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 88,
             )
         }
         173 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 88,
             )
         }
         174 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 88,
             )
         }
         175 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 88,
             )
         }
         176 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 89,
             )
         }
         177 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 89,
             )
         }
         178 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 89,
             )
         }
         179 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 89,
             )
         }
         180 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 90,
             )
         }
         181 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 90,
             )
         }
         182 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 90,
             )
         }
         183 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 90,
             )
         }
         184 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 91,
             )
         }
         185 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 91,
             )
         }
         186 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 91,
             )
         }
         187 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 91,
             )
         }
         188 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 92,
             )
         }
         189 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 92,
             )
         }
         190 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 92,
             )
         }
         191 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 92,
             )
         }
         192 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 93,
             )
         }
         193 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 93,
             )
         }
         194 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 93,
             )
         }
         195 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 93,
             )
         }
         196 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 94,
             )
         }
         197 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 94,
             )
         }
         198 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 94,
             )
         }
         199 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 94,
             )
         }
         200 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 95,
             )
         }
         201 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 96,
             )
         }
         202 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 96,
             )
         }
         203 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 96,
             )
         }
         204 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 96,
             )
         }
         205 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 97,
             )
         }
         206 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 97,
             )
         }
         207 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 98,
             )
         }
         208 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 98,
             )
         }
         209 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 99,
             )
         }
         210 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 100,
             )
         }
         211 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 101,
             )
         }
         212 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 101,
             )
         }
         213 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 102,
             )
         }
         214 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 102,
             )
         }
         215 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 102,
             )
         }
         216 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 102,
             )
         }
         217 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 102,
             )
         }
         218 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 102,
             )
         }
         219 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 103,
             )
         }
         220 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 104,
             )
         }
         221 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 104,
             )
         }
         222 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 105,
             )
         }
         223 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 105,
             )
         }
         224 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         225 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         226 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         227 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         228 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         229 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         230 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         231 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         232 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         233 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         234 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         235 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         236 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 106,
             )
         }
         237 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         238 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         239 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         240 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         241 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         242 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         243 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         244 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 106,
             )
         }
         245 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         246 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         247 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         248 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 106,
             )
         }
         249 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         250 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         251 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         252 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 106,
             )
         }
         253 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 106,
             )
         }
         254 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 106,
             )
         }
         255 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         256 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         257 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         258 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         259 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 106,
             )
         }
         260 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         261 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         262 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         263 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         264 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         265 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         266 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         267 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         268 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         269 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         270 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         271 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         272 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         273 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         274 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         275 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         276 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         277 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         278 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         279 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         280 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         281 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         282 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         283 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         284 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 106,
             )
         }
         285 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         286 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         287 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         288 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         289 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         290 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         291 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 106,
             )
         }
         292 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         293 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         294 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         295 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         296 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         297 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         298 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         299 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         300 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         301 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         302 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         303 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         304 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         305 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         306 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         307 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         308 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         309 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         310 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         311 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         312 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         313 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         314 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         315 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         316 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 106,
             )
         }
         317 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         318 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         319 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         320 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         321 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 106,
             )
         }
         322 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 106,
             )
         }
         323 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 9,
                 nonterminalProduced = 106,
             )
         }
         324 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         325 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         326 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         327 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 106,
             )
         }
         328 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         329 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         330 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         331 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 106,
             )
         }
         332 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         333 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         334 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         335 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         336 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         337 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         338 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         339 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 106,
             )
         }
         340 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         341 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         342 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         343 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         344 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         345 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         346 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         347 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 106,
             )
         }
         348 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 106,
             )
         }
         349 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         350 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 106,
             )
         }
         351 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 106,
             )
         }
         352 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 107,
             )
         }
         353 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 107,
             )
         }
         354 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 107,
             )
         }
         355 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 107,
             )
         }
         356 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 108,
             )
         }
         357 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 108,
             )
         }
         358 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 109,
             )
         }
         359 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 109,
             )
         }
         360 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 110,
             )
         }
         361 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 111,
             )
         }
         362 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 111,
             )
         }
         363 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 112,
             )
         }
         364 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 113,
             )
         }
         365 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 113,
             )
         }
         366 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 114,
             )
         }
         367 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 115,
             )
         }
         368 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 115,
             )
         }
         369 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 116,
             )
         }
         370 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 116,
             )
         }
         371 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 116,
             )
         }
         372 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 117,
             )
         }
         373 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 117,
             )
         }
         374 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 118,
             )
         }
         375 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 119,
             )
         }
         376 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 119,
             )
         }
         377 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 120,
             )
         }
         378 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 120,
             )
         }
         379 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 121,
             )
         }
         380 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 122,
             )
         }
         381 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 122,
             )
         }
         382 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 123,
             )
         }
         383 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 124,
             )
         }
         384 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 125,
             )
         }
         385 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 125,
             )
         }
         386 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 125,
             )
         }
         387 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 126,
             )
         }
         388 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 126,
             )
         }
         389 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 127,
             )
         }
         390 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 127,
             )
         }
         391 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 128,
             )
         }
         392 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 129,
             )
         }
         393 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 130,
             )
         }
         394 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 130,
             )
         }
         395 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 131,
             )
         }
         396 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 131,
             )
         }
         397 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 131,
             )
         }
         398 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 131,
             )
         }
         399 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 132,
             )
         }
         400 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 132,
             )
         }
         401 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 132,
             )
         }
         402 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 133,
             )
         }
         403 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 134,
             )
         }
         404 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 134,
             )
         }
         405 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 135,
             )
         }
         406 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 135,
             )
         }
         407 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 135,
             )
         }
         408 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 135,
             )
         }
         409 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 136,
             )
         }
         410 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 137,
             )
         }
         411 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 137,
             )
         }
         412 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 138,
             )
         }
         413 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 138,
             )
         }
         414 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 138,
             )
         }
         415 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 138,
             )
         }
         416 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 138,
             )
         }
         417 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 138,
             )
         }
         418 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 138,
             )
         }
         419 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 138,
             )
         }
         420 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 138,
             )
         }
         421 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 138,
             )
         }
         422 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 138,
             )
         }
         423 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 138,
             )
         }
         424 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 138,
             )
         }
         425 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 138,
             )
         }
         426 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 139,
             )
         }
         427 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 139,
             )
         }
         428 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 139,
             )
         }
         429 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 139,
             )
         }
         430 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 140,
             )
         }
         431 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 140,
             )
         }
         432 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 140,
             )
         }
         433 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 140,
             )
         }
         434 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 141,
             )
         }
         435 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 141,
             )
         }
         436 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 142,
             )
         }
         437 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 143,
             )
         }
         438 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 144,
             )
         }
         439 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 144,
             )
         }
         440 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 144,
             )
         }
         441 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 145,
             )
         }
         442 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 146,
             )
         }
         443 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 146,
             )
         }
         444 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 147,
             )
         }
         445 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 147,
             )
         }
         446 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 148,
             )
         }
         447 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 149,
             )
         }
         448 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 150,
             )
         }
         449 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 150,
             )
         }
         450 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 150,
             )
         }
         451 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 150,
             )
         }
         452 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 150,
             )
         }
         453 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 151,
             )
         }
         454 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 151,
             )
         }
         455 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 152,
             )
         }
         456 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 152,
             )
         }
         457 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 153,
             )
         }
         458 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 153,
             )
         }
         459 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 154,
             )
         }
         460 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 155,
             )
         }
         461 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 155,
             )
         }
         462 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 156,
             )
         }
         463 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 156,
             )
         }
         464 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 156,
             )
         }
         465 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 156,
             )
         }
         466 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 156,
             )
         }
         467 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 156,
             )
         }
         468 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 156,
             )
         }
         469 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 156,
             )
         }
         470 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 157,
             )
         }
         471 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 157,
             )
         }
         472 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 158,
             )
         }
         473 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 158,
             )
         }
         474 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 158,
             )
         }
         475 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 158,
             )
         }
         476 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 158,
             )
         }
         477 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 159,
             )
         }
         478 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 159,
             )
         }
         479 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 159,
             )
         }
         480 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 160,
             )
         }
         481 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 160,
             )
         }
         482 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 161,
             )
         }
         483 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 161,
             )
         }
         484 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 162,
             )
         }
         485 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 10,
                 nonterminalProduced = 162,
             )
         }
         486 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 6,
                 nonterminalProduced = 162,
             )
         }
         487 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 162,
             )
         }
         488 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 162,
             )
         }
         489 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 8,
                 nonterminalProduced = 162,
             )
         }
         490 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 162,
             )
         }
         491 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 162,
             )
         }
         492 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 162,
             )
         }
         493 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 163,
             )
         }
         494 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 163,
             )
         }
         495 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 164,
             )
         }
         496 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 164,
             )
         }
         497 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 164,
             )
         }
         498 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 165,
             )
         }
         499 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 165,
             )
         }
         500 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 166,
             )
         }
         501 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 167,
             )
         }
         502 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 167,
             )
         }
         503 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 168,
             )
         }
         504 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 168,
             )
         }
         505 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 169,
             )
         }
         506 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 169,
             )
         }
         507 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 169,
             )
         }
         508 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 169,
             )
         }
         509 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 169,
             )
         }
         510 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 3,
                 nonterminalProduced = 169,
             )
         }
         511 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 169,
             )
         }
         512 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 169,
             )
         }
         513 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 169,
             )
         }
         514 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 169,
             )
         }
         515 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 169,
             )
         }
         516 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 11,
                 nonterminalProduced = 169,
             )
         }
         517 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 7,
                 nonterminalProduced = 169,
             )
         }
         518 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 9,
                 nonterminalProduced = 169,
             )
         }
         519 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 169,
             )
         }
         520 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 170,
             )
         }
         521 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 170,
             )
         }
         522 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 171,
             )
         }
         523 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 171,
             )
         }
         524 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 172,
             )
         }
         525 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 172,
             )
         }
         526 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 173,
             )
         }
         527 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 174,
             )
         }
         528 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 174,
             )
         }
         529 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 175,
             )
         }
         530 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 2,
                 nonterminalProduced = 175,
             )
         }
         531 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 4,
                 nonterminalProduced = 176,
             )
         }
         532 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 5,
                 nonterminalProduced = 176,
             )
         }
         533 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 1,
                 nonterminalProduced = 176,
             )
         }
         534 -> {
-            io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce(
+            SimulatedReduce.Reduce(
                 statesToPop = 0,
                 nonterminalProduced = 176,
             )
         }
-        535 -> io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Accept
+        535 -> SimulatedReduce.Accept
         else -> error("invalid reduction index $reduceIndex")
     }
 }
@@ -6588,10 +6642,10 @@ internal fun accepts(
             (-(act + 1)).toShort(),
         )
         val (toPop, nt) = when (sim) {
-            is io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Reduce -> {
+            is SimulatedReduce.Reduce -> {
                 sim.statesToPop to sim.nonterminalProduced
             }
-            is io.github.kotlinmania.lalrpop.runtime.SimulatedReduce.Accept -> return true
+            is SimulatedReduce.Accept -> return true
         }
         statesLen -= toPop
         states.subList(statesLen, states.size).clear()
@@ -6627,7 +6681,7 @@ internal fun symbolTypeMismatch(): Nothing {
 }
 
 internal fun popVariant9(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, Unit, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     if (triple.second !is LrSymbol.Variant9) symbolTypeMismatch()
@@ -6638,8 +6692,8 @@ internal fun popVariant9(
     )
 }
 internal fun popVariant82(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant82 ?: symbolTypeMismatch()
     return Triple(
@@ -6649,8 +6703,8 @@ internal fun popVariant82(
     )
 }
 internal fun popVariant44(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, ActionKind, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant44 ?: symbolTypeMismatch()
     return Triple(
@@ -6660,8 +6714,8 @@ internal fun popVariant44(
     )
 }
 internal fun popVariant10(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Alternative, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant10 ?: symbolTypeMismatch()
     return Triple(
@@ -6671,8 +6725,8 @@ internal fun popVariant10(
     )
 }
 internal fun popVariant34(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, ArgPattern, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant34 ?: symbolTypeMismatch()
     return Triple(
@@ -6682,8 +6736,8 @@ internal fun popVariant34(
     )
 }
 internal fun popVariant48(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, AssociatedType, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant48 ?: symbolTypeMismatch()
     return Triple(
@@ -6693,8 +6747,8 @@ internal fun popVariant48(
     )
 }
 internal fun popVariant22(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Atom, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant22 ?: symbolTypeMismatch()
     return Triple(
@@ -6704,8 +6758,8 @@ internal fun popVariant22(
     )
 }
 internal fun popVariant12(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Attribute, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant12 ?: symbolTypeMismatch()
     return Triple(
@@ -6715,8 +6769,8 @@ internal fun popVariant12(
     )
 }
 internal fun popVariant50(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, AttributeArg, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant50 ?: symbolTypeMismatch()
     return Triple(
@@ -6726,8 +6780,8 @@ internal fun popVariant50(
     )
 }
 internal fun popVariant7(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Condition, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant7 ?: symbolTypeMismatch()
     return Triple(
@@ -6737,8 +6791,8 @@ internal fun popVariant7(
     )
 }
 internal fun popVariant63(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, ConditionOp, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant63 ?: symbolTypeMismatch()
     return Triple(
@@ -6748,8 +6802,8 @@ internal fun popVariant63(
     )
 }
 internal fun popVariant14(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Conversion, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant14 ?: symbolTypeMismatch()
     return Triple(
@@ -6759,8 +6813,8 @@ internal fun popVariant14(
     )
 }
 internal fun popVariant65(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, EnumToken, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant65 ?: symbolTypeMismatch()
     return Triple(
@@ -6770,8 +6824,8 @@ internal fun popVariant65(
     )
 }
 internal fun popVariant66(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, ExprSymbol, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant66 ?: symbolTypeMismatch()
     return Triple(
@@ -6781,8 +6835,8 @@ internal fun popVariant66(
     )
 }
 internal fun popVariant16(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, FieldPattern<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant16 ?: symbolTypeMismatch()
     return Triple(
@@ -6792,8 +6846,8 @@ internal fun popVariant16(
     )
 }
 internal fun popVariant69(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Grammar, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant69 ?: symbolTypeMismatch()
     return Triple(
@@ -6803,8 +6857,8 @@ internal fun popVariant69(
     )
 }
 internal fun popVariant67(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, GrammarItem, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant67 ?: symbolTypeMismatch()
     return Triple(
@@ -6814,8 +6868,8 @@ internal fun popVariant67(
     )
 }
 internal fun popVariant24(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Lifetime, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant24 ?: symbolTypeMismatch()
     return Triple(
@@ -6825,8 +6879,8 @@ internal fun popVariant24(
     )
 }
 internal fun popVariant77(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, MatchContents, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant77 ?: symbolTypeMismatch()
     return Triple(
@@ -6836,8 +6890,8 @@ internal fun popVariant77(
     )
 }
 internal fun popVariant26(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, MatchItem, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant26 ?: symbolTypeMismatch()
     return Triple(
@@ -6847,8 +6901,8 @@ internal fun popVariant26(
     )
 }
 internal fun popVariant79(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, MatchMapping, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant79 ?: symbolTypeMismatch()
     return Triple(
@@ -6858,8 +6912,8 @@ internal fun popVariant79(
     )
 }
 internal fun popVariant81(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, MatchToken, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant81 ?: symbolTypeMismatch()
     return Triple(
@@ -6869,8 +6923,8 @@ internal fun popVariant81(
     )
 }
 internal fun popVariant28(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, NonterminalString, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant28 ?: symbolTypeMismatch()
     return Triple(
@@ -6880,8 +6934,8 @@ internal fun popVariant28(
     )
 }
 internal fun popVariant45(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, ActionKind?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant45 ?: symbolTypeMismatch()
     return Triple(
@@ -6891,8 +6945,8 @@ internal fun popVariant45(
     )
 }
 internal fun popVariant46(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Alternative?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant46 ?: symbolTypeMismatch()
     return Triple(
@@ -6902,8 +6956,8 @@ internal fun popVariant46(
     )
 }
 internal fun popVariant96(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, ArgPattern?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant96 ?: symbolTypeMismatch()
     return Triple(
@@ -6913,8 +6967,8 @@ internal fun popVariant96(
     )
 }
 internal fun popVariant52(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Attribute?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant52 ?: symbolTypeMismatch()
     return Triple(
@@ -6924,8 +6978,8 @@ internal fun popVariant52(
     )
 }
 internal fun popVariant51(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, AttributeArg?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant51 ?: symbolTypeMismatch()
     return Triple(
@@ -6935,8 +6989,8 @@ internal fun popVariant51(
     )
 }
 internal fun popVariant8(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Condition?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant8 ?: symbolTypeMismatch()
     return Triple(
@@ -6946,8 +7000,8 @@ internal fun popVariant8(
     )
 }
 internal fun popVariant64(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Conversion?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant64 ?: symbolTypeMismatch()
     return Triple(
@@ -6957,8 +7011,8 @@ internal fun popVariant64(
     )
 }
 internal fun popVariant68(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, FieldPattern<TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant68 ?: symbolTypeMismatch()
     return Triple(
@@ -6968,8 +7022,8 @@ internal fun popVariant68(
     )
 }
 internal fun popVariant76(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Lifetime?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant76 ?: symbolTypeMismatch()
     return Triple(
@@ -6979,8 +7033,8 @@ internal fun popVariant76(
     )
 }
 internal fun popVariant78(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, MatchItem?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant78 ?: symbolTypeMismatch()
     return Triple(
@@ -6990,8 +7044,8 @@ internal fun popVariant78(
     )
 }
 internal fun popVariant83(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, NonterminalString?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant83 ?: symbolTypeMismatch()
     return Triple(
@@ -7001,8 +7055,8 @@ internal fun popVariant83(
     )
 }
 internal fun popVariant71(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Parameter?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant71 ?: symbolTypeMismatch()
     return Triple(
@@ -7012,8 +7066,8 @@ internal fun popVariant71(
     )
 }
 internal fun popVariant85(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Pattern<TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant85 ?: symbolTypeMismatch()
     return Triple(
@@ -7023,8 +7077,8 @@ internal fun popVariant85(
     )
 }
 internal fun popVariant93(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Symbol?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant93 ?: symbolTypeMismatch()
     return Triple(
@@ -7034,8 +7088,8 @@ internal fun popVariant93(
     )
 }
 internal fun popVariant2(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Tok?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant2 ?: symbolTypeMismatch()
     return Triple(
@@ -7045,8 +7099,8 @@ internal fun popVariant2(
     )
 }
 internal fun popVariant98(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeBound<TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant98 ?: symbolTypeMismatch()
     return Triple(
@@ -7056,8 +7110,8 @@ internal fun popVariant98(
     )
 }
 internal fun popVariant99(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeBoundParameter<TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant99 ?: symbolTypeMismatch()
     return Triple(
@@ -7067,8 +7121,8 @@ internal fun popVariant99(
     )
 }
 internal fun popVariant100(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeParameter?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant100 ?: symbolTypeMismatch()
     return Triple(
@@ -7078,8 +7132,8 @@ internal fun popVariant100(
     )
 }
 internal fun popVariant4(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeRef?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant4 ?: symbolTypeMismatch()
     return Triple(
@@ -7089,8 +7143,8 @@ internal fun popVariant4(
     )
 }
 internal fun popVariant72(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Parameter>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant72 ?: symbolTypeMismatch()
     return Triple(
@@ -7100,8 +7154,8 @@ internal fun popVariant72(
     )
 }
 internal fun popVariant6(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeBoundParameter<TypeRef>>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant6 ?: symbolTypeMismatch()
     return Triple(
@@ -7111,8 +7165,8 @@ internal fun popVariant6(
     )
 }
 internal fun popVariant73(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeParameter>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant73 ?: symbolTypeMismatch()
     return Triple(
@@ -7122,8 +7176,8 @@ internal fun popVariant73(
     )
 }
 internal fun popVariant75(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<WhereClause<TypeRef>>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant75 ?: symbolTypeMismatch()
     return Triple(
@@ -7133,8 +7187,8 @@ internal fun popVariant75(
     )
 }
 internal fun popVariant74(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, WhereClause<TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant74 ?: symbolTypeMismatch()
     return Triple(
@@ -7144,8 +7198,8 @@ internal fun popVariant74(
     )
 }
 internal fun popVariant18(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Parameter, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant18 ?: symbolTypeMismatch()
     return Triple(
@@ -7155,8 +7209,8 @@ internal fun popVariant18(
     )
 }
 internal fun popVariant84(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Path, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant84 ?: symbolTypeMismatch()
     return Triple(
@@ -7166,8 +7220,8 @@ internal fun popVariant84(
     )
 }
 internal fun popVariant30(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Pattern<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant30 ?: symbolTypeMismatch()
     return Triple(
@@ -7177,8 +7231,8 @@ internal fun popVariant30(
     )
 }
 internal fun popVariant86(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, PatternKind<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant86 ?: symbolTypeMismatch()
     return Triple(
@@ -7188,8 +7242,8 @@ internal fun popVariant86(
     )
 }
 internal fun popVariant90(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, RepeatOp, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant90 ?: symbolTypeMismatch()
     return Triple(
@@ -7199,7 +7253,7 @@ internal fun popVariant90(
     )
 }
 internal fun popVariant91(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, String, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant91 ?: symbolTypeMismatch()
@@ -7210,8 +7264,8 @@ internal fun popVariant91(
     )
 }
 internal fun popVariant32(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Symbol, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant32 ?: symbolTypeMismatch()
     return Triple(
@@ -7221,8 +7275,8 @@ internal fun popVariant32(
     )
 }
 internal fun popVariant94(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, SymbolKind, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant94 ?: symbolTypeMismatch()
     return Triple(
@@ -7232,8 +7286,8 @@ internal fun popVariant94(
     )
 }
 internal fun popVariant80(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TerminalLiteral, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant80 ?: symbolTypeMismatch()
     return Triple(
@@ -7243,8 +7297,8 @@ internal fun popVariant80(
     )
 }
 internal fun popVariant89(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TerminalString, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant89 ?: symbolTypeMismatch()
     return Triple(
@@ -7254,8 +7308,8 @@ internal fun popVariant89(
     )
 }
 internal fun popVariant0(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Tok, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant0 ?: symbolTypeMismatch()
     return Triple(
@@ -7265,8 +7319,8 @@ internal fun popVariant0(
     )
 }
 internal fun popVariant95(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.parser.Top, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Top, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant95 ?: symbolTypeMismatch()
     return Triple(
@@ -7276,8 +7330,8 @@ internal fun popVariant95(
     )
 }
 internal fun popVariant97(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Tuple, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant97 ?: symbolTypeMismatch()
     return Triple(
@@ -7287,8 +7341,8 @@ internal fun popVariant97(
     )
 }
 internal fun popVariant36(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeBound<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant36 ?: symbolTypeMismatch()
     return Triple(
@@ -7298,8 +7352,8 @@ internal fun popVariant36(
     )
 }
 internal fun popVariant38(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeBoundParameter<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant38 ?: symbolTypeMismatch()
     return Triple(
@@ -7309,8 +7363,8 @@ internal fun popVariant38(
     )
 }
 internal fun popVariant40(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeParameter, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant40 ?: symbolTypeMismatch()
     return Triple(
@@ -7320,8 +7374,8 @@ internal fun popVariant40(
     )
 }
 internal fun popVariant3(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, TypeRef, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant3 ?: symbolTypeMismatch()
     return Triple(
@@ -7331,8 +7385,8 @@ internal fun popVariant3(
     )
 }
 internal fun popVariant47(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Alternative>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant47 ?: symbolTypeMismatch()
     return Triple(
@@ -7342,8 +7396,8 @@ internal fun popVariant47(
     )
 }
 internal fun popVariant53(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Attribute>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant53 ?: symbolTypeMismatch()
     return Triple(
@@ -7353,8 +7407,8 @@ internal fun popVariant53(
     )
 }
 internal fun popVariant54(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Conversion>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant54 ?: symbolTypeMismatch()
     return Triple(
@@ -7364,8 +7418,8 @@ internal fun popVariant54(
     )
 }
 internal fun popVariant87(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Lifetime>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant87 ?: symbolTypeMismatch()
     return Triple(
@@ -7375,8 +7429,8 @@ internal fun popVariant87(
     )
 }
 internal fun popVariant57(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<MatchItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant57 ?: symbolTypeMismatch()
     return Triple(
@@ -7386,8 +7440,8 @@ internal fun popVariant57(
     )
 }
 internal fun popVariant58(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<NonterminalString>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant58 ?: symbolTypeMismatch()
     return Triple(
@@ -7397,8 +7451,8 @@ internal fun popVariant58(
     )
 }
 internal fun popVariant55(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Parameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant55 ?: symbolTypeMismatch()
     return Triple(
@@ -7408,8 +7462,8 @@ internal fun popVariant55(
     )
 }
 internal fun popVariant59(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Pattern<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant59 ?: symbolTypeMismatch()
     return Triple(
@@ -7419,8 +7473,8 @@ internal fun popVariant59(
     )
 }
 internal fun popVariant60(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Symbol>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant60 ?: symbolTypeMismatch()
     return Triple(
@@ -7430,8 +7484,8 @@ internal fun popVariant60(
     )
 }
 internal fun popVariant88(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeBound<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant88 ?: symbolTypeMismatch()
     return Triple(
@@ -7441,8 +7495,8 @@ internal fun popVariant88(
     )
 }
 internal fun popVariant5(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeBoundParameter<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant5 ?: symbolTypeMismatch()
     return Triple(
@@ -7452,8 +7506,8 @@ internal fun popVariant5(
     )
 }
 internal fun popVariant61(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeParameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant61 ?: symbolTypeMismatch()
     return Triple(
@@ -7463,8 +7517,8 @@ internal fun popVariant61(
     )
 }
 internal fun popVariant62(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant62 ?: symbolTypeMismatch()
     return Triple(
@@ -7474,8 +7528,8 @@ internal fun popVariant62(
     )
 }
 internal fun popVariant56(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<WhereClause<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant56 ?: symbolTypeMismatch()
     return Triple(
@@ -7485,8 +7539,8 @@ internal fun popVariant56(
     )
 }
 internal fun popVariant101(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, Visibility, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant101 ?: symbolTypeMismatch()
     return Triple(
@@ -7496,8 +7550,8 @@ internal fun popVariant101(
     )
 }
 internal fun popVariant20(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, WhereClause<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant20 ?: symbolTypeMismatch()
     return Triple(
@@ -7507,8 +7561,8 @@ internal fun popVariant20(
     )
 }
 internal fun popVariant11(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Alternative>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant11 ?: symbolTypeMismatch()
     return Triple(
@@ -7518,8 +7572,8 @@ internal fun popVariant11(
     )
 }
 internal fun popVariant35(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<ArgPattern>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant35 ?: symbolTypeMismatch()
     return Triple(
@@ -7529,8 +7583,8 @@ internal fun popVariant35(
     )
 }
 internal fun popVariant49(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<AssociatedType>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant49 ?: symbolTypeMismatch()
     return Triple(
@@ -7540,8 +7594,8 @@ internal fun popVariant49(
     )
 }
 internal fun popVariant23(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Atom>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant23 ?: symbolTypeMismatch()
     return Triple(
@@ -7551,8 +7605,8 @@ internal fun popVariant23(
     )
 }
 internal fun popVariant13(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Attribute>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant13 ?: symbolTypeMismatch()
     return Triple(
@@ -7562,8 +7616,8 @@ internal fun popVariant13(
     )
 }
 internal fun popVariant15(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Conversion>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant15 ?: symbolTypeMismatch()
     return Triple(
@@ -7573,8 +7627,8 @@ internal fun popVariant15(
     )
 }
 internal fun popVariant17(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<FieldPattern<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant17 ?: symbolTypeMismatch()
     return Triple(
@@ -7584,8 +7638,8 @@ internal fun popVariant17(
     )
 }
 internal fun popVariant70(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<GrammarItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant70 ?: symbolTypeMismatch()
     return Triple(
@@ -7595,8 +7649,8 @@ internal fun popVariant70(
     )
 }
 internal fun popVariant25(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Lifetime>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant25 ?: symbolTypeMismatch()
     return Triple(
@@ -7606,8 +7660,8 @@ internal fun popVariant25(
     )
 }
 internal fun popVariant27(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<MatchItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant27 ?: symbolTypeMismatch()
     return Triple(
@@ -7617,8 +7671,8 @@ internal fun popVariant27(
     )
 }
 internal fun popVariant29(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<NonterminalString>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant29 ?: symbolTypeMismatch()
     return Triple(
@@ -7628,8 +7682,8 @@ internal fun popVariant29(
     )
 }
 internal fun popVariant19(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Parameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant19 ?: symbolTypeMismatch()
     return Triple(
@@ -7639,8 +7693,8 @@ internal fun popVariant19(
     )
 }
 internal fun popVariant31(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Pattern<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant31 ?: symbolTypeMismatch()
     return Triple(
@@ -7650,7 +7704,7 @@ internal fun popVariant31(
     )
 }
 internal fun popVariant92(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<String>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant92 ?: symbolTypeMismatch()
@@ -7661,8 +7715,8 @@ internal fun popVariant92(
     )
 }
 internal fun popVariant33(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<Symbol>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant33 ?: symbolTypeMismatch()
     return Triple(
@@ -7672,8 +7726,8 @@ internal fun popVariant33(
     )
 }
 internal fun popVariant37(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeBound<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant37 ?: symbolTypeMismatch()
     return Triple(
@@ -7683,8 +7737,8 @@ internal fun popVariant37(
     )
 }
 internal fun popVariant39(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeBoundParameter<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant39 ?: symbolTypeMismatch()
     return Triple(
@@ -7694,8 +7748,8 @@ internal fun popVariant39(
     )
 }
 internal fun popVariant41(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeParameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant41 ?: symbolTypeMismatch()
     return Triple(
@@ -7705,8 +7759,8 @@ internal fun popVariant41(
     )
 }
 internal fun popVariant42(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant42 ?: symbolTypeMismatch()
     return Triple(
@@ -7716,8 +7770,8 @@ internal fun popVariant42(
     )
 }
 internal fun popVariant21(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): Triple<Int, List<WhereClause<TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant21 ?: symbolTypeMismatch()
     return Triple(
@@ -7727,7 +7781,7 @@ internal fun popVariant21(
     )
 }
 internal fun popVariant43(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, Int, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant43 ?: symbolTypeMismatch()
@@ -7738,7 +7792,7 @@ internal fun popVariant43(
     )
 }
 internal fun popVariant1(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, String, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant1 ?: symbolTypeMismatch()
@@ -7763,8 +7817,8 @@ internal
 fun action1
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Grammar, Int>,
 ): Top
 {
     return Top.Grammar(sym1.second)
@@ -7774,8 +7828,8 @@ internal
 fun action2
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Pattern<TypeRef>, Int>,
 ): Top
 {
     return Top.Pattern(sym1.second)
@@ -7785,8 +7839,8 @@ internal
 fun action3
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, MatchMapping, Int>,
 ): Top
 {
     return Top.MatchMapping(sym1.second)
@@ -7796,8 +7850,8 @@ internal
 fun action4
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
 ): Top
 {
     return Top.TypeRefTop(sym1.second)
@@ -7807,8 +7861,8 @@ internal
 fun action5
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<WhereClause<TypeRef>>, Int>,
 ): Top
 {
     return Top.GrammarWhereClauses(sym1.second)
@@ -7817,22 +7871,22 @@ fun action5
 internal fun action6(
     text: String,
     moduleAttributes: Triple<Int, List<String>, Int>,
-    uses: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    attributes: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
+    uses: Triple<Int, List<GrammarItem>, Int>,
+    attributes: Triple<Int, List<Attribute>, Int>,
     lo: Triple<Int, Int, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-    tps: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    parameters: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    whereClauses: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym9: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    items: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    tps: Triple<Int, List<TypeParameter>?, Int>,
+    parameters: Triple<Int, List<Parameter>?, Int>,
+    whereClauses: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym9: Triple<Int, Tok, Int>,
+    items: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar(
+        Grammar(
             prefix = "__", // adjusted by `parseGrammar`
-            span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+            span = Span(lo.second, hi.second),
             typeParameters = (tps.second ?: emptyList()).toMutableList(),
             parameters = (parameters.second ?: emptyList()).toMutableList(),
             whereClauses = (whereClauses.second ?: emptyList()).toMutableList(),
@@ -7847,10 +7901,10 @@ internal
 fun action7
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeParameter>
 {
     return sym1.second
 }
@@ -7859,40 +7913,40 @@ internal
 fun action8
 (
     text: String,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
+    l: Triple<Int, Lifetime, Int>,
+): TypeParameter
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter.LifetimeTp(l.second)
+    return TypeParameter.LifetimeTp(l.second)
 }
 
 internal
 fun action9
 (
     text: String,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
+    l: Triple<Int, Atom, Int>,
+): TypeParameter
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter.Id(l.second)
+    return TypeParameter.Id(l.second)
 }
 
 internal
 fun action10
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+): List<WhereClause<TypeRef>>
 {
     return sym1.second
 }
 
 internal fun action11(
     text: String,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    bounds: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause.LifetimeClause(
+    l: Triple<Int, Lifetime, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    bounds: Triple<Int, List<Lifetime>, Int>,
+): WhereClause<TypeRef> {
+    return WhereClause.LifetimeClause(
         l.second,
         bounds.second.toMutableList(),
     )
@@ -7900,12 +7954,12 @@ internal fun action11(
 
 internal fun action12(
     text: String,
-    f: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    ty: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    bounds: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause.Type(
+    f: Triple<Int, List<TypeParameter>, Int>,
+    ty: Triple<Int, TypeRef, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    bounds: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+): WhereClause<TypeRef> {
+    return WhereClause.Type(
         forall = f.second.toMutableList(),
         ty = ty.second,
         bounds = bounds.second.toMutableList())
@@ -7915,11 +7969,11 @@ internal
 fun action13
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): List<TypeParameter>
 {
     return sym2.second
 }
@@ -7929,7 +7983,7 @@ fun action14
 (
     text: String,
     sym0: Triple<Int, Unit, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+): List<TypeParameter>
 {
     return emptyList()
 }
@@ -7938,8 +7992,8 @@ internal
 fun action15
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+): List<TypeBound<TypeRef>>
 {
     return sym0.second
 }
@@ -7948,22 +8002,22 @@ internal
 fun action16
 (
     text: String,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    l: Triple<Int, Lifetime, Int>,
+): TypeBound<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound.LifetimeBound(l.second)
+    return TypeBound.LifetimeBound(l.second)
 }
 
 internal fun action17(
     text: String,
-    f: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    p: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    params: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    ret: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound.Fn(
+    f: Triple<Int, List<TypeParameter>, Int>,
+    p: Triple<Int, Path, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    params: Triple<Int, List<TypeRef>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    ret: Triple<Int, TypeRef?, Int>,
+): TypeBound<TypeRef> {
+    return TypeBound.Fn(
         forall = f.second.toMutableList(),
         path = p.second, parameters = params.second.toMutableList(), ret = ret.second,
     )
@@ -7971,11 +8025,11 @@ internal fun action17(
 
 internal fun action18(
     text: String,
-    f: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    p: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    params: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound.Trait(
+    f: Triple<Int, List<TypeParameter>, Int>,
+    p: Triple<Int, Path, Int>,
+    params: Triple<Int, List<TypeBoundParameter<TypeRef>>?, Int>,
+): TypeBound<TypeRef> {
+    return TypeBound.Trait(
         forall = f.second.toMutableList(),
         path = p.second,
         parameters = (params.second ?: emptyList()).toMutableList())
@@ -7985,42 +8039,42 @@ internal
 fun action19
 (
     text: String,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    l: Triple<Int, Lifetime, Int>,
+): TypeBoundParameter<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter.LifetimeParam(l.second)
+    return TypeBoundParameter.LifetimeParam(l.second)
 }
 
 internal
 fun action20
 (
     text: String,
-    ty: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    ty: Triple<Int, TypeRef, Int>,
+): TypeBoundParameter<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter.TypeParameterParam(ty.second)
+    return TypeBoundParameter.TypeParameterParam(ty.second)
 }
 
 internal
 fun action21
 (
     text: String,
-    id: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    ty: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    id: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    ty: Triple<Int, TypeRef, Int>,
+): TypeBoundParameter<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter.Associated(id.second, ty.second)
+    return TypeBoundParameter.Associated(id.second, ty.second)
 }
 
 internal
 fun action22
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Parameter>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Parameter>
 {
     return sym1.second
 }
@@ -8034,20 +8088,20 @@ internal
 fun action23
 (
     text: String,
-    id: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    ty: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter
+    id: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    ty: Triple<Int, TypeRef, Int>,
+): Parameter
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter(name = id.second, ty = ty.second)
+    return Parameter(name = id.second, ty = ty.second)
 }
 
 internal
 fun action24
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, GrammarItem, Int>,
+): GrammarItem
 {
     return sym0.second
 }
@@ -8056,8 +8110,8 @@ internal
 fun action25
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, GrammarItem, Int>,
+): GrammarItem
 {
     return sym0.second
 }
@@ -8066,8 +8120,8 @@ internal
 fun action26
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, GrammarItem, Int>,
+): GrammarItem
 {
     return sym0.second
 }
@@ -8076,8 +8130,8 @@ internal
 fun action27
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, GrammarItem, Int>,
+): GrammarItem
 {
     return sym0.second
 }
@@ -8087,47 +8141,47 @@ fun action28
 (
     text: String,
     u: Triple<Int, String, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym1: Triple<Int, Tok, Int>,
+): GrammarItem
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem.Use(io.github.kotlinmania.lalrpop.strip(u.second))
+    return GrammarItem.Use(strip(u.second))
 }
 
 internal
 fun action29
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    p: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    p: Triple<Int, Path, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Visibility
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility.Pub(p.second)
+    return Visibility.Pub(p.second)
 }
 
 internal
 fun action30
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    p: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    p: Triple<Int, Path, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Visibility
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility.PubIn(p.second)
+    return Visibility.PubIn(p.second)
 }
 
 internal
 fun action31
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+    sym0: Triple<Int, Tok, Int>,
+): Visibility
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility.Pub(null)
+    return Visibility.Pub(null)
 }
 
 internal
@@ -8135,27 +8189,27 @@ fun action32
 (
     text: String,
     sym0: Triple<Int, Unit, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+): Visibility
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility.Priv
+    return Visibility.Priv
 }
 
 internal fun action33(
     text: String,
-    attributes: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    v: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
+    attributes: Triple<Int, List<Attribute>, Int>,
+    v: Triple<Int, Visibility, Int>,
     lo: Triple<Int, Int, Int>,
-    n: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
+    n: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
     hi: Triple<Int, Int, Int>,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    a: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem {
+    t: Triple<Int, TypeRef?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    a: Triple<Int, List<Alternative>, Int>,
+): GrammarItem {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem.Nonterminal(
-            io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalData(
+        GrammarItem.Nonterminal(
+            NonterminalData(
                 visibility = v.second,
-                span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+                span = Span(lo.second, hi.second),
                 name = n.second.first,
                 attributes = attributes.second.toMutableList(),
                 args = n.second.second.toMutableList(),
@@ -8169,11 +8223,11 @@ internal
 fun action34
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Attribute, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Attribute
 {
     return sym2.second
 }
@@ -8181,15 +8235,15 @@ fun action34
 internal fun action35(
     text: String,
     lo: Triple<Int, Int, Int>,
-    id: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    arg: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?, Int>,
+    id: Triple<Int, Atom, Int>,
+    arg: Triple<Int, AttributeArg?, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute {
+): Attribute {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute(
-            idSpan = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+        Attribute(
+            idSpan = Span(lo.second, hi.second),
             id = id.second,
-            arg = arg.second ?: io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg.default())
+            arg = arg.second ?: AttributeArg.default())
     }
 }
 
@@ -8197,34 +8251,34 @@ internal
 fun action36
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): AttributeArg
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg.Paren(sym1.second.toMutableList())
+    return AttributeArg.Paren(sym1.second.toMutableList())
 }
 
 internal
 fun action37
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
     value: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg
+): AttributeArg
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg.Equal(value.second)
+    return AttributeArg.Equal(value.second)
 }
 
 internal
 fun action38
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>
+    sym0: Triple<Int, NonterminalString, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<NonterminalString>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Pair<NonterminalString, List<NonterminalString>>
 {
     return sym0.second to sym2.second
 }
@@ -8233,8 +8287,8 @@ internal
 fun action39
 (
     text: String,
-    n: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-): Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>
+    n: Triple<Int, NonterminalString, Int>,
+): Pair<NonterminalString, List<NonterminalString>>
 {
     return n.second to emptyList()
 }
@@ -8244,18 +8298,18 @@ fun action40
 (
     text: String,
     sym0: Triple<Int, String, Int>,
-): Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>
+): Pair<NonterminalString, List<NonterminalString>>
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString(io.github.kotlinmania.lalrpop.Atom.from(sym0.second)) to emptyList()
+    return NonterminalString(Atom.from(sym0.second)) to emptyList()
 }
 
 internal
 fun action41
 (
     text: String,
-    a: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    a: Triple<Int, Alternative, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Alternative>
 {
     return listOf(a.second)
 }
@@ -8264,11 +8318,11 @@ internal
 fun action42
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Alternative>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok?, Int>,
+): List<Alternative>
 {
     return sym1.second
 }
@@ -8277,18 +8331,18 @@ internal
 fun action43
 (
     text: String,
-    attr: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
+    attr: Triple<Int, List<Attribute>, Int>,
     lo: Triple<Int, Int, Int>,
-    s: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    c: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?, Int>,
-    a: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int>,
+    s: Triple<Int, List<Symbol>, Int>,
+    c: Triple<Int, Condition?, Int>,
+    a: Triple<Int, ActionKind?, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative(
-            span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
-            expr = io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol(symbols = s.second.toMutableList()),
+        Alternative(
+            span = Span(lo.second, hi.second),
+            expr = ExprSymbol(symbols = s.second.toMutableList()),
             condition = c.second,
             action = a.second,
             attributes = attr.second.toMutableList(),
@@ -8301,15 +8355,15 @@ fun action44
 (
     text: String,
     lo: Triple<Int, Int, Int>,
-    c: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?, Int>,
-    a: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
+    c: Triple<Int, Condition?, Int>,
+    a: Triple<Int, ActionKind, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative(
-            span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
-            expr = io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol(symbols = mutableListOf()),
+        Alternative(
+            span = Span(lo.second, hi.second),
+            expr = ExprSymbol(symbols = mutableListOf()),
             condition = c.second,
             action = a.second,
             attributes = mutableListOf(),
@@ -8321,20 +8375,20 @@ internal
 fun action45
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
+    sym0: Triple<Int, Tok, Int>,
+): ActionKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind.Lookahead
+    return ActionKind.Lookahead
 }
 
 internal
 fun action46
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
+    sym0: Triple<Int, Tok, Int>,
+): ActionKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind.Lookbehind
+    return ActionKind.Lookbehind
 }
 
 internal
@@ -8342,9 +8396,9 @@ fun action47
 (
     text: String,
     c: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
+): ActionKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind.User(io.github.kotlinmania.lalrpop.strip(c.second))
+    return ActionKind.User(strip(c.second))
 }
 
 internal
@@ -8352,22 +8406,22 @@ fun action48
 (
     text: String,
     c: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
+): ActionKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind.Fallible(io.github.kotlinmania.lalrpop.strip(c.second))
+    return ActionKind.Fallible(strip(c.second))
 }
 
 internal fun action49(
     text: String,
     lo: Triple<Int, Int, Int>,
-    a: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    op: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp, Int>,
-    b: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
+    a: Triple<Int, NonterminalString, Int>,
+    op: Triple<Int, ConditionOp, Int>,
+    b: Triple<Int, Atom, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Condition {
+): Condition {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Condition(
-            span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second), lhs = a.second,
+        Condition(
+            span = Span(lo.second, hi.second), lhs = a.second,
             rhs = b.second, op = op.second,
         )
     }
@@ -8377,97 +8431,97 @@ internal
 fun action50
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp
+    sym0: Triple<Int, Tok, Int>,
+): ConditionOp
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp.Equals
+    return ConditionOp.Equals
 }
 
 internal
 fun action51
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp
+    sym0: Triple<Int, Tok, Int>,
+): ConditionOp
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp.NotEquals
+    return ConditionOp.NotEquals
 }
 
 internal
 fun action52
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp
+    sym0: Triple<Int, Tok, Int>,
+): ConditionOp
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp.Match
+    return ConditionOp.Match
 }
 
 internal
 fun action53
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp
+    sym0: Triple<Int, Tok, Int>,
+): ConditionOp
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp.NotMatch
+    return ConditionOp.NotMatch
 }
 
 internal
 fun action54
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
+    sym0: Triple<Int, List<Symbol>, Int>,
+): ExprSymbol
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol(symbols = sym0.second.toMutableList())
+    return ExprSymbol(symbols = sym0.second.toMutableList())
 }
 
 internal fun action55(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    m: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok?, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    m: Triple<Int, Tok?, Int>,
     sym3: Triple<Int, Int, Int>,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    s: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    l: Triple<Int, Atom, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    s: Triple<Int, Symbol, Int>,
+    sym7: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol.new(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
-        io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Name(io.github.kotlinmania.lalrpop.grammar.parseTree.Name.new(m.second != null, l.second), s.second),
+): Symbol {
+    return Symbol.new(
+        Span(lo.second, hi.second),
+        SymbolKind.Name(Name.new(m.second != null, l.second), s.second),
     )
 }
 
 internal fun action56(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    s: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    s: Triple<Int, Symbol, Int>,
+    sym3: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol.new(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
-        io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Choose(s.second),
+): Symbol {
+    return Symbol.new(
+        Span(lo.second, hi.second),
+        SymbolKind.Choose(s.second),
     )
 }
 
 internal fun action57(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    s: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    t: Triple<Int, Tuple, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    s: Triple<Int, Symbol, Int>,
+    sym5: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol.new(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
-        io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.TupleKind(t.second, s.second),
+): Symbol {
+    return Symbol.new(
+        Span(lo.second, hi.second),
+        SymbolKind.TupleKind(t.second, s.second),
     )
 }
 
@@ -8475,8 +8529,8 @@ internal
 fun action58
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Symbol, Int>,
+): Symbol
 {
     return sym0.second
 }
@@ -8485,22 +8539,22 @@ internal
 fun action59
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Symbol, Int>,
+): Symbol
 {
     return sym0.second
 }
 
 internal fun action60(
     text: String,
-    lhs: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    op: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp, Int>,
+    lhs: Triple<Int, Symbol, Int>,
+    op: Triple<Int, RepeatOp, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol.new(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lhs.second.span.start, hi.second),
-        io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Repeat(
-            io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatSymbol(symbol = lhs.second, op = op.second)),
+): Symbol {
+    return Symbol.new(
+        Span(lhs.second.span.start, hi.second),
+        SymbolKind.Repeat(
+            RepeatSymbol(symbol = lhs.second, op = op.second)),
     )
 }
 
@@ -8508,54 +8562,54 @@ internal
 fun action61
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp
+    sym0: Triple<Int, Tok, Int>,
+): RepeatOp
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp.Plus
+    return RepeatOp.Plus
 }
 
 internal
 fun action62
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp
+    sym0: Triple<Int, Tok, Int>,
+): RepeatOp
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp.Star
+    return RepeatOp.Star
 }
 
 internal
 fun action63
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp
+    sym0: Triple<Int, Tok, Int>,
+): RepeatOp
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp.Question
+    return RepeatOp.Question
 }
 
 internal fun action64(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sk: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind, Int>,
+    sk: Triple<Int, SymbolKind, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol.new(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+): Symbol {
+    return Symbol.new(
+        Span(lo.second, hi.second),
         sk.second,
     )
 }
 
 internal fun action65(
     text: String,
-    name: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    args: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+    name: Triple<Int, NonterminalString, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    args: Triple<Int, List<Symbol>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Macro(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.MacroSymbol(name = name.second, args = args.second.toMutableList())
+    return SymbolKind.Macro(
+        MacroSymbol(name = name.second, args = args.second.toMutableList())
     )
 }
 
@@ -8563,10 +8617,10 @@ internal
 fun action66
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+    sym0: Triple<Int, TerminalString, Int>,
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Terminal(sym0.second)
+    return SymbolKind.Terminal(sym0.second)
 }
 
 internal
@@ -8574,18 +8628,18 @@ fun action67
 (
     text: String,
     sym0: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.AmbiguousId(io.github.kotlinmania.lalrpop.Atom.from(sym0.second))
+    return SymbolKind.AmbiguousId(Atom.from(sym0.second))
 }
 
 internal fun action68(
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+    sym0: Triple<Int, Atom, Int>,
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Nonterminal(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString(sym0.second)
+    return SymbolKind.Nonterminal(
+        NonterminalString(sym0.second)
     )
 }
 
@@ -8593,56 +8647,56 @@ internal
 fun action69
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, ExprSymbol, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Expr(sym1.second)
+    return SymbolKind.Expr(sym1.second)
 }
 
 internal
 fun action70
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+    sym0: Triple<Int, Tok, Int>,
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Lookahead
+    return SymbolKind.Lookahead
 }
 
 internal
 fun action71
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+    sym0: Triple<Int, Tok, Int>,
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.Lookbehind
+    return SymbolKind.Lookbehind
 }
 
 internal
 fun action72
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+    sym0: Triple<Int, Tok, Int>,
+): SymbolKind
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind.io.github.kotlinmania.lalrpop.tok.Error
+    return SymbolKind.Error
 }
 
 internal fun action73(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    tuples: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    tuples: Triple<Int, List<ArgPattern>, Int>,
+    e: Triple<Int, ArgPattern?, Int>,
+    sym4: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple
+): Tuple
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple.new(
+        Tuple.new(
             (tuples.second + listOfNotNull(e.second)).toMutableList()
         )
     }
@@ -8650,12 +8704,12 @@ internal fun action73(
 
 internal fun action74(
     text: String,
-    m: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok?, Int>,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
+    m: Triple<Int, Tok?, Int>,
+    l: Triple<Int, Atom, Int>,
+): ArgPattern
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern.NamePat(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Name.new(m.second != null, l.second)
+    return ArgPattern.NamePat(
+        Name.new(m.second != null, l.second)
     )
 }
 
@@ -8663,59 +8717,59 @@ internal
 fun action75
 (
     text: String,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
+    t: Triple<Int, Tuple, Int>,
+): ArgPattern
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern.TuplePat(t.second)
+    return ArgPattern.TuplePat(t.second)
 }
 
 internal
 fun action76
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeRef>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): TypeRef
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Tuple(sym1.second.toMutableList())
+    return TypeRef.Tuple(sym1.second.toMutableList())
 }
 
 internal
 fun action77
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): TypeRef
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Slice(sym1.second)
+    return TypeRef.Slice(sym1.second)
 }
 
 internal
 fun action78
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Symbol, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): TypeRef
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.OfSymbol(sym1.second.kind)
+        TypeRef.OfSymbol(sym1.second.kind)
     }
 }
 
 internal fun action79(
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    l: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int>,
-    m: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok?, Int>,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    l: Triple<Int, Lifetime?, Int>,
+    m: Triple<Int, Tok?, Int>,
+    t: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Ref(
+    return TypeRef.Ref(
         l.second,
         m.second != null,
         t.second,
@@ -8726,25 +8780,25 @@ internal
 fun action80
 (
     text: String,
-    path: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    types: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    path: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    types: Triple<Int, List<TypeRef>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): TypeRef
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Nominal(path = path.second, types = types.second.toMutableList())
+    return TypeRef.Nominal(path = path.second, types = types.second.toMutableList())
 }
 
 internal fun action81(
     text: String,
-    p: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    p: Triple<Int, Path, Int>,
+): TypeRef
 {
     val id = p.second.asId()
     return if (id != null) {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Id(id)
+        TypeRef.Id(id)
     } else {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Nominal(path = p.second, types = mutableListOf())
+        TypeRef.Nominal(path = p.second, types = mutableListOf())
     }
 }
 
@@ -8752,38 +8806,38 @@ internal
 fun action82
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    path: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    types: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    path: Triple<Int, Path, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    types: Triple<Int, List<TypeRef>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): TypeRef
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.TraitObject(path = path.second, types = types.second.toMutableList())
+    return TypeRef.TraitObject(path = path.second, types = types.second.toMutableList())
 }
 
 internal
 fun action83
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    path: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    path: Triple<Int, Path, Int>,
+): TypeRef
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.TraitObject(path = path.second, types = mutableListOf())
+    return TypeRef.TraitObject(path = path.second, types = mutableListOf())
 }
 
 internal fun action84(
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    forall: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    path: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    parameters: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    ret: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Fn(
+    sym0: Triple<Int, Tok, Int>,
+    forall: Triple<Int, List<TypeParameter>, Int>,
+    path: Triple<Int, Path, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    parameters: Triple<Int, List<TypeRef>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    ret: Triple<Int, TypeRef?, Int>,
+): TypeRef {
+    return TypeRef.Fn(
         forall = forall.second.toMutableList(),
         path = path.second, parameters = parameters.second.toMutableList(), ret = ret.second,
     )
@@ -8793,8 +8847,8 @@ internal
 fun action85
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     return sym0.second
 }
@@ -8803,22 +8857,22 @@ internal
 fun action86
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Lifetime, Int>,
+): TypeRef
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.LifetimeRef(sym0.second)
+    return TypeRef.LifetimeRef(sym0.second)
 }
 
 internal fun action87(
     text: String,
-    a: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok?, Int>,
-    h: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Path {
+    a: Triple<Int, Tok?, Int>,
+    h: Triple<Int, List<Atom>, Int>,
+    t: Triple<Int, Atom, Int>,
+): Path {
     val ids = h.second.toMutableList()
     ids.add(t.second)
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Path(
+        Path(
             absolute = a.second != null,
             ids = ids)
     }
@@ -8827,20 +8881,20 @@ internal fun action87(
 internal fun action88(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    a0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    et: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int>,
-    a1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem {
+    sym3: Triple<Int, Tok, Int>,
+    a0: Triple<Int, List<AssociatedType>, Int>,
+    et: Triple<Int, EnumToken, Int>,
+    a1: Triple<Int, List<AssociatedType>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): GrammarItem {
     val associated = a0.second.toMutableList()
     associated.addAll(a1.second)
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem.ExternToken(
-            io.github.kotlinmania.lalrpop.grammar.parseTree.ExternToken(
-                span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+        GrammarItem.ExternToken(
+            ExternToken(
+                span = Span(lo.second, hi.second),
                 associatedTypes = associated,
                 enumToken = et.second),
         )
@@ -8850,17 +8904,17 @@ internal fun action88(
 internal fun action89(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    a0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym3: Triple<Int, Tok, Int>,
+    a0: Triple<Int, List<AssociatedType>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem.ExternToken(
-            io.github.kotlinmania.lalrpop.grammar.parseTree.ExternToken(
-                span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+        GrammarItem.ExternToken(
+            ExternToken(
+                span = Span(lo.second, hi.second),
                 associatedTypes = a0.second.toMutableList(),
                 enumToken = null,
             ),
@@ -8872,22 +8926,22 @@ internal
 fun action90
 (
     text: String,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    t: Triple<Int, MatchToken, Int>,
+): GrammarItem
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem.MatchToken(t.second)
+    return GrammarItem.MatchToken(t.second)
 }
 
 internal
 fun action91
 (
     text: String,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    c: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken
+    t: Triple<Int, MatchToken, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    c: Triple<Int, MatchContents, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): MatchToken
 {
     return t.second.add(c.second)
 }
@@ -8895,15 +8949,15 @@ fun action91
 internal fun action92(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    c: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken.new(
+    sym3: Triple<Int, Tok, Int>,
+    c: Triple<Int, MatchContents, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): MatchToken {
+    return MatchToken.new(
         contents = c.second,
-        span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+        span = Span(lo.second, hi.second),
     )
 }
 
@@ -8911,49 +8965,49 @@ internal
 fun action93
 (
     text: String,
-    items: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents
+    items: Triple<Int, List<MatchItem>, Int>,
+): MatchContents
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents(items = items.second.toMutableList())
+    return MatchContents(items = items.second.toMutableList())
 }
 
 internal fun action94(
     text: String,
     lo: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+): MatchItem
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem.CatchAll(
-        io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+    return MatchItem.CatchAll(
+        Span(lo.second, hi.second),
     )
 }
 
 internal fun action95(
     text: String,
     lo: Triple<Int, Int, Int>,
-    s: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
+    s: Triple<Int, TerminalLiteral, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem.Unmapped(
+): MatchItem {
+    return MatchItem.Unmapped(
         symbol = s.second,
-        span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+        span = Span(lo.second, hi.second),
     )
 }
 
 internal fun action96(
     text: String,
     lo: Triple<Int, Int, Int>,
-    from: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
+    from: Triple<Int, TerminalLiteral, Int>,
     start: Triple<Int, Int, Int>,
     p: Triple<Int, String, Int>,
     hi: Triple<Int, Int, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem> {
-    val to = io.github.kotlinmania.lalrpop.parser.parseMatchMapping(p.second, start.second + 2)
+): Result<MatchItem> {
+    val to = parseMatchMapping(p.second, start.second + 2)
         .getOrElse { return Result.failure(it) }
     return run {
         Result.success(
-            io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem.Mapped(symbol = from.second, mapping = to, span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second)),
+            MatchItem.Mapped(symbol = from.second, mapping = to, span = Span(lo.second, hi.second)),
         )
     }
 }
@@ -8962,8 +9016,8 @@ internal
 fun action97
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral
+    sym0: Triple<Int, TerminalLiteral, Int>,
+): TerminalLiteral
 {
     return sym0.second
 }
@@ -8972,40 +9026,40 @@ internal
 fun action98
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping
+    sym0: Triple<Int, TerminalString, Int>,
+): MatchMapping
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping.Terminal(sym0.second)
+    return MatchMapping.Terminal(sym0.second)
 }
 
 internal
 fun action99
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): MatchMapping
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping.Skip
+    return MatchMapping.Skip
 }
 
 internal
 fun action100
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
     lo: Triple<Int, Int, Int>,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
+    t: Triple<Int, TypeRef, Int>,
     hi: Triple<Int, Int, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    c: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken
+    sym4: Triple<Int, Tok, Int>,
+    c: Triple<Int, List<Conversion>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): EnumToken
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken(
+        EnumToken(
             typeName = t.second,
-            typeSpan = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+            typeSpan = Span(lo.second, hi.second),
             conversions = c.second.toMutableList(),
         )
     }
@@ -9013,18 +9067,18 @@ fun action100
 
 internal fun action101(
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
     lo: Triple<Int, Int, Int>,
-    n: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
+    n: Triple<Int, Atom, Int>,
     hi: Triple<Int, Int, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    t: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType
+    sym4: Triple<Int, Tok, Int>,
+    t: Triple<Int, TypeRef, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): AssociatedType
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType(
-            typeSpan = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+        AssociatedType(
+            typeSpan = Span(lo.second, hi.second),
             typeName = n.second,
             typeRef = t.second,
         )
@@ -9034,18 +9088,18 @@ internal fun action101(
 internal fun action102(
     text: String,
     lo: Triple<Int, Int, Int>,
-    attributes: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    from: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
+    attributes: Triple<Int, List<Attribute>, Int>,
+    from: Triple<Int, TerminalString, Int>,
     start: Triple<Int, Int, Int>,
     p: Triple<Int, String, Int>,
     hi: Triple<Int, Int, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion> {
-    val pattern = io.github.kotlinmania.lalrpop.parser.parsePattern(p.second, start.second + 2)
+): Result<Conversion> {
+    val pattern = parsePattern(p.second, start.second + 2)
         .getOrElse { return Result.failure(it) }
     return run {
         Result.success(
-            io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion(
-                span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second), attributes = attributes.second.toMutableList(), from = from.second,
+            Conversion(
+                span = Span(lo.second, hi.second), attributes = attributes.second.toMutableList(), from = from.second,
                 to = pattern,
             ),
         )
@@ -9055,23 +9109,23 @@ internal fun action102(
 internal fun action103(
     text: String,
     lo: Triple<Int, Int, Int>,
-    k: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
+    k: Triple<Int, PatternKind<TypeRef>, Int>,
     hi: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.Pattern(
-        span = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+): Pattern<TypeRef> {
+    return Pattern(
+        span = Span(lo.second, hi.second),
         kind = k.second,
     )
 }
 
 internal fun action104(
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.Enum(
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Pattern<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef> {
+    return PatternKind.Enum(
         path = sym0.second,
         pats = sym2.second.toMutableList(),
     )
@@ -9079,27 +9133,27 @@ internal fun action104(
 
 internal fun action105(
     text: String,
-    p: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    a0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    a1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
+    p: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    a0: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    a1: Triple<Int, FieldPattern<TypeRef>?, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef> {
     val fields = a0.second.toMutableList()
     a1.second?.let { fields.add(it) }
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.Struct(
+    return PatternKind.Struct(
         path = p.second, fields = fields, dotdot = false)
 }
 
 internal fun action106(
     text: String,
-    p: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    a0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.Struct(
+    p: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    a0: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef> {
+    return PatternKind.Struct(
         path = p.second,
         fields = a0.second.toMutableList(),
         dotdot = true)
@@ -9109,53 +9163,53 @@ internal
 fun action107
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.Underscore()
+    return PatternKind.Underscore()
 }
 
 internal
 fun action108
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.DotDot()
+    return PatternKind.DotDot()
 }
 
 internal
 fun action109
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.Choose(sym1.second)
+    return PatternKind.Choose(sym1.second)
 }
 
 internal
 fun action110
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Pattern<TypeRef>>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.Tuple(sym1.second.toMutableList())
+    return PatternKind.Tuple(sym1.second.toMutableList())
 }
 
 internal fun action111(
     text: String,
     c: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+): PatternKind<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.CharLiteral(
-        io.github.kotlinmania.lalrpop.Atom.from(c.second),
+    return PatternKind.CharLiteral(
+        Atom.from(c.second),
     )
 }
 
@@ -9163,10 +9217,10 @@ internal
 fun action112
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+): PatternKind<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.PathKind(sym0.second)
+    return PatternKind.PathKind(sym0.second)
 }
 
 internal
@@ -9174,23 +9228,23 @@ fun action113
 (
     text: String,
     s: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+): PatternKind<TypeRef>
 {
-    return io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind.StringKind(s.second)
+    return PatternKind.StringKind(s.second)
 }
 
 internal fun action114(
     text: String,
     lo: Triple<Int, Int, Int>,
-    id: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
+    id: Triple<Int, Atom, Int>,
     hi: Triple<Int, Int, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    pat: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym3: Triple<Int, Tok, Int>,
+    pat: Triple<Int, Pattern<TypeRef>, Int>,
+): FieldPattern<TypeRef>
 {
     return run {
-        io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern(
-            fieldSpan = io.github.kotlinmania.lalrpop.grammar.parseTree.Span(lo.second, hi.second),
+        FieldPattern(
+            fieldSpan = Span(lo.second, hi.second),
             fieldName = id.second,
             pattern = pat.second,
         )
@@ -9200,20 +9254,20 @@ internal fun action114(
 internal fun action115(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+): NonterminalString
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString(
-        io.github.kotlinmania.lalrpop.Atom.from(i.second),
+    return NonterminalString(
+        Atom.from(i.second),
     )
 }
 
 internal fun action116(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+): NonterminalString
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString(
-        io.github.kotlinmania.lalrpop.Atom.from(i.second),
+    return NonterminalString(
+        Atom.from(i.second),
     )
 }
 
@@ -9222,9 +9276,9 @@ fun action117
 (
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.Atom
+): Atom
 {
-    return io.github.kotlinmania.lalrpop.Atom.from(i.second)
+    return Atom.from(i.second)
 }
 
 internal
@@ -9232,9 +9286,9 @@ fun action118
 (
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.Atom
+): Atom
 {
-    return io.github.kotlinmania.lalrpop.Atom.from(i.second)
+    return Atom.from(i.second)
 }
 
 internal
@@ -9242,18 +9296,18 @@ fun action119
 (
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.Atom
+): Atom
 {
-    return io.github.kotlinmania.lalrpop.Atom.from(i.second)
+    return Atom.from(i.second)
 }
 
 internal fun action120(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime
+): Lifetime
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime(
-        io.github.kotlinmania.lalrpop.Atom.from(i.second),
+    return Lifetime(
+        Atom.from(i.second),
     )
 }
 
@@ -9261,8 +9315,8 @@ internal
 fun action121
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+    sym0: Triple<Int, TerminalString, Int>,
+): TerminalString
 {
     return sym0.second
 }
@@ -9270,10 +9324,10 @@ fun action121
 internal fun action122(
     text: String,
     i: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+): TerminalString
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString.Bare(
-        io.github.kotlinmania.lalrpop.Atom.from(i.second),
+    return TerminalString.Bare(
+        Atom.from(i.second),
     )
 }
 
@@ -9281,45 +9335,45 @@ internal
 fun action123
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+    sym0: Triple<Int, TerminalLiteral, Int>,
+): TerminalString
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString.Literal(sym0.second)
+    return TerminalString.Literal(sym0.second)
 }
 
 internal
 fun action124
 (
     text: String,
-    s: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral
+    s: Triple<Int, Atom, Int>,
+): TerminalLiteral
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral.Quoted(s.second)
+    return TerminalLiteral.Quoted(s.second)
 }
 
 internal
 fun action125
 (
     text: String,
-    s: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral
+    s: Triple<Int, Atom, Int>,
+): TerminalLiteral
 {
-    return io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral.Hir(s.second)
+    return TerminalLiteral.Hir(s.second)
 }
 
 internal fun action126(
     text: String,
     lo: Triple<Int, Int, Int>,
     s: Triple<Int, String, Int>,
-): Result<io.github.kotlinmania.lalrpop.Atom> {
-    val escaped = io.github.kotlinmania.lalrpop.tok.applyStringEscapes(s.second, lo.second + 1)
+): Result<Atom> {
+    val escaped = applyStringEscapes(s.second, lo.second + 1)
         .getOrElse { err ->
-            val tokErr = (err as io.github.kotlinmania.lalrpop.tok.TokError).err
+            val tokErr = (err as TokError).err
             return Result.failure(LrParseErrorException(
-                io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = tokErr),
+                ParseError.User(error = tokErr),
             ))
         }
-    return Result.success(io.github.kotlinmania.lalrpop.Atom.from(escaped))
+    return Result.success(Atom.from(escaped))
 }
 
 internal fun action127(
@@ -9327,11 +9381,11 @@ internal fun action127(
     lo: Triple<Int, Int, Int>,
     s: Triple<Int, String, Int>,
 ): Result<String> {
-    val escaped = io.github.kotlinmania.lalrpop.tok.applyStringEscapes(s.second, lo.second + 1)
+    val escaped = applyStringEscapes(s.second, lo.second + 1)
         .getOrElse { err ->
-            val tokErr = (err as io.github.kotlinmania.lalrpop.tok.TokError).err
+            val tokErr = (err as TokError).err
             return Result.failure(LrParseErrorException(
-                io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = tokErr),
+                ParseError.User(error = tokErr),
             ))
         }
     return Result.success(escaped)
@@ -9342,9 +9396,9 @@ fun action128
 (
     text: String,
     s: Triple<Int, String, Int>,
-): io.github.kotlinmania.lalrpop.Atom
+): Atom
 {
-    return io.github.kotlinmania.lalrpop.Atom.from(s.second)
+    return Atom.from(s.second)
 }
 
 internal
@@ -9361,8 +9415,8 @@ internal
 fun action130
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+    sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
+): FieldPattern<TypeRef>?
 {
     return sym0.second
 }
@@ -9373,7 +9427,7 @@ fun action131
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+): FieldPattern<TypeRef>?
 {
     return null
 }
@@ -9384,7 +9438,7 @@ fun action132
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<FieldPattern<TypeRef>>
 {
     return emptyList()
 }
@@ -9393,8 +9447,8 @@ internal
 fun action133
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+): List<FieldPattern<TypeRef>>
 {
     return v.second
 }
@@ -9403,18 +9457,18 @@ internal
 fun action134
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): FieldPattern<TypeRef>
 {
     return sym0.second
 }
 
 internal fun action135(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v0: Triple<Int, List<Pattern<TypeRef>>, Int>,
+    e1: Triple<Int, Pattern<TypeRef>?, Int>,
+): List<Pattern<TypeRef>>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9423,9 +9477,9 @@ internal fun action135(
 
 internal fun action136(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    v0: Triple<Int, List<Conversion>, Int>,
+    e1: Triple<Int, Conversion?, Int>,
+): List<Conversion>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9434,9 +9488,9 @@ internal fun action136(
 
 internal fun action137(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    v0: Triple<Int, List<MatchItem>, Int>,
+    e1: Triple<Int, MatchItem?, Int>,
+): List<MatchItem>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9449,7 +9503,7 @@ fun action138
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>
+): List<AssociatedType>
 {
     return emptyList()
 }
@@ -9458,8 +9512,8 @@ internal
 fun action139
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>
+    v: Triple<Int, List<AssociatedType>, Int>,
+): List<AssociatedType>
 {
     return v.second
 }
@@ -9470,7 +9524,7 @@ fun action140
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.Atom>
+): List<Atom>
 {
     return emptyList()
 }
@@ -9479,8 +9533,8 @@ internal
 fun action141
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-): List<io.github.kotlinmania.lalrpop.Atom>
+    v: Triple<Int, List<Atom>, Int>,
+): List<Atom>
 {
     return v.second
 }
@@ -9489,9 +9543,9 @@ internal
 fun action142
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.Atom
+    sym0: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Atom
 {
     return sym0.second
 }
@@ -9500,8 +9554,8 @@ internal
 fun action143
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.tok.Tok?
+    sym0: Triple<Int, Tok, Int>,
+): Tok?
 {
     return sym0.second
 }
@@ -9512,16 +9566,16 @@ fun action144
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.tok.Tok?
+): Tok?
 {
     return null
 }
 
 internal fun action145(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    v0: Triple<Int, List<TypeRef>, Int>,
+    e1: Triple<Int, TypeRef?, Int>,
+): List<TypeRef>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9532,8 +9586,8 @@ internal
 fun action146
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?
+    sym0: Triple<Int, Lifetime, Int>,
+): Lifetime?
 {
     return sym0.second
 }
@@ -9544,7 +9598,7 @@ fun action147
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?
+): Lifetime?
 {
     return null
 }
@@ -9553,8 +9607,8 @@ internal
 fun action148
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?
+    sym0: Triple<Int, ArgPattern, Int>,
+): ArgPattern?
 {
     return sym0.second
 }
@@ -9565,7 +9619,7 @@ fun action149
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?
+): ArgPattern?
 {
     return null
 }
@@ -9574,17 +9628,17 @@ internal
 fun action150
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>
+    sym0: Triple<Int, ArgPattern, Int>,
+): List<ArgPattern>
 {
     return listOf(sym0.second)
 }
 
 internal fun action151(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>
+    v: Triple<Int, List<ArgPattern>, Int>,
+    e: Triple<Int, ArgPattern, Int>,
+): List<ArgPattern>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -9595,18 +9649,18 @@ internal
 fun action152
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
+    sym0: Triple<Int, ArgPattern, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): ArgPattern
 {
     return sym0.second
 }
 
 internal fun action153(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    v0: Triple<Int, List<Symbol>, Int>,
+    e1: Triple<Int, Symbol?, Int>,
+): List<Symbol>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9617,8 +9671,8 @@ internal
 fun action154
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.tok.Tok?
+    sym0: Triple<Int, Tok, Int>,
+): Tok?
 {
     return sym0.second
 }
@@ -9629,7 +9683,7 @@ fun action155
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.tok.Tok?
+): Tok?
 {
     return null
 }
@@ -9640,7 +9694,7 @@ fun action156
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+): List<Symbol>
 {
     return emptyList()
 }
@@ -9649,8 +9703,8 @@ internal
 fun action157
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    v: Triple<Int, List<Symbol>, Int>,
+): List<Symbol>
 {
     return v.second
 }
@@ -9659,8 +9713,8 @@ internal
 fun action158
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?
+    sym0: Triple<Int, ActionKind, Int>,
+): ActionKind?
 {
     return sym0.second
 }
@@ -9671,7 +9725,7 @@ fun action159
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?
+): ActionKind?
 {
     return null
 }
@@ -9680,8 +9734,8 @@ internal
 fun action160
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?
+    sym0: Triple<Int, Condition, Int>,
+): Condition?
 {
     return sym0.second
 }
@@ -9692,7 +9746,7 @@ fun action161
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?
+): Condition?
 {
     return null
 }
@@ -9701,9 +9755,9 @@ internal
 fun action162
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Condition
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Condition, Int>,
+): Condition
 {
     return sym1.second
 }
@@ -9712,17 +9766,17 @@ internal
 fun action163
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, Symbol, Int>,
+): List<Symbol>
 {
     return listOf(sym0.second)
 }
 
 internal fun action164(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    v: Triple<Int, List<Symbol>, Int>,
+    e: Triple<Int, Symbol, Int>,
+): List<Symbol>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -9733,8 +9787,8 @@ internal
 fun action165
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.tok.Tok?
+    sym0: Triple<Int, Tok, Int>,
+): Tok?
 {
     return sym0.second
 }
@@ -9745,16 +9799,16 @@ fun action166
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.tok.Tok?
+): Tok?
 {
     return null
 }
 
 internal fun action167(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    v0: Triple<Int, List<Alternative>, Int>,
+    e1: Triple<Int, Alternative?, Int>,
+): List<Alternative>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9763,9 +9817,9 @@ internal fun action167(
 
 internal fun action168(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    v0: Triple<Int, List<NonterminalString>, Int>,
+    e1: Triple<Int, NonterminalString?, Int>,
+): List<NonterminalString>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9774,9 +9828,9 @@ internal fun action168(
 
 internal fun action169(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    v0: Triple<Int, List<Attribute>, Int>,
+    e1: Triple<Int, Attribute?, Int>,
+): List<Attribute>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9787,8 +9841,8 @@ internal
 fun action170
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?
+    sym0: Triple<Int, AttributeArg, Int>,
+): AttributeArg?
 {
     return sym0.second
 }
@@ -9799,7 +9853,7 @@ fun action171
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?
+): AttributeArg?
 {
     return null
 }
@@ -9808,8 +9862,8 @@ internal
 fun action172
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+    sym0: Triple<Int, TypeRef, Int>,
+): TypeRef?
 {
     return sym0.second
 }
@@ -9820,7 +9874,7 @@ fun action173
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+): TypeRef?
 {
     return null
 }
@@ -9829,18 +9883,18 @@ internal
 fun action174
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     return sym1.second
 }
 
 internal fun action175(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    v0: Triple<Int, List<Parameter>, Int>,
+    e1: Triple<Int, Parameter?, Int>,
+): List<Parameter>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9851,8 +9905,8 @@ internal
 fun action176
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?
+    sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+): List<TypeBoundParameter<TypeRef>>?
 {
     return sym0.second
 }
@@ -9863,7 +9917,7 @@ fun action177
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?
+): List<TypeBoundParameter<TypeRef>>?
 {
     return null
 }
@@ -9872,19 +9926,19 @@ internal
 fun action178
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     return sym1.second
 }
 
 internal fun action179(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    e1: Triple<Int, TypeBoundParameter<TypeRef>?, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9895,8 +9949,8 @@ internal
 fun action180
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+    sym0: Triple<Int, TypeRef, Int>,
+): TypeRef?
 {
     return sym0.second
 }
@@ -9907,7 +9961,7 @@ fun action181
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+): TypeRef?
 {
     return null
 }
@@ -9916,18 +9970,18 @@ internal
 fun action182
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     return sym1.second
 }
 
 internal fun action183(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    v0: Triple<Int, List<TypeRef>, Int>,
+    e1: Triple<Int, TypeRef?, Int>,
+): List<TypeRef>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9936,9 +9990,9 @@ internal fun action183(
 
 internal fun action184(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>> {
+    v: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+    e: Triple<Int, TypeBound<TypeRef>?, Int>,
+): List<TypeBound<TypeRef>> {
     val out = v.second.toMutableList()
     return when (val item = e.second) {
         null -> out
@@ -9960,9 +10014,9 @@ fun action185
 
 internal fun action186(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime> {
+    v: Triple<Int, List<Lifetime>, Int>,
+    e: Triple<Int, Lifetime?, Int>,
+): List<Lifetime> {
     val out = v.second.toMutableList()
     return when (val item = e.second) {
         null -> out
@@ -9974,9 +10028,9 @@ internal fun action186(
 
 internal fun action187(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    e1: Triple<Int, WhereClause<TypeRef>?, Int>,
+): List<WhereClause<TypeRef>>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -9985,9 +10039,9 @@ internal fun action187(
 
 internal fun action188(
     text: String,
-    v0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    e1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    v0: Triple<Int, List<TypeParameter>, Int>,
+    e1: Triple<Int, TypeParameter?, Int>,
+): List<TypeParameter>
 {
     val v = v0.second.toMutableList()
     e1.second?.let { v.add(it) }
@@ -10000,7 +10054,7 @@ fun action189
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+): List<GrammarItem>
 {
     return emptyList()
 }
@@ -10009,8 +10063,8 @@ internal
 fun action190
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+    v: Triple<Int, List<GrammarItem>, Int>,
+): List<GrammarItem>
 {
     return v.second
 }
@@ -10019,8 +10073,8 @@ internal
 fun action191
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?
+    sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+): List<WhereClause<TypeRef>>?
 {
     return sym0.second
 }
@@ -10031,7 +10085,7 @@ fun action192
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?
+): List<WhereClause<TypeRef>>?
 {
     return null
 }
@@ -10040,8 +10094,8 @@ internal
 fun action193
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?
+    sym0: Triple<Int, List<Parameter>, Int>,
+): List<Parameter>?
 {
     return sym0.second
 }
@@ -10052,7 +10106,7 @@ fun action194
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?
+): List<Parameter>?
 {
     return null
 }
@@ -10061,8 +10115,8 @@ internal
 fun action195
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+): List<TypeParameter>?
 {
     return sym0.second
 }
@@ -10073,7 +10127,7 @@ fun action196
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?
+): List<TypeParameter>?
 {
     return null
 }
@@ -10106,7 +10160,7 @@ fun action199
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+): List<Attribute>
 {
     return emptyList()
 }
@@ -10115,8 +10169,8 @@ internal
 fun action200
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    v: Triple<Int, List<Attribute>, Int>,
+): List<Attribute>
 {
     return v.second
 }
@@ -10127,7 +10181,7 @@ fun action201
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+): List<GrammarItem>
 {
     return emptyList()
 }
@@ -10136,8 +10190,8 @@ internal
 fun action202
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+    v: Triple<Int, List<GrammarItem>, Int>,
+): List<GrammarItem>
 {
     return v.second
 }
@@ -10188,17 +10242,17 @@ internal
 fun action207
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+    sym0: Triple<Int, GrammarItem, Int>,
+): List<GrammarItem>
 {
     return listOf(sym0.second)
 }
 
 internal fun action208(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+    v: Triple<Int, List<GrammarItem>, Int>,
+    e: Triple<Int, GrammarItem, Int>,
+): List<GrammarItem>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -10209,17 +10263,17 @@ internal
 fun action209
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, Attribute, Int>,
+): List<Attribute>
 {
     return listOf(sym0.second)
 }
 
 internal fun action210(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    v: Triple<Int, List<Attribute>, Int>,
+    e: Triple<Int, Attribute, Int>,
+): List<Attribute>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -10230,8 +10284,8 @@ internal
 fun action211
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+    sym0: Triple<Int, GrammarItem, Int>,
+): List<GrammarItem>
 {
     return listOf(sym0.second)
 }
@@ -10242,9 +10296,9 @@ fun action211
 
 internal fun action212(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>
+    v: Triple<Int, List<GrammarItem>, Int>,
+    e: Triple<Int, GrammarItem, Int>,
+): List<GrammarItem>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -10255,8 +10309,8 @@ internal
 fun action213
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?
+    sym0: Triple<Int, TypeParameter, Int>,
+): TypeParameter?
 {
     return sym0.second
 }
@@ -10267,7 +10321,7 @@ fun action214
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?
+): TypeParameter?
 {
     return null
 }
@@ -10278,7 +10332,7 @@ fun action215
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+): List<TypeParameter>
 {
     return emptyList()
 }
@@ -10287,8 +10341,8 @@ internal
 fun action216
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    v: Triple<Int, List<TypeParameter>, Int>,
+): List<TypeParameter>
 {
     return v.second
 }
@@ -10297,9 +10351,9 @@ internal
 fun action217
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
+    sym0: Triple<Int, TypeParameter, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): TypeParameter
 {
     return sym0.second
 }
@@ -10308,8 +10362,8 @@ internal
 fun action218
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+    sym0: Triple<Int, WhereClause<TypeRef>, Int>,
+): WhereClause<TypeRef>?
 {
     return sym0.second
 }
@@ -10320,7 +10374,7 @@ fun action219
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+): WhereClause<TypeRef>?
 {
     return null
 }
@@ -10331,7 +10385,7 @@ fun action220
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<WhereClause<TypeRef>>
 {
     return emptyList()
 }
@@ -10340,8 +10394,8 @@ internal
 fun action221
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+): List<WhereClause<TypeRef>>
 {
     return v.second
 }
@@ -10350,9 +10404,9 @@ internal
 fun action222
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, WhereClause<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): WhereClause<TypeRef>
 {
     return sym0.second
 }
@@ -10363,7 +10417,7 @@ fun action223
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+): List<Lifetime>
 {
     return emptyList()
 }
@@ -10372,8 +10426,8 @@ internal
 fun action224
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    v: Triple<Int, List<Lifetime>, Int>,
+): List<Lifetime>
 {
     return v.second
 }
@@ -10382,9 +10436,9 @@ internal
 fun action225
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime
+    sym0: Triple<Int, Lifetime, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Lifetime
 {
     return sym0.second
 }
@@ -10393,8 +10447,8 @@ internal
 fun action226
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+    sym0: Triple<Int, TypeBound<TypeRef>, Int>,
+): TypeBound<TypeRef>?
 {
     return sym0.second
 }
@@ -10405,7 +10459,7 @@ fun action227
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+): TypeBound<TypeRef>?
 {
     return null
 }
@@ -10416,7 +10470,7 @@ fun action228
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<TypeBound<TypeRef>>
 {
     return emptyList()
 }
@@ -10425,8 +10479,8 @@ internal
 fun action229
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+): List<TypeBound<TypeRef>>
 {
     return v.second
 }
@@ -10435,9 +10489,9 @@ internal
 fun action230
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeBound<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): TypeBound<TypeRef>
 {
     return sym0.second
 }
@@ -10446,8 +10500,8 @@ internal
 fun action231
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+    sym0: Triple<Int, TypeRef, Int>,
+): TypeRef?
 {
     return sym0.second
 }
@@ -10458,7 +10512,7 @@ fun action232
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+): TypeRef?
 {
     return null
 }
@@ -10469,7 +10523,7 @@ fun action233
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+): List<TypeRef>
 {
     return emptyList()
 }
@@ -10478,8 +10532,8 @@ internal
 fun action234
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    v: Triple<Int, List<TypeRef>, Int>,
+): List<TypeRef>
 {
     return v.second
 }
@@ -10488,9 +10542,9 @@ internal
 fun action235
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, TypeRef, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): TypeRef
 {
     return sym0.second
 }
@@ -10499,8 +10553,8 @@ internal
 fun action236
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+    sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+): TypeBoundParameter<TypeRef>?
 {
     return sym0.second
 }
@@ -10511,7 +10565,7 @@ fun action237
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+): TypeBoundParameter<TypeRef>?
 {
     return null
 }
@@ -10522,7 +10576,7 @@ fun action238
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<TypeBoundParameter<TypeRef>>
 {
     return emptyList()
 }
@@ -10531,8 +10585,8 @@ internal
 fun action239
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     return v.second
 }
@@ -10541,9 +10595,9 @@ internal
 fun action240
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): TypeBoundParameter<TypeRef>
 {
     return sym0.second
 }
@@ -10552,8 +10606,8 @@ internal
 fun action241
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?
+    sym0: Triple<Int, Parameter, Int>,
+): Parameter?
 {
     return sym0.second
 }
@@ -10564,7 +10618,7 @@ fun action242
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?
+): Parameter?
 {
     return null
 }
@@ -10575,7 +10629,7 @@ fun action243
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+): List<Parameter>
 {
     return emptyList()
 }
@@ -10584,8 +10638,8 @@ internal
 fun action244
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    v: Triple<Int, List<Parameter>, Int>,
+): List<Parameter>
 {
     return v.second
 }
@@ -10594,9 +10648,9 @@ internal
 fun action245
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter
+    sym0: Triple<Int, Parameter, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Parameter
 {
     return sym0.second
 }
@@ -10605,8 +10659,8 @@ internal
 fun action246
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?
+    sym0: Triple<Int, Attribute, Int>,
+): Attribute?
 {
     return sym0.second
 }
@@ -10617,7 +10671,7 @@ fun action247
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?
+): Attribute?
 {
     return null
 }
@@ -10628,7 +10682,7 @@ fun action248
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+): List<Attribute>
 {
     return emptyList()
 }
@@ -10637,8 +10691,8 @@ internal
 fun action249
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    v: Triple<Int, List<Attribute>, Int>,
+): List<Attribute>
 {
     return v.second
 }
@@ -10647,9 +10701,9 @@ internal
 fun action250
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
+    sym0: Triple<Int, Attribute, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Attribute
 {
     return sym0.second
 }
@@ -10658,8 +10712,8 @@ internal
 fun action251
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?
+    sym0: Triple<Int, NonterminalString, Int>,
+): NonterminalString?
 {
     return sym0.second
 }
@@ -10670,7 +10724,7 @@ fun action252
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?
+): NonterminalString?
 {
     return null
 }
@@ -10681,7 +10735,7 @@ fun action253
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+): List<NonterminalString>
 {
     return emptyList()
 }
@@ -10690,8 +10744,8 @@ internal
 fun action254
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    v: Triple<Int, List<NonterminalString>, Int>,
+): List<NonterminalString>
 {
     return v.second
 }
@@ -10700,9 +10754,9 @@ internal
 fun action255
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+    sym0: Triple<Int, NonterminalString, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): NonterminalString
 {
     return sym0.second
 }
@@ -10711,8 +10765,8 @@ internal
 fun action256
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?
+    sym0: Triple<Int, Alternative, Int>,
+): Alternative?
 {
     return sym0.second
 }
@@ -10723,7 +10777,7 @@ fun action257
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?
+): Alternative?
 {
     return null
 }
@@ -10734,7 +10788,7 @@ fun action258
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+): List<Alternative>
 {
     return emptyList()
 }
@@ -10743,8 +10797,8 @@ internal
 fun action259
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    v: Triple<Int, List<Alternative>, Int>,
+): List<Alternative>
 {
     return v.second
 }
@@ -10753,9 +10807,9 @@ internal
 fun action260
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, Alternative, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Alternative
 {
     return sym0.second
 }
@@ -10764,8 +10818,8 @@ internal
 fun action261
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?
+    sym0: Triple<Int, Symbol, Int>,
+): Symbol?
 {
     return sym0.second
 }
@@ -10776,7 +10830,7 @@ fun action262
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?
+): Symbol?
 {
     return null
 }
@@ -10787,7 +10841,7 @@ fun action263
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+): List<Symbol>
 {
     return emptyList()
 }
@@ -10796,8 +10850,8 @@ internal
 fun action264
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    v: Triple<Int, List<Symbol>, Int>,
+): List<Symbol>
 {
     return v.second
 }
@@ -10806,9 +10860,9 @@ internal
 fun action265
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Symbol, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Symbol
 {
     return sym0.second
 }
@@ -10817,8 +10871,8 @@ internal
 fun action266
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+    sym0: Triple<Int, TypeRef, Int>,
+): TypeRef?
 {
     return sym0.second
 }
@@ -10829,7 +10883,7 @@ fun action267
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+): TypeRef?
 {
     return null
 }
@@ -10840,7 +10894,7 @@ fun action268
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+): List<TypeRef>
 {
     return emptyList()
 }
@@ -10849,8 +10903,8 @@ internal
 fun action269
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    v: Triple<Int, List<TypeRef>, Int>,
+): List<TypeRef>
 {
     return v.second
 }
@@ -10859,9 +10913,9 @@ internal
 fun action270
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, TypeRef, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): TypeRef
 {
     return sym0.second
 }
@@ -10870,17 +10924,17 @@ internal
 fun action271
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): List<io.github.kotlinmania.lalrpop.Atom>
+    sym0: Triple<Int, Atom, Int>,
+): List<Atom>
 {
     return listOf(sym0.second)
 }
 
 internal fun action272(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): List<io.github.kotlinmania.lalrpop.Atom>
+    v: Triple<Int, List<Atom>, Int>,
+    e: Triple<Int, Atom, Int>,
+): List<Atom>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -10891,17 +10945,17 @@ internal
 fun action273
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>
+    sym0: Triple<Int, AssociatedType, Int>,
+): List<AssociatedType>
 {
     return listOf(sym0.second)
 }
 
 internal fun action274(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>
+    v: Triple<Int, List<AssociatedType>, Int>,
+    e: Triple<Int, AssociatedType, Int>,
+): List<AssociatedType>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -10912,8 +10966,8 @@ internal
 fun action275
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?
+    sym0: Triple<Int, MatchItem, Int>,
+): MatchItem?
 {
     return sym0.second
 }
@@ -10924,7 +10978,7 @@ fun action276
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?
+): MatchItem?
 {
     return null
 }
@@ -10935,7 +10989,7 @@ fun action277
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+): List<MatchItem>
 {
     return emptyList()
 }
@@ -10944,8 +10998,8 @@ internal
 fun action278
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    v: Triple<Int, List<MatchItem>, Int>,
+): List<MatchItem>
 {
     return v.second
 }
@@ -10954,9 +11008,9 @@ internal
 fun action279
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+    sym0: Triple<Int, MatchItem, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): MatchItem
 {
     return sym0.second
 }
@@ -10965,8 +11019,8 @@ internal
 fun action280
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?
+    sym0: Triple<Int, Conversion, Int>,
+): Conversion?
 {
     return sym0.second
 }
@@ -10977,7 +11031,7 @@ fun action281
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?
+): Conversion?
 {
     return null
 }
@@ -10988,7 +11042,7 @@ fun action282
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+): List<Conversion>
 {
     return emptyList()
 }
@@ -10997,8 +11051,8 @@ internal
 fun action283
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    v: Triple<Int, List<Conversion>, Int>,
+): List<Conversion>
 {
     return v.second
 }
@@ -11007,9 +11061,9 @@ internal
 fun action284
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion
+    sym0: Triple<Int, Conversion, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Conversion
 {
     return sym0.second
 }
@@ -11018,8 +11072,8 @@ internal
 fun action285
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+    sym0: Triple<Int, Pattern<TypeRef>, Int>,
+): Pattern<TypeRef>?
 {
     return sym0.second
 }
@@ -11030,7 +11084,7 @@ fun action286
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?
+): Pattern<TypeRef>?
 {
     return null
 }
@@ -11041,7 +11095,7 @@ fun action287
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<Pattern<TypeRef>>
 {
     return emptyList()
 }
@@ -11050,8 +11104,8 @@ internal
 fun action288
 (
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<Pattern<TypeRef>>, Int>,
+): List<Pattern<TypeRef>>
 {
     return v.second
 }
@@ -11060,9 +11114,9 @@ internal
 fun action289
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Pattern<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Pattern<TypeRef>
 {
     return sym0.second
 }
@@ -11071,17 +11125,17 @@ internal
 fun action290
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
+): List<FieldPattern<TypeRef>>
 {
     return listOf(sym0.second)
 }
 
 internal fun action291(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    e: Triple<Int, FieldPattern<TypeRef>, Int>,
+): List<FieldPattern<TypeRef>>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11092,17 +11146,17 @@ internal
 fun action292
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, Pattern<TypeRef>, Int>,
+): List<Pattern<TypeRef>>
 {
     return listOf(sym0.second)
 }
 
 internal fun action293(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<Pattern<TypeRef>>, Int>,
+    e: Triple<Int, Pattern<TypeRef>, Int>,
+): List<Pattern<TypeRef>>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11113,17 +11167,17 @@ internal
 fun action294
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, Conversion, Int>,
+): List<Conversion>
 {
     return listOf(sym0.second)
 }
 
 internal fun action295(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    v: Triple<Int, List<Conversion>, Int>,
+    e: Triple<Int, Conversion, Int>,
+): List<Conversion>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11134,17 +11188,17 @@ internal
 fun action296
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, MatchItem, Int>,
+): List<MatchItem>
 {
     return listOf(sym0.second)
 }
 
 internal fun action297(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    v: Triple<Int, List<MatchItem>, Int>,
+    e: Triple<Int, MatchItem, Int>,
+): List<MatchItem>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11155,17 +11209,17 @@ internal
 fun action298
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     return listOf(sym0.second)
 }
 
 internal fun action299(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    v: Triple<Int, List<TypeRef>, Int>,
+    e: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11176,17 +11230,17 @@ internal
 fun action300
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, Symbol, Int>,
+): List<Symbol>
 {
     return listOf(sym0.second)
 }
 
 internal fun action301(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    v: Triple<Int, List<Symbol>, Int>,
+    e: Triple<Int, Symbol, Int>,
+): List<Symbol>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11197,17 +11251,17 @@ internal
 fun action302
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, Alternative, Int>,
+): List<Alternative>
 {
     return listOf(sym0.second)
 }
 
 internal fun action303(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    v: Triple<Int, List<Alternative>, Int>,
+    e: Triple<Int, Alternative, Int>,
+): List<Alternative>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11218,17 +11272,17 @@ internal
 fun action304
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, NonterminalString, Int>,
+): List<NonterminalString>
 {
     return listOf(sym0.second)
 }
 
 internal fun action305(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    v: Triple<Int, List<NonterminalString>, Int>,
+    e: Triple<Int, NonterminalString, Int>,
+): List<NonterminalString>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11239,17 +11293,17 @@ internal
 fun action306
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, Attribute, Int>,
+): List<Attribute>
 {
     return listOf(sym0.second)
 }
 
 internal fun action307(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    v: Triple<Int, List<Attribute>, Int>,
+    e: Triple<Int, Attribute, Int>,
+): List<Attribute>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11260,17 +11314,17 @@ internal
 fun action308
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, Parameter, Int>,
+): List<Parameter>
 {
     return listOf(sym0.second)
 }
 
 internal fun action309(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    v: Triple<Int, List<Parameter>, Int>,
+    e: Triple<Int, Parameter, Int>,
+): List<Parameter>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11281,17 +11335,17 @@ internal
 fun action310
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     return listOf(sym0.second)
 }
 
 internal fun action311(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    e: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11302,17 +11356,17 @@ internal
 fun action312
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     return listOf(sym0.second)
 }
 
 internal fun action313(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    v: Triple<Int, List<TypeRef>, Int>,
+    e: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11323,17 +11377,17 @@ internal
 fun action314
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBound<TypeRef>, Int>,
+): List<TypeBound<TypeRef>>
 {
     return listOf(sym0.second)
 }
 
 internal fun action315(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+    e: Triple<Int, TypeBound<TypeRef>, Int>,
+): List<TypeBound<TypeRef>>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11344,17 +11398,17 @@ internal
 fun action316
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, Lifetime, Int>,
+): List<Lifetime>
 {
     return listOf(sym0.second)
 }
 
 internal fun action317(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    v: Triple<Int, List<Lifetime>, Int>,
+    e: Triple<Int, Lifetime, Int>,
+): List<Lifetime>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11365,17 +11419,17 @@ internal
 fun action318
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, WhereClause<TypeRef>, Int>,
+): List<WhereClause<TypeRef>>
 {
     return listOf(sym0.second)
 }
 
 internal fun action319(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    v: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    e: Triple<Int, WhereClause<TypeRef>, Int>,
+): List<WhereClause<TypeRef>>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11386,17 +11440,17 @@ internal
 fun action320
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, TypeParameter, Int>,
+): List<TypeParameter>
 {
     return listOf(sym0.second)
 }
 
 internal fun action321(
     text: String,
-    v: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    e: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    v: Triple<Int, List<TypeParameter>, Int>,
+    e: Triple<Int, TypeParameter, Int>,
+): List<TypeParameter>
 {
     val out = v.second.toMutableList()
     out.add(e.second)
@@ -11407,10 +11461,10 @@ internal
 fun action322
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Path
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Atom>, Int>,
+    sym2: Triple<Int, Atom, Int>,
+): Path
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -11431,9 +11485,9 @@ internal
 fun action323
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Path
+    sym0: Triple<Int, List<Atom>, Int>,
+    sym1: Triple<Int, Atom, Int>,
+): Path
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -11455,11 +11509,11 @@ internal
 fun action324
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Alternative>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): List<Alternative>
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -11481,10 +11535,10 @@ internal
 fun action325
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Alternative>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Alternative>
 {
     val start0 = sym2.third
     val end0 = sym2.third
@@ -11508,15 +11562,15 @@ fun action326
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
     sym3: Triple<Int, Int, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym4: Triple<Int, Atom, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, Symbol, Int>,
+    sym7: Triple<Int, Tok, Int>,
     sym8: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+): Symbol
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -11544,14 +11598,14 @@ fun action327
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
     sym2: Triple<Int, Int, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym3: Triple<Int, Atom, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, Symbol, Int>,
+    sym6: Triple<Int, Tok, Int>,
     sym7: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+): Symbol
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -11579,9 +11633,9 @@ internal
 fun action328
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Atom, Int>,
+): ArgPattern
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -11601,8 +11655,8 @@ internal
 fun action329
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
+    sym0: Triple<Int, Atom, Int>,
+): ArgPattern
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -11623,11 +11677,11 @@ internal
 fun action330
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Lifetime?, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -11649,10 +11703,10 @@ internal
 fun action331
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Lifetime?, Int>,
+    sym2: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -11675,9 +11729,9 @@ internal
 fun action332
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+): TypeRef?
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -11697,14 +11751,14 @@ internal
 fun action333
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+    sym1: Triple<Int, Path, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeRef>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, TypeRef, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym5.first
     val end0 = sym6.third
@@ -11729,12 +11783,12 @@ internal
 fun action334
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+    sym1: Triple<Int, Path, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeRef>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym4.third
     val end0 = sym4.third
@@ -11759,15 +11813,15 @@ internal
 fun action335
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, Path, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeRef>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym6.first
     val end0 = sym7.third
@@ -11793,13 +11847,13 @@ internal
 fun action336
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, Path, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeRef>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): TypeRef
 {
     val start0 = sym5.third
     val end0 = sym5.third
@@ -11825,9 +11879,9 @@ internal
 fun action337
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+): TypeRef?
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -11847,16 +11901,16 @@ internal
 fun action338
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
     sym2: Triple<Int, Int, Int>,
-    sym3: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
+    sym3: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
     sym4: Triple<Int, Int, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, TypeRef, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym5.first
     val end0 = sym6.third
@@ -11883,14 +11937,14 @@ internal
 fun action339
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
     sym2: Triple<Int, Int, Int>,
-    sym3: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
+    sym3: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
     sym4: Triple<Int, Int, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -11917,10 +11971,10 @@ internal
 fun action340
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeBoundParameter<TypeRef>>?
 {
     val start0 = sym0.first
     val end0 = sym2.third
@@ -11941,12 +11995,12 @@ internal
 fun action341
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+    sym1: Triple<Int, Path, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym2.first
     val end0 = sym4.third
@@ -11969,9 +12023,9 @@ internal
 fun action342
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+    sym1: Triple<Int, Path, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym1.third
     val end0 = sym1.third
@@ -11993,9 +12047,9 @@ internal
 fun action343
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Condition, Int>,
+): Condition?
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12015,14 +12069,14 @@ internal
 fun action344
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
     sym1: Triple<Int, Int, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int>,
+    sym2: Triple<Int, List<Symbol>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Condition, Int>,
+    sym5: Triple<Int, ActionKind?, Int>,
     sym6: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym3.first
     val end0 = sym4.third
@@ -12047,12 +12101,12 @@ internal
 fun action345
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
     sym1: Triple<Int, Int, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int>,
+    sym2: Triple<Int, List<Symbol>, Int>,
+    sym3: Triple<Int, ActionKind?, Int>,
     sym4: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -12078,11 +12132,11 @@ fun action346
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Condition, Int>,
+    sym3: Triple<Int, ActionKind, Int>,
     sym4: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12106,9 +12160,9 @@ fun action347
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
+    sym1: Triple<Int, ActionKind, Int>,
     sym2: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -12137,7 +12191,7 @@ internal fun action348(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+): List<TypeParameter>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -12159,7 +12213,7 @@ internal fun action349(
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+): Visibility
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -12181,9 +12235,9 @@ internal
 fun action350
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, Alternative, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Alternative>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12203,10 +12257,10 @@ internal
 fun action351
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, List<Alternative>, Int>,
+    sym1: Triple<Int, Alternative, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Alternative>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12227,8 +12281,8 @@ internal
 fun action352
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, Alternative?, Int>,
+): List<Alternative>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -12249,9 +12303,9 @@ internal
 fun action353
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, List<Alternative>, Int>,
+    sym1: Triple<Int, Alternative?, Int>,
+): List<Alternative>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -12271,9 +12325,9 @@ internal
 fun action354
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, Attribute, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Attribute>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12293,10 +12347,10 @@ internal
 fun action355
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Attribute, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Attribute>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12317,8 +12371,8 @@ internal
 fun action356
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, Attribute?, Int>,
+): List<Attribute>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -12339,9 +12393,9 @@ internal
 fun action357
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Attribute?, Int>,
+): List<Attribute>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -12361,9 +12415,9 @@ internal
 fun action358
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, Conversion, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Conversion>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12383,10 +12437,10 @@ internal
 fun action359
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, List<Conversion>, Int>,
+    sym1: Triple<Int, Conversion, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Conversion>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12407,8 +12461,8 @@ internal
 fun action360
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, Conversion?, Int>,
+): List<Conversion>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -12429,9 +12483,9 @@ internal
 fun action361
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, List<Conversion>, Int>,
+    sym1: Triple<Int, Conversion?, Int>,
+): List<Conversion>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -12451,9 +12505,9 @@ internal
 fun action362
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<FieldPattern<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12473,10 +12527,10 @@ internal
 fun action363
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    sym1: Triple<Int, FieldPattern<TypeRef>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<FieldPattern<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12497,11 +12551,11 @@ internal
 fun action364
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, FieldPattern<TypeRef>?, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -12525,12 +12579,12 @@ internal
 fun action365
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    sym3: Triple<Int, FieldPattern<TypeRef>?, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -12553,11 +12607,11 @@ internal
 fun action366
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -12581,12 +12635,12 @@ internal
 fun action367
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -12609,9 +12663,9 @@ internal
 fun action368
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, Parameter, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Parameter>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12631,10 +12685,10 @@ internal
 fun action369
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, List<Parameter>, Int>,
+    sym1: Triple<Int, Parameter, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Parameter>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12655,8 +12709,8 @@ internal
 fun action370
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, Parameter?, Int>,
+): List<Parameter>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -12677,9 +12731,9 @@ internal
 fun action371
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, List<Parameter>, Int>,
+    sym1: Triple<Int, Parameter?, Int>,
+): List<Parameter>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -12699,9 +12753,9 @@ internal
 fun action372
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, WhereClause<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<WhereClause<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12721,10 +12775,10 @@ internal
 fun action373
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym1: Triple<Int, WhereClause<TypeRef>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<WhereClause<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12745,8 +12799,8 @@ internal
 fun action374
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, WhereClause<TypeRef>?, Int>,
+): List<WhereClause<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -12767,9 +12821,9 @@ internal
 fun action375
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym1: Triple<Int, WhereClause<TypeRef>?, Int>,
+): List<WhereClause<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -12789,9 +12843,9 @@ internal
 fun action376
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.Atom>
+    sym0: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Atom>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12811,10 +12865,10 @@ internal
 fun action377
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.Atom>
+    sym0: Triple<Int, List<Atom>, Int>,
+    sym1: Triple<Int, Atom, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Atom>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12835,9 +12889,9 @@ internal
 fun action378
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Path
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Atom, Int>,
+): Path
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -12859,10 +12913,10 @@ internal
 fun action379
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Path
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Atom>, Int>,
+    sym2: Triple<Int, Atom, Int>,
+): Path
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -12883,8 +12937,8 @@ internal
 fun action380
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Path
+    sym0: Triple<Int, Atom, Int>,
+): Path
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -12905,9 +12959,9 @@ internal
 fun action381
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Path
+    sym0: Triple<Int, List<Atom>, Int>,
+    sym1: Triple<Int, Atom, Int>,
+): Path
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -12927,9 +12981,9 @@ internal
 fun action382
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, Lifetime, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Lifetime>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -12949,10 +13003,10 @@ internal
 fun action383
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, List<Lifetime>, Int>,
+    sym1: Triple<Int, Lifetime, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Lifetime>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -12973,8 +13027,8 @@ internal
 fun action384
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, Lifetime?, Int>,
+): List<Lifetime>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -12995,9 +13049,9 @@ internal
 fun action385
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, List<Lifetime>, Int>,
+    sym1: Triple<Int, Lifetime?, Int>,
+): List<Lifetime>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13017,9 +13071,9 @@ internal
 fun action386
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, MatchItem, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<MatchItem>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13039,10 +13093,10 @@ internal
 fun action387
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, List<MatchItem>, Int>,
+    sym1: Triple<Int, MatchItem, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<MatchItem>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13063,8 +13117,8 @@ internal
 fun action388
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, MatchItem?, Int>,
+): List<MatchItem>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13085,9 +13139,9 @@ internal
 fun action389
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, List<MatchItem>, Int>,
+    sym1: Triple<Int, MatchItem?, Int>,
+): List<MatchItem>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13107,9 +13161,9 @@ internal
 fun action390
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, NonterminalString, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<NonterminalString>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13129,10 +13183,10 @@ internal
 fun action391
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, List<NonterminalString>, Int>,
+    sym1: Triple<Int, NonterminalString, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<NonterminalString>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13153,8 +13207,8 @@ internal
 fun action392
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, NonterminalString?, Int>,
+): List<NonterminalString>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13175,9 +13229,9 @@ internal
 fun action393
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, List<NonterminalString>, Int>,
+    sym1: Triple<Int, NonterminalString?, Int>,
+): List<NonterminalString>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13197,9 +13251,9 @@ internal
 fun action394
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, Pattern<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Pattern<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13219,10 +13273,10 @@ internal
 fun action395
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
+    sym1: Triple<Int, Pattern<TypeRef>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Pattern<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13243,8 +13297,8 @@ internal
 fun action396
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, Pattern<TypeRef>?, Int>,
+): List<Pattern<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13265,9 +13319,9 @@ internal
 fun action397
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
+    sym1: Triple<Int, Pattern<TypeRef>?, Int>,
+): List<Pattern<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13287,9 +13341,9 @@ internal
 fun action398
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, Symbol, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<Symbol>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13309,10 +13363,10 @@ internal
 fun action399
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, List<Symbol>, Int>,
+    sym1: Triple<Int, Symbol, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<Symbol>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13333,8 +13387,8 @@ internal
 fun action400
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, Symbol?, Int>,
+): List<Symbol>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13355,9 +13409,9 @@ internal
 fun action401
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, List<Symbol>, Int>,
+    sym1: Triple<Int, Symbol?, Int>,
+): List<Symbol>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13377,9 +13431,9 @@ internal
 fun action402
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>
+    sym0: Triple<Int, ArgPattern, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<ArgPattern>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13399,10 +13453,10 @@ internal
 fun action403
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>
+    sym0: Triple<Int, List<ArgPattern>, Int>,
+    sym1: Triple<Int, ArgPattern, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<ArgPattern>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13423,9 +13477,9 @@ internal
 fun action404
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBound<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<TypeBound<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13445,10 +13499,10 @@ internal
 fun action405
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+    sym1: Triple<Int, TypeBound<TypeRef>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeBound<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13469,8 +13523,8 @@ internal
 fun action406
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBound<TypeRef>?, Int>,
+): List<TypeBound<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13491,9 +13545,9 @@ internal
 fun action407
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+    sym1: Triple<Int, TypeBound<TypeRef>?, Int>,
+): List<TypeBound<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13513,9 +13567,9 @@ internal
 fun action408
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13535,10 +13589,10 @@ internal
 fun action409
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym1: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13559,8 +13613,8 @@ internal
 fun action410
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBoundParameter<TypeRef>?, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13581,9 +13635,9 @@ internal
 fun action411
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym1: Triple<Int, TypeBoundParameter<TypeRef>?, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13603,9 +13657,9 @@ internal
 fun action412
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, TypeParameter, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<TypeParameter>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13625,10 +13679,10 @@ internal
 fun action413
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+    sym1: Triple<Int, TypeParameter, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeParameter>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13649,8 +13703,8 @@ internal
 fun action414
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, TypeParameter?, Int>,
+): List<TypeParameter>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13671,9 +13725,9 @@ internal
 fun action415
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+    sym1: Triple<Int, TypeParameter?, Int>,
+): List<TypeParameter>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13693,9 +13747,9 @@ internal
 fun action416
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13715,10 +13769,10 @@ internal
 fun action417
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeRef>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13739,8 +13793,8 @@ internal
 fun action418
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef?, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13761,9 +13815,9 @@ internal
 fun action419
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+    sym1: Triple<Int, TypeRef?, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13783,9 +13837,9 @@ internal
 fun action420
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym1.third
@@ -13805,10 +13859,10 @@ internal
 fun action421
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): List<TypeRef>
 {
     val start0 = sym1.first
     val end0 = sym2.third
@@ -13829,8 +13883,8 @@ internal
 fun action422
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef?, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13851,9 +13905,9 @@ internal
 fun action423
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+    sym1: Triple<Int, TypeRef?, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -13873,13 +13927,13 @@ internal
 fun action424
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Condition, Int>,
+    sym4: Triple<Int, ActionKind?, Int>,
     sym5: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -13905,11 +13959,11 @@ internal
 fun action425
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, ActionKind?, Int>,
     sym3: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -13933,11 +13987,11 @@ internal
 fun action426
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Condition, Int>,
+    sym2: Triple<Int, ActionKind, Int>,
     sym3: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13961,9 +14015,9 @@ internal
 fun action427
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
+    sym0: Triple<Int, ActionKind, Int>,
     sym1: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -13985,13 +14039,13 @@ internal
 fun action428
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Atom, Int>,
     sym2: Triple<Int, Int, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, TypeRef, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): AssociatedType
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -14017,10 +14071,10 @@ internal
 fun action429
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?, Int>,
+    sym0: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, AttributeArg?, Int>,
     sym2: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
+): Attribute
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14043,11 +14097,11 @@ internal
 fun action430
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
+    sym0: Triple<Int, NonterminalString, Int>,
+    sym1: Triple<Int, ConditionOp, Int>,
+    sym2: Triple<Int, Atom, Int>,
     sym3: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Condition
+): Condition
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14074,13 +14128,13 @@ internal
 fun action432
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
     sym2: Triple<Int, Int, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Conversion>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): EnumToken
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -14106,14 +14160,14 @@ internal
 fun action433
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
     sym1: Triple<Int, Int, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<AssociatedType>, Int>,
+    sym4: Triple<Int, EnumToken, Int>,
+    sym5: Triple<Int, List<AssociatedType>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14140,12 +14194,12 @@ internal
 fun action434
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
     sym1: Triple<Int, Int, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<AssociatedType>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14170,11 +14224,11 @@ internal
 fun action435
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
+    sym0: Triple<Int, Atom, Int>,
     sym1: Triple<Int, Int, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Pattern<TypeRef>, Int>,
+): FieldPattern<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14199,16 +14253,16 @@ fun action436
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
     sym4: Triple<Int, Int, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym8: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym9: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym5: Triple<Int, List<TypeParameter>?, Int>,
+    sym6: Triple<Int, List<Parameter>?, Int>,
+    sym7: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym8: Triple<Int, Tok, Int>,
+    sym9: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -14238,9 +14292,9 @@ internal
 fun action437
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
     sym1: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+): MatchItem
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14262,9 +14316,9 @@ internal
 fun action438
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
+    sym0: Triple<Int, TerminalLiteral, Int>,
     sym1: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+): MatchItem
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14288,12 +14342,12 @@ internal
 fun action440
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
     sym1: Triple<Int, Int, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, MatchContents, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): MatchToken
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14318,15 +14372,15 @@ internal
 fun action441
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym2: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
+    sym2: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
     sym3: Triple<Int, Int, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, TypeRef, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -14354,13 +14408,13 @@ internal
 fun action442
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym2: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
+    sym2: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
     sym3: Triple<Int, Int, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -14386,9 +14440,9 @@ internal
 fun action443
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
+    sym0: Triple<Int, PatternKind<TypeRef>, Int>,
     sym1: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+): Pattern<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14413,14 +14467,14 @@ internal
 fun action446
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Atom, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Symbol, Int>,
+    sym5: Triple<Int, Tok, Int>,
     sym6: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+): Symbol
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14456,13 +14510,13 @@ internal
 fun action447
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Atom, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Symbol, Int>,
+    sym4: Triple<Int, Tok, Int>,
     sym5: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+): Symbol
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14497,11 +14551,11 @@ internal
 fun action448
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Symbol, Int>,
+    sym2: Triple<Int, Tok, Int>,
     sym3: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+): Symbol
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14525,13 +14579,13 @@ internal
 fun action449
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tuple, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Symbol, Int>,
+    sym4: Triple<Int, Tok, Int>,
     sym5: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+): Symbol
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14557,9 +14611,9 @@ internal
 fun action450
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind, Int>,
+    sym0: Triple<Int, SymbolKind, Int>,
     sym1: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+): Symbol
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14581,12 +14635,12 @@ internal
 fun action451
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<ArgPattern>, Int>,
+    sym2: Triple<Int, ArgPattern?, Int>,
+    sym3: Triple<Int, Tok, Int>,
     sym4: Triple<Int, Int, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple
+): Tuple
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -14611,12 +14665,12 @@ internal
 fun action452
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Condition, Int>,
+    sym4: Triple<Int, ActionKind?, Int>,
+): Alternative
 {
     val start0 = sym4.third
     val end0 = sym4.third
@@ -14641,10 +14695,10 @@ internal
 fun action453
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, ActionKind?, Int>,
+): Alternative
 {
     val start0 = sym2.third
     val end0 = sym2.third
@@ -14667,10 +14721,10 @@ internal
 fun action454
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Condition, Int>,
+    sym2: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym2.third
     val end0 = sym2.third
@@ -14693,8 +14747,8 @@ internal
 fun action455
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -14715,12 +14769,12 @@ internal
 fun action456
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Atom, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, TypeRef, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): AssociatedType
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -14745,9 +14799,9 @@ internal
 fun action457
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
+    sym0: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, AttributeArg?, Int>,
+): Attribute
 {
     val start0 = sym1.third
     val end0 = sym1.third
@@ -14769,10 +14823,10 @@ internal
 fun action458
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Condition
+    sym0: Triple<Int, NonterminalString, Int>,
+    sym1: Triple<Int, ConditionOp, Int>,
+    sym2: Triple<Int, Atom, Int>,
+): Condition
 {
     val start0 = sym2.third
     val end0 = sym2.third
@@ -14797,12 +14851,12 @@ internal
 fun action460
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Conversion>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): EnumToken
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -14827,13 +14881,13 @@ internal
 fun action461
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<AssociatedType>, Int>,
+    sym3: Triple<Int, EnumToken, Int>,
+    sym4: Triple<Int, List<AssociatedType>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -14859,11 +14913,11 @@ internal
 fun action462
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<AssociatedType>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -14887,10 +14941,10 @@ internal
 fun action463
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Pattern<TypeRef>, Int>,
+): FieldPattern<TypeRef>
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -14914,15 +14968,15 @@ fun action464
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<Parameter>?, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -14951,8 +15005,8 @@ internal
 fun action465
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+    sym0: Triple<Int, Tok, Int>,
+): MatchItem
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -14973,8 +15027,8 @@ internal
 fun action466
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+    sym0: Triple<Int, TerminalLiteral, Int>,
+): MatchItem
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -14997,11 +15051,11 @@ internal
 fun action468
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, MatchContents, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): MatchToken
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -15025,14 +15079,14 @@ internal
 fun action469
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym2: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
+    sym2: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, TypeRef, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -15059,12 +15113,12 @@ internal
 fun action470
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym2: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
+    sym2: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -15089,8 +15143,8 @@ internal
 fun action471
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, PatternKind<TypeRef>, Int>,
+): Pattern<TypeRef>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -15111,13 +15165,13 @@ internal
 fun action472
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Atom, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Symbol, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Symbol
 {
     val start0 = sym5.third
     val end0 = sym5.third
@@ -15143,12 +15197,12 @@ internal
 fun action473
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Atom, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Symbol, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Symbol
 {
     val start0 = sym4.third
     val end0 = sym4.third
@@ -15173,10 +15227,10 @@ internal
 fun action474
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Symbol, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Symbol
 {
     val start0 = sym2.third
     val end0 = sym2.third
@@ -15199,12 +15253,12 @@ internal
 fun action475
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tuple, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Symbol, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Symbol
 {
     val start0 = sym4.third
     val end0 = sym4.third
@@ -15229,9 +15283,9 @@ internal
 fun action476
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, Symbol, Int>,
+    sym1: Triple<Int, RepeatOp, Int>,
+): Symbol
 {
     val start0 = sym1.third
     val end0 = sym1.third
@@ -15253,8 +15307,8 @@ internal
 fun action477
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol
+    sym0: Triple<Int, SymbolKind, Int>,
+): Symbol
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -15275,11 +15329,11 @@ internal
 fun action478
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<ArgPattern>, Int>,
+    sym2: Triple<Int, ArgPattern?, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Tuple
 {
     val start0 = sym3.third
     val end0 = sym3.third
@@ -15303,12 +15357,12 @@ internal
 fun action479
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Condition, Int>,
+    sym4: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -15331,11 +15385,11 @@ internal
 fun action480
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Condition, Int>,
+): Alternative
 {
     val start0 = sym3.third
     val end0 = sym3.third
@@ -15359,10 +15413,10 @@ internal
 fun action481
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -15383,9 +15437,9 @@ internal
 fun action482
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+): Alternative
 {
     val start0 = sym1.third
     val end0 = sym1.third
@@ -15407,8 +15461,8 @@ internal
 fun action483
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, Alternative, Int>,
+): List<Alternative>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -15429,7 +15483,7 @@ fun action484
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+): List<Alternative>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -15449,9 +15503,9 @@ internal
 fun action485
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, List<Alternative>, Int>,
+    sym1: Triple<Int, Alternative, Int>,
+): List<Alternative>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -15471,8 +15525,8 @@ internal
 fun action486
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>
+    sym0: Triple<Int, List<Alternative>, Int>,
+): List<Alternative>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -15493,11 +15547,11 @@ internal
 fun action487
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, EnumToken, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -15530,12 +15584,12 @@ internal
 fun action488
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, EnumToken, Int>,
+    sym3: Triple<Int, List<AssociatedType>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -15567,12 +15621,12 @@ internal
 fun action489
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<AssociatedType>, Int>,
+    sym3: Triple<Int, EnumToken, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -15604,13 +15658,13 @@ internal
 fun action490
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<AssociatedType>, Int>,
+    sym3: Triple<Int, EnumToken, Int>,
+    sym4: Triple<Int, List<AssociatedType>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -15641,10 +15695,10 @@ internal
 fun action491
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -15667,11 +15721,11 @@ internal
 fun action492
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<AssociatedType>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): GrammarItem
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -15693,11 +15747,11 @@ internal
 fun action493
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Symbol>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Condition, Int>,
+    sym3: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -15721,12 +15775,12 @@ internal
 fun action494
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Condition, Int>,
+    sym4: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -15749,10 +15803,10 @@ internal
 fun action495
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Symbol>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Condition, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -15775,11 +15829,11 @@ internal
 fun action496
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Condition, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -15801,9 +15855,9 @@ internal
 fun action497
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Symbol>, Int>,
+    sym1: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -15825,10 +15879,10 @@ internal
 fun action498
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+    sym2: Triple<Int, ActionKind, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -15849,8 +15903,8 @@ internal
 fun action499
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Symbol>, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -15871,9 +15925,9 @@ internal
 fun action500
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, List<Symbol>, Int>,
+): Alternative
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -15897,14 +15951,14 @@ fun action503
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>?, Int>,
+    sym4: Triple<Int, List<Parameter>?, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -15933,15 +15987,15 @@ fun action504
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<Parameter>?, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -15968,13 +16022,13 @@ internal
 fun action505
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym1: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Visibility, Int>,
+    sym1: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, TypeRef, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -16000,14 +16054,14 @@ internal
 fun action506
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym2: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
+    sym2: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, TypeRef, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -16032,11 +16086,11 @@ internal
 fun action507
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym1: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, Visibility, Int>,
+    sym1: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -16060,12 +16114,12 @@ internal
 fun action508
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int>,
-    sym2: Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Visibility, Int>,
+    sym2: Triple<Int, Pair<NonterminalString, List<NonterminalString>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Alternative>, Int>,
+): GrammarItem
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -16088,9 +16142,9 @@ internal
 fun action509
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
+    sym0: Triple<Int, Atom, Int>,
+    sym1: Triple<Int, AttributeArg, Int>,
+): Attribute
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -16110,8 +16164,8 @@ internal
 fun action510
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
+    sym0: Triple<Int, Atom, Int>,
+): Attribute
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -16132,8 +16186,8 @@ internal
 fun action511
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, Attribute, Int>,
+): List<Attribute>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -16154,7 +16208,7 @@ fun action512
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+): List<Attribute>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -16174,9 +16228,9 @@ internal
 fun action513
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Attribute, Int>,
+): List<Attribute>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -16196,8 +16250,8 @@ internal
 fun action514
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>
+    sym0: Triple<Int, List<Attribute>, Int>,
+): List<Attribute>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -16218,8 +16272,8 @@ internal
 fun action515
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, Conversion, Int>,
+): List<Conversion>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -16240,7 +16294,7 @@ fun action516
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+): List<Conversion>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -16260,9 +16314,9 @@ internal
 fun action517
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, List<Conversion>, Int>,
+    sym1: Triple<Int, Conversion, Int>,
+): List<Conversion>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -16282,8 +16336,8 @@ internal
 fun action518
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+    sym0: Triple<Int, List<Conversion>, Int>,
+): List<Conversion>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -16304,11 +16358,11 @@ internal
 fun action519
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, FieldPattern<TypeRef>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -16330,10 +16384,10 @@ internal
 fun action520
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -16356,12 +16410,12 @@ internal
 fun action521
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    sym3: Triple<Int, FieldPattern<TypeRef>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -16384,11 +16438,11 @@ internal
 fun action522
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): PatternKind<TypeRef>
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -16412,14 +16466,14 @@ internal
 fun action523
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, TypeRef, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+): WhereClause<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym3.third
@@ -16444,10 +16498,10 @@ internal
 fun action524
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+): WhereClause<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -16470,17 +16524,17 @@ internal
 fun action525
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym9: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Path, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<TypeRef>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, Tok, Int>,
+    sym9: Triple<Int, TypeRef, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym3.third
@@ -16508,13 +16562,13 @@ internal
 fun action526
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeRef>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, TypeRef, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -16540,15 +16594,15 @@ internal
 fun action527
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Path, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<TypeRef>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym3.third
@@ -16574,11 +16628,11 @@ internal
 fun action528
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeRef>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -16602,15 +16656,15 @@ internal
 fun action529
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Path, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym3.third
@@ -16636,11 +16690,11 @@ internal
 fun action530
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -16664,12 +16718,12 @@ internal
 fun action531
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Path, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym3.third
@@ -16692,8 +16746,8 @@ internal
 fun action532
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, Path, Int>,
+): TypeBound<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -16714,18 +16768,18 @@ internal
 fun action533
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym8: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym9: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym10: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, Path, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<TypeRef>, Int>,
+    sym8: Triple<Int, Tok, Int>,
+    sym9: Triple<Int, Tok, Int>,
+    sym10: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym1.first
     val end0 = sym4.third
@@ -16754,14 +16808,14 @@ internal
 fun action534
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Path, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeRef>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -16788,16 +16842,16 @@ internal
 fun action535
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym8: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, Path, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<TypeRef>, Int>,
+    sym8: Triple<Int, Tok, Int>,
+): TypeRef
 {
     val start0 = sym1.first
     val end0 = sym4.third
@@ -16824,12 +16878,12 @@ internal
 fun action536
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Path, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeRef>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): TypeRef
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -16855,13 +16909,13 @@ fun action537
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>?, Int>,
+    sym4: Triple<Int, List<Parameter>?, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym6.third
     val end0 = sym6.third
@@ -16889,14 +16943,14 @@ fun action538
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>?, Int>,
+    sym4: Triple<Int, List<Parameter>?, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym7.first
     val end0 = sym7.third
@@ -16923,14 +16977,14 @@ fun action539
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<Parameter>?, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym7.third
     val end0 = sym7.third
@@ -16959,15 +17013,15 @@ fun action540
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<Parameter>?, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym8.first
     val end0 = sym8.third
@@ -16994,8 +17048,8 @@ internal
 fun action541
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, Parameter, Int>,
+): List<Parameter>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -17016,7 +17070,7 @@ fun action542
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+): List<Parameter>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -17036,9 +17090,9 @@ internal
 fun action543
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, List<Parameter>, Int>,
+    sym1: Triple<Int, Parameter, Int>,
+): List<Parameter>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -17058,8 +17112,8 @@ internal
 fun action544
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>
+    sym0: Triple<Int, List<Parameter>, Int>,
+): List<Parameter>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -17081,13 +17135,13 @@ fun action545
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>?, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -17113,12 +17167,12 @@ fun action546
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>?, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -17145,14 +17199,14 @@ fun action547
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>?, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -17179,13 +17233,13 @@ fun action548
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>?, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -17213,14 +17267,14 @@ fun action549
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -17247,13 +17301,13 @@ fun action550
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -17281,15 +17335,15 @@ fun action551
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -17317,14 +17371,14 @@ fun action552
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>?, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -17353,13 +17407,13 @@ fun action553
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -17385,12 +17439,12 @@ fun action554
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -17417,12 +17471,12 @@ fun action555
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -17447,11 +17501,11 @@ fun action556
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -17477,14 +17531,14 @@ fun action557
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -17511,13 +17565,13 @@ fun action558
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -17545,13 +17599,13 @@ fun action559
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -17577,12 +17631,12 @@ fun action560
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -17609,14 +17663,14 @@ fun action561
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -17643,13 +17697,13 @@ fun action562
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -17677,13 +17731,13 @@ fun action563
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -17709,12 +17763,12 @@ fun action564
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -17741,15 +17795,15 @@ fun action565
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -17777,14 +17831,14 @@ fun action566
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -17813,14 +17867,14 @@ fun action567
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -17847,13 +17901,13 @@ fun action568
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>?, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -17880,8 +17934,8 @@ internal
 fun action569
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, WhereClause<TypeRef>, Int>,
+): List<WhereClause<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -17902,7 +17956,7 @@ fun action570
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<WhereClause<TypeRef>>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -17922,9 +17976,9 @@ internal
 fun action571
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym1: Triple<Int, WhereClause<TypeRef>, Int>,
+): List<WhereClause<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -17944,8 +17998,8 @@ internal
 fun action572
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+): List<WhereClause<TypeRef>>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -17967,13 +18021,13 @@ fun action573
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -17999,12 +18053,12 @@ fun action574
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -18031,12 +18085,12 @@ fun action575
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -18061,11 +18115,11 @@ fun action576
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -18091,12 +18145,12 @@ fun action577
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -18121,11 +18175,11 @@ fun action578
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -18151,11 +18205,11 @@ fun action579
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -18179,10 +18233,10 @@ fun action580
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -18207,14 +18261,14 @@ fun action581
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -18241,13 +18295,13 @@ fun action582
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -18275,13 +18329,13 @@ fun action583
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -18307,12 +18361,12 @@ fun action584
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -18339,13 +18393,13 @@ fun action585
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -18371,12 +18425,12 @@ fun action586
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -18403,12 +18457,12 @@ fun action587
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.first
     val end0 = sym3.third
@@ -18433,11 +18487,11 @@ fun action588
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym2.third
     val end0 = sym3.first
@@ -18463,14 +18517,14 @@ fun action589
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym6.first
     val end0 = sym6.third
@@ -18497,13 +18551,13 @@ fun action590
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym5.third
     val end0 = sym6.first
@@ -18531,13 +18585,13 @@ fun action591
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -18563,12 +18617,12 @@ fun action592
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -18595,13 +18649,13 @@ fun action593
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -18627,12 +18681,12 @@ fun action594
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -18659,12 +18713,12 @@ fun action595
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -18689,11 +18743,11 @@ fun action596
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -18719,15 +18773,15 @@ fun action597
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym6.first
     val end0 = sym6.third
@@ -18755,14 +18809,14 @@ fun action598
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym5.third
     val end0 = sym6.first
@@ -18791,14 +18845,14 @@ fun action599
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -18825,13 +18879,13 @@ fun action600
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -18859,14 +18913,14 @@ fun action601
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym5.first
     val end0 = sym5.third
@@ -18893,13 +18947,13 @@ fun action602
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.third
     val end0 = sym5.first
@@ -18927,13 +18981,13 @@ fun action603
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym4.first
     val end0 = sym4.third
@@ -18959,12 +19013,12 @@ fun action604
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym3.third
     val end0 = sym4.first
@@ -18990,8 +19044,8 @@ internal
 fun action605
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, Lifetime, Int>,
+): List<Lifetime>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19012,7 +19066,7 @@ fun action606
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+): List<Lifetime>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -19032,9 +19086,9 @@ internal
 fun action607
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, List<Lifetime>, Int>,
+    sym1: Triple<Int, Lifetime, Int>,
+): List<Lifetime>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -19054,8 +19108,8 @@ internal
 fun action608
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>
+    sym0: Triple<Int, List<Lifetime>, Int>,
+): List<Lifetime>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -19076,11 +19130,11 @@ internal
 fun action609
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Lifetime, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -19102,10 +19156,10 @@ internal
 fun action610
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -19128,10 +19182,10 @@ internal
 fun action611
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Lifetime, Int>,
+    sym2: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -19152,9 +19206,9 @@ internal
 fun action612
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+): TypeRef
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -19176,8 +19230,8 @@ internal
 fun action613
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, MatchItem, Int>,
+): List<MatchItem>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19198,7 +19252,7 @@ fun action614
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+): List<MatchItem>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -19218,9 +19272,9 @@ internal
 fun action615
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, List<MatchItem>, Int>,
+    sym1: Triple<Int, MatchItem, Int>,
+): List<MatchItem>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -19240,8 +19294,8 @@ internal
 fun action616
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+    sym0: Triple<Int, List<MatchItem>, Int>,
+): List<MatchItem>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -19262,8 +19316,8 @@ internal
 fun action617
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, NonterminalString, Int>,
+): List<NonterminalString>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19284,7 +19338,7 @@ fun action618
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+): List<NonterminalString>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -19304,9 +19358,9 @@ internal
 fun action619
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, List<NonterminalString>, Int>,
+    sym1: Triple<Int, NonterminalString, Int>,
+): List<NonterminalString>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -19326,8 +19380,8 @@ internal
 fun action620
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>
+    sym0: Triple<Int, List<NonterminalString>, Int>,
+): List<NonterminalString>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -19348,8 +19402,8 @@ internal
 fun action621
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, Pattern<TypeRef>, Int>,
+): List<Pattern<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19370,7 +19424,7 @@ fun action622
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<Pattern<TypeRef>>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -19390,9 +19444,9 @@ internal
 fun action623
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
+    sym1: Triple<Int, Pattern<TypeRef>, Int>,
+): List<Pattern<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -19412,8 +19466,8 @@ internal
 fun action624
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
+): List<Pattern<TypeRef>>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -19434,13 +19488,13 @@ internal
 fun action625
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19467,13 +19521,13 @@ fun action626
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19498,12 +19552,12 @@ internal
 fun action627
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19529,12 +19583,12 @@ fun action628
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19558,12 +19612,12 @@ internal
 fun action629
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19589,12 +19643,12 @@ fun action630
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19618,11 +19672,11 @@ internal
 fun action631
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19647,11 +19701,11 @@ fun action632
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19674,12 +19728,12 @@ internal
 fun action633
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19705,12 +19759,12 @@ fun action634
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19734,11 +19788,11 @@ internal
 fun action635
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19763,11 +19817,11 @@ fun action636
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19790,11 +19844,11 @@ internal
 fun action637
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19819,11 +19873,11 @@ fun action638
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19846,10 +19900,10 @@ internal
 fun action639
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19873,10 +19927,10 @@ fun action640
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19898,14 +19952,14 @@ internal
 fun action641
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19933,14 +19987,14 @@ fun action642
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -19966,13 +20020,13 @@ internal
 fun action643
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -19999,13 +20053,13 @@ fun action644
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20030,13 +20084,13 @@ internal
 fun action645
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20063,13 +20117,13 @@ fun action646
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20094,12 +20148,12 @@ internal
 fun action647
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20125,12 +20179,12 @@ fun action648
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20154,13 +20208,13 @@ internal
 fun action649
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20187,13 +20241,13 @@ fun action650
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20218,12 +20272,12 @@ internal
 fun action651
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20249,12 +20303,12 @@ fun action652
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20278,12 +20332,12 @@ internal
 fun action653
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20309,12 +20363,12 @@ fun action654
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20338,11 +20392,11 @@ internal
 fun action655
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20367,11 +20421,11 @@ fun action656
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20400,14 +20454,14 @@ internal
 fun action657
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20435,14 +20489,14 @@ fun action658
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20468,13 +20522,13 @@ internal
 fun action659
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20501,13 +20555,13 @@ fun action660
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20532,13 +20586,13 @@ internal
 fun action661
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20565,13 +20619,13 @@ fun action662
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20596,12 +20650,12 @@ internal
 fun action663
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20627,12 +20681,12 @@ fun action664
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20656,13 +20710,13 @@ internal
 fun action665
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20689,13 +20743,13 @@ fun action666
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20720,12 +20774,12 @@ internal
 fun action667
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20751,12 +20805,12 @@ fun action668
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20780,12 +20834,12 @@ internal
 fun action669
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20811,12 +20865,12 @@ fun action670
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20840,11 +20894,11 @@ internal
 fun action671
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20869,11 +20923,11 @@ fun action672
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20896,15 +20950,15 @@ internal
 fun action673
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -20933,15 +20987,15 @@ fun action674
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -20968,14 +21022,14 @@ internal
 fun action675
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -21003,14 +21057,14 @@ fun action676
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21036,14 +21090,14 @@ internal
 fun action677
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -21071,14 +21125,14 @@ fun action678
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21104,13 +21158,13 @@ internal
 fun action679
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -21137,13 +21191,13 @@ fun action680
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21168,14 +21222,14 @@ internal
 fun action681
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -21203,14 +21257,14 @@ fun action682
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21236,13 +21290,13 @@ internal
 fun action683
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -21269,13 +21323,13 @@ fun action684
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21300,13 +21354,13 @@ internal
 fun action685
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -21333,13 +21387,13 @@ fun action686
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21364,12 +21418,12 @@ internal
 fun action687
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -21395,12 +21449,12 @@ fun action688
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21434,7 +21488,7 @@ fun action689
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
+): ExprSymbol
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -21454,8 +21508,8 @@ internal
 fun action690
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
+    sym0: Triple<Int, List<Symbol>, Int>,
+): ExprSymbol
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21474,8 +21528,8 @@ internal
 fun action691
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, Symbol, Int>,
+): List<Symbol>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21496,7 +21550,7 @@ fun action692
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+): List<Symbol>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -21516,9 +21570,9 @@ internal
 fun action693
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, List<Symbol>, Int>,
+    sym1: Triple<Int, Symbol, Int>,
+): List<Symbol>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -21538,8 +21592,8 @@ internal
 fun action694
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>
+    sym0: Triple<Int, List<Symbol>, Int>,
+): List<Symbol>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -21560,11 +21614,11 @@ internal
 fun action695
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<ArgPattern>, Int>,
+    sym2: Triple<Int, ArgPattern, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Tuple
 {
     val start0 = sym2.first
     val end0 = sym2.third
@@ -21586,10 +21640,10 @@ internal
 fun action696
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<ArgPattern>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Tuple
 {
     val start0 = sym1.third
     val end0 = sym2.first
@@ -21612,8 +21666,8 @@ internal
 fun action697
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBound<TypeRef>, Int>,
+): List<TypeBound<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21634,7 +21688,7 @@ fun action698
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<TypeBound<TypeRef>>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -21654,9 +21708,9 @@ internal
 fun action699
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+    sym1: Triple<Int, TypeBound<TypeRef>, Int>,
+): List<TypeBound<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -21676,8 +21730,8 @@ internal
 fun action700
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
+): List<TypeBound<TypeRef>>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -21698,8 +21752,8 @@ internal
 fun action701
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21720,7 +21774,7 @@ fun action702
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -21740,9 +21794,9 @@ internal
 fun action703
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+    sym1: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -21762,8 +21816,8 @@ internal
 fun action704
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>
+    sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
+): List<TypeBoundParameter<TypeRef>>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -21784,8 +21838,8 @@ internal
 fun action705
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, TypeParameter, Int>,
+): List<TypeParameter>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21806,7 +21860,7 @@ fun action706
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+): List<TypeParameter>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -21826,9 +21880,9 @@ internal
 fun action707
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+    sym1: Triple<Int, TypeParameter, Int>,
+): List<TypeParameter>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -21848,8 +21902,8 @@ internal
 fun action708
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>
+    sym0: Triple<Int, List<TypeParameter>, Int>,
+): List<TypeParameter>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -21870,8 +21924,8 @@ internal
 fun action709
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21892,7 +21946,7 @@ fun action710
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+): List<TypeRef>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -21912,9 +21966,9 @@ internal
 fun action711
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -21934,8 +21988,8 @@ internal
 fun action712
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -21956,8 +22010,8 @@ internal
 fun action713
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -21978,7 +22032,7 @@ fun action714
     text: String,
     lookbehind: Int,
     lookahead: Int,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+): List<TypeRef>
 {
     val start0 = lookbehind
     val end0 = lookahead
@@ -21998,9 +22052,9 @@ internal
 fun action715
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+    sym1: Triple<Int, TypeRef, Int>,
+): List<TypeRef>
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22020,8 +22074,8 @@ internal
 fun action716
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int>,
-): List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>
+    sym0: Triple<Int, List<TypeRef>, Int>,
+): List<TypeRef>
 {
     val start0 = sym0.third
     val end0 = sym0.third
@@ -22042,12 +22096,12 @@ internal
 fun action717
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22072,13 +22126,13 @@ internal
 fun action718
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22103,12 +22157,12 @@ fun action719
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22135,13 +22189,13 @@ fun action720
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22166,11 +22220,11 @@ internal
 fun action721
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22194,12 +22248,12 @@ internal
 fun action722
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22223,11 +22277,11 @@ fun action723
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22253,12 +22307,12 @@ fun action724
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22282,11 +22336,11 @@ internal
 fun action725
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Parameter>, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22310,12 +22364,12 @@ internal
 fun action726
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22339,11 +22393,11 @@ fun action727
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22369,12 +22423,12 @@ fun action728
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22398,10 +22452,10 @@ internal
 fun action729
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Parameter>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22424,11 +22478,11 @@ internal
 fun action730
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22451,10 +22505,10 @@ fun action731
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22479,11 +22533,11 @@ fun action732
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22510,11 +22564,11 @@ internal
 fun action733
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22538,12 +22592,12 @@ internal
 fun action734
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22567,11 +22621,11 @@ fun action735
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22597,12 +22651,12 @@ fun action736
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22626,10 +22680,10 @@ internal
 fun action737
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22652,11 +22706,11 @@ internal
 fun action738
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22679,10 +22733,10 @@ fun action739
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22707,11 +22761,11 @@ fun action740
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22734,10 +22788,10 @@ internal
 fun action741
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22760,11 +22814,11 @@ internal
 fun action742
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22787,10 +22841,10 @@ fun action743
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22815,11 +22869,11 @@ fun action744
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22842,9 +22896,9 @@ internal
 fun action745
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22866,10 +22920,10 @@ internal
 fun action746
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -22891,9 +22945,9 @@ fun action747
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -22917,10 +22971,10 @@ fun action748
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -22942,13 +22996,13 @@ internal
 fun action749
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -22974,14 +23028,14 @@ internal
 fun action750
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23007,13 +23061,13 @@ fun action751
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23041,14 +23095,14 @@ fun action752
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23074,12 +23128,12 @@ internal
 fun action753
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23104,13 +23158,13 @@ internal
 fun action754
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23135,12 +23189,12 @@ fun action755
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23167,13 +23221,13 @@ fun action756
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23198,12 +23252,12 @@ internal
 fun action757
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Parameter>, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23228,13 +23282,13 @@ internal
 fun action758
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23259,12 +23313,12 @@ fun action759
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23291,13 +23345,13 @@ fun action760
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23322,11 +23376,11 @@ internal
 fun action761
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<Parameter>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23350,12 +23404,12 @@ internal
 fun action762
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23379,11 +23433,11 @@ fun action763
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23409,12 +23463,12 @@ fun action764
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23438,12 +23492,12 @@ internal
 fun action765
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23468,13 +23522,13 @@ internal
 fun action766
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23499,12 +23553,12 @@ fun action767
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23531,13 +23585,13 @@ fun action768
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23562,11 +23616,11 @@ internal
 fun action769
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<TypeParameter>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23590,12 +23644,12 @@ internal
 fun action770
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23619,11 +23673,11 @@ fun action771
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23649,12 +23703,12 @@ fun action772
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23678,11 +23732,11 @@ internal
 fun action773
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23706,12 +23760,12 @@ internal
 fun action774
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23735,11 +23789,11 @@ fun action775
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23765,12 +23819,12 @@ fun action776
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23794,10 +23848,10 @@ internal
 fun action777
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, Tok, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23820,11 +23874,11 @@ internal
 fun action778
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23847,10 +23901,10 @@ fun action779
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -23875,11 +23929,11 @@ fun action780
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -23908,13 +23962,13 @@ internal
 fun action781
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -23940,14 +23994,14 @@ internal
 fun action782
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -23973,13 +24027,13 @@ fun action783
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24007,14 +24061,14 @@ fun action784
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24040,12 +24094,12 @@ internal
 fun action785
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24070,13 +24124,13 @@ internal
 fun action786
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24101,12 +24155,12 @@ fun action787
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24133,13 +24187,13 @@ fun action788
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24164,12 +24218,12 @@ internal
 fun action789
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24194,13 +24248,13 @@ internal
 fun action790
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24225,12 +24279,12 @@ fun action791
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24257,13 +24311,13 @@ fun action792
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24288,11 +24342,11 @@ internal
 fun action793
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24316,12 +24370,12 @@ internal
 fun action794
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24345,11 +24399,11 @@ fun action795
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24375,12 +24429,12 @@ fun action796
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24404,12 +24458,12 @@ internal
 fun action797
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24434,13 +24488,13 @@ internal
 fun action798
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24465,12 +24519,12 @@ fun action799
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24497,13 +24551,13 @@ fun action800
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24528,11 +24582,11 @@ internal
 fun action801
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24556,12 +24610,12 @@ internal
 fun action802
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24585,11 +24639,11 @@ fun action803
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24615,12 +24669,12 @@ fun action804
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24644,11 +24698,11 @@ internal
 fun action805
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24672,12 +24726,12 @@ internal
 fun action806
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24701,11 +24755,11 @@ fun action807
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24731,12 +24785,12 @@ fun action808
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24760,10 +24814,10 @@ internal
 fun action809
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24786,11 +24840,11 @@ internal
 fun action810
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24813,10 +24867,10 @@ fun action811
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24841,11 +24895,11 @@ fun action812
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -24868,14 +24922,14 @@ internal
 fun action813
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -24902,15 +24956,15 @@ internal
 fun action814
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -24937,14 +24991,14 @@ fun action815
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -24973,15 +25027,15 @@ fun action816
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym7: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym8: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym7: Triple<Int, Tok, Int>,
+    sym8: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25008,13 +25062,13 @@ internal
 fun action817
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -25040,14 +25094,14 @@ internal
 fun action818
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -25073,13 +25127,13 @@ fun action819
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -25107,14 +25161,14 @@ fun action820
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<Parameter>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25140,13 +25194,13 @@ internal
 fun action821
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -25172,14 +25226,14 @@ internal
 fun action822
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -25205,13 +25259,13 @@ fun action823
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -25239,14 +25293,14 @@ fun action824
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25272,12 +25326,12 @@ internal
 fun action825
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<Parameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -25302,13 +25356,13 @@ internal
 fun action826
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -25333,12 +25387,12 @@ fun action827
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<Parameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -25365,13 +25419,13 @@ fun action828
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<Parameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25396,13 +25450,13 @@ internal
 fun action829
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -25428,14 +25482,14 @@ internal
 fun action830
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -25461,13 +25515,13 @@ fun action831
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -25495,14 +25549,14 @@ fun action832
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym6: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym7: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym6: Triple<Int, Tok, Int>,
+    sym7: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25528,12 +25582,12 @@ internal
 fun action833
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<TypeParameter>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -25558,13 +25612,13 @@ internal
 fun action834
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -25589,12 +25643,12 @@ fun action835
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<TypeParameter>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -25621,13 +25675,13 @@ fun action836
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<TypeParameter>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25652,12 +25706,12 @@ internal
 fun action837
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -25682,13 +25736,13 @@ internal
 fun action838
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -25713,12 +25767,12 @@ fun action839
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -25745,13 +25799,13 @@ fun action840
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int>,
-    sym5: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym6: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<WhereClause<TypeRef>>, Int>,
+    sym5: Triple<Int, Tok, Int>,
+    sym6: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25776,11 +25830,11 @@ internal
 fun action841
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, Tok, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -25804,12 +25858,12 @@ internal
 fun action842
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym0: Triple<Int, List<GrammarItem>, Int>,
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -25833,11 +25887,11 @@ fun action843
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym2: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<Attribute>, Int>,
+    sym2: Triple<Int, Tok, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym0.third
     val end0 = sym1.first
@@ -25863,12 +25917,12 @@ fun action844
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
-    sym1: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-    sym2: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym3: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym4: Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>,
-    sym5: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int>,
-): io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
+    sym1: Triple<Int, List<GrammarItem>, Int>,
+    sym2: Triple<Int, List<Attribute>, Int>,
+    sym3: Triple<Int, Tok, Int>,
+    sym4: Triple<Int, Tok, Int>,
+    sym5: Triple<Int, List<GrammarItem>, Int>,
+): Grammar
 {
     val start0 = sym1.first
     val end0 = sym1.third
@@ -25890,7 +25944,7 @@ fun action844
 
 
 interface ToTriple {
-    fun toTriple(): Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>>
+    fun toTriple(): Result<Triple<Int, Tok, Int>>
 }
 
 /**
@@ -25904,7 +25958,7 @@ internal class LrParseErrorException(val parseError: ParseError<Int, Tok, TokErr
 /**
  * Bare-triple case: returns the receiver wrapped in a successful result.
  */
-internal fun Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>.toTriple(): Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>> {
+internal fun Triple<Int, Tok, Int>.toTriple(): Result<Triple<Int, Tok, Int>> {
     return Result.success(this)
 }
 
@@ -25912,16 +25966,16 @@ internal fun Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>.toTriple():
  * Fallible-lexer case: lexer errors are mapped to the user-error variant
  * of the parse error.
  */
-internal fun Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>>.toTriple(): Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>> = fold(
+internal fun Result<Triple<Int, Tok, Int>>.toTriple(): Result<Triple<Int, Tok, Int>> = fold(
     onSuccess = { Result.success(it) },
-    onFailure = { err -> Result.failure((err as? io.github.kotlinmania.lalrpop.tok.TokError)?.err?.let { LrParseErrorException(io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = it)) } ?: err) })
+    onFailure = { err -> Result.failure((err as? TokError)?.err?.let { LrParseErrorException(ParseError.User(error = it)) } ?: err) })
 
 internal
 fun reduce0(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -25939,7 +25993,7 @@ fun reduce1(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -25956,7 +26010,7 @@ fun reduce2(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -25974,7 +26028,7 @@ fun reduce3(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -25991,7 +26045,7 @@ fun reduce4(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26009,7 +26063,7 @@ fun reduce5(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26025,7 +26079,7 @@ internal fun reduce6(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("->" <TypeRef>) = "->", TypeRef => ActionFn(182);
@@ -26045,7 +26099,7 @@ internal fun reduce7(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("->" <TypeRef>)? = "->", TypeRef => ActionFn(332);
@@ -26066,7 +26120,7 @@ fun reduce8(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26082,7 +26136,7 @@ internal fun reduce9(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (":" <TypeRef>) = ":", TypeRef => ActionFn(174);
@@ -26102,7 +26156,7 @@ internal fun reduce10(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (":" <TypeRef>)? = ":", TypeRef => ActionFn(337);
@@ -26123,7 +26177,7 @@ fun reduce11(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26139,7 +26193,7 @@ internal fun reduce12(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("<" <Comma<TypeBoundParameter>> ">") = "<", Comma<TypeBoundParameter>, ">" => ActionFn(178);
@@ -26160,7 +26214,7 @@ internal fun reduce13(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("<" <Comma<TypeBoundParameter>> ">")? = "<", Comma<TypeBoundParameter>, ">" => ActionFn(340);
@@ -26182,7 +26236,7 @@ fun reduce14(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26198,7 +26252,7 @@ internal fun reduce15(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("if" <Cond>) = "if", Cond => ActionFn(162);
@@ -26218,7 +26272,7 @@ internal fun reduce16(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("if" <Cond>)? = "if", Cond => ActionFn(343);
@@ -26239,7 +26293,7 @@ fun reduce17(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26256,7 +26310,7 @@ fun reduce18(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26272,7 +26326,7 @@ internal fun reduce19(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Alternative> ",") = Alternative, "," => ActionFn(260);
@@ -26293,7 +26347,7 @@ fun reduce20(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26310,7 +26364,7 @@ fun reduce21(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26327,7 +26381,7 @@ internal fun reduce22(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Alternative> ",")+ = Alternative, "," => ActionFn(350);
@@ -26347,7 +26401,7 @@ internal fun reduce23(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Alternative> ",")+ = (<Alternative> ",")+, Alternative, "," => ActionFn(351);
@@ -26368,7 +26422,7 @@ internal fun reduce24(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",") = AttributeInner, "," => ActionFn(250);
@@ -26389,7 +26443,7 @@ fun reduce25(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26406,7 +26460,7 @@ fun reduce26(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26423,7 +26477,7 @@ internal fun reduce27(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")+ = AttributeInner, "," => ActionFn(354);
@@ -26443,7 +26497,7 @@ internal fun reduce28(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")+ = (<AttributeInner> ",")+, AttributeInner, "," => ActionFn(355);
@@ -26464,7 +26518,7 @@ internal fun reduce29(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Conversion> ",") = Conversion, "," => ActionFn(284);
@@ -26485,7 +26539,7 @@ fun reduce30(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26502,7 +26556,7 @@ fun reduce31(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26519,7 +26573,7 @@ internal fun reduce32(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Conversion> ",")+ = Conversion, "," => ActionFn(358);
@@ -26539,7 +26593,7 @@ internal fun reduce33(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Conversion> ",")+ = (<Conversion> ",")+, Conversion, "," => ActionFn(359);
@@ -26560,7 +26614,7 @@ internal fun reduce34(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",") = FieldPattern, "," => ActionFn(134);
@@ -26581,7 +26635,7 @@ fun reduce35(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26598,7 +26652,7 @@ fun reduce36(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26615,7 +26669,7 @@ internal fun reduce37(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")+ = FieldPattern, "," => ActionFn(362);
@@ -26635,7 +26689,7 @@ internal fun reduce38(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")+ = (<FieldPattern> ",")+, FieldPattern, "," => ActionFn(363);
@@ -26656,7 +26710,7 @@ internal fun reduce39(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",") = GrammarParameter, "," => ActionFn(245);
@@ -26677,7 +26731,7 @@ fun reduce40(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26694,7 +26748,7 @@ fun reduce41(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26711,7 +26765,7 @@ internal fun reduce42(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")+ = GrammarParameter, "," => ActionFn(368);
@@ -26731,7 +26785,7 @@ internal fun reduce43(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")+ = (<GrammarParameter> ",")+, GrammarParameter, "," => ActionFn(369);
@@ -26752,7 +26806,7 @@ internal fun reduce44(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",") = GrammarWhereClause, "," => ActionFn(222);
@@ -26773,7 +26827,7 @@ fun reduce45(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26790,7 +26844,7 @@ fun reduce46(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26807,7 +26861,7 @@ internal fun reduce47(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")+ = GrammarWhereClause, "," => ActionFn(372);
@@ -26827,7 +26881,7 @@ internal fun reduce48(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")+ = (<GrammarWhereClause> ",")+, GrammarWhereClause, "," => ActionFn(373);
@@ -26848,7 +26902,7 @@ internal fun reduce49(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Id> "::") = Id, "::" => ActionFn(142);
@@ -26869,7 +26923,7 @@ fun reduce50(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26886,7 +26940,7 @@ fun reduce51(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26903,7 +26957,7 @@ internal fun reduce52(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Id> "::")+ = Id, "::" => ActionFn(376);
@@ -26923,7 +26977,7 @@ internal fun reduce53(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Id> "::")+ = (<Id> "::")+, Id, "::" => ActionFn(377);
@@ -26944,7 +26998,7 @@ internal fun reduce54(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -26964,7 +27018,7 @@ fun reduce55(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26980,7 +27034,7 @@ fun reduce56(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26996,7 +27050,7 @@ internal fun reduce57(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -27015,7 +27069,7 @@ internal fun reduce58(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -27035,7 +27089,7 @@ internal fun reduce59(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<MatchItem> ",") = MatchItem, "," => ActionFn(279);
@@ -27056,7 +27110,7 @@ fun reduce60(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27073,7 +27127,7 @@ fun reduce61(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27090,7 +27144,7 @@ internal fun reduce62(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")+ = MatchItem, "," => ActionFn(386);
@@ -27110,7 +27164,7 @@ internal fun reduce63(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")+ = (<MatchItem> ",")+, MatchItem, "," => ActionFn(387);
@@ -27131,7 +27185,7 @@ internal fun reduce64(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",") = NotMacroId, "," => ActionFn(255);
@@ -27152,7 +27206,7 @@ fun reduce65(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27169,7 +27223,7 @@ fun reduce66(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27186,7 +27240,7 @@ internal fun reduce67(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")+ = NotMacroId, "," => ActionFn(390);
@@ -27206,7 +27260,7 @@ internal fun reduce68(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")+ = (<NotMacroId> ",")+, NotMacroId, "," => ActionFn(391);
@@ -27227,7 +27281,7 @@ internal fun reduce69(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Pattern> ",") = Pattern, "," => ActionFn(289);
@@ -27248,7 +27302,7 @@ fun reduce70(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27265,7 +27319,7 @@ fun reduce71(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27282,7 +27336,7 @@ internal fun reduce72(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Pattern> ",")+ = Pattern, "," => ActionFn(394);
@@ -27302,7 +27356,7 @@ internal fun reduce73(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Pattern> ",")+ = (<Pattern> ",")+, Pattern, "," => ActionFn(395);
@@ -27323,7 +27377,7 @@ internal fun reduce74(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<LrSymbol> ",") = LrSymbol, "," => ActionFn(265);
@@ -27344,7 +27398,7 @@ fun reduce75(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27361,7 +27415,7 @@ fun reduce76(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27378,7 +27432,7 @@ internal fun reduce77(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<LrSymbol> ",")+ = LrSymbol, "," => ActionFn(398);
@@ -27398,7 +27452,7 @@ internal fun reduce78(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<LrSymbol> ",")+ = (<LrSymbol> ",")+, LrSymbol, "," => ActionFn(399);
@@ -27419,7 +27473,7 @@ internal fun reduce79(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TupleItem> ",") = TupleItem, "," => ActionFn(152);
@@ -27439,7 +27493,7 @@ internal fun reduce80(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TupleItem> ",")+ = TupleItem, "," => ActionFn(402);
@@ -27459,7 +27513,7 @@ internal fun reduce81(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TupleItem> ",")+ = (<TupleItem> ",")+, TupleItem, "," => ActionFn(403);
@@ -27480,7 +27534,7 @@ internal fun reduce82(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBound> "+") = TypeBound, "+" => ActionFn(230);
@@ -27501,7 +27555,7 @@ fun reduce83(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27518,7 +27572,7 @@ fun reduce84(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27535,7 +27589,7 @@ internal fun reduce85(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")+ = TypeBound, "+" => ActionFn(404);
@@ -27555,7 +27609,7 @@ internal fun reduce86(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")+ = (<TypeBound> "+")+, TypeBound, "+" => ActionFn(405);
@@ -27576,7 +27630,7 @@ internal fun reduce87(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",") = TypeBoundParameter, "," => ActionFn(240);
@@ -27597,7 +27651,7 @@ fun reduce88(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27614,7 +27668,7 @@ fun reduce89(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27631,7 +27685,7 @@ internal fun reduce90(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")+ = TypeBoundParameter, "," => ActionFn(408);
@@ -27651,7 +27705,7 @@ internal fun reduce91(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")+ = (<TypeBoundParameter> ",")+, TypeBoundParameter, "," => ActionFn(409);
@@ -27672,7 +27726,7 @@ internal fun reduce92(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",") = TypeParameter, "," => ActionFn(217);
@@ -27693,7 +27747,7 @@ fun reduce93(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27710,7 +27764,7 @@ fun reduce94(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27727,7 +27781,7 @@ internal fun reduce95(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")+ = TypeParameter, "," => ActionFn(412);
@@ -27747,7 +27801,7 @@ internal fun reduce96(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")+ = (<TypeParameter> ",")+, TypeParameter, "," => ActionFn(413);
@@ -27768,7 +27822,7 @@ internal fun reduce97(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRef> ",") = TypeRef, "," => ActionFn(235);
@@ -27789,7 +27843,7 @@ fun reduce98(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27806,7 +27860,7 @@ fun reduce99(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27823,7 +27877,7 @@ internal fun reduce100(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")+ = TypeRef, "," => ActionFn(416);
@@ -27843,7 +27897,7 @@ internal fun reduce101(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")+ = (<TypeRef> ",")+, TypeRef, "," => ActionFn(417);
@@ -27864,7 +27918,7 @@ internal fun reduce102(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",") = TypeRefOrLifetime, "," => ActionFn(270);
@@ -27885,7 +27939,7 @@ fun reduce103(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27902,7 +27956,7 @@ fun reduce104(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27919,7 +27973,7 @@ internal fun reduce105(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")+ = TypeRefOrLifetime, "," => ActionFn(420);
@@ -27939,7 +27993,7 @@ internal fun reduce106(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")+ = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime, "," => ActionFn(421);
@@ -27961,7 +28015,7 @@ fun reduce107(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27978,7 +28032,7 @@ fun reduce108(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27995,7 +28049,7 @@ fun reduce109(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28013,7 +28067,7 @@ fun reduce110(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28031,7 +28085,7 @@ fun reduce111(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28049,7 +28103,7 @@ fun reduce112(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28067,7 +28121,7 @@ fun reduce113(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28085,7 +28139,7 @@ fun reduce114(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28101,7 +28155,7 @@ internal fun reduce115(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = LrSymbol+, "if", Cond, Short => ActionFn(493);
@@ -28123,7 +28177,7 @@ internal fun reduce116(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+, "if", Cond, Short => ActionFn(494);
@@ -28146,7 +28200,7 @@ internal fun reduce117(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = LrSymbol+, "if", Cond => ActionFn(495);
@@ -28167,7 +28221,7 @@ internal fun reduce118(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+, "if", Cond => ActionFn(496);
@@ -28189,7 +28243,7 @@ internal fun reduce119(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = LrSymbol+, Short => ActionFn(497);
@@ -28209,7 +28263,7 @@ internal fun reduce120(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+, Short => ActionFn(498);
@@ -28231,7 +28285,7 @@ fun reduce121(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28248,7 +28302,7 @@ internal fun reduce122(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+ => ActionFn(500);
@@ -28268,7 +28322,7 @@ internal fun reduce123(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = "if", Cond, Short => ActionFn(454);
@@ -28290,7 +28344,7 @@ fun reduce124(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28308,7 +28362,7 @@ fun reduce125(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28326,7 +28380,7 @@ fun reduce126(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28342,7 +28396,7 @@ internal fun reduce127(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternatives = Alternative, ";" => ActionFn(41);
@@ -28362,7 +28416,7 @@ internal fun reduce128(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternatives = "{", Comma<Alternative>, "}", ";" => ActionFn(324);
@@ -28384,7 +28438,7 @@ internal fun reduce129(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternatives = "{", Comma<Alternative>, "}" => ActionFn(325);
@@ -28405,7 +28459,7 @@ internal fun reduce130(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AssociatedType = "type", Id, "=", TypeRef, ";" => ActionFn(456);
@@ -28429,7 +28483,7 @@ fun reduce131(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28446,7 +28500,7 @@ fun reduce132(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28464,7 +28518,7 @@ fun reduce133(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28481,7 +28535,7 @@ internal fun reduce134(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AssociatedType+ = AssociatedType+, AssociatedType => ActionFn(274);
@@ -28501,7 +28555,7 @@ internal fun reduce135(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Attribute = "#", "[", AttributeInner, "]" => ActionFn(34);
@@ -28524,7 +28578,7 @@ fun reduce136(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28541,7 +28595,7 @@ fun reduce137(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28559,7 +28613,7 @@ fun reduce138(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28576,7 +28630,7 @@ internal fun reduce139(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Attribute+ = Attribute+, Attribute => ActionFn(210);
@@ -28596,7 +28650,7 @@ internal fun reduce140(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AttributeArg = "(", Comma<AttributeInner>, ")" => ActionFn(36);
@@ -28617,7 +28671,7 @@ internal fun reduce141(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AttributeArg = "=", "StringLiteral" => ActionFn(37);
@@ -28638,7 +28692,7 @@ fun reduce142(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28656,7 +28710,7 @@ fun reduce143(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28672,7 +28726,7 @@ internal fun reduce144(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AttributeInner = Id, AttributeArg => ActionFn(509);
@@ -28693,7 +28747,7 @@ fun reduce145(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28711,7 +28765,7 @@ fun reduce146(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28729,7 +28783,7 @@ fun reduce147(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28746,7 +28800,7 @@ fun reduce148(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28764,7 +28818,7 @@ fun reduce149(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28780,7 +28834,7 @@ internal fun reduce150(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<Alternative> = (<Alternative> ",")+, Alternative => ActionFn(485);
@@ -28801,7 +28855,7 @@ fun reduce151(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28819,7 +28873,7 @@ fun reduce152(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28837,7 +28891,7 @@ fun reduce153(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28853,7 +28907,7 @@ internal fun reduce154(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<AttributeInner> = (<AttributeInner> ",")+, AttributeInner => ActionFn(513);
@@ -28874,7 +28928,7 @@ fun reduce155(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28892,7 +28946,7 @@ fun reduce156(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28910,7 +28964,7 @@ fun reduce157(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28926,7 +28980,7 @@ internal fun reduce158(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<Conversion> = (<Conversion> ",")+, Conversion => ActionFn(517);
@@ -28947,7 +29001,7 @@ fun reduce159(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28965,7 +29019,7 @@ fun reduce160(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28983,7 +29037,7 @@ fun reduce161(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28999,7 +29053,7 @@ internal fun reduce162(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<GrammarParameter> = (<GrammarParameter> ",")+, GrammarParameter => ActionFn(543);
@@ -29020,7 +29074,7 @@ fun reduce163(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29038,7 +29092,7 @@ fun reduce164(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29056,7 +29110,7 @@ fun reduce165(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29072,7 +29126,7 @@ internal fun reduce166(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+, GrammarWhereClause => ActionFn(571);
@@ -29093,7 +29147,7 @@ fun reduce167(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29111,7 +29165,7 @@ fun reduce168(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29129,7 +29183,7 @@ fun reduce169(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29145,7 +29199,7 @@ internal fun reduce170(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<MatchItem> = (<MatchItem> ",")+, MatchItem => ActionFn(615);
@@ -29166,7 +29220,7 @@ fun reduce171(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29184,7 +29238,7 @@ fun reduce172(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29202,7 +29256,7 @@ fun reduce173(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29218,7 +29272,7 @@ internal fun reduce174(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<NotMacroId> = (<NotMacroId> ",")+, NotMacroId => ActionFn(619);
@@ -29239,7 +29293,7 @@ fun reduce175(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29257,7 +29311,7 @@ fun reduce176(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29275,7 +29329,7 @@ fun reduce177(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29291,7 +29345,7 @@ internal fun reduce178(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<Pattern> = (<Pattern> ",")+, Pattern => ActionFn(623);
@@ -29312,7 +29366,7 @@ fun reduce179(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29330,7 +29384,7 @@ fun reduce180(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29348,7 +29402,7 @@ fun reduce181(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29364,7 +29418,7 @@ internal fun reduce182(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<LrSymbol> = (<LrSymbol> ",")+, LrSymbol => ActionFn(693);
@@ -29385,7 +29439,7 @@ fun reduce183(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29403,7 +29457,7 @@ fun reduce184(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29421,7 +29475,7 @@ fun reduce185(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29437,7 +29491,7 @@ internal fun reduce186(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+, TypeBoundParameter => ActionFn(703);
@@ -29458,7 +29512,7 @@ fun reduce187(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29476,7 +29530,7 @@ fun reduce188(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29494,7 +29548,7 @@ fun reduce189(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29510,7 +29564,7 @@ internal fun reduce190(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeParameter> = (<TypeParameter> ",")+, TypeParameter => ActionFn(707);
@@ -29531,7 +29585,7 @@ fun reduce191(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29549,7 +29603,7 @@ fun reduce192(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29567,7 +29621,7 @@ fun reduce193(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29583,7 +29637,7 @@ internal fun reduce194(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeRef> = (<TypeRef> ",")+, TypeRef => ActionFn(711);
@@ -29604,7 +29658,7 @@ fun reduce195(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29622,7 +29676,7 @@ fun reduce196(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29640,7 +29694,7 @@ fun reduce197(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29656,7 +29710,7 @@ internal fun reduce198(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime => ActionFn(715);
@@ -29677,7 +29731,7 @@ fun reduce199(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29694,7 +29748,7 @@ internal fun reduce200(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Cond = NotMacroId, CondOp, StringLiteral => ActionFn(458);
@@ -29716,7 +29770,7 @@ fun reduce201(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29734,7 +29788,7 @@ fun reduce202(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29752,7 +29806,7 @@ fun reduce203(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29770,7 +29824,7 @@ fun reduce204(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29788,7 +29842,7 @@ fun reduce207(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29806,7 +29860,7 @@ fun reduce208(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29822,7 +29876,7 @@ internal fun reduce209(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // EnumToken = "enum", TypeRef, "{", Comma<Conversion>, "}" => ActionFn(460);
@@ -29846,7 +29900,7 @@ fun reduce210(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29864,7 +29918,7 @@ fun reduce211(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29881,7 +29935,7 @@ fun reduce212(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29898,7 +29952,7 @@ internal fun reduce213(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", EnumToken, "}" => ActionFn(487);
@@ -29920,7 +29974,7 @@ internal fun reduce214(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", EnumToken, AssociatedType+, "}" => ActionFn(488);
@@ -29943,7 +29997,7 @@ internal fun reduce215(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, EnumToken, "}" => ActionFn(489);
@@ -29966,7 +30020,7 @@ internal fun reduce216(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, EnumToken, AssociatedType+, "}" => ActionFn(490);
@@ -29990,7 +30044,7 @@ internal fun reduce217(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", "}" => ActionFn(491);
@@ -30011,7 +30065,7 @@ internal fun reduce218(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, "}" => ActionFn(492);
@@ -30033,7 +30087,7 @@ internal fun reduce219(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // FieldPattern = Id, ":", Pattern => ActionFn(463);
@@ -30055,7 +30109,7 @@ fun reduce220(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -30073,7 +30127,7 @@ fun reduce221(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -30089,7 +30143,7 @@ internal fun reduce222(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ForAll = "for", "<", Comma<TypeParameter>, ">" => ActionFn(13);
@@ -30112,7 +30166,7 @@ fun reduce223(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -30128,7 +30182,7 @@ internal fun reduce224(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(717);
@@ -30151,7 +30205,7 @@ internal fun reduce225(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(718);
@@ -30175,7 +30229,7 @@ internal fun reduce226(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(719);
@@ -30199,7 +30253,7 @@ internal fun reduce227(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(720);
@@ -30224,7 +30278,7 @@ internal fun reduce228(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(721);
@@ -30246,7 +30300,7 @@ internal fun reduce229(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(722);
@@ -30269,7 +30323,7 @@ internal fun reduce230(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(723);
@@ -30292,7 +30346,7 @@ internal fun reduce231(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(724);
@@ -30316,7 +30370,7 @@ internal fun reduce232(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(725);
@@ -30338,7 +30392,7 @@ internal fun reduce233(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(726);
@@ -30361,7 +30415,7 @@ internal fun reduce234(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(727);
@@ -30384,7 +30438,7 @@ internal fun reduce235(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(728);
@@ -30408,7 +30462,7 @@ internal fun reduce236(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, ";" => ActionFn(729);
@@ -30429,7 +30483,7 @@ internal fun reduce237(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, ";" => ActionFn(730);
@@ -30451,7 +30505,7 @@ internal fun reduce238(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";" => ActionFn(731);
@@ -30473,7 +30527,7 @@ internal fun reduce239(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";" => ActionFn(732);
@@ -30496,7 +30550,7 @@ internal fun reduce240(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(733);
@@ -30518,7 +30572,7 @@ internal fun reduce241(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(734);
@@ -30541,7 +30595,7 @@ internal fun reduce242(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(735);
@@ -30564,7 +30618,7 @@ internal fun reduce243(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(736);
@@ -30588,7 +30642,7 @@ internal fun reduce244(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, ";" => ActionFn(737);
@@ -30609,7 +30663,7 @@ internal fun reduce245(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(738);
@@ -30631,7 +30685,7 @@ internal fun reduce246(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(739);
@@ -30653,7 +30707,7 @@ internal fun reduce247(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(740);
@@ -30676,7 +30730,7 @@ internal fun reduce248(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarWhereClauses, ";" => ActionFn(741);
@@ -30697,7 +30751,7 @@ internal fun reduce249(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(742);
@@ -30719,7 +30773,7 @@ internal fun reduce250(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(743);
@@ -30741,7 +30795,7 @@ internal fun reduce251(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(744);
@@ -30764,7 +30818,7 @@ internal fun reduce252(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", ";" => ActionFn(745);
@@ -30784,7 +30838,7 @@ internal fun reduce253(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", ";" => ActionFn(746);
@@ -30805,7 +30859,7 @@ internal fun reduce254(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", ";" => ActionFn(747);
@@ -30826,7 +30880,7 @@ internal fun reduce255(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", ";" => ActionFn(748);
@@ -30848,7 +30902,7 @@ internal fun reduce256(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(749);
@@ -30872,7 +30926,7 @@ internal fun reduce257(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(750);
@@ -30897,7 +30951,7 @@ internal fun reduce258(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(751);
@@ -30922,7 +30976,7 @@ internal fun reduce259(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(752);
@@ -30948,7 +31002,7 @@ internal fun reduce260(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(753);
@@ -30971,7 +31025,7 @@ internal fun reduce261(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(754);
@@ -30995,7 +31049,7 @@ internal fun reduce262(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(755);
@@ -31019,7 +31073,7 @@ internal fun reduce263(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(756);
@@ -31044,7 +31098,7 @@ internal fun reduce264(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(757);
@@ -31067,7 +31121,7 @@ internal fun reduce265(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(758);
@@ -31091,7 +31145,7 @@ internal fun reduce266(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(759);
@@ -31115,7 +31169,7 @@ internal fun reduce267(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(760);
@@ -31140,7 +31194,7 @@ internal fun reduce268(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(761);
@@ -31162,7 +31216,7 @@ internal fun reduce269(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(762);
@@ -31185,7 +31239,7 @@ internal fun reduce270(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(763);
@@ -31208,7 +31262,7 @@ internal fun reduce271(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(764);
@@ -31232,7 +31286,7 @@ internal fun reduce272(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(765);
@@ -31255,7 +31309,7 @@ internal fun reduce273(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(766);
@@ -31279,7 +31333,7 @@ internal fun reduce274(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(767);
@@ -31303,7 +31357,7 @@ internal fun reduce275(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(768);
@@ -31328,7 +31382,7 @@ internal fun reduce276(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(769);
@@ -31350,7 +31404,7 @@ internal fun reduce277(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(770);
@@ -31373,7 +31427,7 @@ internal fun reduce278(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(771);
@@ -31396,7 +31450,7 @@ internal fun reduce279(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(772);
@@ -31420,7 +31474,7 @@ internal fun reduce280(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(773);
@@ -31442,7 +31496,7 @@ internal fun reduce281(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(774);
@@ -31465,7 +31519,7 @@ internal fun reduce282(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(775);
@@ -31488,7 +31542,7 @@ internal fun reduce283(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(776);
@@ -31512,7 +31566,7 @@ internal fun reduce284(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", ";", GrammarItem+ => ActionFn(777);
@@ -31533,7 +31587,7 @@ internal fun reduce285(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", ";", GrammarItem+ => ActionFn(778);
@@ -31555,7 +31609,7 @@ internal fun reduce286(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", ";", GrammarItem+ => ActionFn(779);
@@ -31577,7 +31631,7 @@ internal fun reduce287(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", ";", GrammarItem+ => ActionFn(780);
@@ -31600,7 +31654,7 @@ internal fun reduce288(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(781);
@@ -31624,7 +31678,7 @@ internal fun reduce289(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(782);
@@ -31649,7 +31703,7 @@ internal fun reduce290(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(783);
@@ -31674,7 +31728,7 @@ internal fun reduce291(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(784);
@@ -31700,7 +31754,7 @@ internal fun reduce292(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(785);
@@ -31723,7 +31777,7 @@ internal fun reduce293(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(786);
@@ -31747,7 +31801,7 @@ internal fun reduce294(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(787);
@@ -31771,7 +31825,7 @@ internal fun reduce295(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(788);
@@ -31796,7 +31850,7 @@ internal fun reduce296(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(789);
@@ -31819,7 +31873,7 @@ internal fun reduce297(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(790);
@@ -31843,7 +31897,7 @@ internal fun reduce298(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(791);
@@ -31867,7 +31921,7 @@ internal fun reduce299(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(792);
@@ -31892,7 +31946,7 @@ internal fun reduce300(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, ";" => ActionFn(793);
@@ -31914,7 +31968,7 @@ internal fun reduce301(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(794);
@@ -31937,7 +31991,7 @@ internal fun reduce302(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(795);
@@ -31960,7 +32014,7 @@ internal fun reduce303(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(796);
@@ -31984,7 +32038,7 @@ internal fun reduce304(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(797);
@@ -32007,7 +32061,7 @@ internal fun reduce305(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(798);
@@ -32031,7 +32085,7 @@ internal fun reduce306(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(799);
@@ -32055,7 +32109,7 @@ internal fun reduce307(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(800);
@@ -32080,7 +32134,7 @@ internal fun reduce308(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(801);
@@ -32102,7 +32156,7 @@ internal fun reduce309(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(802);
@@ -32125,7 +32179,7 @@ internal fun reduce310(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(803);
@@ -32148,7 +32202,7 @@ internal fun reduce311(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(804);
@@ -32172,7 +32226,7 @@ internal fun reduce312(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(805);
@@ -32194,7 +32248,7 @@ internal fun reduce313(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(806);
@@ -32217,7 +32271,7 @@ internal fun reduce314(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(807);
@@ -32240,7 +32294,7 @@ internal fun reduce315(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(808);
@@ -32264,7 +32318,7 @@ internal fun reduce316(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", ";" => ActionFn(809);
@@ -32285,7 +32339,7 @@ internal fun reduce317(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", ";" => ActionFn(810);
@@ -32307,7 +32361,7 @@ internal fun reduce318(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", ";" => ActionFn(811);
@@ -32329,7 +32383,7 @@ internal fun reduce319(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";" => ActionFn(812);
@@ -32352,7 +32406,7 @@ internal fun reduce320(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(813);
@@ -32377,7 +32431,7 @@ internal fun reduce321(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(814);
@@ -32403,7 +32457,7 @@ internal fun reduce322(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(815);
@@ -32429,7 +32483,7 @@ internal fun reduce323(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(816);
@@ -32456,7 +32510,7 @@ internal fun reduce324(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(817);
@@ -32480,7 +32534,7 @@ internal fun reduce325(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(818);
@@ -32505,7 +32559,7 @@ internal fun reduce326(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(819);
@@ -32530,7 +32584,7 @@ internal fun reduce327(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(820);
@@ -32556,7 +32610,7 @@ internal fun reduce328(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(821);
@@ -32580,7 +32634,7 @@ internal fun reduce329(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(822);
@@ -32605,7 +32659,7 @@ internal fun reduce330(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(823);
@@ -32630,7 +32684,7 @@ internal fun reduce331(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(824);
@@ -32656,7 +32710,7 @@ internal fun reduce332(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(825);
@@ -32679,7 +32733,7 @@ internal fun reduce333(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(826);
@@ -32703,7 +32757,7 @@ internal fun reduce334(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(827);
@@ -32727,7 +32781,7 @@ internal fun reduce335(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(828);
@@ -32752,7 +32806,7 @@ internal fun reduce336(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(829);
@@ -32776,7 +32830,7 @@ internal fun reduce337(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(830);
@@ -32801,7 +32855,7 @@ internal fun reduce338(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(831);
@@ -32826,7 +32880,7 @@ internal fun reduce339(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(832);
@@ -32852,7 +32906,7 @@ internal fun reduce340(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(833);
@@ -32875,7 +32929,7 @@ internal fun reduce341(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(834);
@@ -32899,7 +32953,7 @@ internal fun reduce342(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(835);
@@ -32923,7 +32977,7 @@ internal fun reduce343(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(836);
@@ -32948,7 +33002,7 @@ internal fun reduce344(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(837);
@@ -32971,7 +33025,7 @@ internal fun reduce345(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(838);
@@ -32995,7 +33049,7 @@ internal fun reduce346(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(839);
@@ -33019,7 +33073,7 @@ internal fun reduce347(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(840);
@@ -33044,7 +33098,7 @@ internal fun reduce348(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", ";", GrammarItem+ => ActionFn(841);
@@ -33066,7 +33120,7 @@ internal fun reduce349(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(842);
@@ -33089,7 +33143,7 @@ internal fun reduce350(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(843);
@@ -33112,7 +33166,7 @@ internal fun reduce351(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(844);
@@ -33137,7 +33191,7 @@ fun reduce352(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33155,7 +33209,7 @@ fun reduce353(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33173,7 +33227,7 @@ fun reduce354(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33191,7 +33245,7 @@ fun reduce355(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33209,7 +33263,7 @@ fun reduce356(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33226,7 +33280,7 @@ fun reduce357(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33244,7 +33298,7 @@ fun reduce358(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33261,7 +33315,7 @@ internal fun reduce359(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarItem+ = GrammarItem+, GrammarItem => ActionFn(212);
@@ -33281,7 +33335,7 @@ internal fun reduce360(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarParameter = Id, ":", TypeRef => ActionFn(23);
@@ -33303,7 +33357,7 @@ fun reduce361(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33321,7 +33375,7 @@ fun reduce362(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33337,7 +33391,7 @@ internal fun reduce363(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarParameters = "(", Comma<GrammarParameter>, ")" => ActionFn(22);
@@ -33359,7 +33413,7 @@ fun reduce364(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33377,7 +33431,7 @@ fun reduce365(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33393,7 +33447,7 @@ internal fun reduce366(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarTypeParameters = "<", Comma<TypeParameter>, ">" => ActionFn(7);
@@ -33415,7 +33469,7 @@ fun reduce367(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33433,7 +33487,7 @@ fun reduce368(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33449,7 +33503,7 @@ internal fun reduce369(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -33469,7 +33523,7 @@ internal fun reduce370(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarWhereClause = "for", "<", Comma<TypeParameter>, ">", TypeRef, ":", TypeBounds => ActionFn(523);
@@ -33494,7 +33548,7 @@ internal fun reduce371(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarWhereClause = TypeRef, ":", TypeBounds => ActionFn(524);
@@ -33516,7 +33570,7 @@ fun reduce372(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33534,7 +33588,7 @@ fun reduce373(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33550,7 +33604,7 @@ internal fun reduce374(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarWhereClauses = "where", Comma<GrammarWhereClause> => ActionFn(10);
@@ -33571,7 +33625,7 @@ fun reduce375(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33589,7 +33643,7 @@ fun reduce376(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33606,7 +33660,7 @@ fun reduce377(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33624,7 +33678,7 @@ fun reduce378(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33642,7 +33696,7 @@ fun reduce379(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33659,7 +33713,7 @@ fun reduce380(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33676,7 +33730,7 @@ fun reduce381(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33692,7 +33746,7 @@ fun reduce382(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33710,7 +33764,7 @@ fun reduce383(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33728,7 +33782,7 @@ fun reduce384(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33746,7 +33800,7 @@ fun reduce385(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33764,7 +33818,7 @@ fun reduce387(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33782,7 +33836,7 @@ fun reduce388(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33799,7 +33853,7 @@ fun reduce389(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33816,7 +33870,7 @@ internal fun reduce390(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // MatchMapping = "{", "}" => ActionFn(99);
@@ -33837,7 +33891,7 @@ fun reduce391(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33855,7 +33909,7 @@ fun reduce392(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33872,7 +33926,7 @@ internal fun reduce393(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // MatchTokenInt = MatchTokenInt, "else", "{", MatchContents, "}" => ActionFn(91);
@@ -33895,7 +33949,7 @@ internal fun reduce394(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // MatchTokenInt = "match", "{", MatchContents, "}" => ActionFn(468);
@@ -33917,7 +33971,7 @@ internal fun reduce395(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(505);
@@ -33941,7 +33995,7 @@ internal fun reduce396(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Attribute+, Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(506);
@@ -33966,7 +34020,7 @@ internal fun reduce397(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Visibility, NonterminalName, "=", Alternatives => ActionFn(507);
@@ -33988,7 +34042,7 @@ internal fun reduce398(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Attribute+, Visibility, NonterminalName, "=", Alternatives => ActionFn(508);
@@ -34011,7 +34065,7 @@ internal fun reduce399(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // NonterminalName = MacroId, "<", Comma<NotMacroId>, ">" => ActionFn(38);
@@ -34034,7 +34088,7 @@ fun reduce400(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34052,7 +34106,7 @@ fun reduce401(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34070,7 +34124,7 @@ fun reduce402(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34088,7 +34142,7 @@ fun reduce403(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34106,7 +34160,7 @@ fun reduce404(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34122,7 +34176,7 @@ internal fun reduce405(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Path = "::", Id => ActionFn(378);
@@ -34142,7 +34196,7 @@ internal fun reduce406(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Path = "::", (<Id> "::")+, Id => ActionFn(379);
@@ -34164,7 +34218,7 @@ fun reduce407(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34181,7 +34235,7 @@ internal fun reduce408(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Path = (<Id> "::")+, Id => ActionFn(381);
@@ -34202,7 +34256,7 @@ fun reduce409(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34220,7 +34274,7 @@ fun reduce410(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34238,7 +34292,7 @@ fun reduce411(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34254,7 +34308,7 @@ internal fun reduce412(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "(", Comma<Pattern>, ")" => ActionFn(104);
@@ -34276,7 +34330,7 @@ internal fun reduce413(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", FieldPattern, "}" => ActionFn(519);
@@ -34298,7 +34352,7 @@ internal fun reduce414(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", "}" => ActionFn(520);
@@ -34319,7 +34373,7 @@ internal fun reduce415(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, FieldPattern, "}" => ActionFn(521);
@@ -34342,7 +34396,7 @@ internal fun reduce416(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, "}" => ActionFn(522);
@@ -34364,7 +34418,7 @@ internal fun reduce417(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", "..", "}" => ActionFn(366);
@@ -34386,7 +34440,7 @@ internal fun reduce418(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, "..", "}" => ActionFn(367);
@@ -34410,7 +34464,7 @@ fun reduce419(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34428,7 +34482,7 @@ fun reduce420(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34445,7 +34499,7 @@ internal fun reduce421(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = "<", TypeRef, ">" => ActionFn(109);
@@ -34466,7 +34520,7 @@ internal fun reduce422(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = "(", Comma<Pattern>, ")" => ActionFn(110);
@@ -34488,7 +34542,7 @@ fun reduce423(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34506,7 +34560,7 @@ fun reduce424(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34524,7 +34578,7 @@ fun reduce425(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34542,7 +34596,7 @@ fun reduce426(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34559,7 +34613,7 @@ fun reduce427(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34574,7 +34628,7 @@ internal fun reduce428(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -34594,7 +34648,7 @@ fun reduce429(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34611,7 +34665,7 @@ fun reduce430(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34629,7 +34683,7 @@ fun reduce431(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34645,7 +34699,7 @@ internal fun reduce432(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Plus<TypeBound> = (<TypeBound> "+")+, TypeBound => ActionFn(699);
@@ -34666,7 +34720,7 @@ fun reduce433(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34684,7 +34738,7 @@ fun reduce434(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34702,7 +34756,7 @@ fun reduce435(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34720,7 +34774,7 @@ fun reduce436(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34738,7 +34792,7 @@ fun reduce437(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34756,7 +34810,7 @@ fun reduce438(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34774,7 +34828,7 @@ fun reduce439(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34792,7 +34846,7 @@ fun reduce440(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34810,7 +34864,7 @@ fun reduce441(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34828,7 +34882,7 @@ fun reduce442(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34845,7 +34899,7 @@ fun reduce443(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34863,7 +34917,7 @@ fun reduce444(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34880,7 +34934,7 @@ internal fun reduce445(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ShebangAttribute+ = ShebangAttribute+, ShebangAttribute => ActionFn(206);
@@ -34900,7 +34954,7 @@ internal fun reduce448(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", "mut", Id, ":", Symbol0, ">" => ActionFn(472);
@@ -34924,7 +34978,7 @@ internal fun reduce449(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", Id, ":", Symbol0, ">" => ActionFn(473);
@@ -34947,7 +35001,7 @@ internal fun reduce450(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", Symbol0, ">" => ActionFn(474);
@@ -34968,7 +35022,7 @@ internal fun reduce451(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", Tuples, ":", Symbol0, ">" => ActionFn(475);
@@ -34992,7 +35046,7 @@ fun reduce452(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35010,7 +35064,7 @@ fun reduce453(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35027,7 +35081,7 @@ fun reduce454(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35045,7 +35099,7 @@ fun reduce455(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35062,7 +35116,7 @@ internal fun reduce456(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol+ = LrSymbol+, LrSymbol => ActionFn(164);
@@ -35083,7 +35137,7 @@ fun reduce457(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35100,7 +35154,7 @@ internal fun reduce458(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Symbol0 = Symbol0, RepeatOp => ActionFn(476);
@@ -35121,7 +35175,7 @@ fun reduce459(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35139,7 +35193,7 @@ fun reduce460(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35157,7 +35211,7 @@ fun reduce461(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35173,7 +35227,7 @@ internal fun reduce462(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // SymbolKind1 = MacroId, "<", Comma<LrSymbol>, ">" => ActionFn(65);
@@ -35196,7 +35250,7 @@ fun reduce463(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35214,7 +35268,7 @@ fun reduce464(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35232,7 +35286,7 @@ fun reduce465(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35249,7 +35303,7 @@ internal fun reduce466(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // SymbolKind1 = "(", ExprSymbol, ")" => ActionFn(69);
@@ -35271,7 +35325,7 @@ fun reduce467(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35289,7 +35343,7 @@ fun reduce468(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35307,7 +35361,7 @@ fun reduce469(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35325,7 +35379,7 @@ fun reduce470(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35343,7 +35397,7 @@ fun reduce471(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35360,7 +35414,7 @@ internal fun reduce472(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartGrammar", Grammar => ActionFn(1);
@@ -35380,7 +35434,7 @@ internal fun reduce473(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartPattern", Pattern => ActionFn(2);
@@ -35400,7 +35454,7 @@ internal fun reduce474(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartMatchMapping", MatchMapping => ActionFn(3);
@@ -35420,7 +35474,7 @@ internal fun reduce475(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartTypeRef", TypeRef => ActionFn(4);
@@ -35440,7 +35494,7 @@ internal fun reduce476(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartGrammarWhereClauses", GrammarWhereClauses => ActionFn(5);
@@ -35460,7 +35514,7 @@ internal fun reduce477(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TupleItem = "mut", Id => ActionFn(328);
@@ -35481,7 +35535,7 @@ fun reduce478(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35499,7 +35553,7 @@ fun reduce479(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35517,7 +35571,7 @@ fun reduce480(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35535,7 +35589,7 @@ fun reduce481(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35551,7 +35605,7 @@ internal fun reduce482(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Tuples = "(", (<TupleItem> ",")+, TupleItem, ")" => ActionFn(695);
@@ -35573,7 +35627,7 @@ internal fun reduce483(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Tuples = "(", (<TupleItem> ",")+, ")" => ActionFn(696);
@@ -35595,7 +35649,7 @@ fun reduce484(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35611,7 +35665,7 @@ internal fun reduce485(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(525);
@@ -35639,7 +35693,7 @@ internal fun reduce486(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(526);
@@ -35663,7 +35717,7 @@ internal fun reduce487(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(527);
@@ -35689,7 +35743,7 @@ internal fun reduce488(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = Path, "(", Comma<TypeRef>, ")" => ActionFn(528);
@@ -35711,7 +35765,7 @@ internal fun reduce489(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(529);
@@ -35737,7 +35791,7 @@ internal fun reduce490(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(530);
@@ -35759,7 +35813,7 @@ internal fun reduce491(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path => ActionFn(531);
@@ -35783,7 +35837,7 @@ fun reduce492(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35801,7 +35855,7 @@ fun reduce493(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35819,7 +35873,7 @@ fun reduce494(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35836,7 +35890,7 @@ fun reduce495(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35853,7 +35907,7 @@ fun reduce496(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35870,7 +35924,7 @@ internal fun reduce497(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBoundParameter = Id, "=", TypeRef => ActionFn(21);
@@ -35892,7 +35946,7 @@ fun reduce498(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35910,7 +35964,7 @@ fun reduce499(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35927,7 +35981,7 @@ fun reduce500(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35945,7 +35999,7 @@ fun reduce501(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35962,7 +36016,7 @@ fun reduce502(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35980,7 +36034,7 @@ fun reduce503(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35998,7 +36052,7 @@ fun reduce504(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36014,7 +36068,7 @@ internal fun reduce505(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "(", Comma<TypeRef>, ")" => ActionFn(76);
@@ -36035,7 +36089,7 @@ internal fun reduce506(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "[", TypeRef, "]" => ActionFn(77);
@@ -36056,7 +36110,7 @@ internal fun reduce507(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "#", LrSymbol, "#" => ActionFn(78);
@@ -36077,7 +36131,7 @@ internal fun reduce508(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36098,7 +36152,7 @@ internal fun reduce509(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "&", "mut", TypeRef => ActionFn(610);
@@ -36119,7 +36173,7 @@ internal fun reduce510(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36139,7 +36193,7 @@ internal fun reduce511(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "&", TypeRef => ActionFn(612);
@@ -36159,7 +36213,7 @@ internal fun reduce512(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(80);
@@ -36182,7 +36236,7 @@ fun reduce513(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36199,7 +36253,7 @@ internal fun reduce514(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36221,7 +36275,7 @@ internal fun reduce515(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36240,7 +36294,7 @@ internal fun reduce516(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36268,7 +36322,7 @@ internal fun reduce517(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36292,7 +36346,7 @@ internal fun reduce518(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36318,7 +36372,7 @@ internal fun reduce519(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     check(
@@ -36341,7 +36395,7 @@ fun reduce520(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36359,7 +36413,7 @@ fun reduce521(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36376,7 +36430,7 @@ fun reduce522(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36394,7 +36448,7 @@ fun reduce523(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36411,7 +36465,7 @@ fun reduce524(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36429,7 +36483,7 @@ fun reduce525(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36445,7 +36499,7 @@ internal fun reduce526(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Use = "use", ";" => ActionFn(28);
@@ -36466,7 +36520,7 @@ fun reduce527(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36483,7 +36537,7 @@ fun reduce528(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36501,7 +36555,7 @@ fun reduce529(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36518,7 +36572,7 @@ internal fun reduce530(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Use+ = Use+, Use => ActionFn(208);
@@ -36538,7 +36592,7 @@ internal fun reduce531(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Visibility = "public", "(", Path, ")" => ActionFn(29);
@@ -36560,7 +36614,7 @@ internal fun reduce532(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Visibility = "public", "(", "in", Path, ")" => ActionFn(30);
@@ -36584,7 +36638,7 @@ fun reduce533(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36602,7 +36656,7 @@ fun reduce534(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
+        Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36624,11 +36678,11 @@ internal
 fun action431
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, TerminalString, Int>,
     sym2: Triple<Int, String, Int>,
     sym3: Triple<Int, Int, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+): Result<Conversion>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -36661,10 +36715,10 @@ internal
 fun action439
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
+    sym0: Triple<Int, TerminalLiteral, Int>,
     sym1: Triple<Int, String, Int>,
     sym2: Triple<Int, Int, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+): Result<MatchItem>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -36719,7 +36773,7 @@ fun action445
 (
     text: String,
     sym0: Triple<Int, String, Int>,
-): Result<io.github.kotlinmania.lalrpop.Atom>
+): Result<Atom>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -36740,10 +36794,10 @@ internal
 fun action459
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, TerminalString, Int>,
     sym2: Triple<Int, String, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+): Result<Conversion>
 {
     val start0 = sym2.third
     val end0 = sym2.third
@@ -36766,9 +36820,9 @@ internal
 fun action467
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int>,
+    sym0: Triple<Int, TerminalLiteral, Int>,
     sym1: Triple<Int, String, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>
+): Result<MatchItem>
 {
     val start0 = sym1.third
     val end0 = sym1.third
@@ -36790,9 +36844,9 @@ internal
 fun action501
 (
     text: String,
-    sym0: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
+    sym0: Triple<Int, TerminalString, Int>,
     sym1: Triple<Int, String, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+): Result<Conversion>
 {
     val start0 = sym0.first
     val end0 = sym0.first
@@ -36814,10 +36868,10 @@ internal
 fun action502
 (
     text: String,
-    sym0: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int>,
-    sym1: Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int>,
+    sym0: Triple<Int, List<Attribute>, Int>,
+    sym1: Triple<Int, TerminalString, Int>,
     sym2: Triple<Int, String, Int>,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>
+): Result<Conversion>
 {
     val start0 = sym0.first
     val end0 = sym0.third
@@ -36846,8 +36900,8 @@ internal fun reduce(
     action: Short,
     lookaheadStart: Int?,
     states: MutableList<Short>,
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
-): io.github.kotlinmania.lalrpop.runtime.ParseResult<Top, Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.Error>? {
+    symbols: MutableList<Triple<Int, LrSymbol, Int>>,
+): ParseResult<Top, Int, Tok, io.github.kotlinmania.lalrpop.tok.Error>? {
     val (popStates, nonterminal) = when (action) {
         0.toShort() -> {
             reduce0(text, lookaheadStart, symbols)
@@ -38448,8 +38502,8 @@ internal fun reduce(
             val end = sym1.third
             val nt = action501(text, sym0, sym1).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = (it as io.github.kotlinmania.lalrpop.tok.TokError).err))
-                return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(pe)
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, LrSymbol.Variant14(nt), end))
             Pair(2, 97)
@@ -38464,8 +38518,8 @@ internal fun reduce(
             val end = sym2.third
             val nt = action502(text, sym0, sym1, sym2).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = (it as io.github.kotlinmania.lalrpop.tok.TokError).err))
-                return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(pe)
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, LrSymbol.Variant14(nt), end))
             Pair(3, 97)
@@ -38479,8 +38533,8 @@ internal fun reduce(
             val end = sym1.third
             val nt = action467(text, sym0, sym1).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = (it as io.github.kotlinmania.lalrpop.tok.TokError).err))
-                return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(pe)
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, LrSymbol.Variant26(nt), end))
             Pair(2, 125)
@@ -38492,8 +38546,8 @@ internal fun reduce(
             val end = sym0.third
             val nt = action444(text, sym0).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = (it as io.github.kotlinmania.lalrpop.tok.TokError).err))
-                return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(pe)
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, LrSymbol.Variant91(nt), end))
             Pair(1, 148)
@@ -38505,10 +38559,10 @@ internal fun reduce(
             val end = sym0.third
             val nt = action445(text, sym0).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(
-                        io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = (it as io.github.kotlinmania.lalrpop.tok.TokError).err),
+                    ?: return ParseResult.Failure(
+                        ParseError.User(error = (it as TokError).err),
                     )
-                return io.github.kotlinmania.lalrpop.runtime.ParseResult.Failure(pe)
+                return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, LrSymbol.Variant22(nt), end))
             Pair(1, 149)
@@ -38517,7 +38571,7 @@ internal fun reduce(
             // ___Top = Top => ActionFn(0);
             val sym0 = popVariant95(symbols)
             val nt = action0(text, sym0)
-            return io.github.kotlinmania.lalrpop.runtime.ParseResult.Top(nt)
+            return ParseResult.Top(nt)
         }
         else -> error("invalid action code $action")
     }
@@ -38541,22 +38595,22 @@ class TopParser {
 
     fun parse(
         text: String,
-        tokens: Iterator<Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>>>,
-    ): io.github.kotlinmania.lalrpop.runtime.ParseResult<Top, Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.Error> {
+        tokens: Iterator<Result<Triple<Int, Tok, Int>>>,
+    ): ParseResult<Top, Int, Tok, io.github.kotlinmania.lalrpop.tok.Error> {
         val adapted = tokens.asSequence().map { token ->
             token.fold(
-                onSuccess = { io.github.kotlinmania.lalrpop.runtime.TokResult.Ok(it) },
+                onSuccess = { TokResult.Ok(it) },
                 onFailure = { err ->
                     val pe = when (err) {
                         is LrParseErrorException -> err.parseError
-                        is io.github.kotlinmania.lalrpop.tok.TokError ->
-                            io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = err.err)
+                        is TokError ->
+                            ParseError.User(error = err.err)
                         else -> throw err
                     }
-                    io.github.kotlinmania.lalrpop.runtime.TokResult.Err(pe)
+                    TokResult.Err(pe)
                 },
             )
         }.iterator()
-        return io.github.kotlinmania.lalrpop.runtime.Parser.drive(StateMachine(text), adapted)
+        return Parser.drive(StateMachine(text), adapted)
     }
 }
