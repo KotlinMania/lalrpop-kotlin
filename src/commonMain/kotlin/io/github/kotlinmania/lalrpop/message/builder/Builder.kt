@@ -49,9 +49,6 @@ class MessageBuilder(
 }
 
 class HeadingCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
-    // Mirrors the `type MessageBuilder = MessageBuilder;` line in the Rust
-    // `implementation Character for HeadingCharacter` block (builder.rs:52).
-
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setHeading(Vert.new(items, 1))
         return this.message
@@ -59,9 +56,6 @@ class HeadingCharacter(internal val message: MessageBuilder) : Character<Message
 }
 
 class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
-    // Mirrors the `type MessageBuilder = MessageBuilder;` line in the Rust
-    // `implementation Character for BodyCharacter` block (builder.rs:65).
-
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setBody(Vert.new(items, 2))
         return this.message
@@ -75,11 +69,6 @@ class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBui
 // adjacent to one another horizontally (no spaces in between).
 
 class InlineBuilder : Character<Content> {
-    // Mirrors the `type Content = Box<dyn Content>;` line in the Rust
-    // `implementation Character for InlineBuilder` block (builder.rs:93). Kotlin
-    // reifies the trait object as the bare interface — `Content` here
-    // is the equivalent of the upstream `Box<dyn Content>`.
-
     companion object {
         fun new(): Builder<Content> = Builder.new(InlineBuilder())
     }
@@ -216,13 +205,6 @@ class HorizCharacter<C>(
     internal val base: Builder<C>,
     internal val separate: Int,
 ) : Character<Builder<C>> {
-    // Mirrors the `type End = Builder<C>;` line in the Rust
-    // `implementation<C: Character> Character for HorizCharacter<C>` block (builder.rs:261).
-    // Kotlin nested typealiases cannot capture the outer class type
-    // parameter, so the binding here uses a star-projection — the upstream
-    // semantic shape (`Builder<C>`) is preserved on the supertype declaration
-    // above, and the typealias exists to surface the symbol for parity checks.
-
     override fun end(items: MutableList<Content>): Builder<C> =
         this.base.push(Horiz.new(items, this.separate))
 }
@@ -231,9 +213,6 @@ class VertCharacter<C>(
     internal val base: Builder<C>,
     internal val separate: Int,
 ) : Character<Builder<C>> {
-    // Mirrors the `type End = Builder<C>;` line in the Rust
-    // `implementation<C: Character> Character for VertCharacter<C>` block (builder.rs:276).
-
     override fun end(items: MutableList<Content>): Builder<C> =
         this.base.push(Vert.new(items, this.separate))
 }
@@ -241,9 +220,6 @@ class VertCharacter<C>(
 class WrapCharacter<C>(
     internal val base: Builder<C>,
 ) : Character<Builder<C>> {
-    // Mirrors the `type End = Builder<C>;` line in the Rust
-    // `implementation<C: Character> Character for WrapCharacter<C>` block (builder.rs:290).
-
     override fun end(items: MutableList<Content>): Builder<C> =
         this.base.push(Wrap.new(items))
 }
