@@ -1,5 +1,5 @@
 // port-lint: source lr1/interpret.rs
-/** LR(1) interpreter. Just builds up parse trees. Intended for testing. */
+//! LR(1) interpreter. Just builds up parse trees. Intended for testing.
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.ParseTree
@@ -9,50 +9,9 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 
-data class InterpretError<L : LookaheadInterpret<L>>(
-    val state: State<L>,
-    val token: Token,
-)
+typealias InterpretError<L> = Pair<State<L>, Token>
 
-private class Error
-
-private class Formatter(val sb: StringBuilder = StringBuilder())
-
-fun fmt(tree: ParseTree, fmt: Formatter, error: Error): Result<Unit> {
-    return fmt(tree, fmt)
-}
-
-fun fmt(tree: ParseTree, fmt: Formatter): Result<Unit> {
-    when (tree) {
-        is ParseTree.Nonterminal -> {
-            val id = tree.nt
-            val trees = tree.trees
-            fmt.sb.append("[").append(id).append(": ").append(Sep(", ", trees)).append("]")
-        }
-        is ParseTree.Terminal -> {
-            val id = tree.t
-            fmt.sb.append(id)
-        }
-    }
-    return Result.success(Unit)
-}
-
-fun reduction(state: State<Nil>, token: Token): Production? {
-    return state.reductions
-        .asSequence()
-        .map { (_, production) -> production }
-        .firstOrNull()
-}
-
-fun reduction(state: State<TokenSet>, token: Token): Production? {
-    return state.reductions
-        .asSequence()
-        .filter { (tokens, _) -> tokens.contains(token) }
-        .map { (_, production) -> production }
-        .firstOrNull()
-}
-
-/// Feed in the given tokens and then EOF, returning the final parse tree that is reduced.
+/** Feed in the given tokens and then EOF, returning the final parse tree that is reduced. */
 fun <L : LookaheadInterpret<L>> interpret(
     states: List<State<L>>,
     tokens: MutableList<TerminalString>,
@@ -62,7 +21,7 @@ fun <L : LookaheadInterpret<L>> interpret(
     return m.execute(tokens.iterator())
 }
 
-/// Feed in the given tokens and returns the states on the stack.
+/** Feed in the given tokens and returns the states on the stack. */
 fun <L : LookaheadInterpret<L>> interpretPartial(
     states: List<State<L>>,
     tokens: Iterable<TerminalString>,
@@ -89,10 +48,19 @@ private class Machine<L : LookaheadInterpret<L>>(
         return states[index.value]
     }
 
-    fun executePartial(tokens: Iterator<TerminalString>): Result<Unit> {
-        if (stateStack.isNotEmpty() || dataStack.isNotEmpty()) {
-            return Result.failure(IllegalStateException("state/data stacks must be empty"))
+    @Suppress("UNCHECKED_CAST")
+    private fun dispatchReduction(state: State<L>, token: Token): Production? {
+        val first = state.reductions.firstOrNull()?.first
+        return if (first is TokenSet) {
+            reduction(state as State<TokenSet>, token)
+        } else {
+            reduction(state as State<Nil>, token)
         }
+    }
+
+    fun executePartial(tokens: Iterator<TerminalString>): Result<Unit> {
+        check(stateStack.isEmpty())
+        check(dataStack.isEmpty())
 
         stateStack.add(StateIndex(0))
 
@@ -113,18 +81,12 @@ private class Machine<L : LookaheadInterpret<L>>(
                 continue
             }
 
-            val production = if (state.reductions.firstOrNull()?.first is TokenSet) {
-                reduction(state as State<TokenSet>, Token.Terminal(terminal))
+            val production = dispatchReduction(state, Token.Terminal(terminal))
+            if (production != null) {
+                val more = reduce(production)
+                check(more)
             } else {
-                reduction(state as State<Nil>, Token.Terminal(terminal))
-            }
-            if (production == null) {
                 return Result.failure(InterpretErrorException(InterpretError(state, Token.Terminal(terminal))))
-            }
-
-            val more = reduce(production)
-            if (!more) {
-                return Result.failure(IllegalStateException("interpreter completed early"))
             }
         }
 
@@ -140,19 +102,12 @@ private class Machine<L : LookaheadInterpret<L>>(
         // drain now for EOF
         while (true) {
             val state = topState()
-            val production = if (state.reductions.firstOrNull()?.first is TokenSet) {
-                reduction(state as State<TokenSet>, Token.Eof)
-            } else {
-                reduction(state as State<Nil>, Token.Eof)
-            }
+            val production = dispatchReduction(state, Token.Eof)
             if (production == null) {
                 return Result.failure(InterpretErrorException(InterpretError(state, Token.Eof)))
             }
-
             if (!reduce(production)) {
-                if (dataStack.size != 1) {
-                    return Result.failure(IllegalStateException("expected one parse tree"))
-                }
+                check(dataStack.size == 1)
                 return Result.success(dataStack.removeLast())
             }
         }
@@ -191,9 +146,44 @@ private class Machine<L : LookaheadInterpret<L>>(
     }
 }
 
+private object DebugForParseTree {
+    fun fmt(tree: ParseTree, fmt: StringBuilder) {
+        DisplayForParseTree.fmt(tree, fmt)
+    }
+}
+
+private object DisplayForParseTree {
+    fun fmt(tree: ParseTree, fmt: StringBuilder) {
+        when (tree) {
+            is ParseTree.Nonterminal -> {
+                val id = tree.nt
+                val trees = tree.trees
+                fmt.append("[").append(id).append(": ").append(Sep(", ", trees)).append("]")
+            }
+            is ParseTree.Terminal -> {
+                val id = tree.t
+                fmt.append(id)
+            }
+        }
+    }
+}
+
 class InterpretErrorException<L : LookaheadInterpret<L>>(val error: InterpretError<L>) :
     RuntimeException()
 
 interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {
     fun reduction(state: State<Self>, token: Token): Production?
 }
+
+private fun reduction(state: State<Nil>, token: Token): Production? =
+    state.reductions
+        .asSequence()
+        .map { (_, production) -> production }
+        .firstOrNull()
+
+private fun reduction(state: State<TokenSet>, token: Token): Production? =
+    state.reductions
+        .asSequence()
+        .filter { (tokens, _) -> tokens.contains(token) }
+        .map { (_, production) -> production }
+        .firstOrNull()
