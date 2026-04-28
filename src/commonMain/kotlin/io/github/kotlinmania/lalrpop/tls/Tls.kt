@@ -39,7 +39,7 @@ class Tls private constructor() : AutoCloseable {
         }
 
         /**
-         * Installs `Tls` and returns a placeholder value.  When this
+         * Installs `Tls` and returns a guard value.  When this
          * value is dropped, the `Tls` entries will be removed. To access
          * the values from `Tls`, call `Tls.session()` or
          * `Tls.fileText()`.
