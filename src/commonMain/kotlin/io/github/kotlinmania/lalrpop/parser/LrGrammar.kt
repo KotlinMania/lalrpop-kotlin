@@ -1,65 +1,6 @@
 // port-lint: source src/parser/lrgrammar.rs
 package io.github.kotlinmania.lalrpop.parser
 
-// This file is a single-Kotlin-file mirror of the LALRPOP-generated
-// `parser/lrgrammar.rs` (~40k lines). Sections are translated in place
-// and ordered to match the Rust source.
-//
-// Rust file structure (line numbers refer to lrgrammar.rs):
-//   1-37     imports + `mod ___parse___Top` opener   (translated: package + comments)
-//   38-142   `___Symbol` enum (102 variants)         (translated below)
-//   143-1400 `___ACTION` const + `___action` function (translated below)
-//   1401-1403  `___action` lookup                    (translated below)
-//   1404-2661  `___EOF_ACTION` const                 (translated below)
-//   2662-3115  `___goto` function (translated below)
-//   3117-3176  `___TERMINAL` const                   (translated below)
-//   3178-3187  `___expected_tokens` function (translated below)
-//   3188-3202  `___expected_tokens_from_states` function (translated below)
-//   3203-3208  `___StateMachine` struct                (translated below)
-//   3209-3303  `ParserDefinition` implementation on StateMachine (translated below as
-//                                                      `StateMachineDefinition`)
-//   3304-3374  `___token_to_integer`                   (translated below)
-//   3375-3391  `___token_to_symbol`                    (translated below)
-//   3392-6613  `___simulate_reduce`                  (translated below)
-//   6648-6680  `___accepts`                          (translated below)
-//   6681-8366  `___reduce` dispatcher                (translated below)
-//   8367-8370  `___symbol_type_mismatch`             (translated below)
-//   8371-9492  `___pop_VariantN` helpers (102 fns)   (translated below)
-//   9493-19691 `___reduce0`..`___reduce534`          (translated below; 5 fallible
-//                                                      cases 205/206/386/446/447 stay
-//                                                      inlined in the dispatcher)
-//   19692-19765 `___action0`..`___action5` (Top ctors) (translated below)
-//   19766-20010 `___action6`..`___action22`          (translated below)
-//   20011-20455 `___action23`..`___action53`         (translated below)
-//   20456-20875 `___action54`..`___action83`         (translated below)
-//   20876-21330 `___action84`..`___action112`        (translated below)
-//   21331-21900 `___action113`..`___action156`       (translated below)
-//   21901-22600 `___action157`..`___action211`       (translated below)
-//   22601-23300 `___action212`..`___action267`       (translated below)
-//   23301-24000 `___action268`..`___action321`       (translated below)
-//   24001-24800 `___action322`..`___action347`       (translated below)
-//   24801-25568 `___action348`..`___action377`       (translated below)
-//   25569-26743 `___action378`..`___action423`       (translated below)
-//   26744-27789 `___action424`..`___action455`       (translated below)
-//   27790-28924 `___action456`..`___action492`       (translated below)
-//   28925-29716 `___action493`..`___action520`       (translated below)
-//   29717-30190 `___action521`..`___action534`       (translated below)
-//   30191-31482 `___action535`..`___action572`       (translated below)
-//   31483-32812 `___action573`..`___action612`       (translated below)
-//   32813-34162 `___action613`..`___action656`       (translated below)
-//   34163-35282 `___action657`..`___action688`       (translated below)
-//   35283-36490 `___action689`..`___action732`       (translated below)
-//   36491-38024 `___action733`..`___action780`       (translated below)
-//   38025-39656 `___action781`..`___action828`       (translated below)
-//   39657-40200 `___action829`..`___action844`       (translated below; action table complete)
-//   40202-40219 `___ToTriple` impls                   (translated below)
-//
-// Rust `i16` -> Kotlin `Short`; the column count (59) is the terminal
-// alphabet size and must stay in lockstep with the Symbol enum.
-
-// === lrgrammar.rs:38-142 — `___Symbol` enum ===
-/** Translation of `public(crate) enum ___Symbol<'input>` from lrgrammar.rs:38. */
-/** Renamed `LrSymbol` to avoid colliding with `grammar.parseTree.Symbol` (Variant32). */
 internal sealed class LrSymbol {
     data class Variant0(val v: io.github.kotlinmania.lalrpop.tok.Tok) : LrSymbol()
     data class Variant1(val v: String) : LrSymbol()
@@ -165,7 +106,6 @@ internal sealed class LrSymbol {
     data class Variant101(val v: io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility) : LrSymbol()
 }
 
-// === lrgrammar.rs:143-1400 — `___ACTION` const ===
 internal val ACTION: ShortArray = shortArrayOf(
 // State 0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,5,4,6,3,
@@ -1429,7 +1369,6 @@ internal fun action(state: Short, integer: Int): Short {
     return ACTION[state.toInt() * 59 + integer]
 }
 
-// === lrgrammar.rs:1404-2661 — `___EOF_ACTION` const ===
 internal val EOF_ACTION: ShortArray = shortArrayOf(
 // State 0
 0,
@@ -2689,7 +2628,6 @@ internal val EOF_ACTION: ShortArray = shortArrayOf(
 -486,
 )
 
-// === lrgrammar.rs:2662-3115 — `___goto` function ===
 // Rust `match` -> Kotlin `when`; or-patterns (`a | b`) become
 // comma-separated literals; inclusive ranges (`a..=b`) are expanded
 // since Kotlin `when` does not allow mixing literals and `in` clauses
@@ -3150,7 +3088,6 @@ else -> 0
     }).toShort()
 }
 
-// === lrgrammar.rs:3117-3176 — `___TERMINAL` const ===
 // In Rust the strings are wrapped with `r###""enum""###` (raw triple-hash)
 // so the embedded double-quotes survive verbatim. Kotlin string literals
 // are simpler, so we keep the embedded double-quotes inline.
@@ -3216,8 +3153,6 @@ internal val TERMINAL: Array<String> = arrayOf(
     "\"StartGrammarWhereClauses\"",
 )
 
-// === lrgrammar.rs:3178-3187 — `___expected_tokens` function ===
-/** `___expected_tokens(state)`. */
 internal fun expectedTokens(state: Short): List<String> {
     return TERMINAL.mapIndexedNotNull { index, terminal ->
         val nextState = action(state, index)
@@ -3229,7 +3164,6 @@ internal fun expectedTokens(state: Short): List<String> {
     }
 }
 
-// === lrgrammar.rs:3212-3221 — associated-type bindings on the ParserDefinition implementation ===
 // The Rust source binds these inside the `implementation ParserDefinition for ___StateMachine`
 // block (one `type Foo = Bar;` line each, lines 3212-3221). The Kotlin port
 // realises them as concrete generic arguments on the StateMachine class
@@ -3242,9 +3176,8 @@ internal typealias TokenIndex = Int
 internal typealias ReduceIndex = Short
 internal typealias NonterminalIndex = Int
 
-// === lrgrammar.rs:3203-3303 — `___StateMachine` struct + `ParserDefinition` implementation ===
-// The Rust struct holds `text: &'input str` plus a phantom marker; in
-// Kotlin we drop the lifetime entirely and keep just the input text. The
+// The Rust struct holds `text: &str` plus a phantom marker; in
+// Kotlin we drop the borrow annotation entirely and keep just the input text. The
 // `implementation ___state_machine::ParserDefinition for ___StateMachine` block is
 // realised directly on the class — each method forwards to the free
 // function that the Rust implementation also delegates to.
@@ -3335,7 +3268,6 @@ internal class StateMachine(
     }
 }
 
-// === lrgrammar.rs:3304-3374 — `___token_to_integer` ===
 // Maps a token to its column in the ACTION/EOF_ACTION tables.
 // Returns null when the token is not a recognised terminal (LALRPOP
 // `___token_to_integer` returns `None` for the same case).
@@ -3344,7 +3276,6 @@ fun tokenToInteger(
     token: io.github.kotlinmania.lalrpop.tok.Tok,
 ): Int?
 {
-    @Suppress("REDUNDANT_ELSE_IN_WHEN")
     return when (
         token
     ) {
@@ -3411,7 +3342,6 @@ fun tokenToInteger(
     }
 }
 
-// === lrgrammar.rs:3375-3391 — `___token_to_symbol` ===
 // Wraps a recognised token into the matching `LrSymbol` variant.
 // Token columns 0-12, 14, 22-30, 33-36, 38-58 are payload-less terminals
 // stored as Variant0; columns 13, 15-21, 31, 32, 37 carry a string
@@ -3434,8 +3364,6 @@ internal fun tokenToSymbol(tokenIndex: Int, token: io.github.kotlinmania.lalrpop
     }
 }
 
-// === lrgrammar.rs:3392-6613 — `___simulate_reduce` ===
-/** `___simulate_reduce(reduceIndex)`. */
 internal fun simulateReduce
 (
     reduceIndex: Short,
@@ -6659,7 +6587,6 @@ internal fun simulateReduce
     }
 }
 
-// === lrgrammar.rs:6648-6680 — `___accepts` ===
 // Returns true if the parser, starting from the given state stack and
 // hypothetical lookahead token (or EOF when null), can eventually
 // accept. Drives the simulated reduce-loop until it shifts (true),
@@ -6698,7 +6625,6 @@ internal fun accepts(
     }
 }
 
-// === lrgrammar.rs:3188-3202 — `___expected_tokens_from_states` ===
 // Companion to `expectedTokens` that uses `accepts` to model the parse
 // state more precisely.
 internal fun expectedTokensFromStates(
@@ -6716,7 +6642,6 @@ internal fun expectedTokensFromStates(
         }
     }
 }
-// === lrgrammar.rs:8367-... — `___symbol_type_mismatch` and `___pop_VariantN` helpers ===
 // Each `___pop_VariantN` pops the top of the symbol stack, asserts that the
 // symbol is `LrSymbol.VariantN`, and returns its payload value tagged with
 // the surrounding (left, right) location markers. Variant9 carries no
@@ -7924,7 +7849,6 @@ fun action5
     return Top.GrammarWhereClauses(sym1.second)
 }
 
-// Hand-translated grammar productions for the top-level `Grammar` rule
 // and its immediate dependencies (type parameters, where clauses, type
 // bounds, parameter lists). Sealed-class variant names diverge from the
 // Rust enum variant names where needed to dodge keyword/AST-name
@@ -8010,8 +7934,8 @@ internal fun action11(
     bounds: Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int>,
 ): io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef> {
     return io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause.LifetimeClause(
-        lifetime = l.second,
-        bounds = bounds.second.toMutableList(),
+        l.second,
+        bounds.second.toMutableList(),
     )
 }
 
@@ -26029,26 +25953,10 @@ fun action844
     )
 }
 
-// === lrgrammar.rs:40202-40219 ===
 
-/**
- * Translation of `interface ___ToTriple<'input>` (lrgrammar.rs:40203).
- *
- * Upstream uses ad-hoc trait dispatch on the input iterator item type
- * to pick between the bare-triple and fallible-lexer conversions. Kotlin
- * has no equivalent (you cannot retroactively implementation a trait for an
- * existing concrete type), so the two `implementation` blocks (lines 40208 / 40214)
- * dissolve into the two `toTriple` extension functions defined below.
- *
- * The trait declaration itself is preserved here (with no abstract
- * members — the Kotlin extensions are the impls) so the symbol-parity
- * check sees a `ToTriple` declaration corresponding to the Rust trait.
- * Callers do not implement this interface; they call `.toTriple()` on
- * the receiver, which resolves to one of the two extension functions
- * via Kotlin overload resolution on receiver type.
- */
-@Suppress("unused")
-interface ToTriple
+interface ToTriple {
+    fun toTriple(): Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>>
+}
 
 /**
  * Exception adapter wrapping an [LrParseError] so it can flow through
@@ -26084,13 +25992,11 @@ internal fun Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>>.toT
     onSuccess = { Result.success(it) },
     onFailure = { err -> Result.failure((err as? io.github.kotlinmania.lalrpop.tok.TokError)?.err?.let { LrParseErrorException(io.github.kotlinmania.lalrpop.runtime.ParseError.User(error = it)) } ?: err) })
 
-// === lrgrammar.rs:9493-19691 — `___reduce0`..`___reduce534` ===
 // Fallible reduces (205, 206, 386, 446, 447) are inlined into the
 // dispatcher (see `___reduce` translation below) — they can short-circuit
 // with `Some(Err(e))`, so they never appear as free functions in Rust and
 // are absent here too.
 
-/** `___reduce0` — "::"? = "::" => ActionFn(143); */
 internal
 fun reduce0(
     text: String,
@@ -26109,7 +26015,6 @@ fun reduce0(
     return Pair(1, 0)
 }
 
-/** `___reduce1` — "::"? =  => ActionFn(144); */
 internal
 fun reduce1(
     text: String,
@@ -26127,7 +26032,6 @@ fun reduce1(
     return Pair(0, 0)
 }
 
-/** `___reduce2` — ";"? = ";" => ActionFn(165); */
 internal
 fun reduce2(
     text: String,
@@ -26146,7 +26050,6 @@ fun reduce2(
     return Pair(1, 1)
 }
 
-/** `___reduce3` — ";"? =  => ActionFn(166); */
 internal
 fun reduce3(
     text: String,
@@ -26164,7 +26067,6 @@ fun reduce3(
     return Pair(0, 1)
 }
 
-/** `___reduce4` — "mut"? = "mut" => ActionFn(154); */
 internal
 fun reduce4(
     text: String,
@@ -26183,7 +26085,6 @@ fun reduce4(
     return Pair(1, 2)
 }
 
-/** `___reduce5` — "mut"? =  => ActionFn(155); */
 internal
 fun reduce5(
     text: String,
@@ -26201,7 +26102,6 @@ fun reduce5(
     return Pair(0, 2)
 }
 
-/** `___reduce6` — ("->" <TypeRef>) = "->", TypeRef => ActionFn(182); */
 internal fun reduce6(
     text: String,
     lookaheadStart: Int?,
@@ -26222,7 +26122,6 @@ internal fun reduce6(
     return Pair(2, 3)
 }
 
-/** `___reduce7` — ("->" <TypeRef>)? = "->", TypeRef => ActionFn(332); */
 internal fun reduce7(
     text: String,
     lookaheadStart: Int?,
@@ -26243,7 +26142,6 @@ internal fun reduce7(
     return Pair(2, 4)
 }
 
-/** `___reduce8` — ("->" <TypeRef>)? =  => ActionFn(181); */
 internal
 fun reduce8(
     text: String,
@@ -26261,7 +26159,6 @@ fun reduce8(
     return Pair(0, 4)
 }
 
-/** `___reduce9` — (":" <TypeRef>) = ":", TypeRef => ActionFn(174); */
 internal fun reduce9(
     text: String,
     lookaheadStart: Int?,
@@ -26282,7 +26179,6 @@ internal fun reduce9(
     return Pair(2, 5)
 }
 
-/** `___reduce10` — (":" <TypeRef>)? = ":", TypeRef => ActionFn(337); */
 internal fun reduce10(
     text: String,
     lookaheadStart: Int?,
@@ -26303,7 +26199,6 @@ internal fun reduce10(
     return Pair(2, 6)
 }
 
-/** `___reduce11` — (":" <TypeRef>)? =  => ActionFn(173); */
 internal
 fun reduce11(
     text: String,
@@ -26321,7 +26216,6 @@ fun reduce11(
     return Pair(0, 6)
 }
 
-/** `___reduce12` — ("<" <Comma<TypeBoundParameter>> ">") = "<", Comma<TypeBoundParameter>, ">" => ActionFn(178); */
 internal fun reduce12(
     text: String,
     lookaheadStart: Int?,
@@ -26343,7 +26237,6 @@ internal fun reduce12(
     return Pair(3, 7)
 }
 
-/** `___reduce13` — ("<" <Comma<TypeBoundParameter>> ">")? = "<", Comma<TypeBoundParameter>, ">" => ActionFn(340); */
 internal fun reduce13(
     text: String,
     lookaheadStart: Int?,
@@ -26365,7 +26258,6 @@ internal fun reduce13(
     return Pair(3, 8)
 }
 
-/** `___reduce14` — ("<" <Comma<TypeBoundParameter>> ">")? =  => ActionFn(177); */
 internal
 fun reduce14(
     text: String,
@@ -26383,7 +26275,6 @@ fun reduce14(
     return Pair(0, 8)
 }
 
-/** `___reduce15` — ("if" <Cond>) = "if", Cond => ActionFn(162); */
 internal fun reduce15(
     text: String,
     lookaheadStart: Int?,
@@ -26404,7 +26295,6 @@ internal fun reduce15(
     return Pair(2, 9)
 }
 
-/** `___reduce16` — ("if" <Cond>)? = "if", Cond => ActionFn(343); */
 internal fun reduce16(
     text: String,
     lookaheadStart: Int?,
@@ -26425,7 +26315,6 @@ internal fun reduce16(
     return Pair(2, 10)
 }
 
-/** `___reduce17` — ("if" <Cond>)? =  => ActionFn(161); */
 internal
 fun reduce17(
     text: String,
@@ -26443,7 +26332,6 @@ fun reduce17(
     return Pair(0, 10)
 }
 
-/** `___reduce18` — () =  => ActionFn(185); */
 internal
 fun reduce18(
     text: String,
@@ -26461,7 +26349,6 @@ fun reduce18(
     return Pair(0, 11)
 }
 
-/** `___reduce19` — (<Alternative> ",") = Alternative, "," => ActionFn(260); */
 internal fun reduce19(
     text: String,
     lookaheadStart: Int?,
@@ -26482,7 +26369,6 @@ internal fun reduce19(
     return Pair(2, 12)
 }
 
-/** `___reduce20` — (<Alternative> ",")* =  => ActionFn(258); */
 internal
 fun reduce20(
     text: String,
@@ -26500,7 +26386,6 @@ fun reduce20(
     return Pair(0, 13)
 }
 
-/** `___reduce21` — (<Alternative> ",")* = (<Alternative> ",")+ => ActionFn(259); */
 internal
 fun reduce21(
     text: String,
@@ -26519,7 +26404,6 @@ fun reduce21(
     return Pair(1, 13)
 }
 
-/** `___reduce22` — (<Alternative> ",")+ = Alternative, "," => ActionFn(350); */
 internal fun reduce22(
     text: String,
     lookaheadStart: Int?,
@@ -26540,7 +26424,6 @@ internal fun reduce22(
     return Pair(2, 14)
 }
 
-/** `___reduce23` — (<Alternative> ",")+ = (<Alternative> ",")+, Alternative, "," => ActionFn(351); */
 internal fun reduce23(
     text: String,
     lookaheadStart: Int?,
@@ -26562,7 +26445,6 @@ internal fun reduce23(
     return Pair(3, 14)
 }
 
-/** `___reduce24` — (<AttributeInner> ",") = AttributeInner, "," => ActionFn(250); */
 internal fun reduce24(
     text: String,
     lookaheadStart: Int?,
@@ -26583,7 +26465,6 @@ internal fun reduce24(
     return Pair(2, 15)
 }
 
-/** `___reduce25` — (<AttributeInner> ",")* =  => ActionFn(248); */
 internal
 fun reduce25(
     text: String,
@@ -26601,7 +26482,6 @@ fun reduce25(
     return Pair(0, 16)
 }
 
-/** `___reduce26` — (<AttributeInner> ",")* = (<AttributeInner> ",")+ => ActionFn(249); */
 internal
 fun reduce26(
     text: String,
@@ -26620,7 +26500,6 @@ fun reduce26(
     return Pair(1, 16)
 }
 
-/** `___reduce27` — (<AttributeInner> ",")+ = AttributeInner, "," => ActionFn(354); */
 internal fun reduce27(
     text: String,
     lookaheadStart: Int?,
@@ -26641,7 +26520,6 @@ internal fun reduce27(
     return Pair(2, 17)
 }
 
-/** `___reduce28` — (<AttributeInner> ",")+ = (<AttributeInner> ",")+, AttributeInner, "," => ActionFn(355); */
 internal fun reduce28(
     text: String,
     lookaheadStart: Int?,
@@ -26663,7 +26541,6 @@ internal fun reduce28(
     return Pair(3, 17)
 }
 
-/** `___reduce29` — (<Conversion> ",") = Conversion, "," => ActionFn(284); */
 internal fun reduce29(
     text: String,
     lookaheadStart: Int?,
@@ -26684,7 +26561,6 @@ internal fun reduce29(
     return Pair(2, 18)
 }
 
-/** `___reduce30` — (<Conversion> ",")* =  => ActionFn(282); */
 internal
 fun reduce30(
     text: String,
@@ -26702,7 +26578,6 @@ fun reduce30(
     return Pair(0, 19)
 }
 
-/** `___reduce31` — (<Conversion> ",")* = (<Conversion> ",")+ => ActionFn(283); */
 internal
 fun reduce31(
     text: String,
@@ -26721,7 +26596,6 @@ fun reduce31(
     return Pair(1, 19)
 }
 
-/** `___reduce32` — (<Conversion> ",")+ = Conversion, "," => ActionFn(358); */
 internal fun reduce32(
     text: String,
     lookaheadStart: Int?,
@@ -26742,7 +26616,6 @@ internal fun reduce32(
     return Pair(2, 20)
 }
 
-/** `___reduce33` — (<Conversion> ",")+ = (<Conversion> ",")+, Conversion, "," => ActionFn(359); */
 internal fun reduce33(
     text: String,
     lookaheadStart: Int?,
@@ -26764,7 +26637,6 @@ internal fun reduce33(
     return Pair(3, 20)
 }
 
-/** `___reduce34` — (<FieldPattern> ",") = FieldPattern, "," => ActionFn(134); */
 internal fun reduce34(
     text: String,
     lookaheadStart: Int?,
@@ -26785,7 +26657,6 @@ internal fun reduce34(
     return Pair(2, 21)
 }
 
-/** `___reduce35` — (<FieldPattern> ",")* =  => ActionFn(132); */
 internal
 fun reduce35(
     text: String,
@@ -26803,7 +26674,6 @@ fun reduce35(
     return Pair(0, 22)
 }
 
-/** `___reduce36` — (<FieldPattern> ",")* = (<FieldPattern> ",")+ => ActionFn(133); */
 internal
 fun reduce36(
     text: String,
@@ -26822,7 +26692,6 @@ fun reduce36(
     return Pair(1, 22)
 }
 
-/** `___reduce37` — (<FieldPattern> ",")+ = FieldPattern, "," => ActionFn(362); */
 internal fun reduce37(
     text: String,
     lookaheadStart: Int?,
@@ -26843,7 +26712,6 @@ internal fun reduce37(
     return Pair(2, 23)
 }
 
-/** `___reduce38` — (<FieldPattern> ",")+ = (<FieldPattern> ",")+, FieldPattern, "," => ActionFn(363); */
 internal fun reduce38(
     text: String,
     lookaheadStart: Int?,
@@ -26865,7 +26733,6 @@ internal fun reduce38(
     return Pair(3, 23)
 }
 
-/** `___reduce39` — (<GrammarParameter> ",") = GrammarParameter, "," => ActionFn(245); */
 internal fun reduce39(
     text: String,
     lookaheadStart: Int?,
@@ -26886,7 +26753,6 @@ internal fun reduce39(
     return Pair(2, 24)
 }
 
-/** `___reduce40` — (<GrammarParameter> ",")* =  => ActionFn(243); */
 internal
 fun reduce40(
     text: String,
@@ -26904,7 +26770,6 @@ fun reduce40(
     return Pair(0, 25)
 }
 
-/** `___reduce41` — (<GrammarParameter> ",")* = (<GrammarParameter> ",")+ => ActionFn(244); */
 internal
 fun reduce41(
     text: String,
@@ -26923,7 +26788,6 @@ fun reduce41(
     return Pair(1, 25)
 }
 
-/** `___reduce42` — (<GrammarParameter> ",")+ = GrammarParameter, "," => ActionFn(368); */
 internal fun reduce42(
     text: String,
     lookaheadStart: Int?,
@@ -26944,7 +26808,6 @@ internal fun reduce42(
     return Pair(2, 26)
 }
 
-/** `___reduce43` — (<GrammarParameter> ",")+ = (<GrammarParameter> ",")+, GrammarParameter, "," => ActionFn(369); */
 internal fun reduce43(
     text: String,
     lookaheadStart: Int?,
@@ -26966,7 +26829,6 @@ internal fun reduce43(
     return Pair(3, 26)
 }
 
-/** `___reduce44` — (<GrammarWhereClause> ",") = GrammarWhereClause, "," => ActionFn(222); */
 internal fun reduce44(
     text: String,
     lookaheadStart: Int?,
@@ -26987,7 +26849,6 @@ internal fun reduce44(
     return Pair(2, 27)
 }
 
-/** `___reduce45` — (<GrammarWhereClause> ",")* =  => ActionFn(220); */
 internal
 fun reduce45(
     text: String,
@@ -27005,7 +26866,6 @@ fun reduce45(
     return Pair(0, 28)
 }
 
-/** `___reduce46` — (<GrammarWhereClause> ",")* = (<GrammarWhereClause> ",")+ => ActionFn(221); */
 internal
 fun reduce46(
     text: String,
@@ -27024,7 +26884,6 @@ fun reduce46(
     return Pair(1, 28)
 }
 
-/** `___reduce47` — (<GrammarWhereClause> ",")+ = GrammarWhereClause, "," => ActionFn(372); */
 internal fun reduce47(
     text: String,
     lookaheadStart: Int?,
@@ -27045,7 +26904,6 @@ internal fun reduce47(
     return Pair(2, 29)
 }
 
-/** `___reduce48` — (<GrammarWhereClause> ",")+ = (<GrammarWhereClause> ",")+, GrammarWhereClause, "," => ActionFn(373); */
 internal fun reduce48(
     text: String,
     lookaheadStart: Int?,
@@ -27067,7 +26925,6 @@ internal fun reduce48(
     return Pair(3, 29)
 }
 
-/** `___reduce49` — (<Id> "::") = Id, "::" => ActionFn(142); */
 internal fun reduce49(
     text: String,
     lookaheadStart: Int?,
@@ -27088,7 +26945,6 @@ internal fun reduce49(
     return Pair(2, 30)
 }
 
-/** `___reduce50` — (<Id> "::")* =  => ActionFn(140); */
 internal
 fun reduce50(
     text: String,
@@ -27106,7 +26962,6 @@ fun reduce50(
     return Pair(0, 31)
 }
 
-/** `___reduce51` — (<Id> "::")* = (<Id> "::")+ => ActionFn(141); */
 internal
 fun reduce51(
     text: String,
@@ -27125,7 +26980,6 @@ fun reduce51(
     return Pair(1, 31)
 }
 
-/** `___reduce52` — (<Id> "::")+ = Id, "::" => ActionFn(376); */
 internal fun reduce52(
     text: String,
     lookaheadStart: Int?,
@@ -27146,7 +27000,6 @@ internal fun reduce52(
     return Pair(2, 32)
 }
 
-/** `___reduce53` — (<Id> "::")+ = (<Id> "::")+, Id, "::" => ActionFn(377); */
 internal fun reduce53(
     text: String,
     lookaheadStart: Int?,
@@ -27168,7 +27021,6 @@ internal fun reduce53(
     return Pair(3, 32)
 }
 
-/** `___reduce54` — (<Lifetime> "+") = Lifetime, "+" => ActionFn(225); */
 internal fun reduce54(
     text: String,
     lookaheadStart: Int?,
@@ -27189,7 +27041,6 @@ internal fun reduce54(
     return Pair(2, 33)
 }
 
-/** `___reduce55` — (<Lifetime> "+")* =  => ActionFn(223); */
 internal
 fun reduce55(
     text: String,
@@ -27207,7 +27058,6 @@ fun reduce55(
     return Pair(0, 34)
 }
 
-/** `___reduce56` — (<Lifetime> "+")* = (<Lifetime> "+")+ => ActionFn(224); */
 internal
 fun reduce56(
     text: String,
@@ -27226,7 +27076,6 @@ fun reduce56(
     return Pair(1, 34)
 }
 
-/** `___reduce57` — (<Lifetime> "+")+ = Lifetime, "+" => ActionFn(382); */
 internal fun reduce57(
     text: String,
     lookaheadStart: Int?,
@@ -27247,7 +27096,6 @@ internal fun reduce57(
     return Pair(2, 35)
 }
 
-/** `___reduce58` — (<Lifetime> "+")+ = (<Lifetime> "+")+, Lifetime, "+" => ActionFn(383); */
 internal fun reduce58(
     text: String,
     lookaheadStart: Int?,
@@ -27269,7 +27117,6 @@ internal fun reduce58(
     return Pair(3, 35)
 }
 
-/** `___reduce59` — (<MatchItem> ",") = MatchItem, "," => ActionFn(279); */
 internal fun reduce59(
     text: String,
     lookaheadStart: Int?,
@@ -27290,7 +27137,6 @@ internal fun reduce59(
     return Pair(2, 36)
 }
 
-/** `___reduce60` — (<MatchItem> ",")* =  => ActionFn(277); */
 internal
 fun reduce60(
     text: String,
@@ -27308,7 +27154,6 @@ fun reduce60(
     return Pair(0, 37)
 }
 
-/** `___reduce61` — (<MatchItem> ",")* = (<MatchItem> ",")+ => ActionFn(278); */
 internal
 fun reduce61(
     text: String,
@@ -27327,7 +27172,6 @@ fun reduce61(
     return Pair(1, 37)
 }
 
-/** `___reduce62` — (<MatchItem> ",")+ = MatchItem, "," => ActionFn(386); */
 internal fun reduce62(
     text: String,
     lookaheadStart: Int?,
@@ -27348,7 +27192,6 @@ internal fun reduce62(
     return Pair(2, 38)
 }
 
-/** `___reduce63` — (<MatchItem> ",")+ = (<MatchItem> ",")+, MatchItem, "," => ActionFn(387); */
 internal fun reduce63(
     text: String,
     lookaheadStart: Int?,
@@ -27370,7 +27213,6 @@ internal fun reduce63(
     return Pair(3, 38)
 }
 
-/** `___reduce64` — (<NotMacroId> ",") = NotMacroId, "," => ActionFn(255); */
 internal fun reduce64(
     text: String,
     lookaheadStart: Int?,
@@ -27391,7 +27233,6 @@ internal fun reduce64(
     return Pair(2, 39)
 }
 
-/** `___reduce65` — (<NotMacroId> ",")* =  => ActionFn(253); */
 internal
 fun reduce65(
     text: String,
@@ -27409,7 +27250,6 @@ fun reduce65(
     return Pair(0, 40)
 }
 
-/** `___reduce66` — (<NotMacroId> ",")* = (<NotMacroId> ",")+ => ActionFn(254); */
 internal
 fun reduce66(
     text: String,
@@ -27428,7 +27268,6 @@ fun reduce66(
     return Pair(1, 40)
 }
 
-/** `___reduce67` — (<NotMacroId> ",")+ = NotMacroId, "," => ActionFn(390); */
 internal fun reduce67(
     text: String,
     lookaheadStart: Int?,
@@ -27449,7 +27288,6 @@ internal fun reduce67(
     return Pair(2, 41)
 }
 
-/** `___reduce68` — (<NotMacroId> ",")+ = (<NotMacroId> ",")+, NotMacroId, "," => ActionFn(391); */
 internal fun reduce68(
     text: String,
     lookaheadStart: Int?,
@@ -27471,7 +27309,6 @@ internal fun reduce68(
     return Pair(3, 41)
 }
 
-/** `___reduce69` — (<Pattern> ",") = Pattern, "," => ActionFn(289); */
 internal fun reduce69(
     text: String,
     lookaheadStart: Int?,
@@ -27492,7 +27329,6 @@ internal fun reduce69(
     return Pair(2, 42)
 }
 
-/** `___reduce70` — (<Pattern> ",")* =  => ActionFn(287); */
 internal
 fun reduce70(
     text: String,
@@ -27510,7 +27346,6 @@ fun reduce70(
     return Pair(0, 43)
 }
 
-/** `___reduce71` — (<Pattern> ",")* = (<Pattern> ",")+ => ActionFn(288); */
 internal
 fun reduce71(
     text: String,
@@ -27529,7 +27364,6 @@ fun reduce71(
     return Pair(1, 43)
 }
 
-/** `___reduce72` — (<Pattern> ",")+ = Pattern, "," => ActionFn(394); */
 internal fun reduce72(
     text: String,
     lookaheadStart: Int?,
@@ -27550,7 +27384,6 @@ internal fun reduce72(
     return Pair(2, 44)
 }
 
-/** `___reduce73` — (<Pattern> ",")+ = (<Pattern> ",")+, Pattern, "," => ActionFn(395); */
 internal fun reduce73(
     text: String,
     lookaheadStart: Int?,
@@ -27572,7 +27405,6 @@ internal fun reduce73(
     return Pair(3, 44)
 }
 
-/** `___reduce74` — (<Symbol> ",") = Symbol, "," => ActionFn(265); */
 internal fun reduce74(
     text: String,
     lookaheadStart: Int?,
@@ -27593,7 +27425,6 @@ internal fun reduce74(
     return Pair(2, 45)
 }
 
-/** `___reduce75` — (<Symbol> ",")* =  => ActionFn(263); */
 internal
 fun reduce75(
     text: String,
@@ -27611,7 +27442,6 @@ fun reduce75(
     return Pair(0, 46)
 }
 
-/** `___reduce76` — (<Symbol> ",")* = (<Symbol> ",")+ => ActionFn(264); */
 internal
 fun reduce76(
     text: String,
@@ -27630,7 +27460,6 @@ fun reduce76(
     return Pair(1, 46)
 }
 
-/** `___reduce77` — (<Symbol> ",")+ = Symbol, "," => ActionFn(398); */
 internal fun reduce77(
     text: String,
     lookaheadStart: Int?,
@@ -27651,7 +27480,6 @@ internal fun reduce77(
     return Pair(2, 47)
 }
 
-/** `___reduce78` — (<Symbol> ",")+ = (<Symbol> ",")+, Symbol, "," => ActionFn(399); */
 internal fun reduce78(
     text: String,
     lookaheadStart: Int?,
@@ -27673,7 +27501,6 @@ internal fun reduce78(
     return Pair(3, 47)
 }
 
-/** `___reduce79` — (<TupleItem> ",") = TupleItem, "," => ActionFn(152); */
 internal fun reduce79(
     text: String,
     lookaheadStart: Int?,
@@ -27694,7 +27521,6 @@ internal fun reduce79(
     return Pair(2, 48)
 }
 
-/** `___reduce80` — (<TupleItem> ",")+ = TupleItem, "," => ActionFn(402); */
 internal fun reduce80(
     text: String,
     lookaheadStart: Int?,
@@ -27715,7 +27541,6 @@ internal fun reduce80(
     return Pair(2, 49)
 }
 
-/** `___reduce81` — (<TupleItem> ",")+ = (<TupleItem> ",")+, TupleItem, "," => ActionFn(403); */
 internal fun reduce81(
     text: String,
     lookaheadStart: Int?,
@@ -27737,7 +27562,6 @@ internal fun reduce81(
     return Pair(3, 49)
 }
 
-/** `___reduce82` — (<TypeBound> "+") = TypeBound, "+" => ActionFn(230); */
 internal fun reduce82(
     text: String,
     lookaheadStart: Int?,
@@ -27758,7 +27582,6 @@ internal fun reduce82(
     return Pair(2, 50)
 }
 
-/** `___reduce83` — (<TypeBound> "+")* =  => ActionFn(228); */
 internal
 fun reduce83(
     text: String,
@@ -27776,7 +27599,6 @@ fun reduce83(
     return Pair(0, 51)
 }
 
-/** `___reduce84` — (<TypeBound> "+")* = (<TypeBound> "+")+ => ActionFn(229); */
 internal
 fun reduce84(
     text: String,
@@ -27795,7 +27617,6 @@ fun reduce84(
     return Pair(1, 51)
 }
 
-/** `___reduce85` — (<TypeBound> "+")+ = TypeBound, "+" => ActionFn(404); */
 internal fun reduce85(
     text: String,
     lookaheadStart: Int?,
@@ -27816,7 +27637,6 @@ internal fun reduce85(
     return Pair(2, 52)
 }
 
-/** `___reduce86` — (<TypeBound> "+")+ = (<TypeBound> "+")+, TypeBound, "+" => ActionFn(405); */
 internal fun reduce86(
     text: String,
     lookaheadStart: Int?,
@@ -27838,7 +27658,6 @@ internal fun reduce86(
     return Pair(3, 52)
 }
 
-/** `___reduce87` — (<TypeBoundParameter> ",") = TypeBoundParameter, "," => ActionFn(240); */
 internal fun reduce87(
     text: String,
     lookaheadStart: Int?,
@@ -27859,7 +27678,6 @@ internal fun reduce87(
     return Pair(2, 53)
 }
 
-/** `___reduce88` — (<TypeBoundParameter> ",")* =  => ActionFn(238); */
 internal
 fun reduce88(
     text: String,
@@ -27877,7 +27695,6 @@ fun reduce88(
     return Pair(0, 54)
 }
 
-/** `___reduce89` — (<TypeBoundParameter> ",")* = (<TypeBoundParameter> ",")+ => ActionFn(239); */
 internal
 fun reduce89(
     text: String,
@@ -27896,7 +27713,6 @@ fun reduce89(
     return Pair(1, 54)
 }
 
-/** `___reduce90` — (<TypeBoundParameter> ",")+ = TypeBoundParameter, "," => ActionFn(408); */
 internal fun reduce90(
     text: String,
     lookaheadStart: Int?,
@@ -27917,7 +27733,6 @@ internal fun reduce90(
     return Pair(2, 55)
 }
 
-/** `___reduce91` — (<TypeBoundParameter> ",")+ = (<TypeBoundParameter> ",")+, TypeBoundParameter, "," => ActionFn(409); */
 internal fun reduce91(
     text: String,
     lookaheadStart: Int?,
@@ -27939,7 +27754,6 @@ internal fun reduce91(
     return Pair(3, 55)
 }
 
-/** `___reduce92` — (<TypeParameter> ",") = TypeParameter, "," => ActionFn(217); */
 internal fun reduce92(
     text: String,
     lookaheadStart: Int?,
@@ -27960,7 +27774,6 @@ internal fun reduce92(
     return Pair(2, 56)
 }
 
-/** `___reduce93` — (<TypeParameter> ",")* =  => ActionFn(215); */
 internal
 fun reduce93(
     text: String,
@@ -27978,7 +27791,6 @@ fun reduce93(
     return Pair(0, 57)
 }
 
-/** `___reduce94` — (<TypeParameter> ",")* = (<TypeParameter> ",")+ => ActionFn(216); */
 internal
 fun reduce94(
     text: String,
@@ -27997,7 +27809,6 @@ fun reduce94(
     return Pair(1, 57)
 }
 
-/** `___reduce95` — (<TypeParameter> ",")+ = TypeParameter, "," => ActionFn(412); */
 internal fun reduce95(
     text: String,
     lookaheadStart: Int?,
@@ -28018,7 +27829,6 @@ internal fun reduce95(
     return Pair(2, 58)
 }
 
-/** `___reduce96` — (<TypeParameter> ",")+ = (<TypeParameter> ",")+, TypeParameter, "," => ActionFn(413); */
 internal fun reduce96(
     text: String,
     lookaheadStart: Int?,
@@ -28040,7 +27850,6 @@ internal fun reduce96(
     return Pair(3, 58)
 }
 
-/** `___reduce97` — (<TypeRef> ",") = TypeRef, "," => ActionFn(235); */
 internal fun reduce97(
     text: String,
     lookaheadStart: Int?,
@@ -28061,7 +27870,6 @@ internal fun reduce97(
     return Pair(2, 59)
 }
 
-/** `___reduce98` — (<TypeRef> ",")* =  => ActionFn(233); */
 internal
 fun reduce98(
     text: String,
@@ -28079,7 +27887,6 @@ fun reduce98(
     return Pair(0, 60)
 }
 
-/** `___reduce99` — (<TypeRef> ",")* = (<TypeRef> ",")+ => ActionFn(234); */
 internal
 fun reduce99(
     text: String,
@@ -28098,7 +27905,6 @@ fun reduce99(
     return Pair(1, 60)
 }
 
-/** `___reduce100` — (<TypeRef> ",")+ = TypeRef, "," => ActionFn(416); */
 internal fun reduce100(
     text: String,
     lookaheadStart: Int?,
@@ -28119,7 +27925,6 @@ internal fun reduce100(
     return Pair(2, 61)
 }
 
-/** `___reduce101` — (<TypeRef> ",")+ = (<TypeRef> ",")+, TypeRef, "," => ActionFn(417); */
 internal fun reduce101(
     text: String,
     lookaheadStart: Int?,
@@ -28141,7 +27946,6 @@ internal fun reduce101(
     return Pair(3, 61)
 }
 
-/** `___reduce102` — (<TypeRefOrLifetime> ",") = TypeRefOrLifetime, "," => ActionFn(270); */
 internal fun reduce102(
     text: String,
     lookaheadStart: Int?,
@@ -28162,7 +27966,6 @@ internal fun reduce102(
     return Pair(2, 62)
 }
 
-/** `___reduce103` — (<TypeRefOrLifetime> ",")* =  => ActionFn(268); */
 internal
 fun reduce103(
     text: String,
@@ -28180,7 +27983,6 @@ fun reduce103(
     return Pair(0, 63)
 }
 
-/** `___reduce104` — (<TypeRefOrLifetime> ",")* = (<TypeRefOrLifetime> ",")+ => ActionFn(269); */
 internal
 fun reduce104(
     text: String,
@@ -28199,7 +28001,6 @@ fun reduce104(
     return Pair(1, 63)
 }
 
-/** `___reduce105` — (<TypeRefOrLifetime> ",")+ = TypeRefOrLifetime, "," => ActionFn(420); */
 internal fun reduce105(
     text: String,
     lookaheadStart: Int?,
@@ -28220,7 +28021,6 @@ internal fun reduce105(
     return Pair(2, 64)
 }
 
-/** `___reduce106` — (<TypeRefOrLifetime> ",")+ = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime, "," => ActionFn(421); */
 internal fun reduce106(
     text: String,
     lookaheadStart: Int?,
@@ -28242,7 +28042,6 @@ internal fun reduce106(
     return Pair(3, 64)
 }
 
-/** `___reduce107` — @L =  => ActionFn(198); */
 internal
 fun reduce107(
     text: String,
@@ -28260,7 +28059,6 @@ fun reduce107(
     return Pair(0, 65)
 }
 
-/** `___reduce108` — @R =  => ActionFn(197); */
 internal
 fun reduce108(
     text: String,
@@ -28278,7 +28076,6 @@ fun reduce108(
     return Pair(0, 66)
 }
 
-/** `___reduce109` — Action = "=>@L" => ActionFn(45); */
 internal
 fun reduce109(
     text: String,
@@ -28297,7 +28094,6 @@ fun reduce109(
     return Pair(1, 67)
 }
 
-/** `___reduce110` — Action = "=>@R" => ActionFn(46); */
 internal
 fun reduce110(
     text: String,
@@ -28316,7 +28112,6 @@ fun reduce110(
     return Pair(1, 67)
 }
 
-/** `___reduce111` — Action = "=>" => ActionFn(47); */
 internal
 fun reduce111(
     text: String,
@@ -28335,7 +28130,6 @@ fun reduce111(
     return Pair(1, 67)
 }
 
-/** `___reduce112` — Action = "=>?" => ActionFn(48); */
 internal
 fun reduce112(
     text: String,
@@ -28354,7 +28148,6 @@ fun reduce112(
     return Pair(1, 67)
 }
 
-/** `___reduce113` — Action? = Action => ActionFn(158); */
 internal
 fun reduce113(
     text: String,
@@ -28373,7 +28166,6 @@ fun reduce113(
     return Pair(1, 68)
 }
 
-/** `___reduce114` — Action? =  => ActionFn(159); */
 internal
 fun reduce114(
     text: String,
@@ -28391,7 +28183,6 @@ fun reduce114(
     return Pair(0, 68)
 }
 
-/** `___reduce115` — Alternative = Symbol+, "if", Cond, Action => ActionFn(493); */
 internal fun reduce115(
     text: String,
     lookaheadStart: Int?,
@@ -28414,7 +28205,6 @@ internal fun reduce115(
     return Pair(4, 69)
 }
 
-/** `___reduce116` — Alternative = Attribute+, Symbol+, "if", Cond, Action => ActionFn(494); */
 internal fun reduce116(
     text: String,
     lookaheadStart: Int?,
@@ -28438,7 +28228,6 @@ internal fun reduce116(
     return Pair(5, 69)
 }
 
-/** `___reduce117` — Alternative = Symbol+, "if", Cond => ActionFn(495); */
 internal fun reduce117(
     text: String,
     lookaheadStart: Int?,
@@ -28460,7 +28249,6 @@ internal fun reduce117(
     return Pair(3, 69)
 }
 
-/** `___reduce118` — Alternative = Attribute+, Symbol+, "if", Cond => ActionFn(496); */
 internal fun reduce118(
     text: String,
     lookaheadStart: Int?,
@@ -28483,7 +28271,6 @@ internal fun reduce118(
     return Pair(4, 69)
 }
 
-/** `___reduce119` — Alternative = Symbol+, Action => ActionFn(497); */
 internal fun reduce119(
     text: String,
     lookaheadStart: Int?,
@@ -28504,7 +28291,6 @@ internal fun reduce119(
     return Pair(2, 69)
 }
 
-/** `___reduce120` — Alternative = Attribute+, Symbol+, Action => ActionFn(498); */
 internal fun reduce120(
     text: String,
     lookaheadStart: Int?,
@@ -28526,7 +28312,6 @@ internal fun reduce120(
     return Pair(3, 69)
 }
 
-/** `___reduce121` — Alternative = Symbol+ => ActionFn(499); */
 internal
 fun reduce121(
     text: String,
@@ -28545,7 +28330,6 @@ fun reduce121(
     return Pair(1, 69)
 }
 
-/** `___reduce122` — Alternative = Attribute+, Symbol+ => ActionFn(500); */
 internal fun reduce122(
     text: String,
     lookaheadStart: Int?,
@@ -28566,7 +28350,6 @@ internal fun reduce122(
     return Pair(2, 69)
 }
 
-/** `___reduce123` — Alternative = "if", Cond, Action => ActionFn(454); */
 internal fun reduce123(
     text: String,
     lookaheadStart: Int?,
@@ -28588,7 +28371,6 @@ internal fun reduce123(
     return Pair(3, 69)
 }
 
-/** `___reduce124` — Alternative = Action => ActionFn(455); */
 internal
 fun reduce124(
     text: String,
@@ -28607,7 +28389,6 @@ fun reduce124(
     return Pair(1, 69)
 }
 
-/** `___reduce125` — Alternative? = Alternative => ActionFn(256); */
 internal
 fun reduce125(
     text: String,
@@ -28626,7 +28407,6 @@ fun reduce125(
     return Pair(1, 70)
 }
 
-/** `___reduce126` — Alternative? =  => ActionFn(257); */
 internal
 fun reduce126(
     text: String,
@@ -28644,7 +28424,6 @@ fun reduce126(
     return Pair(0, 70)
 }
 
-/** `___reduce127` — Alternatives = Alternative, ";" => ActionFn(41); */
 internal fun reduce127(
     text: String,
     lookaheadStart: Int?,
@@ -28665,7 +28444,6 @@ internal fun reduce127(
     return Pair(2, 71)
 }
 
-/** `___reduce128` — Alternatives = "{", Comma<Alternative>, "}", ";" => ActionFn(324); */
 internal fun reduce128(
     text: String,
     lookaheadStart: Int?,
@@ -28688,7 +28466,6 @@ internal fun reduce128(
     return Pair(4, 71)
 }
 
-/** `___reduce129` — Alternatives = "{", Comma<Alternative>, "}" => ActionFn(325); */
 internal fun reduce129(
     text: String,
     lookaheadStart: Int?,
@@ -28710,7 +28487,6 @@ internal fun reduce129(
     return Pair(3, 71)
 }
 
-/** `___reduce130` — AssociatedType = "type", Id, "=", TypeRef, ";" => ActionFn(456); */
 internal fun reduce130(
     text: String,
     lookaheadStart: Int?,
@@ -28734,7 +28510,6 @@ internal fun reduce130(
     return Pair(5, 72)
 }
 
-/** `___reduce131` — AssociatedType* =  => ActionFn(138); */
 internal
 fun reduce131(
     text: String,
@@ -28752,7 +28527,6 @@ fun reduce131(
     return Pair(0, 73)
 }
 
-/** `___reduce132` — AssociatedType* = AssociatedType+ => ActionFn(139); */
 internal
 fun reduce132(
     text: String,
@@ -28771,7 +28545,6 @@ fun reduce132(
     return Pair(1, 73)
 }
 
-/** `___reduce133` — AssociatedType+ = AssociatedType => ActionFn(273); */
 internal
 fun reduce133(
     text: String,
@@ -28790,7 +28563,6 @@ fun reduce133(
     return Pair(1, 74)
 }
 
-/** `___reduce134` — AssociatedType+ = AssociatedType+, AssociatedType => ActionFn(274); */
 internal fun reduce134(
     text: String,
     lookaheadStart: Int?,
@@ -28811,7 +28583,6 @@ internal fun reduce134(
     return Pair(2, 74)
 }
 
-/** `___reduce135` — Attribute = "#", "[", AttributeInner, "]" => ActionFn(34); */
 internal fun reduce135(
     text: String,
     lookaheadStart: Int?,
@@ -28834,7 +28605,6 @@ internal fun reduce135(
     return Pair(4, 75)
 }
 
-/** `___reduce136` — Attribute* =  => ActionFn(199); */
 internal
 fun reduce136(
     text: String,
@@ -28852,7 +28622,6 @@ fun reduce136(
     return Pair(0, 76)
 }
 
-/** `___reduce137` — Attribute* = Attribute+ => ActionFn(200); */
 internal
 fun reduce137(
     text: String,
@@ -28871,7 +28640,6 @@ fun reduce137(
     return Pair(1, 76)
 }
 
-/** `___reduce138` — Attribute+ = Attribute => ActionFn(209); */
 internal
 fun reduce138(
     text: String,
@@ -28890,7 +28658,6 @@ fun reduce138(
     return Pair(1, 77)
 }
 
-/** `___reduce139` — Attribute+ = Attribute+, Attribute => ActionFn(210); */
 internal fun reduce139(
     text: String,
     lookaheadStart: Int?,
@@ -28911,7 +28678,6 @@ internal fun reduce139(
     return Pair(2, 77)
 }
 
-/** `___reduce140` — AttributeArg = "(", Comma<AttributeInner>, ")" => ActionFn(36); */
 internal fun reduce140(
     text: String,
     lookaheadStart: Int?,
@@ -28933,7 +28699,6 @@ internal fun reduce140(
     return Pair(3, 78)
 }
 
-/** `___reduce141` — AttributeArg = "=", "StringLiteral" => ActionFn(37); */
 internal fun reduce141(
     text: String,
     lookaheadStart: Int?,
@@ -28954,7 +28719,6 @@ internal fun reduce141(
     return Pair(2, 78)
 }
 
-/** `___reduce142` — AttributeArg? = AttributeArg => ActionFn(170); */
 internal
 fun reduce142(
     text: String,
@@ -28973,7 +28737,6 @@ fun reduce142(
     return Pair(1, 79)
 }
 
-/** `___reduce143` — AttributeArg? =  => ActionFn(171); */
 internal
 fun reduce143(
     text: String,
@@ -28991,7 +28754,6 @@ fun reduce143(
     return Pair(0, 79)
 }
 
-/** `___reduce144` — AttributeInner = Id, AttributeArg => ActionFn(509); */
 internal fun reduce144(
     text: String,
     lookaheadStart: Int?,
@@ -29012,7 +28774,6 @@ internal fun reduce144(
     return Pair(2, 80)
 }
 
-/** `___reduce145` — AttributeInner = Id => ActionFn(510); */
 internal
 fun reduce145(
     text: String,
@@ -29031,7 +28792,6 @@ fun reduce145(
     return Pair(1, 80)
 }
 
-/** `___reduce146` — AttributeInner? = AttributeInner => ActionFn(246); */
 internal
 fun reduce146(
     text: String,
@@ -29050,7 +28810,6 @@ fun reduce146(
     return Pair(1, 81)
 }
 
-/** `___reduce147` — AttributeInner? =  => ActionFn(247); */
 internal
 fun reduce147(
     text: String,
@@ -29068,7 +28827,6 @@ fun reduce147(
     return Pair(0, 81)
 }
 
-/** `___reduce148` — Comma<Alternative> = Alternative => ActionFn(483); */
 internal
 fun reduce148(
     text: String,
@@ -29087,7 +28845,6 @@ fun reduce148(
     return Pair(1, 82)
 }
 
-/** `___reduce149` — Comma<Alternative> =  => ActionFn(484); */
 internal
 fun reduce149(
     text: String,
@@ -29105,7 +28862,6 @@ fun reduce149(
     return Pair(0, 82)
 }
 
-/** `___reduce150` — Comma<Alternative> = (<Alternative> ",")+, Alternative => ActionFn(485); */
 internal fun reduce150(
     text: String,
     lookaheadStart: Int?,
@@ -29126,7 +28882,6 @@ internal fun reduce150(
     return Pair(2, 82)
 }
 
-/** `___reduce151` — Comma<Alternative> = (<Alternative> ",")+ => ActionFn(486); */
 internal
 fun reduce151(
     text: String,
@@ -29145,7 +28900,6 @@ fun reduce151(
     return Pair(1, 82)
 }
 
-/** `___reduce152` — Comma<AttributeInner> = AttributeInner => ActionFn(511); */
 internal
 fun reduce152(
     text: String,
@@ -29164,7 +28918,6 @@ fun reduce152(
     return Pair(1, 83)
 }
 
-/** `___reduce153` — Comma<AttributeInner> =  => ActionFn(512); */
 internal
 fun reduce153(
     text: String,
@@ -29182,7 +28935,6 @@ fun reduce153(
     return Pair(0, 83)
 }
 
-/** `___reduce154` — Comma<AttributeInner> = (<AttributeInner> ",")+, AttributeInner => ActionFn(513); */
 internal fun reduce154(
     text: String,
     lookaheadStart: Int?,
@@ -29203,7 +28955,6 @@ internal fun reduce154(
     return Pair(2, 83)
 }
 
-/** `___reduce155` — Comma<AttributeInner> = (<AttributeInner> ",")+ => ActionFn(514); */
 internal
 fun reduce155(
     text: String,
@@ -29222,7 +28973,6 @@ fun reduce155(
     return Pair(1, 83)
 }
 
-/** `___reduce156` — Comma<Conversion> = Conversion => ActionFn(515); */
 internal
 fun reduce156(
     text: String,
@@ -29241,7 +28991,6 @@ fun reduce156(
     return Pair(1, 84)
 }
 
-/** `___reduce157` — Comma<Conversion> =  => ActionFn(516); */
 internal
 fun reduce157(
     text: String,
@@ -29259,7 +29008,6 @@ fun reduce157(
     return Pair(0, 84)
 }
 
-/** `___reduce158` — Comma<Conversion> = (<Conversion> ",")+, Conversion => ActionFn(517); */
 internal fun reduce158(
     text: String,
     lookaheadStart: Int?,
@@ -29280,7 +29028,6 @@ internal fun reduce158(
     return Pair(2, 84)
 }
 
-/** `___reduce159` — Comma<Conversion> = (<Conversion> ",")+ => ActionFn(518); */
 internal
 fun reduce159(
     text: String,
@@ -29299,7 +29046,6 @@ fun reduce159(
     return Pair(1, 84)
 }
 
-/** `___reduce160` — Comma<GrammarParameter> = GrammarParameter => ActionFn(541); */
 internal
 fun reduce160(
     text: String,
@@ -29318,7 +29064,6 @@ fun reduce160(
     return Pair(1, 85)
 }
 
-/** `___reduce161` — Comma<GrammarParameter> =  => ActionFn(542); */
 internal
 fun reduce161(
     text: String,
@@ -29336,7 +29081,6 @@ fun reduce161(
     return Pair(0, 85)
 }
 
-/** `___reduce162` — Comma<GrammarParameter> = (<GrammarParameter> ",")+, GrammarParameter => ActionFn(543); */
 internal fun reduce162(
     text: String,
     lookaheadStart: Int?,
@@ -29357,7 +29101,6 @@ internal fun reduce162(
     return Pair(2, 85)
 }
 
-/** `___reduce163` — Comma<GrammarParameter> = (<GrammarParameter> ",")+ => ActionFn(544); */
 internal
 fun reduce163(
     text: String,
@@ -29376,7 +29119,6 @@ fun reduce163(
     return Pair(1, 85)
 }
 
-/** `___reduce164` — Comma<GrammarWhereClause> = GrammarWhereClause => ActionFn(569); */
 internal
 fun reduce164(
     text: String,
@@ -29395,7 +29137,6 @@ fun reduce164(
     return Pair(1, 86)
 }
 
-/** `___reduce165` — Comma<GrammarWhereClause> =  => ActionFn(570); */
 internal
 fun reduce165(
     text: String,
@@ -29413,7 +29154,6 @@ fun reduce165(
     return Pair(0, 86)
 }
 
-/** `___reduce166` — Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+, GrammarWhereClause => ActionFn(571); */
 internal fun reduce166(
     text: String,
     lookaheadStart: Int?,
@@ -29434,7 +29174,6 @@ internal fun reduce166(
     return Pair(2, 86)
 }
 
-/** `___reduce167` — Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+ => ActionFn(572); */
 internal
 fun reduce167(
     text: String,
@@ -29453,7 +29192,6 @@ fun reduce167(
     return Pair(1, 86)
 }
 
-/** `___reduce168` — Comma<MatchItem> = MatchItem => ActionFn(613); */
 internal
 fun reduce168(
     text: String,
@@ -29472,7 +29210,6 @@ fun reduce168(
     return Pair(1, 87)
 }
 
-/** `___reduce169` — Comma<MatchItem> =  => ActionFn(614); */
 internal
 fun reduce169(
     text: String,
@@ -29490,7 +29227,6 @@ fun reduce169(
     return Pair(0, 87)
 }
 
-/** `___reduce170` — Comma<MatchItem> = (<MatchItem> ",")+, MatchItem => ActionFn(615); */
 internal fun reduce170(
     text: String,
     lookaheadStart: Int?,
@@ -29511,7 +29247,6 @@ internal fun reduce170(
     return Pair(2, 87)
 }
 
-/** `___reduce171` — Comma<MatchItem> = (<MatchItem> ",")+ => ActionFn(616); */
 internal
 fun reduce171(
     text: String,
@@ -29530,7 +29265,6 @@ fun reduce171(
     return Pair(1, 87)
 }
 
-/** `___reduce172` — Comma<NotMacroId> = NotMacroId => ActionFn(617); */
 internal
 fun reduce172(
     text: String,
@@ -29549,7 +29283,6 @@ fun reduce172(
     return Pair(1, 88)
 }
 
-/** `___reduce173` — Comma<NotMacroId> =  => ActionFn(618); */
 internal
 fun reduce173(
     text: String,
@@ -29567,7 +29300,6 @@ fun reduce173(
     return Pair(0, 88)
 }
 
-/** `___reduce174` — Comma<NotMacroId> = (<NotMacroId> ",")+, NotMacroId => ActionFn(619); */
 internal fun reduce174(
     text: String,
     lookaheadStart: Int?,
@@ -29588,7 +29320,6 @@ internal fun reduce174(
     return Pair(2, 88)
 }
 
-/** `___reduce175` — Comma<NotMacroId> = (<NotMacroId> ",")+ => ActionFn(620); */
 internal
 fun reduce175(
     text: String,
@@ -29607,7 +29338,6 @@ fun reduce175(
     return Pair(1, 88)
 }
 
-/** `___reduce176` — Comma<Pattern> = Pattern => ActionFn(621); */
 internal
 fun reduce176(
     text: String,
@@ -29626,7 +29356,6 @@ fun reduce176(
     return Pair(1, 89)
 }
 
-/** `___reduce177` — Comma<Pattern> =  => ActionFn(622); */
 internal
 fun reduce177(
     text: String,
@@ -29644,7 +29373,6 @@ fun reduce177(
     return Pair(0, 89)
 }
 
-/** `___reduce178` — Comma<Pattern> = (<Pattern> ",")+, Pattern => ActionFn(623); */
 internal fun reduce178(
     text: String,
     lookaheadStart: Int?,
@@ -29665,7 +29393,6 @@ internal fun reduce178(
     return Pair(2, 89)
 }
 
-/** `___reduce179` — Comma<Pattern> = (<Pattern> ",")+ => ActionFn(624); */
 internal
 fun reduce179(
     text: String,
@@ -29684,7 +29411,6 @@ fun reduce179(
     return Pair(1, 89)
 }
 
-/** `___reduce180` — Comma<Symbol> = Symbol => ActionFn(691); */
 internal
 fun reduce180(
     text: String,
@@ -29703,7 +29429,6 @@ fun reduce180(
     return Pair(1, 90)
 }
 
-/** `___reduce181` — Comma<Symbol> =  => ActionFn(692); */
 internal
 fun reduce181(
     text: String,
@@ -29721,7 +29446,6 @@ fun reduce181(
     return Pair(0, 90)
 }
 
-/** `___reduce182` — Comma<Symbol> = (<Symbol> ",")+, Symbol => ActionFn(693); */
 internal fun reduce182(
     text: String,
     lookaheadStart: Int?,
@@ -29742,7 +29466,6 @@ internal fun reduce182(
     return Pair(2, 90)
 }
 
-/** `___reduce183` — Comma<Symbol> = (<Symbol> ",")+ => ActionFn(694); */
 internal
 fun reduce183(
     text: String,
@@ -29761,7 +29484,6 @@ fun reduce183(
     return Pair(1, 90)
 }
 
-/** `___reduce184` — Comma<TypeBoundParameter> = TypeBoundParameter => ActionFn(701); */
 internal
 fun reduce184(
     text: String,
@@ -29780,7 +29502,6 @@ fun reduce184(
     return Pair(1, 91)
 }
 
-/** `___reduce185` — Comma<TypeBoundParameter> =  => ActionFn(702); */
 internal
 fun reduce185(
     text: String,
@@ -29798,7 +29519,6 @@ fun reduce185(
     return Pair(0, 91)
 }
 
-/** `___reduce186` — Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+, TypeBoundParameter => ActionFn(703); */
 internal fun reduce186(
     text: String,
     lookaheadStart: Int?,
@@ -29819,7 +29539,6 @@ internal fun reduce186(
     return Pair(2, 91)
 }
 
-/** `___reduce187` — Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+ => ActionFn(704); */
 internal
 fun reduce187(
     text: String,
@@ -29838,7 +29557,6 @@ fun reduce187(
     return Pair(1, 91)
 }
 
-/** `___reduce188` — Comma<TypeParameter> = TypeParameter => ActionFn(705); */
 internal
 fun reduce188(
     text: String,
@@ -29857,7 +29575,6 @@ fun reduce188(
     return Pair(1, 92)
 }
 
-/** `___reduce189` — Comma<TypeParameter> =  => ActionFn(706); */
 internal
 fun reduce189(
     text: String,
@@ -29875,7 +29592,6 @@ fun reduce189(
     return Pair(0, 92)
 }
 
-/** `___reduce190` — Comma<TypeParameter> = (<TypeParameter> ",")+, TypeParameter => ActionFn(707); */
 internal fun reduce190(
     text: String,
     lookaheadStart: Int?,
@@ -29896,7 +29612,6 @@ internal fun reduce190(
     return Pair(2, 92)
 }
 
-/** `___reduce191` — Comma<TypeParameter> = (<TypeParameter> ",")+ => ActionFn(708); */
 internal
 fun reduce191(
     text: String,
@@ -29915,7 +29630,6 @@ fun reduce191(
     return Pair(1, 92)
 }
 
-/** `___reduce192` — Comma<TypeRef> = TypeRef => ActionFn(709); */
 internal
 fun reduce192(
     text: String,
@@ -29934,7 +29648,6 @@ fun reduce192(
     return Pair(1, 93)
 }
 
-/** `___reduce193` — Comma<TypeRef> =  => ActionFn(710); */
 internal
 fun reduce193(
     text: String,
@@ -29952,7 +29665,6 @@ fun reduce193(
     return Pair(0, 93)
 }
 
-/** `___reduce194` — Comma<TypeRef> = (<TypeRef> ",")+, TypeRef => ActionFn(711); */
 internal fun reduce194(
     text: String,
     lookaheadStart: Int?,
@@ -29973,7 +29685,6 @@ internal fun reduce194(
     return Pair(2, 93)
 }
 
-/** `___reduce195` — Comma<TypeRef> = (<TypeRef> ",")+ => ActionFn(712); */
 internal
 fun reduce195(
     text: String,
@@ -29992,7 +29703,6 @@ fun reduce195(
     return Pair(1, 93)
 }
 
-/** `___reduce196` — Comma<TypeRefOrLifetime> = TypeRefOrLifetime => ActionFn(713); */
 internal
 fun reduce196(
     text: String,
@@ -30011,7 +29721,6 @@ fun reduce196(
     return Pair(1, 94)
 }
 
-/** `___reduce197` — Comma<TypeRefOrLifetime> =  => ActionFn(714); */
 internal
 fun reduce197(
     text: String,
@@ -30029,7 +29738,6 @@ fun reduce197(
     return Pair(0, 94)
 }
 
-/** `___reduce198` — Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime => ActionFn(715); */
 internal fun reduce198(
     text: String,
     lookaheadStart: Int?,
@@ -30050,7 +29758,6 @@ internal fun reduce198(
     return Pair(2, 94)
 }
 
-/** `___reduce199` — Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+ => ActionFn(716); */
 internal
 fun reduce199(
     text: String,
@@ -30069,7 +29776,6 @@ fun reduce199(
     return Pair(1, 94)
 }
 
-/** `___reduce200` — Cond = NotMacroId, CondOp, StringLiteral => ActionFn(458); */
 internal fun reduce200(
     text: String,
     lookaheadStart: Int?,
@@ -30091,7 +29797,6 @@ internal fun reduce200(
     return Pair(3, 95)
 }
 
-/** `___reduce201` — CondOp = "==" => ActionFn(50); */
 internal
 fun reduce201(
     text: String,
@@ -30110,7 +29815,6 @@ fun reduce201(
     return Pair(1, 96)
 }
 
-/** `___reduce202` — CondOp = "!=" => ActionFn(51); */
 internal
 fun reduce202(
     text: String,
@@ -30129,7 +29833,6 @@ fun reduce202(
     return Pair(1, 96)
 }
 
-/** `___reduce203` — CondOp = "~~" => ActionFn(52); */
 internal
 fun reduce203(
     text: String,
@@ -30148,7 +29851,6 @@ fun reduce203(
     return Pair(1, 96)
 }
 
-/** `___reduce204` — CondOp = "!~" => ActionFn(53); */
 internal
 fun reduce204(
     text: String,
@@ -30167,7 +29869,6 @@ fun reduce204(
     return Pair(1, 96)
 }
 
-/** `___reduce207` — Conversion? = Conversion => ActionFn(280); */
 internal
 fun reduce207(
     text: String,
@@ -30186,7 +29887,6 @@ fun reduce207(
     return Pair(1, 98)
 }
 
-/** `___reduce208` — Conversion? =  => ActionFn(281); */
 internal
 fun reduce208(
     text: String,
@@ -30204,7 +29904,6 @@ fun reduce208(
     return Pair(0, 98)
 }
 
-/** `___reduce209` — EnumToken = "enum", TypeRef, "{", Comma<Conversion>, "}" => ActionFn(460); */
 internal fun reduce209(
     text: String,
     lookaheadStart: Int?,
@@ -30228,7 +29927,6 @@ internal fun reduce209(
     return Pair(5, 99)
 }
 
-/** `___reduce210` — Escape = "Escape" => ActionFn(119); */
 internal
 fun reduce210(
     text: String,
@@ -30247,7 +29945,6 @@ fun reduce210(
     return Pair(1, 100)
 }
 
-/** `___reduce211` — ExprSymbol =  => ActionFn(689); */
 internal
 fun reduce211(
     text: String,
@@ -30265,7 +29962,6 @@ fun reduce211(
     return Pair(0, 101)
 }
 
-/** `___reduce212` — ExprSymbol = Symbol+ => ActionFn(690); */
 internal
 fun reduce212(
     text: String,
@@ -30284,7 +29980,6 @@ fun reduce212(
     return Pair(1, 101)
 }
 
-/** `___reduce213` — ExternToken = "extern", "{", EnumToken, "}" => ActionFn(487); */
 internal fun reduce213(
     text: String,
     lookaheadStart: Int?,
@@ -30307,7 +30002,6 @@ internal fun reduce213(
     return Pair(4, 102)
 }
 
-/** `___reduce214` — ExternToken = "extern", "{", EnumToken, AssociatedType+, "}" => ActionFn(488); */
 internal fun reduce214(
     text: String,
     lookaheadStart: Int?,
@@ -30331,7 +30025,6 @@ internal fun reduce214(
     return Pair(5, 102)
 }
 
-/** `___reduce215` — ExternToken = "extern", "{", AssociatedType+, EnumToken, "}" => ActionFn(489); */
 internal fun reduce215(
     text: String,
     lookaheadStart: Int?,
@@ -30355,7 +30048,6 @@ internal fun reduce215(
     return Pair(5, 102)
 }
 
-/** `___reduce216` — ExternToken = "extern", "{", AssociatedType+, EnumToken, AssociatedType+, "}" => ActionFn(490); */
 internal fun reduce216(
     text: String,
     lookaheadStart: Int?,
@@ -30380,7 +30072,6 @@ internal fun reduce216(
     return Pair(6, 102)
 }
 
-/** `___reduce217` — ExternToken = "extern", "{", "}" => ActionFn(491); */
 internal fun reduce217(
     text: String,
     lookaheadStart: Int?,
@@ -30402,7 +30093,6 @@ internal fun reduce217(
     return Pair(3, 102)
 }
 
-/** `___reduce218` — ExternToken = "extern", "{", AssociatedType+, "}" => ActionFn(492); */
 internal fun reduce218(
     text: String,
     lookaheadStart: Int?,
@@ -30425,7 +30115,6 @@ internal fun reduce218(
     return Pair(4, 102)
 }
 
-/** `___reduce219` — FieldPattern = Id, ":", Pattern => ActionFn(463); */
 internal fun reduce219(
     text: String,
     lookaheadStart: Int?,
@@ -30447,7 +30136,6 @@ internal fun reduce219(
     return Pair(3, 103)
 }
 
-/** `___reduce220` — FieldPattern? = FieldPattern => ActionFn(130); */
 internal
 fun reduce220(
     text: String,
@@ -30466,7 +30154,6 @@ fun reduce220(
     return Pair(1, 104)
 }
 
-/** `___reduce221` — FieldPattern? =  => ActionFn(131); */
 internal
 fun reduce221(
     text: String,
@@ -30484,7 +30171,6 @@ fun reduce221(
     return Pair(0, 104)
 }
 
-/** `___reduce222` — ForAll = "for", "<", Comma<TypeParameter>, ">" => ActionFn(13); */
 internal fun reduce222(
     text: String,
     lookaheadStart: Int?,
@@ -30507,7 +30193,6 @@ internal fun reduce222(
     return Pair(4, 105)
 }
 
-/** `___reduce223` — ForAll =  => ActionFn(348); */
 internal
 fun reduce223(
     text: String,
@@ -30525,7 +30210,6 @@ fun reduce223(
     return Pair(0, 105)
 }
 
-/** `___reduce224` — Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(717); */
 internal fun reduce224(
     text: String,
     lookaheadStart: Int?,
@@ -30549,7 +30233,6 @@ internal fun reduce224(
     return Pair(5, 106)
 }
 
-/** `___reduce225` — Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(718); */
 internal fun reduce225(
     text: String,
     lookaheadStart: Int?,
@@ -30574,7 +30257,6 @@ internal fun reduce225(
     return Pair(6, 106)
 }
 
-/** `___reduce226` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(719); */
 internal fun reduce226(
     text: String,
     lookaheadStart: Int?,
@@ -30599,7 +30281,6 @@ internal fun reduce226(
     return Pair(6, 106)
 }
 
-/** `___reduce227` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(720); */
 internal fun reduce227(
     text: String,
     lookaheadStart: Int?,
@@ -30625,7 +30306,6 @@ internal fun reduce227(
     return Pair(7, 106)
 }
 
-/** `___reduce228` — Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(721); */
 internal fun reduce228(
     text: String,
     lookaheadStart: Int?,
@@ -30648,7 +30328,6 @@ internal fun reduce228(
     return Pair(4, 106)
 }
 
-/** `___reduce229` — Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(722); */
 internal fun reduce229(
     text: String,
     lookaheadStart: Int?,
@@ -30672,7 +30351,6 @@ internal fun reduce229(
     return Pair(5, 106)
 }
 
-/** `___reduce230` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(723); */
 internal fun reduce230(
     text: String,
     lookaheadStart: Int?,
@@ -30696,7 +30374,6 @@ internal fun reduce230(
     return Pair(5, 106)
 }
 
-/** `___reduce231` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(724); */
 internal fun reduce231(
     text: String,
     lookaheadStart: Int?,
@@ -30721,7 +30398,6 @@ internal fun reduce231(
     return Pair(6, 106)
 }
 
-/** `___reduce232` — Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(725); */
 internal fun reduce232(
     text: String,
     lookaheadStart: Int?,
@@ -30744,7 +30420,6 @@ internal fun reduce232(
     return Pair(4, 106)
 }
 
-/** `___reduce233` — Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(726); */
 internal fun reduce233(
     text: String,
     lookaheadStart: Int?,
@@ -30768,7 +30443,6 @@ internal fun reduce233(
     return Pair(5, 106)
 }
 
-/** `___reduce234` — Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(727); */
 internal fun reduce234(
     text: String,
     lookaheadStart: Int?,
@@ -30792,7 +30466,6 @@ internal fun reduce234(
     return Pair(5, 106)
 }
 
-/** `___reduce235` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(728); */
 internal fun reduce235(
     text: String,
     lookaheadStart: Int?,
@@ -30817,7 +30490,6 @@ internal fun reduce235(
     return Pair(6, 106)
 }
 
-/** `___reduce236` — Grammar = "grammar", GrammarParameters, ";" => ActionFn(729); */
 internal fun reduce236(
     text: String,
     lookaheadStart: Int?,
@@ -30839,7 +30511,6 @@ internal fun reduce236(
     return Pair(3, 106)
 }
 
-/** `___reduce237` — Grammar = Use+, "grammar", GrammarParameters, ";" => ActionFn(730); */
 internal fun reduce237(
     text: String,
     lookaheadStart: Int?,
@@ -30862,7 +30533,6 @@ internal fun reduce237(
     return Pair(4, 106)
 }
 
-/** `___reduce238` — Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";" => ActionFn(731); */
 internal fun reduce238(
     text: String,
     lookaheadStart: Int?,
@@ -30885,7 +30555,6 @@ internal fun reduce238(
     return Pair(4, 106)
 }
 
-/** `___reduce239` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";" => ActionFn(732); */
 internal fun reduce239(
     text: String,
     lookaheadStart: Int?,
@@ -30909,7 +30578,6 @@ internal fun reduce239(
     return Pair(5, 106)
 }
 
-/** `___reduce240` — Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(733); */
 internal fun reduce240(
     text: String,
     lookaheadStart: Int?,
@@ -30932,7 +30600,6 @@ internal fun reduce240(
     return Pair(4, 106)
 }
 
-/** `___reduce241` — Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(734); */
 internal fun reduce241(
     text: String,
     lookaheadStart: Int?,
@@ -30956,7 +30623,6 @@ internal fun reduce241(
     return Pair(5, 106)
 }
 
-/** `___reduce242` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(735); */
 internal fun reduce242(
     text: String,
     lookaheadStart: Int?,
@@ -30980,7 +30646,6 @@ internal fun reduce242(
     return Pair(5, 106)
 }
 
-/** `___reduce243` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(736); */
 internal fun reduce243(
     text: String,
     lookaheadStart: Int?,
@@ -31005,7 +30670,6 @@ internal fun reduce243(
     return Pair(6, 106)
 }
 
-/** `___reduce244` — Grammar = "grammar", GrammarTypeParameters, ";" => ActionFn(737); */
 internal fun reduce244(
     text: String,
     lookaheadStart: Int?,
@@ -31027,7 +30691,6 @@ internal fun reduce244(
     return Pair(3, 106)
 }
 
-/** `___reduce245` — Grammar = Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(738); */
 internal fun reduce245(
     text: String,
     lookaheadStart: Int?,
@@ -31050,7 +30713,6 @@ internal fun reduce245(
     return Pair(4, 106)
 }
 
-/** `___reduce246` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(739); */
 internal fun reduce246(
     text: String,
     lookaheadStart: Int?,
@@ -31073,7 +30735,6 @@ internal fun reduce246(
     return Pair(4, 106)
 }
 
-/** `___reduce247` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(740); */
 internal fun reduce247(
     text: String,
     lookaheadStart: Int?,
@@ -31097,7 +30758,6 @@ internal fun reduce247(
     return Pair(5, 106)
 }
 
-/** `___reduce248` — Grammar = "grammar", GrammarWhereClauses, ";" => ActionFn(741); */
 internal fun reduce248(
     text: String,
     lookaheadStart: Int?,
@@ -31119,7 +30779,6 @@ internal fun reduce248(
     return Pair(3, 106)
 }
 
-/** `___reduce249` — Grammar = Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(742); */
 internal fun reduce249(
     text: String,
     lookaheadStart: Int?,
@@ -31142,7 +30801,6 @@ internal fun reduce249(
     return Pair(4, 106)
 }
 
-/** `___reduce250` — Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(743); */
 internal fun reduce250(
     text: String,
     lookaheadStart: Int?,
@@ -31165,7 +30823,6 @@ internal fun reduce250(
     return Pair(4, 106)
 }
 
-/** `___reduce251` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(744); */
 internal fun reduce251(
     text: String,
     lookaheadStart: Int?,
@@ -31189,7 +30846,6 @@ internal fun reduce251(
     return Pair(5, 106)
 }
 
-/** `___reduce252` — Grammar = "grammar", ";" => ActionFn(745); */
 internal fun reduce252(
     text: String,
     lookaheadStart: Int?,
@@ -31210,7 +30866,6 @@ internal fun reduce252(
     return Pair(2, 106)
 }
 
-/** `___reduce253` — Grammar = Use+, "grammar", ";" => ActionFn(746); */
 internal fun reduce253(
     text: String,
     lookaheadStart: Int?,
@@ -31232,7 +30887,6 @@ internal fun reduce253(
     return Pair(3, 106)
 }
 
-/** `___reduce254` — Grammar = ShebangAttribute+, "grammar", ";" => ActionFn(747); */
 internal fun reduce254(
     text: String,
     lookaheadStart: Int?,
@@ -31254,7 +30908,6 @@ internal fun reduce254(
     return Pair(3, 106)
 }
 
-/** `___reduce255` — Grammar = ShebangAttribute+, Use+, "grammar", ";" => ActionFn(748); */
 internal fun reduce255(
     text: String,
     lookaheadStart: Int?,
@@ -31277,7 +30930,6 @@ internal fun reduce255(
     return Pair(4, 106)
 }
 
-/** `___reduce256` — Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(749); */
 internal fun reduce256(
     text: String,
     lookaheadStart: Int?,
@@ -31302,7 +30954,6 @@ internal fun reduce256(
     return Pair(6, 106)
 }
 
-/** `___reduce257` — Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(750); */
 internal fun reduce257(
     text: String,
     lookaheadStart: Int?,
@@ -31328,7 +30979,6 @@ internal fun reduce257(
     return Pair(7, 106)
 }
 
-/** `___reduce258` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(751); */
 internal fun reduce258(
     text: String,
     lookaheadStart: Int?,
@@ -31354,7 +31004,6 @@ internal fun reduce258(
     return Pair(7, 106)
 }
 
-/** `___reduce259` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(752); */
 internal fun reduce259(
     text: String,
     lookaheadStart: Int?,
@@ -31381,7 +31030,6 @@ internal fun reduce259(
     return Pair(8, 106)
 }
 
-/** `___reduce260` — Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(753); */
 internal fun reduce260(
     text: String,
     lookaheadStart: Int?,
@@ -31405,7 +31053,6 @@ internal fun reduce260(
     return Pair(5, 106)
 }
 
-/** `___reduce261` — Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(754); */
 internal fun reduce261(
     text: String,
     lookaheadStart: Int?,
@@ -31430,7 +31077,6 @@ internal fun reduce261(
     return Pair(6, 106)
 }
 
-/** `___reduce262` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(755); */
 internal fun reduce262(
     text: String,
     lookaheadStart: Int?,
@@ -31455,7 +31101,6 @@ internal fun reduce262(
     return Pair(6, 106)
 }
 
-/** `___reduce263` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(756); */
 internal fun reduce263(
     text: String,
     lookaheadStart: Int?,
@@ -31481,7 +31126,6 @@ internal fun reduce263(
     return Pair(7, 106)
 }
 
-/** `___reduce264` — Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(757); */
 internal fun reduce264(
     text: String,
     lookaheadStart: Int?,
@@ -31505,7 +31149,6 @@ internal fun reduce264(
     return Pair(5, 106)
 }
 
-/** `___reduce265` — Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(758); */
 internal fun reduce265(
     text: String,
     lookaheadStart: Int?,
@@ -31530,7 +31173,6 @@ internal fun reduce265(
     return Pair(6, 106)
 }
 
-/** `___reduce266` — Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(759); */
 internal fun reduce266(
     text: String,
     lookaheadStart: Int?,
@@ -31555,7 +31197,6 @@ internal fun reduce266(
     return Pair(6, 106)
 }
 
-/** `___reduce267` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(760); */
 internal fun reduce267(
     text: String,
     lookaheadStart: Int?,
@@ -31581,7 +31222,6 @@ internal fun reduce267(
     return Pair(7, 106)
 }
 
-/** `___reduce268` — Grammar = "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(761); */
 internal fun reduce268(
     text: String,
     lookaheadStart: Int?,
@@ -31604,7 +31244,6 @@ internal fun reduce268(
     return Pair(4, 106)
 }
 
-/** `___reduce269` — Grammar = Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(762); */
 internal fun reduce269(
     text: String,
     lookaheadStart: Int?,
@@ -31628,7 +31267,6 @@ internal fun reduce269(
     return Pair(5, 106)
 }
 
-/** `___reduce270` — Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(763); */
 internal fun reduce270(
     text: String,
     lookaheadStart: Int?,
@@ -31652,7 +31290,6 @@ internal fun reduce270(
     return Pair(5, 106)
 }
 
-/** `___reduce271` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(764); */
 internal fun reduce271(
     text: String,
     lookaheadStart: Int?,
@@ -31677,7 +31314,6 @@ internal fun reduce271(
     return Pair(6, 106)
 }
 
-/** `___reduce272` — Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(765); */
 internal fun reduce272(
     text: String,
     lookaheadStart: Int?,
@@ -31701,7 +31337,6 @@ internal fun reduce272(
     return Pair(5, 106)
 }
 
-/** `___reduce273` — Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(766); */
 internal fun reduce273(
     text: String,
     lookaheadStart: Int?,
@@ -31726,7 +31361,6 @@ internal fun reduce273(
     return Pair(6, 106)
 }
 
-/** `___reduce274` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(767); */
 internal fun reduce274(
     text: String,
     lookaheadStart: Int?,
@@ -31751,7 +31385,6 @@ internal fun reduce274(
     return Pair(6, 106)
 }
 
-/** `___reduce275` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(768); */
 internal fun reduce275(
     text: String,
     lookaheadStart: Int?,
@@ -31777,7 +31410,6 @@ internal fun reduce275(
     return Pair(7, 106)
 }
 
-/** `___reduce276` — Grammar = "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(769); */
 internal fun reduce276(
     text: String,
     lookaheadStart: Int?,
@@ -31800,7 +31432,6 @@ internal fun reduce276(
     return Pair(4, 106)
 }
 
-/** `___reduce277` — Grammar = Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(770); */
 internal fun reduce277(
     text: String,
     lookaheadStart: Int?,
@@ -31824,7 +31455,6 @@ internal fun reduce277(
     return Pair(5, 106)
 }
 
-/** `___reduce278` — Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(771); */
 internal fun reduce278(
     text: String,
     lookaheadStart: Int?,
@@ -31848,7 +31478,6 @@ internal fun reduce278(
     return Pair(5, 106)
 }
 
-/** `___reduce279` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(772); */
 internal fun reduce279(
     text: String,
     lookaheadStart: Int?,
@@ -31873,7 +31502,6 @@ internal fun reduce279(
     return Pair(6, 106)
 }
 
-/** `___reduce280` — Grammar = "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(773); */
 internal fun reduce280(
     text: String,
     lookaheadStart: Int?,
@@ -31896,7 +31524,6 @@ internal fun reduce280(
     return Pair(4, 106)
 }
 
-/** `___reduce281` — Grammar = Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(774); */
 internal fun reduce281(
     text: String,
     lookaheadStart: Int?,
@@ -31920,7 +31547,6 @@ internal fun reduce281(
     return Pair(5, 106)
 }
 
-/** `___reduce282` — Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(775); */
 internal fun reduce282(
     text: String,
     lookaheadStart: Int?,
@@ -31944,7 +31570,6 @@ internal fun reduce282(
     return Pair(5, 106)
 }
 
-/** `___reduce283` — Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(776); */
 internal fun reduce283(
     text: String,
     lookaheadStart: Int?,
@@ -31969,7 +31594,6 @@ internal fun reduce283(
     return Pair(6, 106)
 }
 
-/** `___reduce284` — Grammar = "grammar", ";", GrammarItem+ => ActionFn(777); */
 internal fun reduce284(
     text: String,
     lookaheadStart: Int?,
@@ -31991,7 +31615,6 @@ internal fun reduce284(
     return Pair(3, 106)
 }
 
-/** `___reduce285` — Grammar = Use+, "grammar", ";", GrammarItem+ => ActionFn(778); */
 internal fun reduce285(
     text: String,
     lookaheadStart: Int?,
@@ -32014,7 +31637,6 @@ internal fun reduce285(
     return Pair(4, 106)
 }
 
-/** `___reduce286` — Grammar = ShebangAttribute+, "grammar", ";", GrammarItem+ => ActionFn(779); */
 internal fun reduce286(
     text: String,
     lookaheadStart: Int?,
@@ -32037,7 +31659,6 @@ internal fun reduce286(
     return Pair(4, 106)
 }
 
-/** `___reduce287` — Grammar = ShebangAttribute+, Use+, "grammar", ";", GrammarItem+ => ActionFn(780); */
 internal fun reduce287(
     text: String,
     lookaheadStart: Int?,
@@ -32061,7 +31682,6 @@ internal fun reduce287(
     return Pair(5, 106)
 }
 
-/** `___reduce288` — Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(781); */
 internal fun reduce288(
     text: String,
     lookaheadStart: Int?,
@@ -32086,7 +31706,6 @@ internal fun reduce288(
     return Pair(6, 106)
 }
 
-/** `___reduce289` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(782); */
 internal fun reduce289(
     text: String,
     lookaheadStart: Int?,
@@ -32112,7 +31731,6 @@ internal fun reduce289(
     return Pair(7, 106)
 }
 
-/** `___reduce290` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(783); */
 internal fun reduce290(
     text: String,
     lookaheadStart: Int?,
@@ -32138,7 +31756,6 @@ internal fun reduce290(
     return Pair(7, 106)
 }
 
-/** `___reduce291` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(784); */
 internal fun reduce291(
     text: String,
     lookaheadStart: Int?,
@@ -32165,7 +31782,6 @@ internal fun reduce291(
     return Pair(8, 106)
 }
 
-/** `___reduce292` — Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(785); */
 internal fun reduce292(
     text: String,
     lookaheadStart: Int?,
@@ -32189,7 +31805,6 @@ internal fun reduce292(
     return Pair(5, 106)
 }
 
-/** `___reduce293` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(786); */
 internal fun reduce293(
     text: String,
     lookaheadStart: Int?,
@@ -32214,7 +31829,6 @@ internal fun reduce293(
     return Pair(6, 106)
 }
 
-/** `___reduce294` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(787); */
 internal fun reduce294(
     text: String,
     lookaheadStart: Int?,
@@ -32239,7 +31853,6 @@ internal fun reduce294(
     return Pair(6, 106)
 }
 
-/** `___reduce295` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(788); */
 internal fun reduce295(
     text: String,
     lookaheadStart: Int?,
@@ -32265,7 +31878,6 @@ internal fun reduce295(
     return Pair(7, 106)
 }
 
-/** `___reduce296` — Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(789); */
 internal fun reduce296(
     text: String,
     lookaheadStart: Int?,
@@ -32289,7 +31901,6 @@ internal fun reduce296(
     return Pair(5, 106)
 }
 
-/** `___reduce297` — Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(790); */
 internal fun reduce297(
     text: String,
     lookaheadStart: Int?,
@@ -32314,7 +31925,6 @@ internal fun reduce297(
     return Pair(6, 106)
 }
 
-/** `___reduce298` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(791); */
 internal fun reduce298(
     text: String,
     lookaheadStart: Int?,
@@ -32339,7 +31949,6 @@ internal fun reduce298(
     return Pair(6, 106)
 }
 
-/** `___reduce299` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(792); */
 internal fun reduce299(
     text: String,
     lookaheadStart: Int?,
@@ -32365,7 +31974,6 @@ internal fun reduce299(
     return Pair(7, 106)
 }
 
-/** `___reduce300` — Grammar = Attribute+, "grammar", GrammarParameters, ";" => ActionFn(793); */
 internal fun reduce300(
     text: String,
     lookaheadStart: Int?,
@@ -32388,7 +31996,6 @@ internal fun reduce300(
     return Pair(4, 106)
 }
 
-/** `___reduce301` — Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(794); */
 internal fun reduce301(
     text: String,
     lookaheadStart: Int?,
@@ -32412,7 +32019,6 @@ internal fun reduce301(
     return Pair(5, 106)
 }
 
-/** `___reduce302` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(795); */
 internal fun reduce302(
     text: String,
     lookaheadStart: Int?,
@@ -32436,7 +32042,6 @@ internal fun reduce302(
     return Pair(5, 106)
 }
 
-/** `___reduce303` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(796); */
 internal fun reduce303(
     text: String,
     lookaheadStart: Int?,
@@ -32461,7 +32066,6 @@ internal fun reduce303(
     return Pair(6, 106)
 }
 
-/** `___reduce304` — Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(797); */
 internal fun reduce304(
     text: String,
     lookaheadStart: Int?,
@@ -32485,7 +32089,6 @@ internal fun reduce304(
     return Pair(5, 106)
 }
 
-/** `___reduce305` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(798); */
 internal fun reduce305(
     text: String,
     lookaheadStart: Int?,
@@ -32510,7 +32113,6 @@ internal fun reduce305(
     return Pair(6, 106)
 }
 
-/** `___reduce306` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(799); */
 internal fun reduce306(
     text: String,
     lookaheadStart: Int?,
@@ -32535,7 +32137,6 @@ internal fun reduce306(
     return Pair(6, 106)
 }
 
-/** `___reduce307` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(800); */
 internal fun reduce307(
     text: String,
     lookaheadStart: Int?,
@@ -32561,7 +32162,6 @@ internal fun reduce307(
     return Pair(7, 106)
 }
 
-/** `___reduce308` — Grammar = Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(801); */
 internal fun reduce308(
     text: String,
     lookaheadStart: Int?,
@@ -32584,7 +32184,6 @@ internal fun reduce308(
     return Pair(4, 106)
 }
 
-/** `___reduce309` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(802); */
 internal fun reduce309(
     text: String,
     lookaheadStart: Int?,
@@ -32608,7 +32207,6 @@ internal fun reduce309(
     return Pair(5, 106)
 }
 
-/** `___reduce310` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(803); */
 internal fun reduce310(
     text: String,
     lookaheadStart: Int?,
@@ -32632,7 +32230,6 @@ internal fun reduce310(
     return Pair(5, 106)
 }
 
-/** `___reduce311` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(804); */
 internal fun reduce311(
     text: String,
     lookaheadStart: Int?,
@@ -32657,7 +32254,6 @@ internal fun reduce311(
     return Pair(6, 106)
 }
 
-/** `___reduce312` — Grammar = Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(805); */
 internal fun reduce312(
     text: String,
     lookaheadStart: Int?,
@@ -32680,7 +32276,6 @@ internal fun reduce312(
     return Pair(4, 106)
 }
 
-/** `___reduce313` — Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(806); */
 internal fun reduce313(
     text: String,
     lookaheadStart: Int?,
@@ -32704,7 +32299,6 @@ internal fun reduce313(
     return Pair(5, 106)
 }
 
-/** `___reduce314` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(807); */
 internal fun reduce314(
     text: String,
     lookaheadStart: Int?,
@@ -32728,7 +32322,6 @@ internal fun reduce314(
     return Pair(5, 106)
 }
 
-/** `___reduce315` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(808); */
 internal fun reduce315(
     text: String,
     lookaheadStart: Int?,
@@ -32753,7 +32346,6 @@ internal fun reduce315(
     return Pair(6, 106)
 }
 
-/** `___reduce316` — Grammar = Attribute+, "grammar", ";" => ActionFn(809); */
 internal fun reduce316(
     text: String,
     lookaheadStart: Int?,
@@ -32775,7 +32367,6 @@ internal fun reduce316(
     return Pair(3, 106)
 }
 
-/** `___reduce317` — Grammar = Use+, Attribute+, "grammar", ";" => ActionFn(810); */
 internal fun reduce317(
     text: String,
     lookaheadStart: Int?,
@@ -32798,7 +32389,6 @@ internal fun reduce317(
     return Pair(4, 106)
 }
 
-/** `___reduce318` — Grammar = ShebangAttribute+, Attribute+, "grammar", ";" => ActionFn(811); */
 internal fun reduce318(
     text: String,
     lookaheadStart: Int?,
@@ -32821,7 +32411,6 @@ internal fun reduce318(
     return Pair(4, 106)
 }
 
-/** `___reduce319` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";" => ActionFn(812); */
 internal fun reduce319(
     text: String,
     lookaheadStart: Int?,
@@ -32845,7 +32434,6 @@ internal fun reduce319(
     return Pair(5, 106)
 }
 
-/** `___reduce320` — Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(813); */
 internal fun reduce320(
     text: String,
     lookaheadStart: Int?,
@@ -32871,7 +32459,6 @@ internal fun reduce320(
     return Pair(7, 106)
 }
 
-/** `___reduce321` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(814); */
 internal fun reduce321(
     text: String,
     lookaheadStart: Int?,
@@ -32898,7 +32485,6 @@ internal fun reduce321(
     return Pair(8, 106)
 }
 
-/** `___reduce322` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(815); */
 internal fun reduce322(
     text: String,
     lookaheadStart: Int?,
@@ -32925,7 +32511,6 @@ internal fun reduce322(
     return Pair(8, 106)
 }
 
-/** `___reduce323` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(816); */
 internal fun reduce323(
     text: String,
     lookaheadStart: Int?,
@@ -32953,7 +32538,6 @@ internal fun reduce323(
     return Pair(9, 106)
 }
 
-/** `___reduce324` — Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(817); */
 internal fun reduce324(
     text: String,
     lookaheadStart: Int?,
@@ -32978,7 +32562,6 @@ internal fun reduce324(
     return Pair(6, 106)
 }
 
-/** `___reduce325` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(818); */
 internal fun reduce325(
     text: String,
     lookaheadStart: Int?,
@@ -33004,7 +32587,6 @@ internal fun reduce325(
     return Pair(7, 106)
 }
 
-/** `___reduce326` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(819); */
 internal fun reduce326(
     text: String,
     lookaheadStart: Int?,
@@ -33030,7 +32612,6 @@ internal fun reduce326(
     return Pair(7, 106)
 }
 
-/** `___reduce327` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(820); */
 internal fun reduce327(
     text: String,
     lookaheadStart: Int?,
@@ -33057,7 +32638,6 @@ internal fun reduce327(
     return Pair(8, 106)
 }
 
-/** `___reduce328` — Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(821); */
 internal fun reduce328(
     text: String,
     lookaheadStart: Int?,
@@ -33082,7 +32662,6 @@ internal fun reduce328(
     return Pair(6, 106)
 }
 
-/** `___reduce329` — Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(822); */
 internal fun reduce329(
     text: String,
     lookaheadStart: Int?,
@@ -33108,7 +32687,6 @@ internal fun reduce329(
     return Pair(7, 106)
 }
 
-/** `___reduce330` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(823); */
 internal fun reduce330(
     text: String,
     lookaheadStart: Int?,
@@ -33134,7 +32712,6 @@ internal fun reduce330(
     return Pair(7, 106)
 }
 
-/** `___reduce331` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(824); */
 internal fun reduce331(
     text: String,
     lookaheadStart: Int?,
@@ -33161,7 +32738,6 @@ internal fun reduce331(
     return Pair(8, 106)
 }
 
-/** `___reduce332` — Grammar = Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(825); */
 internal fun reduce332(
     text: String,
     lookaheadStart: Int?,
@@ -33185,7 +32761,6 @@ internal fun reduce332(
     return Pair(5, 106)
 }
 
-/** `___reduce333` — Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(826); */
 internal fun reduce333(
     text: String,
     lookaheadStart: Int?,
@@ -33210,7 +32785,6 @@ internal fun reduce333(
     return Pair(6, 106)
 }
 
-/** `___reduce334` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(827); */
 internal fun reduce334(
     text: String,
     lookaheadStart: Int?,
@@ -33235,7 +32809,6 @@ internal fun reduce334(
     return Pair(6, 106)
 }
 
-/** `___reduce335` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(828); */
 internal fun reduce335(
     text: String,
     lookaheadStart: Int?,
@@ -33261,7 +32834,6 @@ internal fun reduce335(
     return Pair(7, 106)
 }
 
-/** `___reduce336` — Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(829); */
 internal fun reduce336(
     text: String,
     lookaheadStart: Int?,
@@ -33286,7 +32858,6 @@ internal fun reduce336(
     return Pair(6, 106)
 }
 
-/** `___reduce337` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(830); */
 internal fun reduce337(
     text: String,
     lookaheadStart: Int?,
@@ -33312,7 +32883,6 @@ internal fun reduce337(
     return Pair(7, 106)
 }
 
-/** `___reduce338` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(831); */
 internal fun reduce338(
     text: String,
     lookaheadStart: Int?,
@@ -33338,7 +32908,6 @@ internal fun reduce338(
     return Pair(7, 106)
 }
 
-/** `___reduce339` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(832); */
 internal fun reduce339(
     text: String,
     lookaheadStart: Int?,
@@ -33365,7 +32934,6 @@ internal fun reduce339(
     return Pair(8, 106)
 }
 
-/** `___reduce340` — Grammar = Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(833); */
 internal fun reduce340(
     text: String,
     lookaheadStart: Int?,
@@ -33389,7 +32957,6 @@ internal fun reduce340(
     return Pair(5, 106)
 }
 
-/** `___reduce341` — Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(834); */
 internal fun reduce341(
     text: String,
     lookaheadStart: Int?,
@@ -33414,7 +32981,6 @@ internal fun reduce341(
     return Pair(6, 106)
 }
 
-/** `___reduce342` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(835); */
 internal fun reduce342(
     text: String,
     lookaheadStart: Int?,
@@ -33439,7 +33005,6 @@ internal fun reduce342(
     return Pair(6, 106)
 }
 
-/** `___reduce343` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(836); */
 internal fun reduce343(
     text: String,
     lookaheadStart: Int?,
@@ -33465,7 +33030,6 @@ internal fun reduce343(
     return Pair(7, 106)
 }
 
-/** `___reduce344` — Grammar = Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(837); */
 internal fun reduce344(
     text: String,
     lookaheadStart: Int?,
@@ -33489,7 +33053,6 @@ internal fun reduce344(
     return Pair(5, 106)
 }
 
-/** `___reduce345` — Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(838); */
 internal fun reduce345(
     text: String,
     lookaheadStart: Int?,
@@ -33514,7 +33077,6 @@ internal fun reduce345(
     return Pair(6, 106)
 }
 
-/** `___reduce346` — Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(839); */
 internal fun reduce346(
     text: String,
     lookaheadStart: Int?,
@@ -33539,7 +33101,6 @@ internal fun reduce346(
     return Pair(6, 106)
 }
 
-/** `___reduce347` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(840); */
 internal fun reduce347(
     text: String,
     lookaheadStart: Int?,
@@ -33565,7 +33126,6 @@ internal fun reduce347(
     return Pair(7, 106)
 }
 
-/** `___reduce348` — Grammar = Attribute+, "grammar", ";", GrammarItem+ => ActionFn(841); */
 internal fun reduce348(
     text: String,
     lookaheadStart: Int?,
@@ -33588,7 +33148,6 @@ internal fun reduce348(
     return Pair(4, 106)
 }
 
-/** `___reduce349` — Grammar = Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(842); */
 internal fun reduce349(
     text: String,
     lookaheadStart: Int?,
@@ -33612,7 +33171,6 @@ internal fun reduce349(
     return Pair(5, 106)
 }
 
-/** `___reduce350` — Grammar = ShebangAttribute+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(843); */
 internal fun reduce350(
     text: String,
     lookaheadStart: Int?,
@@ -33636,7 +33194,6 @@ internal fun reduce350(
     return Pair(5, 106)
 }
 
-/** `___reduce351` — Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(844); */
 internal fun reduce351(
     text: String,
     lookaheadStart: Int?,
@@ -33661,7 +33218,6 @@ internal fun reduce351(
     return Pair(6, 106)
 }
 
-/** `___reduce352` — GrammarItem = Use => ActionFn(24); */
 internal
 fun reduce352(
     text: String,
@@ -33680,7 +33236,6 @@ fun reduce352(
     return Pair(1, 107)
 }
 
-/** `___reduce353` — GrammarItem = MatchToken => ActionFn(25); */
 internal
 fun reduce353(
     text: String,
@@ -33699,7 +33254,6 @@ fun reduce353(
     return Pair(1, 107)
 }
 
-/** `___reduce354` — GrammarItem = ExternToken => ActionFn(26); */
 internal
 fun reduce354(
     text: String,
@@ -33718,7 +33272,6 @@ fun reduce354(
     return Pair(1, 107)
 }
 
-/** `___reduce355` — GrammarItem = Nonterminal => ActionFn(27); */
 internal
 fun reduce355(
     text: String,
@@ -33737,7 +33290,6 @@ fun reduce355(
     return Pair(1, 107)
 }
 
-/** `___reduce356` — GrammarItem* =  => ActionFn(189); */
 internal
 fun reduce356(
     text: String,
@@ -33755,7 +33307,6 @@ fun reduce356(
     return Pair(0, 108)
 }
 
-/** `___reduce357` — GrammarItem* = GrammarItem+ => ActionFn(190); */
 internal
 fun reduce357(
     text: String,
@@ -33774,7 +33325,6 @@ fun reduce357(
     return Pair(1, 108)
 }
 
-/** `___reduce358` — GrammarItem+ = GrammarItem => ActionFn(211); */
 internal
 fun reduce358(
     text: String,
@@ -33793,7 +33343,6 @@ fun reduce358(
     return Pair(1, 109)
 }
 
-/** `___reduce359` — GrammarItem+ = GrammarItem+, GrammarItem => ActionFn(212); */
 internal fun reduce359(
     text: String,
     lookaheadStart: Int?,
@@ -33814,7 +33363,6 @@ internal fun reduce359(
     return Pair(2, 109)
 }
 
-/** `___reduce360` — GrammarParameter = Id, ":", TypeRef => ActionFn(23); */
 internal fun reduce360(
     text: String,
     lookaheadStart: Int?,
@@ -33836,7 +33384,6 @@ internal fun reduce360(
     return Pair(3, 110)
 }
 
-/** `___reduce361` — GrammarParameter? = GrammarParameter => ActionFn(241); */
 internal
 fun reduce361(
     text: String,
@@ -33855,7 +33402,6 @@ fun reduce361(
     return Pair(1, 111)
 }
 
-/** `___reduce362` — GrammarParameter? =  => ActionFn(242); */
 internal
 fun reduce362(
     text: String,
@@ -33873,7 +33419,6 @@ fun reduce362(
     return Pair(0, 111)
 }
 
-/** `___reduce363` — GrammarParameters = "(", Comma<GrammarParameter>, ")" => ActionFn(22); */
 internal fun reduce363(
     text: String,
     lookaheadStart: Int?,
@@ -33895,7 +33440,6 @@ internal fun reduce363(
     return Pair(3, 112)
 }
 
-/** `___reduce364` — GrammarParameters? = GrammarParameters => ActionFn(193); */
 internal
 fun reduce364(
     text: String,
@@ -33914,7 +33458,6 @@ fun reduce364(
     return Pair(1, 113)
 }
 
-/** `___reduce365` — GrammarParameters? =  => ActionFn(194); */
 internal
 fun reduce365(
     text: String,
@@ -33932,7 +33475,6 @@ fun reduce365(
     return Pair(0, 113)
 }
 
-/** `___reduce366` — GrammarTypeParameters = "<", Comma<TypeParameter>, ">" => ActionFn(7); */
 internal fun reduce366(
     text: String,
     lookaheadStart: Int?,
@@ -33954,7 +33496,6 @@ internal fun reduce366(
     return Pair(3, 114)
 }
 
-/** `___reduce367` — GrammarTypeParameters? = GrammarTypeParameters => ActionFn(195); */
 internal
 fun reduce367(
     text: String,
@@ -33973,7 +33514,6 @@ fun reduce367(
     return Pair(1, 115)
 }
 
-/** `___reduce368` — GrammarTypeParameters? =  => ActionFn(196); */
 internal
 fun reduce368(
     text: String,
@@ -33991,7 +33531,6 @@ fun reduce368(
     return Pair(0, 115)
 }
 
-/** `___reduce369` — GrammarWhereClause = Lifetime, ":", Plus<Lifetime> => ActionFn(11); */
 internal fun reduce369(
     text: String,
     lookaheadStart: Int?,
@@ -34013,7 +33552,6 @@ internal fun reduce369(
     return Pair(3, 116)
 }
 
-/** `___reduce370` — GrammarWhereClause = "for", "<", Comma<TypeParameter>, ">", TypeRef, ":", TypeBounds => ActionFn(523); */
 internal fun reduce370(
     text: String,
     lookaheadStart: Int?,
@@ -34039,7 +33577,6 @@ internal fun reduce370(
     return Pair(7, 116)
 }
 
-/** `___reduce371` — GrammarWhereClause = TypeRef, ":", TypeBounds => ActionFn(524); */
 internal fun reduce371(
     text: String,
     lookaheadStart: Int?,
@@ -34061,7 +33598,6 @@ internal fun reduce371(
     return Pair(3, 116)
 }
 
-/** `___reduce372` — GrammarWhereClause? = GrammarWhereClause => ActionFn(218); */
 internal
 fun reduce372(
     text: String,
@@ -34080,7 +33616,6 @@ fun reduce372(
     return Pair(1, 117)
 }
 
-/** `___reduce373` — GrammarWhereClause? =  => ActionFn(219); */
 internal
 fun reduce373(
     text: String,
@@ -34098,7 +33633,6 @@ fun reduce373(
     return Pair(0, 117)
 }
 
-/** `___reduce374` — GrammarWhereClauses = "where", Comma<GrammarWhereClause> => ActionFn(10); */
 internal fun reduce374(
     text: String,
     lookaheadStart: Int?,
@@ -34119,7 +33653,6 @@ internal fun reduce374(
     return Pair(2, 118)
 }
 
-/** `___reduce375` — GrammarWhereClauses? = GrammarWhereClauses => ActionFn(191); */
 internal
 fun reduce375(
     text: String,
@@ -34138,7 +33671,6 @@ fun reduce375(
     return Pair(1, 119)
 }
 
-/** `___reduce376` — GrammarWhereClauses? =  => ActionFn(192); */
 internal
 fun reduce376(
     text: String,
@@ -34156,7 +33688,6 @@ fun reduce376(
     return Pair(0, 119)
 }
 
-/** `___reduce377` — Id = "Id" => ActionFn(117); */
 internal
 fun reduce377(
     text: String,
@@ -34175,7 +33706,6 @@ fun reduce377(
     return Pair(1, 120)
 }
 
-/** `___reduce378` — Id = "MacroId" => ActionFn(118); */
 internal
 fun reduce378(
     text: String,
@@ -34194,7 +33724,6 @@ fun reduce378(
     return Pair(1, 120)
 }
 
-/** `___reduce379` — Lifetime = "Lifetime" => ActionFn(120); */
 internal
 fun reduce379(
     text: String,
@@ -34213,7 +33742,6 @@ fun reduce379(
     return Pair(1, 121)
 }
 
-/** `___reduce380` — Lifetime? = Lifetime => ActionFn(146); */
 internal
 fun reduce380(
     text: String,
@@ -34232,7 +33760,6 @@ fun reduce380(
     return Pair(1, 122)
 }
 
-/** `___reduce381` — Lifetime? =  => ActionFn(147); */
 internal
 fun reduce381(
     text: String,
@@ -34250,7 +33777,6 @@ fun reduce381(
     return Pair(0, 122)
 }
 
-/** `___reduce382` — MacroId = "MacroId" => ActionFn(115); */
 internal
 fun reduce382(
     text: String,
@@ -34269,7 +33795,6 @@ fun reduce382(
     return Pair(1, 123)
 }
 
-/** `___reduce383` — MatchContents = Comma<MatchItem> => ActionFn(93); */
 internal
 fun reduce383(
     text: String,
@@ -34288,7 +33813,6 @@ fun reduce383(
     return Pair(1, 124)
 }
 
-/** `___reduce384` — MatchItem = "_" => ActionFn(465); */
 internal
 fun reduce384(
     text: String,
@@ -34307,7 +33831,6 @@ fun reduce384(
     return Pair(1, 125)
 }
 
-/** `___reduce385` — MatchItem = MatchSymbol => ActionFn(466); */
 internal
 fun reduce385(
     text: String,
@@ -34326,7 +33849,6 @@ fun reduce385(
     return Pair(1, 125)
 }
 
-/** `___reduce387` — MatchItem? = MatchItem => ActionFn(275); */
 internal
 fun reduce387(
     text: String,
@@ -34345,7 +33867,6 @@ fun reduce387(
     return Pair(1, 126)
 }
 
-/** `___reduce388` — MatchItem? =  => ActionFn(276); */
 internal
 fun reduce388(
     text: String,
@@ -34363,7 +33884,6 @@ fun reduce388(
     return Pair(0, 126)
 }
 
-/** `___reduce389` — MatchMapping = Terminal => ActionFn(98); */
 internal
 fun reduce389(
     text: String,
@@ -34382,7 +33902,6 @@ fun reduce389(
     return Pair(1, 127)
 }
 
-/** `___reduce390` — MatchMapping = "{", "}" => ActionFn(99); */
 internal fun reduce390(
     text: String,
     lookaheadStart: Int?,
@@ -34403,7 +33922,6 @@ internal fun reduce390(
     return Pair(2, 127)
 }
 
-/** `___reduce391` — MatchSymbol = QuotedLiteral => ActionFn(97); */
 internal
 fun reduce391(
     text: String,
@@ -34422,7 +33940,6 @@ fun reduce391(
     return Pair(1, 128)
 }
 
-/** `___reduce392` — MatchToken = MatchTokenInt => ActionFn(90); */
 internal
 fun reduce392(
     text: String,
@@ -34441,7 +33958,6 @@ fun reduce392(
     return Pair(1, 129)
 }
 
-/** `___reduce393` — MatchTokenInt = MatchTokenInt, "else", "{", MatchContents, "}" => ActionFn(91); */
 internal fun reduce393(
     text: String,
     lookaheadStart: Int?,
@@ -34465,7 +33981,6 @@ internal fun reduce393(
     return Pair(5, 130)
 }
 
-/** `___reduce394` — MatchTokenInt = "match", "{", MatchContents, "}" => ActionFn(468); */
 internal fun reduce394(
     text: String,
     lookaheadStart: Int?,
@@ -34488,7 +34003,6 @@ internal fun reduce394(
     return Pair(4, 130)
 }
 
-/** `___reduce395` — Nonterminal = Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(505); */
 internal fun reduce395(
     text: String,
     lookaheadStart: Int?,
@@ -34513,7 +34027,6 @@ internal fun reduce395(
     return Pair(6, 131)
 }
 
-/** `___reduce396` — Nonterminal = Attribute+, Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(506); */
 internal fun reduce396(
     text: String,
     lookaheadStart: Int?,
@@ -34539,7 +34052,6 @@ internal fun reduce396(
     return Pair(7, 131)
 }
 
-/** `___reduce397` — Nonterminal = Visibility, NonterminalName, "=", Alternatives => ActionFn(507); */
 internal fun reduce397(
     text: String,
     lookaheadStart: Int?,
@@ -34562,7 +34074,6 @@ internal fun reduce397(
     return Pair(4, 131)
 }
 
-/** `___reduce398` — Nonterminal = Attribute+, Visibility, NonterminalName, "=", Alternatives => ActionFn(508); */
 internal fun reduce398(
     text: String,
     lookaheadStart: Int?,
@@ -34586,7 +34097,6 @@ internal fun reduce398(
     return Pair(5, 131)
 }
 
-/** `___reduce399` — NonterminalName = MacroId, "<", Comma<NotMacroId>, ">" => ActionFn(38); */
 internal fun reduce399(
     text: String,
     lookaheadStart: Int?,
@@ -34609,7 +34119,6 @@ internal fun reduce399(
     return Pair(4, 132)
 }
 
-/** `___reduce400` — NonterminalName = NotMacroId => ActionFn(39); */
 internal
 fun reduce400(
     text: String,
@@ -34628,7 +34137,6 @@ fun reduce400(
     return Pair(1, 132)
 }
 
-/** `___reduce401` — NonterminalName = "Escape" => ActionFn(40); */
 internal
 fun reduce401(
     text: String,
@@ -34647,7 +34155,6 @@ fun reduce401(
     return Pair(1, 132)
 }
 
-/** `___reduce402` — NotMacroId = "Id" => ActionFn(116); */
 internal
 fun reduce402(
     text: String,
@@ -34666,7 +34173,6 @@ fun reduce402(
     return Pair(1, 133)
 }
 
-/** `___reduce403` — NotMacroId? = NotMacroId => ActionFn(251); */
 internal
 fun reduce403(
     text: String,
@@ -34685,7 +34191,6 @@ fun reduce403(
     return Pair(1, 134)
 }
 
-/** `___reduce404` — NotMacroId? =  => ActionFn(252); */
 internal
 fun reduce404(
     text: String,
@@ -34703,7 +34208,6 @@ fun reduce404(
     return Pair(0, 134)
 }
 
-/** `___reduce405` — Path = "::", Id => ActionFn(378); */
 internal fun reduce405(
     text: String,
     lookaheadStart: Int?,
@@ -34724,7 +34228,6 @@ internal fun reduce405(
     return Pair(2, 135)
 }
 
-/** `___reduce406` — Path = "::", (<Id> "::")+, Id => ActionFn(379); */
 internal fun reduce406(
     text: String,
     lookaheadStart: Int?,
@@ -34746,7 +34249,6 @@ internal fun reduce406(
     return Pair(3, 135)
 }
 
-/** `___reduce407` — Path = Id => ActionFn(380); */
 internal
 fun reduce407(
     text: String,
@@ -34765,7 +34267,6 @@ fun reduce407(
     return Pair(1, 135)
 }
 
-/** `___reduce408` — Path = (<Id> "::")+, Id => ActionFn(381); */
 internal fun reduce408(
     text: String,
     lookaheadStart: Int?,
@@ -34786,7 +34287,6 @@ internal fun reduce408(
     return Pair(2, 135)
 }
 
-/** `___reduce409` — Pattern = PatternKind => ActionFn(471); */
 internal
 fun reduce409(
     text: String,
@@ -34805,7 +34305,6 @@ fun reduce409(
     return Pair(1, 136)
 }
 
-/** `___reduce410` — Pattern? = Pattern => ActionFn(285); */
 internal
 fun reduce410(
     text: String,
@@ -34824,7 +34323,6 @@ fun reduce410(
     return Pair(1, 137)
 }
 
-/** `___reduce411` — Pattern? =  => ActionFn(286); */
 internal
 fun reduce411(
     text: String,
@@ -34842,7 +34340,6 @@ fun reduce411(
     return Pair(0, 137)
 }
 
-/** `___reduce412` — PatternKind = Path, "(", Comma<Pattern>, ")" => ActionFn(104); */
 internal fun reduce412(
     text: String,
     lookaheadStart: Int?,
@@ -34865,7 +34362,6 @@ internal fun reduce412(
     return Pair(4, 138)
 }
 
-/** `___reduce413` — PatternKind = Path, "{", FieldPattern, "}" => ActionFn(519); */
 internal fun reduce413(
     text: String,
     lookaheadStart: Int?,
@@ -34888,7 +34384,6 @@ internal fun reduce413(
     return Pair(4, 138)
 }
 
-/** `___reduce414` — PatternKind = Path, "{", "}" => ActionFn(520); */
 internal fun reduce414(
     text: String,
     lookaheadStart: Int?,
@@ -34910,7 +34405,6 @@ internal fun reduce414(
     return Pair(3, 138)
 }
 
-/** `___reduce415` — PatternKind = Path, "{", (<FieldPattern> ",")+, FieldPattern, "}" => ActionFn(521); */
 internal fun reduce415(
     text: String,
     lookaheadStart: Int?,
@@ -34934,7 +34428,6 @@ internal fun reduce415(
     return Pair(5, 138)
 }
 
-/** `___reduce416` — PatternKind = Path, "{", (<FieldPattern> ",")+, "}" => ActionFn(522); */
 internal fun reduce416(
     text: String,
     lookaheadStart: Int?,
@@ -34957,7 +34450,6 @@ internal fun reduce416(
     return Pair(4, 138)
 }
 
-/** `___reduce417` — PatternKind = Path, "{", "..", "}" => ActionFn(366); */
 internal fun reduce417(
     text: String,
     lookaheadStart: Int?,
@@ -34980,7 +34472,6 @@ internal fun reduce417(
     return Pair(4, 138)
 }
 
-/** `___reduce418` — PatternKind = Path, "{", (<FieldPattern> ",")+, "..", "}" => ActionFn(367); */
 internal fun reduce418(
     text: String,
     lookaheadStart: Int?,
@@ -35004,7 +34495,6 @@ internal fun reduce418(
     return Pair(5, 138)
 }
 
-/** `___reduce419` — PatternKind = "_" => ActionFn(107); */
 internal
 fun reduce419(
     text: String,
@@ -35023,7 +34513,6 @@ fun reduce419(
     return Pair(1, 138)
 }
 
-/** `___reduce420` — PatternKind = ".." => ActionFn(108); */
 internal
 fun reduce420(
     text: String,
@@ -35042,7 +34531,6 @@ fun reduce420(
     return Pair(1, 138)
 }
 
-/** `___reduce421` — PatternKind = "<", TypeRef, ">" => ActionFn(109); */
 internal fun reduce421(
     text: String,
     lookaheadStart: Int?,
@@ -35064,7 +34552,6 @@ internal fun reduce421(
     return Pair(3, 138)
 }
 
-/** `___reduce422` — PatternKind = "(", Comma<Pattern>, ")" => ActionFn(110); */
 internal fun reduce422(
     text: String,
     lookaheadStart: Int?,
@@ -35086,7 +34573,6 @@ internal fun reduce422(
     return Pair(3, 138)
 }
 
-/** `___reduce423` — PatternKind = "CharLiteral" => ActionFn(111); */
 internal
 fun reduce423(
     text: String,
@@ -35105,7 +34591,6 @@ fun reduce423(
     return Pair(1, 138)
 }
 
-/** `___reduce424` — PatternKind = Path => ActionFn(112); */
 internal
 fun reduce424(
     text: String,
@@ -35124,7 +34609,6 @@ fun reduce424(
     return Pair(1, 138)
 }
 
-/** `___reduce425` — PatternKind = StringConstant => ActionFn(113); */
 internal
 fun reduce425(
     text: String,
@@ -35143,7 +34627,6 @@ fun reduce425(
     return Pair(1, 138)
 }
 
-/** `___reduce426` — Plus<Lifetime> = Lifetime => ActionFn(605); */
 internal
 fun reduce426(
     text: String,
@@ -35162,7 +34645,6 @@ fun reduce426(
     return Pair(1, 139)
 }
 
-/** `___reduce427` — Plus<Lifetime> =  => ActionFn(606); */
 internal
 fun reduce427(
     text: String,
@@ -35180,7 +34662,6 @@ fun reduce427(
     return Pair(0, 139)
 }
 
-/** `___reduce428` — Plus<Lifetime> = (<Lifetime> "+")+, Lifetime => ActionFn(607); */
 internal fun reduce428(
     text: String,
     lookaheadStart: Int?,
@@ -35201,7 +34682,6 @@ internal fun reduce428(
     return Pair(2, 139)
 }
 
-/** `___reduce429` — Plus<Lifetime> = (<Lifetime> "+")+ => ActionFn(608); */
 internal
 fun reduce429(
     text: String,
@@ -35220,7 +34700,6 @@ fun reduce429(
     return Pair(1, 139)
 }
 
-/** `___reduce430` — Plus<TypeBound> = TypeBound => ActionFn(697); */
 internal
 fun reduce430(
     text: String,
@@ -35239,7 +34718,6 @@ fun reduce430(
     return Pair(1, 140)
 }
 
-/** `___reduce431` — Plus<TypeBound> =  => ActionFn(698); */
 internal
 fun reduce431(
     text: String,
@@ -35257,7 +34735,6 @@ fun reduce431(
     return Pair(0, 140)
 }
 
-/** `___reduce432` — Plus<TypeBound> = (<TypeBound> "+")+, TypeBound => ActionFn(699); */
 internal fun reduce432(
     text: String,
     lookaheadStart: Int?,
@@ -35278,7 +34755,6 @@ internal fun reduce432(
     return Pair(2, 140)
 }
 
-/** `___reduce433` — Plus<TypeBound> = (<TypeBound> "+")+ => ActionFn(700); */
 internal
 fun reduce433(
     text: String,
@@ -35297,7 +34773,6 @@ fun reduce433(
     return Pair(1, 140)
 }
 
-/** `___reduce434` — QuotedLiteral = StringLiteral => ActionFn(124); */
 internal
 fun reduce434(
     text: String,
@@ -35316,7 +34791,6 @@ fun reduce434(
     return Pair(1, 141)
 }
 
-/** `___reduce435` — QuotedLiteral = RegexLiteral => ActionFn(125); */
 internal
 fun reduce435(
     text: String,
@@ -35335,7 +34809,6 @@ fun reduce435(
     return Pair(1, 141)
 }
 
-/** `___reduce436` — QuotedTerminal = QuotedLiteral => ActionFn(123); */
 internal
 fun reduce436(
     text: String,
@@ -35354,7 +34827,6 @@ fun reduce436(
     return Pair(1, 142)
 }
 
-/** `___reduce437` — RegexLiteral = "RegexLiteral" => ActionFn(128); */
 internal
 fun reduce437(
     text: String,
@@ -35373,7 +34845,6 @@ fun reduce437(
     return Pair(1, 143)
 }
 
-/** `___reduce438` — RepeatOp = "+" => ActionFn(61); */
 internal
 fun reduce438(
     text: String,
@@ -35392,7 +34863,6 @@ fun reduce438(
     return Pair(1, 144)
 }
 
-/** `___reduce439` — RepeatOp = "*" => ActionFn(62); */
 internal
 fun reduce439(
     text: String,
@@ -35411,7 +34881,6 @@ fun reduce439(
     return Pair(1, 144)
 }
 
-/** `___reduce440` — RepeatOp = "?" => ActionFn(63); */
 internal
 fun reduce440(
     text: String,
@@ -35430,7 +34899,6 @@ fun reduce440(
     return Pair(1, 144)
 }
 
-/** `___reduce441` — ShebangAttribute = "#![...]" => ActionFn(129); */
 internal
 fun reduce441(
     text: String,
@@ -35449,7 +34917,6 @@ fun reduce441(
     return Pair(1, 145)
 }
 
-/** `___reduce442` — ShebangAttribute* =  => ActionFn(203); */
 internal
 fun reduce442(
     text: String,
@@ -35467,7 +34934,6 @@ fun reduce442(
     return Pair(0, 146)
 }
 
-/** `___reduce443` — ShebangAttribute* = ShebangAttribute+ => ActionFn(204); */
 internal
 fun reduce443(
     text: String,
@@ -35486,7 +34952,6 @@ fun reduce443(
     return Pair(1, 146)
 }
 
-/** `___reduce444` — ShebangAttribute+ = ShebangAttribute => ActionFn(205); */
 internal
 fun reduce444(
     text: String,
@@ -35505,7 +34970,6 @@ fun reduce444(
     return Pair(1, 147)
 }
 
-/** `___reduce445` — ShebangAttribute+ = ShebangAttribute+, ShebangAttribute => ActionFn(206); */
 internal fun reduce445(
     text: String,
     lookaheadStart: Int?,
@@ -35526,7 +34990,6 @@ internal fun reduce445(
     return Pair(2, 147)
 }
 
-/** `___reduce448` — Symbol = "<", "mut", Id, ":", Symbol0, ">" => ActionFn(472); */
 internal fun reduce448(
     text: String,
     lookaheadStart: Int?,
@@ -35551,7 +35014,6 @@ internal fun reduce448(
     return Pair(6, 150)
 }
 
-/** `___reduce449` — Symbol = "<", Id, ":", Symbol0, ">" => ActionFn(473); */
 internal fun reduce449(
     text: String,
     lookaheadStart: Int?,
@@ -35575,7 +35037,6 @@ internal fun reduce449(
     return Pair(5, 150)
 }
 
-/** `___reduce450` — Symbol = "<", Symbol0, ">" => ActionFn(474); */
 internal fun reduce450(
     text: String,
     lookaheadStart: Int?,
@@ -35597,7 +35058,6 @@ internal fun reduce450(
     return Pair(3, 150)
 }
 
-/** `___reduce451` — Symbol = "<", Tuples, ":", Symbol0, ">" => ActionFn(475); */
 internal fun reduce451(
     text: String,
     lookaheadStart: Int?,
@@ -35621,7 +35081,6 @@ internal fun reduce451(
     return Pair(5, 150)
 }
 
-/** `___reduce452` — Symbol = Symbol0 => ActionFn(58); */
 internal
 fun reduce452(
     text: String,
@@ -35640,7 +35099,6 @@ fun reduce452(
     return Pair(1, 150)
 }
 
-/** `___reduce453` — Symbol* =  => ActionFn(156); */
 internal
 fun reduce453(
     text: String,
@@ -35658,7 +35116,6 @@ fun reduce453(
     return Pair(0, 151)
 }
 
-/** `___reduce454` — Symbol* = Symbol+ => ActionFn(157); */
 internal
 fun reduce454(
     text: String,
@@ -35677,7 +35134,6 @@ fun reduce454(
     return Pair(1, 151)
 }
 
-/** `___reduce455` — Symbol+ = Symbol => ActionFn(163); */
 internal
 fun reduce455(
     text: String,
@@ -35696,7 +35152,6 @@ fun reduce455(
     return Pair(1, 152)
 }
 
-/** `___reduce456` — Symbol+ = Symbol+, Symbol => ActionFn(164); */
 internal fun reduce456(
     text: String,
     lookaheadStart: Int?,
@@ -35717,7 +35172,6 @@ internal fun reduce456(
     return Pair(2, 152)
 }
 
-/** `___reduce457` — Symbol0 = Symbol1 => ActionFn(59); */
 internal
 fun reduce457(
     text: String,
@@ -35736,7 +35190,6 @@ fun reduce457(
     return Pair(1, 153)
 }
 
-/** `___reduce458` — Symbol0 = Symbol0, RepeatOp => ActionFn(476); */
 internal fun reduce458(
     text: String,
     lookaheadStart: Int?,
@@ -35757,7 +35210,6 @@ internal fun reduce458(
     return Pair(2, 153)
 }
 
-/** `___reduce459` — Symbol1 = SymbolKind1 => ActionFn(477); */
 internal
 fun reduce459(
     text: String,
@@ -35776,7 +35228,6 @@ fun reduce459(
     return Pair(1, 154)
 }
 
-/** `___reduce460` — Symbol? = Symbol => ActionFn(261); */
 internal
 fun reduce460(
     text: String,
@@ -35795,7 +35246,6 @@ fun reduce460(
     return Pair(1, 155)
 }
 
-/** `___reduce461` — Symbol? =  => ActionFn(262); */
 internal
 fun reduce461(
     text: String,
@@ -35813,7 +35263,6 @@ fun reduce461(
     return Pair(0, 155)
 }
 
-/** `___reduce462` — SymbolKind1 = MacroId, "<", Comma<Symbol>, ">" => ActionFn(65); */
 internal fun reduce462(
     text: String,
     lookaheadStart: Int?,
@@ -35836,7 +35285,6 @@ internal fun reduce462(
     return Pair(4, 156)
 }
 
-/** `___reduce463` — SymbolKind1 = QuotedTerminal => ActionFn(66); */
 internal
 fun reduce463(
     text: String,
@@ -35855,7 +35303,6 @@ fun reduce463(
     return Pair(1, 156)
 }
 
-/** `___reduce464` — SymbolKind1 = "Id" => ActionFn(67); */
 internal
 fun reduce464(
     text: String,
@@ -35874,7 +35321,6 @@ fun reduce464(
     return Pair(1, 156)
 }
 
-/** `___reduce465` — SymbolKind1 = Escape => ActionFn(68); */
 internal
 fun reduce465(
     text: String,
@@ -35893,7 +35339,6 @@ fun reduce465(
     return Pair(1, 156)
 }
 
-/** `___reduce466` — SymbolKind1 = "(", ExprSymbol, ")" => ActionFn(69); */
 internal fun reduce466(
     text: String,
     lookaheadStart: Int?,
@@ -35915,7 +35360,6 @@ internal fun reduce466(
     return Pair(3, 156)
 }
 
-/** `___reduce467` — SymbolKind1 = "@L" => ActionFn(70); */
 internal
 fun reduce467(
     text: String,
@@ -35934,7 +35378,6 @@ fun reduce467(
     return Pair(1, 156)
 }
 
-/** `___reduce468` — SymbolKind1 = "@R" => ActionFn(71); */
 internal
 fun reduce468(
     text: String,
@@ -35953,7 +35396,6 @@ fun reduce468(
     return Pair(1, 156)
 }
 
-/** `___reduce469` — SymbolKind1 = "!" => ActionFn(72); */
 internal
 fun reduce469(
     text: String,
@@ -35972,7 +35414,6 @@ fun reduce469(
     return Pair(1, 156)
 }
 
-/** `___reduce470` — Terminal = QuotedTerminal => ActionFn(121); */
 internal
 fun reduce470(
     text: String,
@@ -35991,7 +35432,6 @@ fun reduce470(
     return Pair(1, 157)
 }
 
-/** `___reduce471` — Terminal = "Id" => ActionFn(122); */
 internal
 fun reduce471(
     text: String,
@@ -36010,7 +35450,6 @@ fun reduce471(
     return Pair(1, 157)
 }
 
-/** `___reduce472` — Top = "StartGrammar", Grammar => ActionFn(1); */
 internal fun reduce472(
     text: String,
     lookaheadStart: Int?,
@@ -36031,7 +35470,6 @@ internal fun reduce472(
     return Pair(2, 158)
 }
 
-/** `___reduce473` — Top = "StartPattern", Pattern => ActionFn(2); */
 internal fun reduce473(
     text: String,
     lookaheadStart: Int?,
@@ -36052,7 +35490,6 @@ internal fun reduce473(
     return Pair(2, 158)
 }
 
-/** `___reduce474` — Top = "StartMatchMapping", MatchMapping => ActionFn(3); */
 internal fun reduce474(
     text: String,
     lookaheadStart: Int?,
@@ -36073,7 +35510,6 @@ internal fun reduce474(
     return Pair(2, 158)
 }
 
-/** `___reduce475` — Top = "StartTypeRef", TypeRef => ActionFn(4); */
 internal fun reduce475(
     text: String,
     lookaheadStart: Int?,
@@ -36094,7 +35530,6 @@ internal fun reduce475(
     return Pair(2, 158)
 }
 
-/** `___reduce476` — Top = "StartGrammarWhereClauses", GrammarWhereClauses => ActionFn(5); */
 internal fun reduce476(
     text: String,
     lookaheadStart: Int?,
@@ -36115,7 +35550,6 @@ internal fun reduce476(
     return Pair(2, 158)
 }
 
-/** `___reduce477` — TupleItem = "mut", Id => ActionFn(328); */
 internal fun reduce477(
     text: String,
     lookaheadStart: Int?,
@@ -36136,7 +35570,6 @@ internal fun reduce477(
     return Pair(2, 159)
 }
 
-/** `___reduce478` — TupleItem = Id => ActionFn(329); */
 internal
 fun reduce478(
     text: String,
@@ -36155,7 +35588,6 @@ fun reduce478(
     return Pair(1, 159)
 }
 
-/** `___reduce479` — TupleItem = Tuples => ActionFn(75); */
 internal
 fun reduce479(
     text: String,
@@ -36174,7 +35606,6 @@ fun reduce479(
     return Pair(1, 159)
 }
 
-/** `___reduce480` — TupleItem? = TupleItem => ActionFn(148); */
 internal
 fun reduce480(
     text: String,
@@ -36193,7 +35624,6 @@ fun reduce480(
     return Pair(1, 160)
 }
 
-/** `___reduce481` — TupleItem? =  => ActionFn(149); */
 internal
 fun reduce481(
     text: String,
@@ -36211,7 +35641,6 @@ fun reduce481(
     return Pair(0, 160)
 }
 
-/** `___reduce482` — Tuples = "(", (<TupleItem> ",")+, TupleItem, ")" => ActionFn(695); */
 internal fun reduce482(
     text: String,
     lookaheadStart: Int?,
@@ -36234,7 +35663,6 @@ internal fun reduce482(
     return Pair(4, 161)
 }
 
-/** `___reduce483` — Tuples = "(", (<TupleItem> ",")+, ")" => ActionFn(696); */
 internal fun reduce483(
     text: String,
     lookaheadStart: Int?,
@@ -36256,7 +35684,6 @@ internal fun reduce483(
     return Pair(3, 161)
 }
 
-/** `___reduce484` — TypeBound = Lifetime => ActionFn(16); */
 internal
 fun reduce484(
     text: String,
@@ -36275,7 +35702,6 @@ fun reduce484(
     return Pair(1, 162)
 }
 
-/** `___reduce485` — TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(525); */
 internal fun reduce485(
     text: String,
     lookaheadStart: Int?,
@@ -36304,7 +35730,6 @@ internal fun reduce485(
     return Pair(10, 162)
 }
 
-/** `___reduce486` — TypeBound = Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(526); */
 internal fun reduce486(
     text: String,
     lookaheadStart: Int?,
@@ -36329,7 +35754,6 @@ internal fun reduce486(
     return Pair(6, 162)
 }
 
-/** `___reduce487` — TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(527); */
 internal fun reduce487(
     text: String,
     lookaheadStart: Int?,
@@ -36356,7 +35780,6 @@ internal fun reduce487(
     return Pair(8, 162)
 }
 
-/** `___reduce488` — TypeBound = Path, "(", Comma<TypeRef>, ")" => ActionFn(528); */
 internal fun reduce488(
     text: String,
     lookaheadStart: Int?,
@@ -36379,7 +35802,6 @@ internal fun reduce488(
     return Pair(4, 162)
 }
 
-/** `___reduce489` — TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(529); */
 internal fun reduce489(
     text: String,
     lookaheadStart: Int?,
@@ -36406,7 +35828,6 @@ internal fun reduce489(
     return Pair(8, 162)
 }
 
-/** `___reduce490` — TypeBound = Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(530); */
 internal fun reduce490(
     text: String,
     lookaheadStart: Int?,
@@ -36429,7 +35850,6 @@ internal fun reduce490(
     return Pair(4, 162)
 }
 
-/** `___reduce491` — TypeBound = "for", "<", Comma<TypeParameter>, ">", Path => ActionFn(531); */
 internal fun reduce491(
     text: String,
     lookaheadStart: Int?,
@@ -36453,7 +35873,6 @@ internal fun reduce491(
     return Pair(5, 162)
 }
 
-/** `___reduce492` — TypeBound = Path => ActionFn(532); */
 internal
 fun reduce492(
     text: String,
@@ -36472,7 +35891,6 @@ fun reduce492(
     return Pair(1, 162)
 }
 
-/** `___reduce493` — TypeBound? = TypeBound => ActionFn(226); */
 internal
 fun reduce493(
     text: String,
@@ -36491,7 +35909,6 @@ fun reduce493(
     return Pair(1, 163)
 }
 
-/** `___reduce494` — TypeBound? =  => ActionFn(227); */
 internal
 fun reduce494(
     text: String,
@@ -36509,7 +35926,6 @@ fun reduce494(
     return Pair(0, 163)
 }
 
-/** `___reduce495` — TypeBoundParameter = Lifetime => ActionFn(19); */
 internal
 fun reduce495(
     text: String,
@@ -36528,7 +35944,6 @@ fun reduce495(
     return Pair(1, 164)
 }
 
-/** `___reduce496` — TypeBoundParameter = TypeRef => ActionFn(20); */
 internal
 fun reduce496(
     text: String,
@@ -36547,7 +35962,6 @@ fun reduce496(
     return Pair(1, 164)
 }
 
-/** `___reduce497` — TypeBoundParameter = Id, "=", TypeRef => ActionFn(21); */
 internal fun reduce497(
     text: String,
     lookaheadStart: Int?,
@@ -36569,7 +35983,6 @@ internal fun reduce497(
     return Pair(3, 164)
 }
 
-/** `___reduce498` — TypeBoundParameter? = TypeBoundParameter => ActionFn(236); */
 internal
 fun reduce498(
     text: String,
@@ -36588,7 +36001,6 @@ fun reduce498(
     return Pair(1, 165)
 }
 
-/** `___reduce499` — TypeBoundParameter? =  => ActionFn(237); */
 internal
 fun reduce499(
     text: String,
@@ -36606,7 +36018,6 @@ fun reduce499(
     return Pair(0, 165)
 }
 
-/** `___reduce500` — TypeBounds = Plus<TypeBound> => ActionFn(15); */
 internal
 fun reduce500(
     text: String,
@@ -36625,7 +36036,6 @@ fun reduce500(
     return Pair(1, 166)
 }
 
-/** `___reduce501` — TypeParameter = Lifetime => ActionFn(8); */
 internal
 fun reduce501(
     text: String,
@@ -36644,7 +36054,6 @@ fun reduce501(
     return Pair(1, 167)
 }
 
-/** `___reduce502` — TypeParameter = Id => ActionFn(9); */
 internal
 fun reduce502(
     text: String,
@@ -36663,7 +36072,6 @@ fun reduce502(
     return Pair(1, 167)
 }
 
-/** `___reduce503` — TypeParameter? = TypeParameter => ActionFn(213); */
 internal
 fun reduce503(
     text: String,
@@ -36682,7 +36090,6 @@ fun reduce503(
     return Pair(1, 168)
 }
 
-/** `___reduce504` — TypeParameter? =  => ActionFn(214); */
 internal
 fun reduce504(
     text: String,
@@ -36700,7 +36107,6 @@ fun reduce504(
     return Pair(0, 168)
 }
 
-/** `___reduce505` — TypeRef = "(", Comma<TypeRef>, ")" => ActionFn(76); */
 internal fun reduce505(
     text: String,
     lookaheadStart: Int?,
@@ -36722,7 +36128,6 @@ internal fun reduce505(
     return Pair(3, 169)
 }
 
-/** `___reduce506` — TypeRef = "[", TypeRef, "]" => ActionFn(77); */
 internal fun reduce506(
     text: String,
     lookaheadStart: Int?,
@@ -36744,7 +36149,6 @@ internal fun reduce506(
     return Pair(3, 169)
 }
 
-/** `___reduce507` — TypeRef = "#", Symbol, "#" => ActionFn(78); */
 internal fun reduce507(
     text: String,
     lookaheadStart: Int?,
@@ -36766,7 +36170,6 @@ internal fun reduce507(
     return Pair(3, 169)
 }
 
-/** `___reduce508` — TypeRef = "&", Lifetime, "mut", TypeRef => ActionFn(609); */
 internal fun reduce508(
     text: String,
     lookaheadStart: Int?,
@@ -36789,7 +36192,6 @@ internal fun reduce508(
     return Pair(4, 169)
 }
 
-/** `___reduce509` — TypeRef = "&", "mut", TypeRef => ActionFn(610); */
 internal fun reduce509(
     text: String,
     lookaheadStart: Int?,
@@ -36811,7 +36213,6 @@ internal fun reduce509(
     return Pair(3, 169)
 }
 
-/** `___reduce510` — TypeRef = "&", Lifetime, TypeRef => ActionFn(611); */
 internal fun reduce510(
     text: String,
     lookaheadStart: Int?,
@@ -36833,7 +36234,6 @@ internal fun reduce510(
     return Pair(3, 169)
 }
 
-/** `___reduce511` — TypeRef = "&", TypeRef => ActionFn(612); */
 internal fun reduce511(
     text: String,
     lookaheadStart: Int?,
@@ -36854,7 +36254,6 @@ internal fun reduce511(
     return Pair(2, 169)
 }
 
-/** `___reduce512` — TypeRef = Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(80); */
 internal fun reduce512(
     text: String,
     lookaheadStart: Int?,
@@ -36877,7 +36276,6 @@ internal fun reduce512(
     return Pair(4, 169)
 }
 
-/** `___reduce513` — TypeRef = Path => ActionFn(81); */
 internal
 fun reduce513(
     text: String,
@@ -36896,7 +36294,6 @@ fun reduce513(
     return Pair(1, 169)
 }
 
-/** `___reduce514` — TypeRef = "dyn", Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(82); */
 internal fun reduce514(
     text: String,
     lookaheadStart: Int?,
@@ -36920,7 +36317,6 @@ internal fun reduce514(
     return Pair(5, 169)
 }
 
-/** `___reduce515` — TypeRef = "dyn", Path => ActionFn(83); */
 internal fun reduce515(
     text: String,
     lookaheadStart: Int?,
@@ -36941,7 +36337,6 @@ internal fun reduce515(
     return Pair(2, 169)
 }
 
-/** `___reduce516` — TypeRef = "dyn", "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(533); */
 internal fun reduce516(
     text: String,
     lookaheadStart: Int?,
@@ -36971,7 +36366,6 @@ internal fun reduce516(
     return Pair(11, 169)
 }
 
-/** `___reduce517` — TypeRef = "dyn", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(534); */
 internal fun reduce517(
     text: String,
     lookaheadStart: Int?,
@@ -36997,7 +36391,6 @@ internal fun reduce517(
     return Pair(7, 169)
 }
 
-/** `___reduce518` — TypeRef = "dyn", "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(535); */
 internal fun reduce518(
     text: String,
     lookaheadStart: Int?,
@@ -37025,7 +36418,6 @@ internal fun reduce518(
     return Pair(9, 169)
 }
 
-/** `___reduce519` — TypeRef = "dyn", Path, "(", Comma<TypeRef>, ")" => ActionFn(536); */
 internal fun reduce519(
     text: String,
     lookaheadStart: Int?,
@@ -37049,7 +36441,6 @@ internal fun reduce519(
     return Pair(5, 169)
 }
 
-/** `___reduce520` — TypeRef? = TypeRef => ActionFn(231); */
 internal
 fun reduce520(
     text: String,
@@ -37068,7 +36459,6 @@ fun reduce520(
     return Pair(1, 170)
 }
 
-/** `___reduce521` — TypeRef? =  => ActionFn(232); */
 internal
 fun reduce521(
     text: String,
@@ -37086,7 +36476,6 @@ fun reduce521(
     return Pair(0, 170)
 }
 
-/** `___reduce522` — TypeRefOrLifetime = TypeRef => ActionFn(85); */
 internal
 fun reduce522(
     text: String,
@@ -37105,7 +36494,6 @@ fun reduce522(
     return Pair(1, 171)
 }
 
-/** `___reduce523` — TypeRefOrLifetime = Lifetime => ActionFn(86); */
 internal
 fun reduce523(
     text: String,
@@ -37124,7 +36512,6 @@ fun reduce523(
     return Pair(1, 171)
 }
 
-/** `___reduce524` — TypeRefOrLifetime? = TypeRefOrLifetime => ActionFn(266); */
 internal
 fun reduce524(
     text: String,
@@ -37143,7 +36530,6 @@ fun reduce524(
     return Pair(1, 172)
 }
 
-/** `___reduce525` — TypeRefOrLifetime? =  => ActionFn(267); */
 internal
 fun reduce525(
     text: String,
@@ -37161,7 +36547,6 @@ fun reduce525(
     return Pair(0, 172)
 }
 
-/** `___reduce526` — Use = "use", ";" => ActionFn(28); */
 internal fun reduce526(
     text: String,
     lookaheadStart: Int?,
@@ -37182,7 +36567,6 @@ internal fun reduce526(
     return Pair(2, 173)
 }
 
-/** `___reduce527` — Use* =  => ActionFn(201); */
 internal
 fun reduce527(
     text: String,
@@ -37200,7 +36584,6 @@ fun reduce527(
     return Pair(0, 174)
 }
 
-/** `___reduce528` — Use* = Use+ => ActionFn(202); */
 internal
 fun reduce528(
     text: String,
@@ -37219,7 +36602,6 @@ fun reduce528(
     return Pair(1, 174)
 }
 
-/** `___reduce529` — Use+ = Use => ActionFn(207); */
 internal
 fun reduce529(
     text: String,
@@ -37238,7 +36620,6 @@ fun reduce529(
     return Pair(1, 175)
 }
 
-/** `___reduce530` — Use+ = Use+, Use => ActionFn(208); */
 internal fun reduce530(
     text: String,
     lookaheadStart: Int?,
@@ -37259,7 +36640,6 @@ internal fun reduce530(
     return Pair(2, 175)
 }
 
-/** `___reduce531` — Visibility = "public", "(", Path, ")" => ActionFn(29); */
 internal fun reduce531(
     text: String,
     lookaheadStart: Int?,
@@ -37282,7 +36662,6 @@ internal fun reduce531(
     return Pair(4, 176)
 }
 
-/** `___reduce532` — Visibility = "public", "(", "in", Path, ")" => ActionFn(30); */
 internal fun reduce532(
     text: String,
     lookaheadStart: Int?,
@@ -37306,7 +36685,6 @@ internal fun reduce532(
     return Pair(5, 176)
 }
 
-/** `___reduce533` — Visibility = "public" => ActionFn(31); */
 internal
 fun reduce533(
     text: String,
@@ -37325,7 +36703,6 @@ fun reduce533(
     return Pair(1, 176)
 }
 
-/** `___reduce534` — Visibility =  => ActionFn(349); */
 internal
 fun reduce534(
     text: String,
@@ -37343,9 +36720,7 @@ fun reduce534(
     return Pair(0, 176)
 }
 
-// === lrgrammar.rs:6614-8366 — fallible forwarders + `___reduce` dispatcher + `ParserDefinition` + `TopParser` ===
 
-// === lrgrammar.rs:26967-29220 — fallible forwarder actions ===
 // These forwarders splice in `___action197`/`___action198` placeholder
 // sub-results around a call into one of the fallible base actions
 // (`action96`, `action102`, `action126`, `action127`). Any failure from
@@ -37565,9 +36940,8 @@ fun action502
     )
 }
 
-// === lrgrammar.rs:6681-8366 — `___reduce` dispatcher ===
 /**
- * Translation of `function ___reduce<'input>(...)` from lrgrammar.rs:6681. Looks up
+ * Translation of `function ___reduce(...)` from lrgrammar.rs:6681. Looks up
  * the i16 action code, delegates to the matching infallible `reduceN`, or
  * inlines the five fallible cases that must short-circuit on error. Returns
  * a non-null [ParseResult] only when the parse is complete (case 535) or when
