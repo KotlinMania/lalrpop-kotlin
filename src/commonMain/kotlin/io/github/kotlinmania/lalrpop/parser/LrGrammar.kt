@@ -36698,7 +36698,7 @@ fun reduce534(
 }
 
 
-// These forwarders splice in `___action197`/`___action198` placeholder
+// These forwarders splice in `___action197`/`___action198` sentinel
 // sub-results around a call into one of the fallible base actions
 // (`action96`, `action102`, `action126`, `action127`). Any failure from
 // the base action is propagated through `Result` unchanged.
