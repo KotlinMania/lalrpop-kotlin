@@ -52,7 +52,7 @@ class ContextSet(
 
         /**
          * Attempts to union `set1` with `set2`, producing a new set.
-         * Throws `OverlappingLookaheadException` if that would produce
+         * Throws `OverlappingLookahead` if that would produce
          * an invalid (overlapping) conflict set.
          */
         fun union(set1: ContextSet, set2: ContextSet): ContextSet {
@@ -72,7 +72,7 @@ class ContextSet(
      * Attempts to merge the values `conflict: set` into this
      * conflict set. If this would result in an invalid conflict set
      * (where two conflicts have overlapping lookahead), then throws
-     * `OverlappingLookaheadException` and has no effect.
+     * `OverlappingLookahead` and has no effect.
      *
      * Assuming no errors, returns `true` if this resulted in any
      * modifications, and `false` otherwise.
@@ -81,7 +81,7 @@ class ContextSet(
         for ((i, value) in values.withIndex()) {
             val index = ConflictIndex.new(i)
             if (index != conflict && value.isIntersecting(set)) {
-                throw OverlappingLookaheadException
+                throw OverlappingLookahead
             }
         }
 
@@ -106,13 +106,10 @@ class ContextSet(
     }
 }
 
-object OverlappingLookaheadException : RuntimeException() {
-    private fun readResolve(): Any = OverlappingLookaheadException
-}
-
 /**
- * Marker type matching the upstream Rust `class OverlappingLookaheadException;` --
- * a unit struct used as an `Err` payload. The Kotlin port models the
- * error as the [OverlappingLookaheadException] singleton; this
- * typealias preserves the original Rust name for parity tooling.
+ * Upstream Rust uses a unit struct `OverlappingLookahead` as an `Err` payload.
+ *
+ * Kotlin does not have a direct unit-struct equivalent; we model the error as a
+ * singleton throwable that can be caught by type.
  */
+object OverlappingLookahead : Exception()
