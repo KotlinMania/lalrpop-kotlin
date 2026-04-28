@@ -101,14 +101,14 @@ class InlineBuilder : Character<Content> {
  * Example:
  *
  * ```noCompile
- * let node = InlineBuilder::new()
- * .beginLines() // starts a child builder for adjacent lines
- * .text("foo")   // add a text node "foo" to the child builder
- * .text("bar")   // add a text node "bar" to the child builder
- * .end()         // finish the lines builder, return to the parent
- * .end();        // finish the parent `InlineBuilder`, yielding up the
- * // `lines` child that was pushed (see `InlineBuilder`
- * // for more details)
+ * val node = InlineBuilder.new()
+ *     .beginLines() // starts a child builder for adjacent lines
+ *     .text("foo")   // add a text node "foo" to the child builder
+ *     .text("bar")   // add a text node "bar" to the child builder
+ *     .end()         // finish the lines builder, return to the parent
+ *     .end()         // finish the parent [InlineBuilder], yielding up the
+ *                    // `lines` child that was pushed (see [InlineBuilder]
+ *                    // for more details)
  * ```
  */
 class Builder<End>(
