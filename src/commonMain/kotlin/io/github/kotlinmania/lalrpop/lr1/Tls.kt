@@ -26,6 +26,7 @@ private class RefCell<T>(private var value: T) {
 }
 
 private fun <T> RefCell<T?>.take(): T? = this.replace(null)
+private fun <T> T?.expect(message: String): T = this ?: error(message)
 
 class Lr1Tls private constructor(
     private val oldValue: RefCell<TerminalSet?>,
@@ -46,7 +47,7 @@ class Lr1Tls private constructor(
         fun <RET> with(
             op: (TerminalSet) -> RET,
         ): RET {
-            return TERMINALS.with { s -> op(s.borrow() ?: error("LR1 TLS not installed")) }
+            return TERMINALS.with { s -> op(s.borrow().expect("LR1 TLS not installed")) }
         }
     }
 }
