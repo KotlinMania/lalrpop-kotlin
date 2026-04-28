@@ -6,13 +6,6 @@
   "agents_md": "",
   "tasks": [
     {
-      "source_path": "lr1/interpret.rs",
-      "source_qualified": "lr1.interpret",
-      "target_path": "lr1/Interpret.kt",
-      "dependent_count": 4,
-      "status": "pending"
-    },
-    {
       "source_path": "test_util.rs",
       "source_qualified": "test_util",
       "target_path": "TestUtil.kt",
@@ -334,6 +327,14 @@
       "dependent_count": 6,
       "status": "completed",
       "completed_at": "2026-04-28T06:08:10"
+    },
+    {
+      "source_path": "lr1/interpret.rs",
+      "source_qualified": "lr1.interpret",
+      "target_path": "lr1/Interpret.kt",
+      "dependent_count": 4,
+      "status": "completed",
+      "completed_at": "2026-04-28T06:09:46"
     },
     {
       "source_path": "lr1/tls.rs",
