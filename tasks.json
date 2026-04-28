@@ -6,13 +6,6 @@
   "agents_md": "",
   "tasks": [
     {
-      "source_path": "collections/set.rs",
-      "source_qualified": "collections.set",
-      "target_path": "collections/Set.kt",
-      "dependent_count": 6,
-      "status": "pending"
-    },
-    {
       "source_path": "lr1/interpret.rs",
       "source_qualified": "lr1.interpret",
       "target_path": "lr1/Interpret.kt",
@@ -333,6 +326,14 @@
       "target_path": "lexer/nfa/Interpret.kt",
       "dependent_count": 0,
       "status": "pending"
+    },
+    {
+      "source_path": "collections/set.rs",
+      "source_qualified": "collections.set",
+      "target_path": "collections/Set.kt",
+      "dependent_count": 6,
+      "status": "completed",
+      "completed_at": "2026-04-28T06:08:10"
     },
     {
       "source_path": "lr1/tls.rs",
