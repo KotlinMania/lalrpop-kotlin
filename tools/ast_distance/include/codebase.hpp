@@ -1036,33 +1036,25 @@ public:
         std::vector<std::string> reasons;
         std::string code = strip_kotlin_comments_and_strings(source);
         std::string comments = extract_kotlin_comments(source);
-
-        // Strip port-lint header lines from the comments scan: those lines
-        // legitimately contain snake_case Rust paths and would otherwise
-        // false-positive the snake_case-in-comments check.
+        // Ported Kotlin files must begin with a provenance marker like:
+        //   // port-lint: source src/foo_bar.rs
+        // This header is required for port tracking and may legitimately contain
+        // snake_case segments from upstream Rust filenames. Exclude it from the
+        // cheat detection scan.
         {
-            std::string filtered;
-            filtered.reserve(comments.size());
-            size_t pos = 0;
-            while (pos < comments.size()) {
-                size_t eol = comments.find('\n', pos);
-                size_t end = (eol == std::string::npos) ? comments.size() : eol;
-                std::string line = comments.substr(pos, end - pos);
-                size_t first = line.find_first_not_of(" \t*/");
-                bool is_port_lint = false;
-                if (first != std::string::npos) {
-                    std::string trimmed = line.substr(first);
-                    if (trimmed.rfind("port-lint:", 0) == 0) {
-                        is_port_lint = true;
-                    }
+            std::istringstream in(comments);
+            std::ostringstream out;
+            std::string line;
+            bool first = true;
+            while (std::getline(in, line)) {
+                if (line.find("port-lint: source") != std::string::npos) {
+                    continue;
                 }
-                if (!is_port_lint) {
-                    filtered.append(line);
-                }
-                filtered.push_back('\n');
-                pos = (eol == std::string::npos) ? comments.size() : eol + 1;
+                if (!first) out << "\n";
+                first = false;
+                out << line;
             }
-            comments = std::move(filtered);
+            comments = out.str();
         }
 
         auto add_reason = [&](const std::string& reason) {
@@ -1130,7 +1122,7 @@ public:
              "translator-note comment (`Kotlin:`) in Kotlin comments"},
             {std::regex(R"(\(\s*from\s+impl\b[^)]*\))", std::regex_constants::icase),
              "Rust impl provenance note in Kotlin comments"},
-            {std::regex(R"((\blifetimes?\b|(?:^|[\s<,(])'[A-Za-z_][A-Za-z0-9_]*\b))", std::regex_constants::icase),
+            {std::regex(R"(\b(lifetime|lifetimes|'[A-Za-z_][A-Za-z0-9_]*)\b)", std::regex_constants::icase),
              "Rust lifetime explanation in Kotlin comments"},
             {std::regex(R"(\b(dyn|usize|Box|transmute|unsafe)\b)"),
              "Rust-only type/unsafe terminology in Kotlin comments"},
