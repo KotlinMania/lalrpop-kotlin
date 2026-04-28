@@ -18,6 +18,4 @@ class Set<K : Comparable<K>> private constructor(
     }
 }
 
-fun <K : Comparable<K>> set(): Set<K> {
-    return Set.default<K>()
-}
+fun <K : Comparable<K>> set(): Set<K> = Set.default<K>()
