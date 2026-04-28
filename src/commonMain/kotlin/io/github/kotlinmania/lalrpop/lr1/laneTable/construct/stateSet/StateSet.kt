@@ -31,7 +31,7 @@ data class StateSet(
         fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
             try {
                 ContextSet.union(value1, value2)
-            } catch (_: io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookaheadException) {
+            } catch (_: io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookahead) {
                 null
             }
     }
