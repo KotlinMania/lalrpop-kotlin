@@ -9,20 +9,10 @@ import io.github.kotlinmania.lalrpop.parser.parseGrammar
 
 private val SPAN: Regex = Regex("Span\\([0-9 ,\\n]*\\)")
 
-private class Error
-
-private class Formatter(val sb: StringBuilder = StringBuilder())
-
 private class ExpectedDebug(private val s: String) {
-    fun fmt(fmt: Formatter): Result<Unit> {
-        // Ignore trailing commas in multiline Debug representation.
-        // Needed to work around rust-lang/rust#59076.
-        val s = this.s.replace(",\n", "\n")
-        fmt.sb.append(s)
-        return Result.success(Unit)
-    }
-
-    fun fmt(fmt: Formatter, _error: Error): Result<Unit> = fmt(fmt)
+    // Ignore trailing commas in multiline Debug representation.
+    // Needed to work around rust-lang/rust#59076.
+    override fun toString(): String = s.replace(",\n", "\n")
 }
 
 fun <D : Any> expectDebug(actual: D, expected: String) {
@@ -52,8 +42,6 @@ fun <D : Any, E : Any> compare(actual: D, expected: E) {
     }
 }
 
-private fun <T> Result<T>.unwrap(): T = getOrThrow()
-
 /**
  * Ignore differences in `Span` values, by replacing them all with fixed
  * dummy text.
@@ -61,9 +49,8 @@ private fun <T> Result<T>.unwrap(): T = getOrThrow()
 private fun normalize(withSpans: String): String =
     SPAN.replace(withSpans, "Span(..)")
 
-fun normalizedGrammar(s: String): Grammar {
-    return Result.success(normalizeWithoutValidating(parseGrammar(s).unwrap())).unwrap()
-}
+fun normalizedGrammar(s: String): Grammar =
+    normalizeWithoutValidating(parseGrammar(s).getOrThrow())
 
 fun checkNormErr(expectedErr: String, span: String, err: NormError) {
     val expected = Regex(expectedErr)
