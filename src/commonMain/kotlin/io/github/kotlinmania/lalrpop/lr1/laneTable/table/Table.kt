@@ -22,7 +22,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookaheadException
+import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookahead
 
 data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
     override fun compareTo(other: ConflictIndex): Int = index.compareTo(other.index)
@@ -114,7 +114,7 @@ class LaneTable(
     /**
      * Returns a map containing all states that appear in the table,
      * along with the context set for each state (i.e., each row in
-     * the table, basically). Throws `OverlappingLookaheadException`
+     * the table, basically). Throws `OverlappingLookahead`
      * wrapping the offending `StateIndex` if any state has a conflict
      * between the context sets even within its own row.
      */
@@ -125,7 +125,7 @@ class LaneTable(
             val cs = map.getOrPut(stateIndex) { ContextSet.new(this.conflicts) }
             try {
                 cs.insert(conflictIndex, tokenSet)
-            } catch (e: OverlappingLookaheadException) {
+            } catch (e: OverlappingLookahead) {
                 throw RowConflictException(stateIndex)
             }
         }
