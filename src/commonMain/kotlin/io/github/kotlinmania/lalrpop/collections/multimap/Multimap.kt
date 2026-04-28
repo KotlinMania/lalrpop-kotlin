@@ -6,14 +6,6 @@ import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.set.set
 
-/**
- * Mirrors `type IntoIter = btreeMap::Iterator<Pair<K, C>>;` from
- * `implementation<K: Ord, C: Collection> IntoIterator for Multimap<K, C>`.
- * Kotlin does not have associated types on interface implementations,
- * so we expose the binding as a top-level typealias for parity.
- */
-typealias Iterator<Pair<K, C>> = Iterator<Pair<K, C>>
-
 class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
     private val collectionFactory: () -> C,
 ) : Iterable<Pair<K, C>> {

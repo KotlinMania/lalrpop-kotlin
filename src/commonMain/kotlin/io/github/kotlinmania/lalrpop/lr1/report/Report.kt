@@ -48,8 +48,6 @@ fun generateReport(
 
 private const val INDENT_STRING: String = "    "
 
-private typealias BTreeMap<StateIndex, MutableList<Conflict<L>>> = BTreeMap<StateIndex, MutableList<Conflict<L>>>
-
 private class ReportGenerator<W : Appendable>(
     val out: W,
 ) {

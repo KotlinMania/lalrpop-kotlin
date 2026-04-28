@@ -155,7 +155,7 @@ interface ParserDefinition<
         reduceIndex: ReduceIndex,
         startLocation: Location?,
         states: MutableList<StateIndex>,
-        symbols: MutableList<SymbolTriple<Location, Symbol>>,
+        symbols: MutableList<Triple<Location, Symbol, Location>>,
     ): ParseResult<Success, Location, Token, Error>?
 
     /**
@@ -220,7 +220,7 @@ class Parser<
     private val tokens: Iterator<TokResult<Location, Token, Error>>,
 ) {
     private val states: MutableList<StateIndex> = mutableListOf(definition.startState())
-    private val symbols: MutableList<SymbolTriple<Location, Symbol>> = mutableListOf()
+    private val symbols: MutableList<Triple<Location, Symbol, Location>> = mutableListOf()
     private var lastLocation: Location = definition.startLocation()
 
     companion object {
@@ -322,7 +322,7 @@ class Parser<
     }
 
     private fun errorRecovery(
-        initialLookahead: TokenTriple<Location, Token>?,
+        initialLookahead: Triple<Location, Token, Location>?,
         initialTokenIndex: TokenIndex?,
     ): NextToken<Location, Token, TokenIndex, Success, Error> {
         var optLookahead = initialLookahead
@@ -340,7 +340,7 @@ class Parser<
 
         val error = unrecognizedTokenError(optLookahead, states)
 
-        val droppedTokens: MutableList<TokenTriple<Location, Token>> = mutableListOf()
+        val droppedTokens: MutableList<Triple<Location, Token, Location>> = mutableListOf()
 
         // We are going to insert ERROR into the lookahead. So, first, perform
         // all reductions from current state triggered by having ERROR in the
@@ -602,7 +602,7 @@ class Parser<
     }
 
     private fun unrecognizedTokenError(
-        token: TokenTriple<Location, Token>?,
+        token: Triple<Location, Token, Location>?,
         states: List<StateIndex>,
     ): ParseError<Location, Token, Error> {
         return if (token != null) {
@@ -627,7 +627,7 @@ class Parser<
         if (!tokens.hasNext()) {
             return NextToken.Eof()
         }
-        val token: TokenTriple<Location, Token> = when (val tr = tokens.next()) {
+        val token: Triple<Location, Token, Location> = when (val tr = tokens.next()) {
             is TokResult.Ok -> tr.value
             is TokResult.Err -> return NextToken.Done(ParseResult.Failure(tr.error))
         }
@@ -645,7 +645,7 @@ class Parser<
 
 private sealed class NextToken<Location, Token, TokenIndex, Success, Error> {
     class FoundToken<Location, Token, TokenIndex, Success, Error>(
-        val lookahead: TokenTriple<Location, Token>,
+        val lookahead: Triple<Location, Token, Location>,
         val tokenIndex: TokenIndex,
     ) : NextToken<Location, Token, TokenIndex, Success, Error>()
 

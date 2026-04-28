@@ -80,7 +80,7 @@ internal const val MIN_LEN: Int = MIN_LEN_AFTER_SPLIT
  * system enforces it once at the class parameter rather than at every method.
  */
 class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
-    internal var root: Root<K, V>? = null
+    internal var root: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>? = null
     internal var length: Int = 0
 
     /**
@@ -1152,7 +1152,7 @@ class ExtractIf<K : Comparable<K>, V, Q : Comparable<Q>> internal constructor(
 internal class ExtractIfInner<K : Comparable<K>, V, Q : Comparable<Q>>(
     internal val map: BTreeMap<K, V>,
     /** Buried reference to the root field in the borrowed map. */
-    internal var dormantRoot: DormantMutRef<Root<K, V>>?,
+    internal var dormantRoot: DormantMutRef<NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>>?,
     /** Contains a leaf edge preceding the next element to be returned, or the last leaf edge. */
     internal var curLeafEdge: Handle<NodeRef<Marker.Mut, K, V, Marker.Leaf>, Marker.Edge>?,
     /** Range over which iteration was requested. */
@@ -1223,7 +1223,7 @@ internal class ExtractIfInner<K : Comparable<K>, V, Q : Comparable<Q>>(
  */
 class Cursor<K : Comparable<K>, V> internal constructor(
     internal var current: Handle<NodeRef<Marker.Immut, K, V, Marker.Leaf>, Marker.Edge>?,
-    internal var root: Root<K, V>?,
+    internal var root: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>?,
 ) {
     /**
      * Advances the cursor to the next gap, returning the key and value of

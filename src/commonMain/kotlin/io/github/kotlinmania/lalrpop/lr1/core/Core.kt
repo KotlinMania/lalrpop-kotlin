@@ -249,10 +249,6 @@ data class TableConstructionError<L : Lookahead<L>>(
     val conflicts: MutableList<Conflict<L>>,
 )
 
-// LrResult and MutableList<State<TokenSet>> exist in Rust as Result type aliases.
-// In Kotlin they would be sealed sum types; they are elided here
-// in favor of throwing TableConstructionError directly at the call site.
-
 /** `A = B C (*) D E F` or `A = B C (*)` */
 data class SymbolSets(
     val prefix: List<Symbol>,       // both cases, [B, C]

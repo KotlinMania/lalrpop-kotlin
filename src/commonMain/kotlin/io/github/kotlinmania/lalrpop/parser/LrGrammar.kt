@@ -3164,14 +3164,11 @@ internal fun expectedTokens(state: Short): List<String> {
     }
 }
 
-internal typealias io.github.kotlinmania.lalrpop.tok.Error = io.github.kotlinmania.lalrpop.tok.io.github.kotlinmania.lalrpop.tok.Error
-internal typealias io.github.kotlinmania.lalrpop.tok.Tok = io.github.kotlinmania.lalrpop.tok.Tok
-
 internal class StateMachine(
     internal val text: String,
 ) : io.github.kotlinmania.lalrpop.runtime.ParserDefinition<
     Int,
-    io.github.kotlinmania.lalrpop.tok.io.github.kotlinmania.lalrpop.tok.Error,
+    io.github.kotlinmania.lalrpop.tok.Error,
     io.github.kotlinmania.lalrpop.tok.Tok,
     Int,
     LrSymbol,
@@ -3226,7 +3223,7 @@ internal class StateMachine(
     }
 
     override fun errorRecoverySymbol(
-        recovery: io.github.kotlinmania.lalrpop.runtime.ErrorRecovery<Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.io.github.kotlinmania.lalrpop.tok.Error>,
+        recovery: io.github.kotlinmania.lalrpop.runtime.ErrorRecovery<Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.Error>,
     ): LrSymbol
     {
         error("error recovery not enabled for this grammar")
@@ -3236,12 +3233,12 @@ internal class StateMachine(
         reduceIndex: Short,
         startLocation: Int?,
         states: MutableList<Short>,
-        symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+        symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
     ): io.github.kotlinmania.lalrpop.runtime.ParseResult<
         Top,
         Int,
         io.github.kotlinmania.lalrpop.tok.Tok,
-        io.github.kotlinmania.lalrpop.tok.io.github.kotlinmania.lalrpop.tok.Error,
+        io.github.kotlinmania.lalrpop.tok.Error,
     >? {
         return io.github.kotlinmania.lalrpop.parser.reduce(
             text,
@@ -6637,7 +6634,7 @@ internal fun symbolTypeMismatch(): Nothing {
 }
 
 internal fun popVariant9(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, Unit, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     if (triple.second !is LrSymbol.Variant9) symbolTypeMismatch()
@@ -6648,7 +6645,7 @@ internal fun popVariant9(
     )
 }
 internal fun popVariant82(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, Pair<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant82 ?: symbolTypeMismatch()
@@ -6659,7 +6656,7 @@ internal fun popVariant82(
     )
 }
 internal fun popVariant44(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant44 ?: symbolTypeMismatch()
@@ -6670,7 +6667,7 @@ internal fun popVariant44(
     )
 }
 internal fun popVariant10(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant10 ?: symbolTypeMismatch()
@@ -6681,7 +6678,7 @@ internal fun popVariant10(
     )
 }
 internal fun popVariant34(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant34 ?: symbolTypeMismatch()
@@ -6692,7 +6689,7 @@ internal fun popVariant34(
     )
 }
 internal fun popVariant48(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant48 ?: symbolTypeMismatch()
@@ -6703,7 +6700,7 @@ internal fun popVariant48(
     )
 }
 internal fun popVariant22(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.Atom, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant22 ?: symbolTypeMismatch()
@@ -6714,7 +6711,7 @@ internal fun popVariant22(
     )
 }
 internal fun popVariant12(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant12 ?: symbolTypeMismatch()
@@ -6725,7 +6722,7 @@ internal fun popVariant12(
     )
 }
 internal fun popVariant50(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant50 ?: symbolTypeMismatch()
@@ -6736,7 +6733,7 @@ internal fun popVariant50(
     )
 }
 internal fun popVariant7(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant7 ?: symbolTypeMismatch()
@@ -6747,7 +6744,7 @@ internal fun popVariant7(
     )
 }
 internal fun popVariant63(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ConditionOp, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant63 ?: symbolTypeMismatch()
@@ -6758,7 +6755,7 @@ internal fun popVariant63(
     )
 }
 internal fun popVariant14(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant14 ?: symbolTypeMismatch()
@@ -6769,7 +6766,7 @@ internal fun popVariant14(
     )
 }
 internal fun popVariant65(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.EnumToken, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant65 ?: symbolTypeMismatch()
@@ -6780,7 +6777,7 @@ internal fun popVariant65(
     )
 }
 internal fun popVariant66(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant66 ?: symbolTypeMismatch()
@@ -6791,7 +6788,7 @@ internal fun popVariant66(
     )
 }
 internal fun popVariant16(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant16 ?: symbolTypeMismatch()
@@ -6802,7 +6799,7 @@ internal fun popVariant16(
     )
 }
 internal fun popVariant69(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant69 ?: symbolTypeMismatch()
@@ -6813,7 +6810,7 @@ internal fun popVariant69(
     )
 }
 internal fun popVariant67(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant67 ?: symbolTypeMismatch()
@@ -6824,7 +6821,7 @@ internal fun popVariant67(
     )
 }
 internal fun popVariant24(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant24 ?: symbolTypeMismatch()
@@ -6835,7 +6832,7 @@ internal fun popVariant24(
     )
 }
 internal fun popVariant77(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchContents, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant77 ?: symbolTypeMismatch()
@@ -6846,7 +6843,7 @@ internal fun popVariant77(
     )
 }
 internal fun popVariant26(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant26 ?: symbolTypeMismatch()
@@ -6857,7 +6854,7 @@ internal fun popVariant26(
     )
 }
 internal fun popVariant79(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant79 ?: symbolTypeMismatch()
@@ -6868,7 +6865,7 @@ internal fun popVariant79(
     )
 }
 internal fun popVariant81(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant81 ?: symbolTypeMismatch()
@@ -6879,7 +6876,7 @@ internal fun popVariant81(
     )
 }
 internal fun popVariant28(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant28 ?: symbolTypeMismatch()
@@ -6890,7 +6887,7 @@ internal fun popVariant28(
     )
 }
 internal fun popVariant45(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant45 ?: symbolTypeMismatch()
@@ -6901,7 +6898,7 @@ internal fun popVariant45(
     )
 }
 internal fun popVariant46(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant46 ?: symbolTypeMismatch()
@@ -6912,7 +6909,7 @@ internal fun popVariant46(
     )
 }
 internal fun popVariant96(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant96 ?: symbolTypeMismatch()
@@ -6923,7 +6920,7 @@ internal fun popVariant96(
     )
 }
 internal fun popVariant52(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant52 ?: symbolTypeMismatch()
@@ -6934,7 +6931,7 @@ internal fun popVariant52(
     )
 }
 internal fun popVariant51(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant51 ?: symbolTypeMismatch()
@@ -6945,7 +6942,7 @@ internal fun popVariant51(
     )
 }
 internal fun popVariant8(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Condition?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant8 ?: symbolTypeMismatch()
@@ -6956,7 +6953,7 @@ internal fun popVariant8(
     )
 }
 internal fun popVariant64(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant64 ?: symbolTypeMismatch()
@@ -6967,7 +6964,7 @@ internal fun popVariant64(
     )
 }
 internal fun popVariant68(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant68 ?: symbolTypeMismatch()
@@ -6978,7 +6975,7 @@ internal fun popVariant68(
     )
 }
 internal fun popVariant76(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant76 ?: symbolTypeMismatch()
@@ -6989,7 +6986,7 @@ internal fun popVariant76(
     )
 }
 internal fun popVariant78(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant78 ?: symbolTypeMismatch()
@@ -7000,7 +6997,7 @@ internal fun popVariant78(
     )
 }
 internal fun popVariant83(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant83 ?: symbolTypeMismatch()
@@ -7011,7 +7008,7 @@ internal fun popVariant83(
     )
 }
 internal fun popVariant71(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant71 ?: symbolTypeMismatch()
@@ -7022,7 +7019,7 @@ internal fun popVariant71(
     )
 }
 internal fun popVariant85(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant85 ?: symbolTypeMismatch()
@@ -7033,7 +7030,7 @@ internal fun popVariant85(
     )
 }
 internal fun popVariant93(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant93 ?: symbolTypeMismatch()
@@ -7044,7 +7041,7 @@ internal fun popVariant93(
     )
 }
 internal fun popVariant2(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant2 ?: symbolTypeMismatch()
@@ -7055,7 +7052,7 @@ internal fun popVariant2(
     )
 }
 internal fun popVariant98(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant98 ?: symbolTypeMismatch()
@@ -7066,7 +7063,7 @@ internal fun popVariant98(
     )
 }
 internal fun popVariant99(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant99 ?: symbolTypeMismatch()
@@ -7077,7 +7074,7 @@ internal fun popVariant99(
     )
 }
 internal fun popVariant100(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant100 ?: symbolTypeMismatch()
@@ -7088,7 +7085,7 @@ internal fun popVariant100(
     )
 }
 internal fun popVariant4(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant4 ?: symbolTypeMismatch()
@@ -7099,7 +7096,7 @@ internal fun popVariant4(
     )
 }
 internal fun popVariant72(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant72 ?: symbolTypeMismatch()
@@ -7110,7 +7107,7 @@ internal fun popVariant72(
     )
 }
 internal fun popVariant6(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant6 ?: symbolTypeMismatch()
@@ -7121,7 +7118,7 @@ internal fun popVariant6(
     )
 }
 internal fun popVariant73(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant73 ?: symbolTypeMismatch()
@@ -7132,7 +7129,7 @@ internal fun popVariant73(
     )
 }
 internal fun popVariant75(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant75 ?: symbolTypeMismatch()
@@ -7143,7 +7140,7 @@ internal fun popVariant75(
     )
 }
 internal fun popVariant74(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>?, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant74 ?: symbolTypeMismatch()
@@ -7154,7 +7151,7 @@ internal fun popVariant74(
     )
 }
 internal fun popVariant18(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant18 ?: symbolTypeMismatch()
@@ -7165,7 +7162,7 @@ internal fun popVariant18(
     )
 }
 internal fun popVariant84(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Path, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant84 ?: symbolTypeMismatch()
@@ -7176,7 +7173,7 @@ internal fun popVariant84(
     )
 }
 internal fun popVariant30(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant30 ?: symbolTypeMismatch()
@@ -7187,7 +7184,7 @@ internal fun popVariant30(
     )
 }
 internal fun popVariant86(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant86 ?: symbolTypeMismatch()
@@ -7198,7 +7195,7 @@ internal fun popVariant86(
     )
 }
 internal fun popVariant90(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.RepeatOp, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant90 ?: symbolTypeMismatch()
@@ -7209,7 +7206,7 @@ internal fun popVariant90(
     )
 }
 internal fun popVariant91(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, String, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant91 ?: symbolTypeMismatch()
@@ -7220,7 +7217,7 @@ internal fun popVariant91(
     )
 }
 internal fun popVariant32(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant32 ?: symbolTypeMismatch()
@@ -7231,7 +7228,7 @@ internal fun popVariant32(
     )
 }
 internal fun popVariant94(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant94 ?: symbolTypeMismatch()
@@ -7242,7 +7239,7 @@ internal fun popVariant94(
     )
 }
 internal fun popVariant80(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant80 ?: symbolTypeMismatch()
@@ -7253,7 +7250,7 @@ internal fun popVariant80(
     )
 }
 internal fun popVariant89(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant89 ?: symbolTypeMismatch()
@@ -7264,7 +7261,7 @@ internal fun popVariant89(
     )
 }
 internal fun popVariant0(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant0 ?: symbolTypeMismatch()
@@ -7275,7 +7272,7 @@ internal fun popVariant0(
     )
 }
 internal fun popVariant95(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.parser.Top, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant95 ?: symbolTypeMismatch()
@@ -7286,7 +7283,7 @@ internal fun popVariant95(
     )
 }
 internal fun popVariant97(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant97 ?: symbolTypeMismatch()
@@ -7297,7 +7294,7 @@ internal fun popVariant97(
     )
 }
 internal fun popVariant36(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant36 ?: symbolTypeMismatch()
@@ -7308,7 +7305,7 @@ internal fun popVariant36(
     )
 }
 internal fun popVariant38(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant38 ?: symbolTypeMismatch()
@@ -7319,7 +7316,7 @@ internal fun popVariant38(
     )
 }
 internal fun popVariant40(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant40 ?: symbolTypeMismatch()
@@ -7330,7 +7327,7 @@ internal fun popVariant40(
     )
 }
 internal fun popVariant3(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant3 ?: symbolTypeMismatch()
@@ -7341,7 +7338,7 @@ internal fun popVariant3(
     )
 }
 internal fun popVariant47(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant47 ?: symbolTypeMismatch()
@@ -7352,7 +7349,7 @@ internal fun popVariant47(
     )
 }
 internal fun popVariant53(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant53 ?: symbolTypeMismatch()
@@ -7363,7 +7360,7 @@ internal fun popVariant53(
     )
 }
 internal fun popVariant54(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant54 ?: symbolTypeMismatch()
@@ -7374,7 +7371,7 @@ internal fun popVariant54(
     )
 }
 internal fun popVariant87(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant87 ?: symbolTypeMismatch()
@@ -7385,7 +7382,7 @@ internal fun popVariant87(
     )
 }
 internal fun popVariant57(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant57 ?: symbolTypeMismatch()
@@ -7396,7 +7393,7 @@ internal fun popVariant57(
     )
 }
 internal fun popVariant58(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant58 ?: symbolTypeMismatch()
@@ -7407,7 +7404,7 @@ internal fun popVariant58(
     )
 }
 internal fun popVariant55(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant55 ?: symbolTypeMismatch()
@@ -7418,7 +7415,7 @@ internal fun popVariant55(
     )
 }
 internal fun popVariant59(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant59 ?: symbolTypeMismatch()
@@ -7429,7 +7426,7 @@ internal fun popVariant59(
     )
 }
 internal fun popVariant60(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant60 ?: symbolTypeMismatch()
@@ -7440,7 +7437,7 @@ internal fun popVariant60(
     )
 }
 internal fun popVariant88(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant88 ?: symbolTypeMismatch()
@@ -7451,7 +7448,7 @@ internal fun popVariant88(
     )
 }
 internal fun popVariant5(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant5 ?: symbolTypeMismatch()
@@ -7462,7 +7459,7 @@ internal fun popVariant5(
     )
 }
 internal fun popVariant61(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant61 ?: symbolTypeMismatch()
@@ -7473,7 +7470,7 @@ internal fun popVariant61(
     )
 }
 internal fun popVariant62(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant62 ?: symbolTypeMismatch()
@@ -7484,7 +7481,7 @@ internal fun popVariant62(
     )
 }
 internal fun popVariant56(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant56 ?: symbolTypeMismatch()
@@ -7495,7 +7492,7 @@ internal fun popVariant56(
     )
 }
 internal fun popVariant101(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant101 ?: symbolTypeMismatch()
@@ -7506,7 +7503,7 @@ internal fun popVariant101(
     )
 }
 internal fun popVariant20(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant20 ?: symbolTypeMismatch()
@@ -7517,7 +7514,7 @@ internal fun popVariant20(
     )
 }
 internal fun popVariant11(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant11 ?: symbolTypeMismatch()
@@ -7528,7 +7525,7 @@ internal fun popVariant11(
     )
 }
 internal fun popVariant35(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant35 ?: symbolTypeMismatch()
@@ -7539,7 +7536,7 @@ internal fun popVariant35(
     )
 }
 internal fun popVariant49(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.AssociatedType>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant49 ?: symbolTypeMismatch()
@@ -7550,7 +7547,7 @@ internal fun popVariant49(
     )
 }
 internal fun popVariant23(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.Atom>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant23 ?: symbolTypeMismatch()
@@ -7561,7 +7558,7 @@ internal fun popVariant23(
     )
 }
 internal fun popVariant13(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant13 ?: symbolTypeMismatch()
@@ -7572,7 +7569,7 @@ internal fun popVariant13(
     )
 }
 internal fun popVariant15(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Conversion>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant15 ?: symbolTypeMismatch()
@@ -7583,7 +7580,7 @@ internal fun popVariant15(
     )
 }
 internal fun popVariant17(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant17 ?: symbolTypeMismatch()
@@ -7594,7 +7591,7 @@ internal fun popVariant17(
     )
 }
 internal fun popVariant70(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant70 ?: symbolTypeMismatch()
@@ -7605,7 +7602,7 @@ internal fun popVariant70(
     )
 }
 internal fun popVariant25(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant25 ?: symbolTypeMismatch()
@@ -7616,7 +7613,7 @@ internal fun popVariant25(
     )
 }
 internal fun popVariant27(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant27 ?: symbolTypeMismatch()
@@ -7627,7 +7624,7 @@ internal fun popVariant27(
     )
 }
 internal fun popVariant29(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant29 ?: symbolTypeMismatch()
@@ -7638,7 +7635,7 @@ internal fun popVariant29(
     )
 }
 internal fun popVariant19(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.Parameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant19 ?: symbolTypeMismatch()
@@ -7649,7 +7646,7 @@ internal fun popVariant19(
     )
 }
 internal fun popVariant31(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant31 ?: symbolTypeMismatch()
@@ -7660,7 +7657,7 @@ internal fun popVariant31(
     )
 }
 internal fun popVariant92(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<String>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant92 ?: symbolTypeMismatch()
@@ -7671,7 +7668,7 @@ internal fun popVariant92(
     )
 }
 internal fun popVariant33(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.LrSymbol>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant33 ?: symbolTypeMismatch()
@@ -7682,7 +7679,7 @@ internal fun popVariant33(
     )
 }
 internal fun popVariant37(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant37 ?: symbolTypeMismatch()
@@ -7693,7 +7690,7 @@ internal fun popVariant37(
     )
 }
 internal fun popVariant39(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant39 ?: symbolTypeMismatch()
@@ -7704,7 +7701,7 @@ internal fun popVariant39(
     )
 }
 internal fun popVariant41(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant41 ?: symbolTypeMismatch()
@@ -7715,7 +7712,7 @@ internal fun popVariant41(
     )
 }
 internal fun popVariant42(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant42 ?: symbolTypeMismatch()
@@ -7726,7 +7723,7 @@ internal fun popVariant42(
     )
 }
 internal fun popVariant21(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, List<io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause<io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef>>, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant21 ?: symbolTypeMismatch()
@@ -7737,7 +7734,7 @@ internal fun popVariant21(
     )
 }
 internal fun popVariant43(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, Int, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant43 ?: symbolTypeMismatch()
@@ -7748,7 +7745,7 @@ internal fun popVariant43(
     )
 }
 internal fun popVariant1(
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
 ): Triple<Int, String, Int> {
     val triple = symbols.removeAt(symbols.size - 1)
     val sym = triple.second as? LrSymbol.Variant1 ?: symbolTypeMismatch()
@@ -25964,7 +25961,7 @@ internal fun Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>.toTriple():
  *
  * The Kotlin lexer reports failures as
  * [io.github.kotlinmania.lalrpop.tok.TokError], a [Throwable]
- * wrapper around the inner [io.github.kotlinmania.lalrpop.tok.io.github.kotlinmania.lalrpop.tok.Error].
+ * wrapper around the inner [io.github.kotlinmania.lalrpop.tok.Error].
  * We unwrap it here and rewrap as an [LrParseErrorException] so callers
  * can observe the user-error variant via [LrParseErrorException.parseError].
  */
@@ -25982,7 +25979,7 @@ fun reduce0(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26000,7 +25997,7 @@ fun reduce1(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26017,7 +26014,7 @@ fun reduce2(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26035,7 +26032,7 @@ fun reduce3(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26052,7 +26049,7 @@ fun reduce4(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26070,7 +26067,7 @@ fun reduce5(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26086,7 +26083,7 @@ internal fun reduce6(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("->" <TypeRef>) = "->", TypeRef => ActionFn(182);
@@ -26106,7 +26103,7 @@ internal fun reduce7(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("->" <TypeRef>)? = "->", TypeRef => ActionFn(332);
@@ -26127,7 +26124,7 @@ fun reduce8(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26143,7 +26140,7 @@ internal fun reduce9(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (":" <TypeRef>) = ":", TypeRef => ActionFn(174);
@@ -26163,7 +26160,7 @@ internal fun reduce10(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (":" <TypeRef>)? = ":", TypeRef => ActionFn(337);
@@ -26184,7 +26181,7 @@ fun reduce11(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26200,7 +26197,7 @@ internal fun reduce12(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("<" <Comma<TypeBoundParameter>> ">") = "<", Comma<TypeBoundParameter>, ">" => ActionFn(178);
@@ -26221,7 +26218,7 @@ internal fun reduce13(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("<" <Comma<TypeBoundParameter>> ">")? = "<", Comma<TypeBoundParameter>, ">" => ActionFn(340);
@@ -26243,7 +26240,7 @@ fun reduce14(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26259,7 +26256,7 @@ internal fun reduce15(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("if" <Cond>) = "if", Cond => ActionFn(162);
@@ -26279,7 +26276,7 @@ internal fun reduce16(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ("if" <Cond>)? = "if", Cond => ActionFn(343);
@@ -26300,7 +26297,7 @@ fun reduce17(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26317,7 +26314,7 @@ fun reduce18(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26333,7 +26330,7 @@ internal fun reduce19(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Alternative> ",") = Alternative, "," => ActionFn(260);
@@ -26354,7 +26351,7 @@ fun reduce20(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26371,7 +26368,7 @@ fun reduce21(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26388,7 +26385,7 @@ internal fun reduce22(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Alternative> ",")+ = Alternative, "," => ActionFn(350);
@@ -26408,7 +26405,7 @@ internal fun reduce23(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Alternative> ",")+ = (<Alternative> ",")+, Alternative, "," => ActionFn(351);
@@ -26429,7 +26426,7 @@ internal fun reduce24(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",") = AttributeInner, "," => ActionFn(250);
@@ -26450,7 +26447,7 @@ fun reduce25(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26467,7 +26464,7 @@ fun reduce26(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26484,7 +26481,7 @@ internal fun reduce27(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")+ = AttributeInner, "," => ActionFn(354);
@@ -26504,7 +26501,7 @@ internal fun reduce28(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")+ = (<AttributeInner> ",")+, AttributeInner, "," => ActionFn(355);
@@ -26525,7 +26522,7 @@ internal fun reduce29(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Conversion> ",") = Conversion, "," => ActionFn(284);
@@ -26546,7 +26543,7 @@ fun reduce30(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26563,7 +26560,7 @@ fun reduce31(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26580,7 +26577,7 @@ internal fun reduce32(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Conversion> ",")+ = Conversion, "," => ActionFn(358);
@@ -26600,7 +26597,7 @@ internal fun reduce33(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Conversion> ",")+ = (<Conversion> ",")+, Conversion, "," => ActionFn(359);
@@ -26621,7 +26618,7 @@ internal fun reduce34(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",") = FieldPattern, "," => ActionFn(134);
@@ -26642,7 +26639,7 @@ fun reduce35(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26659,7 +26656,7 @@ fun reduce36(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26676,7 +26673,7 @@ internal fun reduce37(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")+ = FieldPattern, "," => ActionFn(362);
@@ -26696,7 +26693,7 @@ internal fun reduce38(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")+ = (<FieldPattern> ",")+, FieldPattern, "," => ActionFn(363);
@@ -26717,7 +26714,7 @@ internal fun reduce39(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",") = GrammarParameter, "," => ActionFn(245);
@@ -26738,7 +26735,7 @@ fun reduce40(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26755,7 +26752,7 @@ fun reduce41(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26772,7 +26769,7 @@ internal fun reduce42(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")+ = GrammarParameter, "," => ActionFn(368);
@@ -26792,7 +26789,7 @@ internal fun reduce43(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")+ = (<GrammarParameter> ",")+, GrammarParameter, "," => ActionFn(369);
@@ -26813,7 +26810,7 @@ internal fun reduce44(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",") = GrammarWhereClause, "," => ActionFn(222);
@@ -26834,7 +26831,7 @@ fun reduce45(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26851,7 +26848,7 @@ fun reduce46(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26868,7 +26865,7 @@ internal fun reduce47(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")+ = GrammarWhereClause, "," => ActionFn(372);
@@ -26888,7 +26885,7 @@ internal fun reduce48(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")+ = (<GrammarWhereClause> ",")+, GrammarWhereClause, "," => ActionFn(373);
@@ -26909,7 +26906,7 @@ internal fun reduce49(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Id> "::") = Id, "::" => ActionFn(142);
@@ -26930,7 +26927,7 @@ fun reduce50(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26947,7 +26944,7 @@ fun reduce51(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -26964,7 +26961,7 @@ internal fun reduce52(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Id> "::")+ = Id, "::" => ActionFn(376);
@@ -26984,7 +26981,7 @@ internal fun reduce53(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Id> "::")+ = (<Id> "::")+, Id, "::" => ActionFn(377);
@@ -27005,7 +27002,7 @@ internal fun reduce54(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Lifetime> "+") = Lifetime, "+" => ActionFn(225);
@@ -27026,7 +27023,7 @@ fun reduce55(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27043,7 +27040,7 @@ fun reduce56(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27060,7 +27057,7 @@ internal fun reduce57(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Lifetime> "+")+ = Lifetime, "+" => ActionFn(382);
@@ -27080,7 +27077,7 @@ internal fun reduce58(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Lifetime> "+")+ = (<Lifetime> "+")+, Lifetime, "+" => ActionFn(383);
@@ -27101,7 +27098,7 @@ internal fun reduce59(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<MatchItem> ",") = MatchItem, "," => ActionFn(279);
@@ -27122,7 +27119,7 @@ fun reduce60(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27139,7 +27136,7 @@ fun reduce61(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27156,7 +27153,7 @@ internal fun reduce62(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")+ = MatchItem, "," => ActionFn(386);
@@ -27176,7 +27173,7 @@ internal fun reduce63(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")+ = (<MatchItem> ",")+, MatchItem, "," => ActionFn(387);
@@ -27197,7 +27194,7 @@ internal fun reduce64(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",") = NotMacroId, "," => ActionFn(255);
@@ -27218,7 +27215,7 @@ fun reduce65(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27235,7 +27232,7 @@ fun reduce66(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27252,7 +27249,7 @@ internal fun reduce67(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")+ = NotMacroId, "," => ActionFn(390);
@@ -27272,7 +27269,7 @@ internal fun reduce68(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")+ = (<NotMacroId> ",")+, NotMacroId, "," => ActionFn(391);
@@ -27293,7 +27290,7 @@ internal fun reduce69(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Pattern> ",") = Pattern, "," => ActionFn(289);
@@ -27314,7 +27311,7 @@ fun reduce70(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27331,7 +27328,7 @@ fun reduce71(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27348,7 +27345,7 @@ internal fun reduce72(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Pattern> ",")+ = Pattern, "," => ActionFn(394);
@@ -27368,7 +27365,7 @@ internal fun reduce73(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<Pattern> ",")+ = (<Pattern> ",")+, Pattern, "," => ActionFn(395);
@@ -27389,7 +27386,7 @@ internal fun reduce74(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<LrSymbol> ",") = LrSymbol, "," => ActionFn(265);
@@ -27410,7 +27407,7 @@ fun reduce75(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27427,7 +27424,7 @@ fun reduce76(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27444,7 +27441,7 @@ internal fun reduce77(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<LrSymbol> ",")+ = LrSymbol, "," => ActionFn(398);
@@ -27464,7 +27461,7 @@ internal fun reduce78(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<LrSymbol> ",")+ = (<LrSymbol> ",")+, LrSymbol, "," => ActionFn(399);
@@ -27485,7 +27482,7 @@ internal fun reduce79(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TupleItem> ",") = TupleItem, "," => ActionFn(152);
@@ -27505,7 +27502,7 @@ internal fun reduce80(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TupleItem> ",")+ = TupleItem, "," => ActionFn(402);
@@ -27525,7 +27522,7 @@ internal fun reduce81(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TupleItem> ",")+ = (<TupleItem> ",")+, TupleItem, "," => ActionFn(403);
@@ -27546,7 +27543,7 @@ internal fun reduce82(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBound> "+") = TypeBound, "+" => ActionFn(230);
@@ -27567,7 +27564,7 @@ fun reduce83(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27584,7 +27581,7 @@ fun reduce84(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27601,7 +27598,7 @@ internal fun reduce85(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")+ = TypeBound, "+" => ActionFn(404);
@@ -27621,7 +27618,7 @@ internal fun reduce86(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")+ = (<TypeBound> "+")+, TypeBound, "+" => ActionFn(405);
@@ -27642,7 +27639,7 @@ internal fun reduce87(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",") = TypeBoundParameter, "," => ActionFn(240);
@@ -27663,7 +27660,7 @@ fun reduce88(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27680,7 +27677,7 @@ fun reduce89(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27697,7 +27694,7 @@ internal fun reduce90(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")+ = TypeBoundParameter, "," => ActionFn(408);
@@ -27717,7 +27714,7 @@ internal fun reduce91(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")+ = (<TypeBoundParameter> ",")+, TypeBoundParameter, "," => ActionFn(409);
@@ -27738,7 +27735,7 @@ internal fun reduce92(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",") = TypeParameter, "," => ActionFn(217);
@@ -27759,7 +27756,7 @@ fun reduce93(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27776,7 +27773,7 @@ fun reduce94(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27793,7 +27790,7 @@ internal fun reduce95(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")+ = TypeParameter, "," => ActionFn(412);
@@ -27813,7 +27810,7 @@ internal fun reduce96(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")+ = (<TypeParameter> ",")+, TypeParameter, "," => ActionFn(413);
@@ -27834,7 +27831,7 @@ internal fun reduce97(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRef> ",") = TypeRef, "," => ActionFn(235);
@@ -27855,7 +27852,7 @@ fun reduce98(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27872,7 +27869,7 @@ fun reduce99(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27889,7 +27886,7 @@ internal fun reduce100(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")+ = TypeRef, "," => ActionFn(416);
@@ -27909,7 +27906,7 @@ internal fun reduce101(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")+ = (<TypeRef> ",")+, TypeRef, "," => ActionFn(417);
@@ -27930,7 +27927,7 @@ internal fun reduce102(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",") = TypeRefOrLifetime, "," => ActionFn(270);
@@ -27951,7 +27948,7 @@ fun reduce103(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27968,7 +27965,7 @@ fun reduce104(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -27985,7 +27982,7 @@ internal fun reduce105(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")+ = TypeRefOrLifetime, "," => ActionFn(420);
@@ -28005,7 +28002,7 @@ internal fun reduce106(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")+ = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime, "," => ActionFn(421);
@@ -28027,7 +28024,7 @@ fun reduce107(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28044,7 +28041,7 @@ fun reduce108(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28061,7 +28058,7 @@ fun reduce109(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28079,7 +28076,7 @@ fun reduce110(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28097,7 +28094,7 @@ fun reduce111(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28115,7 +28112,7 @@ fun reduce112(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28133,7 +28130,7 @@ fun reduce113(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28151,7 +28148,7 @@ fun reduce114(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28167,7 +28164,7 @@ internal fun reduce115(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = LrSymbol+, "if", Cond, Short => ActionFn(493);
@@ -28189,7 +28186,7 @@ internal fun reduce116(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+, "if", Cond, Short => ActionFn(494);
@@ -28212,7 +28209,7 @@ internal fun reduce117(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = LrSymbol+, "if", Cond => ActionFn(495);
@@ -28233,7 +28230,7 @@ internal fun reduce118(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+, "if", Cond => ActionFn(496);
@@ -28255,7 +28252,7 @@ internal fun reduce119(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = LrSymbol+, Short => ActionFn(497);
@@ -28275,7 +28272,7 @@ internal fun reduce120(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+, Short => ActionFn(498);
@@ -28297,7 +28294,7 @@ fun reduce121(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28314,7 +28311,7 @@ internal fun reduce122(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, LrSymbol+ => ActionFn(500);
@@ -28334,7 +28331,7 @@ internal fun reduce123(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternative = "if", Cond, Short => ActionFn(454);
@@ -28356,7 +28353,7 @@ fun reduce124(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28374,7 +28371,7 @@ fun reduce125(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28392,7 +28389,7 @@ fun reduce126(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28408,7 +28405,7 @@ internal fun reduce127(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternatives = Alternative, ";" => ActionFn(41);
@@ -28428,7 +28425,7 @@ internal fun reduce128(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternatives = "{", Comma<Alternative>, "}", ";" => ActionFn(324);
@@ -28450,7 +28447,7 @@ internal fun reduce129(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Alternatives = "{", Comma<Alternative>, "}" => ActionFn(325);
@@ -28471,7 +28468,7 @@ internal fun reduce130(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AssociatedType = "type", Id, "=", TypeRef, ";" => ActionFn(456);
@@ -28495,7 +28492,7 @@ fun reduce131(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28512,7 +28509,7 @@ fun reduce132(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28530,7 +28527,7 @@ fun reduce133(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28547,7 +28544,7 @@ internal fun reduce134(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AssociatedType+ = AssociatedType+, AssociatedType => ActionFn(274);
@@ -28567,7 +28564,7 @@ internal fun reduce135(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Attribute = "#", "[", AttributeInner, "]" => ActionFn(34);
@@ -28590,7 +28587,7 @@ fun reduce136(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28607,7 +28604,7 @@ fun reduce137(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28625,7 +28622,7 @@ fun reduce138(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28642,7 +28639,7 @@ internal fun reduce139(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Attribute+ = Attribute+, Attribute => ActionFn(210);
@@ -28662,7 +28659,7 @@ internal fun reduce140(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AttributeArg = "(", Comma<AttributeInner>, ")" => ActionFn(36);
@@ -28683,7 +28680,7 @@ internal fun reduce141(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AttributeArg = "=", "StringLiteral" => ActionFn(37);
@@ -28704,7 +28701,7 @@ fun reduce142(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28722,7 +28719,7 @@ fun reduce143(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28738,7 +28735,7 @@ internal fun reduce144(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // AttributeInner = Id, AttributeArg => ActionFn(509);
@@ -28759,7 +28756,7 @@ fun reduce145(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28777,7 +28774,7 @@ fun reduce146(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28795,7 +28792,7 @@ fun reduce147(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28812,7 +28809,7 @@ fun reduce148(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28830,7 +28827,7 @@ fun reduce149(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28846,7 +28843,7 @@ internal fun reduce150(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<Alternative> = (<Alternative> ",")+, Alternative => ActionFn(485);
@@ -28867,7 +28864,7 @@ fun reduce151(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28885,7 +28882,7 @@ fun reduce152(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28903,7 +28900,7 @@ fun reduce153(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28919,7 +28916,7 @@ internal fun reduce154(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<AttributeInner> = (<AttributeInner> ",")+, AttributeInner => ActionFn(513);
@@ -28940,7 +28937,7 @@ fun reduce155(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28958,7 +28955,7 @@ fun reduce156(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28976,7 +28973,7 @@ fun reduce157(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -28992,7 +28989,7 @@ internal fun reduce158(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<Conversion> = (<Conversion> ",")+, Conversion => ActionFn(517);
@@ -29013,7 +29010,7 @@ fun reduce159(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29031,7 +29028,7 @@ fun reduce160(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29049,7 +29046,7 @@ fun reduce161(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29065,7 +29062,7 @@ internal fun reduce162(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<GrammarParameter> = (<GrammarParameter> ",")+, GrammarParameter => ActionFn(543);
@@ -29086,7 +29083,7 @@ fun reduce163(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29104,7 +29101,7 @@ fun reduce164(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29122,7 +29119,7 @@ fun reduce165(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29138,7 +29135,7 @@ internal fun reduce166(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+, GrammarWhereClause => ActionFn(571);
@@ -29159,7 +29156,7 @@ fun reduce167(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29177,7 +29174,7 @@ fun reduce168(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29195,7 +29192,7 @@ fun reduce169(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29211,7 +29208,7 @@ internal fun reduce170(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<MatchItem> = (<MatchItem> ",")+, MatchItem => ActionFn(615);
@@ -29232,7 +29229,7 @@ fun reduce171(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29250,7 +29247,7 @@ fun reduce172(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29268,7 +29265,7 @@ fun reduce173(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29284,7 +29281,7 @@ internal fun reduce174(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<NotMacroId> = (<NotMacroId> ",")+, NotMacroId => ActionFn(619);
@@ -29305,7 +29302,7 @@ fun reduce175(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29323,7 +29320,7 @@ fun reduce176(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29341,7 +29338,7 @@ fun reduce177(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29357,7 +29354,7 @@ internal fun reduce178(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<Pattern> = (<Pattern> ",")+, Pattern => ActionFn(623);
@@ -29378,7 +29375,7 @@ fun reduce179(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29396,7 +29393,7 @@ fun reduce180(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29414,7 +29411,7 @@ fun reduce181(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29430,7 +29427,7 @@ internal fun reduce182(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<LrSymbol> = (<LrSymbol> ",")+, LrSymbol => ActionFn(693);
@@ -29451,7 +29448,7 @@ fun reduce183(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29469,7 +29466,7 @@ fun reduce184(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29487,7 +29484,7 @@ fun reduce185(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29503,7 +29500,7 @@ internal fun reduce186(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+, TypeBoundParameter => ActionFn(703);
@@ -29524,7 +29521,7 @@ fun reduce187(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29542,7 +29539,7 @@ fun reduce188(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29560,7 +29557,7 @@ fun reduce189(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29576,7 +29573,7 @@ internal fun reduce190(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeParameter> = (<TypeParameter> ",")+, TypeParameter => ActionFn(707);
@@ -29597,7 +29594,7 @@ fun reduce191(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29615,7 +29612,7 @@ fun reduce192(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29633,7 +29630,7 @@ fun reduce193(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29649,7 +29646,7 @@ internal fun reduce194(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeRef> = (<TypeRef> ",")+, TypeRef => ActionFn(711);
@@ -29670,7 +29667,7 @@ fun reduce195(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29688,7 +29685,7 @@ fun reduce196(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29706,7 +29703,7 @@ fun reduce197(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29722,7 +29719,7 @@ internal fun reduce198(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime => ActionFn(715);
@@ -29743,7 +29740,7 @@ fun reduce199(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29760,7 +29757,7 @@ internal fun reduce200(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Cond = NotMacroId, CondOp, StringLiteral => ActionFn(458);
@@ -29782,7 +29779,7 @@ fun reduce201(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29800,7 +29797,7 @@ fun reduce202(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29818,7 +29815,7 @@ fun reduce203(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29836,7 +29833,7 @@ fun reduce204(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29854,7 +29851,7 @@ fun reduce207(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29872,7 +29869,7 @@ fun reduce208(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29888,7 +29885,7 @@ internal fun reduce209(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // EnumToken = "enum", TypeRef, "{", Comma<Conversion>, "}" => ActionFn(460);
@@ -29912,7 +29909,7 @@ fun reduce210(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29930,7 +29927,7 @@ fun reduce211(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29947,7 +29944,7 @@ fun reduce212(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -29964,7 +29961,7 @@ internal fun reduce213(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", EnumToken, "}" => ActionFn(487);
@@ -29986,7 +29983,7 @@ internal fun reduce214(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", EnumToken, AssociatedType+, "}" => ActionFn(488);
@@ -30009,7 +30006,7 @@ internal fun reduce215(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, EnumToken, "}" => ActionFn(489);
@@ -30032,7 +30029,7 @@ internal fun reduce216(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, EnumToken, AssociatedType+, "}" => ActionFn(490);
@@ -30056,7 +30053,7 @@ internal fun reduce217(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", "}" => ActionFn(491);
@@ -30077,7 +30074,7 @@ internal fun reduce218(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, "}" => ActionFn(492);
@@ -30099,7 +30096,7 @@ internal fun reduce219(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // FieldPattern = Id, ":", Pattern => ActionFn(463);
@@ -30121,7 +30118,7 @@ fun reduce220(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -30139,7 +30136,7 @@ fun reduce221(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -30155,7 +30152,7 @@ internal fun reduce222(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ForAll = "for", "<", Comma<TypeParameter>, ">" => ActionFn(13);
@@ -30178,7 +30175,7 @@ fun reduce223(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -30194,7 +30191,7 @@ internal fun reduce224(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(717);
@@ -30217,7 +30214,7 @@ internal fun reduce225(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(718);
@@ -30241,7 +30238,7 @@ internal fun reduce226(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(719);
@@ -30265,7 +30262,7 @@ internal fun reduce227(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(720);
@@ -30290,7 +30287,7 @@ internal fun reduce228(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(721);
@@ -30312,7 +30309,7 @@ internal fun reduce229(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(722);
@@ -30335,7 +30332,7 @@ internal fun reduce230(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(723);
@@ -30358,7 +30355,7 @@ internal fun reduce231(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(724);
@@ -30382,7 +30379,7 @@ internal fun reduce232(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(725);
@@ -30404,7 +30401,7 @@ internal fun reduce233(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(726);
@@ -30427,7 +30424,7 @@ internal fun reduce234(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(727);
@@ -30450,7 +30447,7 @@ internal fun reduce235(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(728);
@@ -30474,7 +30471,7 @@ internal fun reduce236(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, ";" => ActionFn(729);
@@ -30495,7 +30492,7 @@ internal fun reduce237(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, ";" => ActionFn(730);
@@ -30517,7 +30514,7 @@ internal fun reduce238(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";" => ActionFn(731);
@@ -30539,7 +30536,7 @@ internal fun reduce239(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";" => ActionFn(732);
@@ -30562,7 +30559,7 @@ internal fun reduce240(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(733);
@@ -30584,7 +30581,7 @@ internal fun reduce241(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(734);
@@ -30607,7 +30604,7 @@ internal fun reduce242(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(735);
@@ -30630,7 +30627,7 @@ internal fun reduce243(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(736);
@@ -30654,7 +30651,7 @@ internal fun reduce244(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, ";" => ActionFn(737);
@@ -30675,7 +30672,7 @@ internal fun reduce245(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(738);
@@ -30697,7 +30694,7 @@ internal fun reduce246(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(739);
@@ -30719,7 +30716,7 @@ internal fun reduce247(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(740);
@@ -30742,7 +30739,7 @@ internal fun reduce248(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarWhereClauses, ";" => ActionFn(741);
@@ -30763,7 +30760,7 @@ internal fun reduce249(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(742);
@@ -30785,7 +30782,7 @@ internal fun reduce250(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(743);
@@ -30807,7 +30804,7 @@ internal fun reduce251(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(744);
@@ -30830,7 +30827,7 @@ internal fun reduce252(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", ";" => ActionFn(745);
@@ -30850,7 +30847,7 @@ internal fun reduce253(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", ";" => ActionFn(746);
@@ -30871,7 +30868,7 @@ internal fun reduce254(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", ";" => ActionFn(747);
@@ -30892,7 +30889,7 @@ internal fun reduce255(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", ";" => ActionFn(748);
@@ -30914,7 +30911,7 @@ internal fun reduce256(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(749);
@@ -30938,7 +30935,7 @@ internal fun reduce257(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(750);
@@ -30963,7 +30960,7 @@ internal fun reduce258(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(751);
@@ -30988,7 +30985,7 @@ internal fun reduce259(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(752);
@@ -31014,7 +31011,7 @@ internal fun reduce260(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(753);
@@ -31037,7 +31034,7 @@ internal fun reduce261(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(754);
@@ -31061,7 +31058,7 @@ internal fun reduce262(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(755);
@@ -31085,7 +31082,7 @@ internal fun reduce263(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(756);
@@ -31110,7 +31107,7 @@ internal fun reduce264(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(757);
@@ -31133,7 +31130,7 @@ internal fun reduce265(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(758);
@@ -31157,7 +31154,7 @@ internal fun reduce266(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(759);
@@ -31181,7 +31178,7 @@ internal fun reduce267(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(760);
@@ -31206,7 +31203,7 @@ internal fun reduce268(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(761);
@@ -31228,7 +31225,7 @@ internal fun reduce269(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(762);
@@ -31251,7 +31248,7 @@ internal fun reduce270(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(763);
@@ -31274,7 +31271,7 @@ internal fun reduce271(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(764);
@@ -31298,7 +31295,7 @@ internal fun reduce272(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(765);
@@ -31321,7 +31318,7 @@ internal fun reduce273(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(766);
@@ -31345,7 +31342,7 @@ internal fun reduce274(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(767);
@@ -31369,7 +31366,7 @@ internal fun reduce275(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(768);
@@ -31394,7 +31391,7 @@ internal fun reduce276(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(769);
@@ -31416,7 +31413,7 @@ internal fun reduce277(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(770);
@@ -31439,7 +31436,7 @@ internal fun reduce278(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(771);
@@ -31462,7 +31459,7 @@ internal fun reduce279(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(772);
@@ -31486,7 +31483,7 @@ internal fun reduce280(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(773);
@@ -31508,7 +31505,7 @@ internal fun reduce281(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(774);
@@ -31531,7 +31528,7 @@ internal fun reduce282(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(775);
@@ -31554,7 +31551,7 @@ internal fun reduce283(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(776);
@@ -31578,7 +31575,7 @@ internal fun reduce284(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = "grammar", ";", GrammarItem+ => ActionFn(777);
@@ -31599,7 +31596,7 @@ internal fun reduce285(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", ";", GrammarItem+ => ActionFn(778);
@@ -31621,7 +31618,7 @@ internal fun reduce286(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", ";", GrammarItem+ => ActionFn(779);
@@ -31643,7 +31640,7 @@ internal fun reduce287(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", ";", GrammarItem+ => ActionFn(780);
@@ -31666,7 +31663,7 @@ internal fun reduce288(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(781);
@@ -31690,7 +31687,7 @@ internal fun reduce289(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(782);
@@ -31715,7 +31712,7 @@ internal fun reduce290(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(783);
@@ -31740,7 +31737,7 @@ internal fun reduce291(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(784);
@@ -31766,7 +31763,7 @@ internal fun reduce292(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(785);
@@ -31789,7 +31786,7 @@ internal fun reduce293(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(786);
@@ -31813,7 +31810,7 @@ internal fun reduce294(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(787);
@@ -31837,7 +31834,7 @@ internal fun reduce295(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(788);
@@ -31862,7 +31859,7 @@ internal fun reduce296(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(789);
@@ -31885,7 +31882,7 @@ internal fun reduce297(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(790);
@@ -31909,7 +31906,7 @@ internal fun reduce298(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(791);
@@ -31933,7 +31930,7 @@ internal fun reduce299(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(792);
@@ -31958,7 +31955,7 @@ internal fun reduce300(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, ";" => ActionFn(793);
@@ -31980,7 +31977,7 @@ internal fun reduce301(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(794);
@@ -32003,7 +32000,7 @@ internal fun reduce302(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(795);
@@ -32026,7 +32023,7 @@ internal fun reduce303(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(796);
@@ -32050,7 +32047,7 @@ internal fun reduce304(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(797);
@@ -32073,7 +32070,7 @@ internal fun reduce305(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(798);
@@ -32097,7 +32094,7 @@ internal fun reduce306(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(799);
@@ -32121,7 +32118,7 @@ internal fun reduce307(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(800);
@@ -32146,7 +32143,7 @@ internal fun reduce308(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(801);
@@ -32168,7 +32165,7 @@ internal fun reduce309(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(802);
@@ -32191,7 +32188,7 @@ internal fun reduce310(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(803);
@@ -32214,7 +32211,7 @@ internal fun reduce311(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(804);
@@ -32238,7 +32235,7 @@ internal fun reduce312(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(805);
@@ -32260,7 +32257,7 @@ internal fun reduce313(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(806);
@@ -32283,7 +32280,7 @@ internal fun reduce314(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(807);
@@ -32306,7 +32303,7 @@ internal fun reduce315(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(808);
@@ -32330,7 +32327,7 @@ internal fun reduce316(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", ";" => ActionFn(809);
@@ -32351,7 +32348,7 @@ internal fun reduce317(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", ";" => ActionFn(810);
@@ -32373,7 +32370,7 @@ internal fun reduce318(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", ";" => ActionFn(811);
@@ -32395,7 +32392,7 @@ internal fun reduce319(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";" => ActionFn(812);
@@ -32418,7 +32415,7 @@ internal fun reduce320(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(813);
@@ -32443,7 +32440,7 @@ internal fun reduce321(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(814);
@@ -32469,7 +32466,7 @@ internal fun reduce322(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(815);
@@ -32495,7 +32492,7 @@ internal fun reduce323(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(816);
@@ -32522,7 +32519,7 @@ internal fun reduce324(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(817);
@@ -32546,7 +32543,7 @@ internal fun reduce325(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(818);
@@ -32571,7 +32568,7 @@ internal fun reduce326(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(819);
@@ -32596,7 +32593,7 @@ internal fun reduce327(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(820);
@@ -32622,7 +32619,7 @@ internal fun reduce328(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(821);
@@ -32646,7 +32643,7 @@ internal fun reduce329(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(822);
@@ -32671,7 +32668,7 @@ internal fun reduce330(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(823);
@@ -32696,7 +32693,7 @@ internal fun reduce331(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(824);
@@ -32722,7 +32719,7 @@ internal fun reduce332(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(825);
@@ -32745,7 +32742,7 @@ internal fun reduce333(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(826);
@@ -32769,7 +32766,7 @@ internal fun reduce334(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(827);
@@ -32793,7 +32790,7 @@ internal fun reduce335(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(828);
@@ -32818,7 +32815,7 @@ internal fun reduce336(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(829);
@@ -32842,7 +32839,7 @@ internal fun reduce337(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(830);
@@ -32867,7 +32864,7 @@ internal fun reduce338(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(831);
@@ -32892,7 +32889,7 @@ internal fun reduce339(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(832);
@@ -32918,7 +32915,7 @@ internal fun reduce340(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(833);
@@ -32941,7 +32938,7 @@ internal fun reduce341(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(834);
@@ -32965,7 +32962,7 @@ internal fun reduce342(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(835);
@@ -32989,7 +32986,7 @@ internal fun reduce343(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(836);
@@ -33014,7 +33011,7 @@ internal fun reduce344(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(837);
@@ -33037,7 +33034,7 @@ internal fun reduce345(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(838);
@@ -33061,7 +33058,7 @@ internal fun reduce346(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(839);
@@ -33085,7 +33082,7 @@ internal fun reduce347(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(840);
@@ -33110,7 +33107,7 @@ internal fun reduce348(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", ";", GrammarItem+ => ActionFn(841);
@@ -33132,7 +33129,7 @@ internal fun reduce349(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(842);
@@ -33155,7 +33152,7 @@ internal fun reduce350(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(843);
@@ -33178,7 +33175,7 @@ internal fun reduce351(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(844);
@@ -33203,7 +33200,7 @@ fun reduce352(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33221,7 +33218,7 @@ fun reduce353(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33239,7 +33236,7 @@ fun reduce354(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33257,7 +33254,7 @@ fun reduce355(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33275,7 +33272,7 @@ fun reduce356(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33292,7 +33289,7 @@ fun reduce357(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33310,7 +33307,7 @@ fun reduce358(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33327,7 +33324,7 @@ internal fun reduce359(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarItem+ = GrammarItem+, GrammarItem => ActionFn(212);
@@ -33347,7 +33344,7 @@ internal fun reduce360(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarParameter = Id, ":", TypeRef => ActionFn(23);
@@ -33369,7 +33366,7 @@ fun reduce361(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33387,7 +33384,7 @@ fun reduce362(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33403,7 +33400,7 @@ internal fun reduce363(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarParameters = "(", Comma<GrammarParameter>, ")" => ActionFn(22);
@@ -33425,7 +33422,7 @@ fun reduce364(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33443,7 +33440,7 @@ fun reduce365(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33459,7 +33456,7 @@ internal fun reduce366(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarTypeParameters = "<", Comma<TypeParameter>, ">" => ActionFn(7);
@@ -33481,7 +33478,7 @@ fun reduce367(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33499,7 +33496,7 @@ fun reduce368(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33515,7 +33512,7 @@ internal fun reduce369(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarWhereClause = Lifetime, ":", Plus<Lifetime> => ActionFn(11);
@@ -33536,7 +33533,7 @@ internal fun reduce370(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarWhereClause = "for", "<", Comma<TypeParameter>, ">", TypeRef, ":", TypeBounds => ActionFn(523);
@@ -33561,7 +33558,7 @@ internal fun reduce371(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarWhereClause = TypeRef, ":", TypeBounds => ActionFn(524);
@@ -33583,7 +33580,7 @@ fun reduce372(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33601,7 +33598,7 @@ fun reduce373(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33617,7 +33614,7 @@ internal fun reduce374(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // GrammarWhereClauses = "where", Comma<GrammarWhereClause> => ActionFn(10);
@@ -33638,7 +33635,7 @@ fun reduce375(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33656,7 +33653,7 @@ fun reduce376(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33673,7 +33670,7 @@ fun reduce377(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33691,7 +33688,7 @@ fun reduce378(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33709,7 +33706,7 @@ fun reduce379(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33727,7 +33724,7 @@ fun reduce380(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33745,7 +33742,7 @@ fun reduce381(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33762,7 +33759,7 @@ fun reduce382(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33780,7 +33777,7 @@ fun reduce383(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33798,7 +33795,7 @@ fun reduce384(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33816,7 +33813,7 @@ fun reduce385(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33834,7 +33831,7 @@ fun reduce387(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33852,7 +33849,7 @@ fun reduce388(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33869,7 +33866,7 @@ fun reduce389(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33886,7 +33883,7 @@ internal fun reduce390(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // MatchMapping = "{", "}" => ActionFn(99);
@@ -33907,7 +33904,7 @@ fun reduce391(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33925,7 +33922,7 @@ fun reduce392(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -33942,7 +33939,7 @@ internal fun reduce393(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // MatchTokenInt = MatchTokenInt, "else", "{", MatchContents, "}" => ActionFn(91);
@@ -33965,7 +33962,7 @@ internal fun reduce394(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // MatchTokenInt = "match", "{", MatchContents, "}" => ActionFn(468);
@@ -33987,7 +33984,7 @@ internal fun reduce395(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(505);
@@ -34011,7 +34008,7 @@ internal fun reduce396(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Attribute+, Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(506);
@@ -34036,7 +34033,7 @@ internal fun reduce397(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Visibility, NonterminalName, "=", Alternatives => ActionFn(507);
@@ -34058,7 +34055,7 @@ internal fun reduce398(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Nonterminal = Attribute+, Visibility, NonterminalName, "=", Alternatives => ActionFn(508);
@@ -34081,7 +34078,7 @@ internal fun reduce399(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // NonterminalName = MacroId, "<", Comma<NotMacroId>, ">" => ActionFn(38);
@@ -34104,7 +34101,7 @@ fun reduce400(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34122,7 +34119,7 @@ fun reduce401(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34140,7 +34137,7 @@ fun reduce402(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34158,7 +34155,7 @@ fun reduce403(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34176,7 +34173,7 @@ fun reduce404(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34192,7 +34189,7 @@ internal fun reduce405(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Path = "::", Id => ActionFn(378);
@@ -34212,7 +34209,7 @@ internal fun reduce406(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Path = "::", (<Id> "::")+, Id => ActionFn(379);
@@ -34234,7 +34231,7 @@ fun reduce407(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34251,7 +34248,7 @@ internal fun reduce408(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Path = (<Id> "::")+, Id => ActionFn(381);
@@ -34272,7 +34269,7 @@ fun reduce409(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34290,7 +34287,7 @@ fun reduce410(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34308,7 +34305,7 @@ fun reduce411(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34324,7 +34321,7 @@ internal fun reduce412(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "(", Comma<Pattern>, ")" => ActionFn(104);
@@ -34346,7 +34343,7 @@ internal fun reduce413(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", FieldPattern, "}" => ActionFn(519);
@@ -34368,7 +34365,7 @@ internal fun reduce414(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", "}" => ActionFn(520);
@@ -34389,7 +34386,7 @@ internal fun reduce415(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, FieldPattern, "}" => ActionFn(521);
@@ -34412,7 +34409,7 @@ internal fun reduce416(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, "}" => ActionFn(522);
@@ -34434,7 +34431,7 @@ internal fun reduce417(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", "..", "}" => ActionFn(366);
@@ -34456,7 +34453,7 @@ internal fun reduce418(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, "..", "}" => ActionFn(367);
@@ -34480,7 +34477,7 @@ fun reduce419(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34498,7 +34495,7 @@ fun reduce420(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34515,7 +34512,7 @@ internal fun reduce421(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = "<", TypeRef, ">" => ActionFn(109);
@@ -34536,7 +34533,7 @@ internal fun reduce422(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // PatternKind = "(", Comma<Pattern>, ")" => ActionFn(110);
@@ -34558,7 +34555,7 @@ fun reduce423(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34576,7 +34573,7 @@ fun reduce424(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34594,7 +34591,7 @@ fun reduce425(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34612,7 +34609,7 @@ fun reduce426(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34630,7 +34627,7 @@ fun reduce427(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34646,7 +34643,7 @@ internal fun reduce428(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Plus<Lifetime> = (<Lifetime> "+")+, Lifetime => ActionFn(607);
@@ -34667,7 +34664,7 @@ fun reduce429(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34685,7 +34682,7 @@ fun reduce430(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34703,7 +34700,7 @@ fun reduce431(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34719,7 +34716,7 @@ internal fun reduce432(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Plus<TypeBound> = (<TypeBound> "+")+, TypeBound => ActionFn(699);
@@ -34740,7 +34737,7 @@ fun reduce433(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34758,7 +34755,7 @@ fun reduce434(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34776,7 +34773,7 @@ fun reduce435(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34794,7 +34791,7 @@ fun reduce436(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34812,7 +34809,7 @@ fun reduce437(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34830,7 +34827,7 @@ fun reduce438(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34848,7 +34845,7 @@ fun reduce439(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34866,7 +34863,7 @@ fun reduce440(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34884,7 +34881,7 @@ fun reduce441(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34902,7 +34899,7 @@ fun reduce442(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34919,7 +34916,7 @@ fun reduce443(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34937,7 +34934,7 @@ fun reduce444(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -34954,7 +34951,7 @@ internal fun reduce445(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // ShebangAttribute+ = ShebangAttribute+, ShebangAttribute => ActionFn(206);
@@ -34974,7 +34971,7 @@ internal fun reduce448(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", "mut", Id, ":", Symbol0, ">" => ActionFn(472);
@@ -34998,7 +34995,7 @@ internal fun reduce449(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", Id, ":", Symbol0, ">" => ActionFn(473);
@@ -35021,7 +35018,7 @@ internal fun reduce450(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", Symbol0, ">" => ActionFn(474);
@@ -35042,7 +35039,7 @@ internal fun reduce451(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol = "<", Tuples, ":", Symbol0, ">" => ActionFn(475);
@@ -35066,7 +35063,7 @@ fun reduce452(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35084,7 +35081,7 @@ fun reduce453(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35101,7 +35098,7 @@ fun reduce454(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35119,7 +35116,7 @@ fun reduce455(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35136,7 +35133,7 @@ internal fun reduce456(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // LrSymbol+ = LrSymbol+, LrSymbol => ActionFn(164);
@@ -35157,7 +35154,7 @@ fun reduce457(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35174,7 +35171,7 @@ internal fun reduce458(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Symbol0 = Symbol0, RepeatOp => ActionFn(476);
@@ -35195,7 +35192,7 @@ fun reduce459(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35213,7 +35210,7 @@ fun reduce460(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35231,7 +35228,7 @@ fun reduce461(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35247,7 +35244,7 @@ internal fun reduce462(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // SymbolKind1 = MacroId, "<", Comma<LrSymbol>, ">" => ActionFn(65);
@@ -35270,7 +35267,7 @@ fun reduce463(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35288,7 +35285,7 @@ fun reduce464(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35306,7 +35303,7 @@ fun reduce465(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35323,7 +35320,7 @@ internal fun reduce466(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // SymbolKind1 = "(", ExprSymbol, ")" => ActionFn(69);
@@ -35345,7 +35342,7 @@ fun reduce467(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35363,7 +35360,7 @@ fun reduce468(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35381,7 +35378,7 @@ fun reduce469(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35399,7 +35396,7 @@ fun reduce470(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35417,7 +35414,7 @@ fun reduce471(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35434,7 +35431,7 @@ internal fun reduce472(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartGrammar", Grammar => ActionFn(1);
@@ -35454,7 +35451,7 @@ internal fun reduce473(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartPattern", Pattern => ActionFn(2);
@@ -35474,7 +35471,7 @@ internal fun reduce474(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartMatchMapping", MatchMapping => ActionFn(3);
@@ -35494,7 +35491,7 @@ internal fun reduce475(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartTypeRef", TypeRef => ActionFn(4);
@@ -35514,7 +35511,7 @@ internal fun reduce476(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Top = "StartGrammarWhereClauses", GrammarWhereClauses => ActionFn(5);
@@ -35534,7 +35531,7 @@ internal fun reduce477(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TupleItem = "mut", Id => ActionFn(328);
@@ -35555,7 +35552,7 @@ fun reduce478(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35573,7 +35570,7 @@ fun reduce479(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35591,7 +35588,7 @@ fun reduce480(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35609,7 +35606,7 @@ fun reduce481(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35625,7 +35622,7 @@ internal fun reduce482(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Tuples = "(", (<TupleItem> ",")+, TupleItem, ")" => ActionFn(695);
@@ -35647,7 +35644,7 @@ internal fun reduce483(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Tuples = "(", (<TupleItem> ",")+, ")" => ActionFn(696);
@@ -35669,7 +35666,7 @@ fun reduce484(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35686,7 +35683,7 @@ internal fun reduce485(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(525);
@@ -35714,7 +35711,7 @@ internal fun reduce486(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(526);
@@ -35738,7 +35735,7 @@ internal fun reduce487(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(527);
@@ -35764,7 +35761,7 @@ internal fun reduce488(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = Path, "(", Comma<TypeRef>, ")" => ActionFn(528);
@@ -35786,7 +35783,7 @@ internal fun reduce489(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(529);
@@ -35812,7 +35809,7 @@ internal fun reduce490(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(530);
@@ -35834,7 +35831,7 @@ internal fun reduce491(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path => ActionFn(531);
@@ -35858,7 +35855,7 @@ fun reduce492(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35876,7 +35873,7 @@ fun reduce493(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35894,7 +35891,7 @@ fun reduce494(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35911,7 +35908,7 @@ fun reduce495(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35929,7 +35926,7 @@ fun reduce496(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35946,7 +35943,7 @@ internal fun reduce497(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeBoundParameter = Id, "=", TypeRef => ActionFn(21);
@@ -35968,7 +35965,7 @@ fun reduce498(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -35986,7 +35983,7 @@ fun reduce499(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36003,7 +36000,7 @@ fun reduce500(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36021,7 +36018,7 @@ fun reduce501(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36039,7 +36036,7 @@ fun reduce502(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36057,7 +36054,7 @@ fun reduce503(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36075,7 +36072,7 @@ fun reduce504(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36091,7 +36088,7 @@ internal fun reduce505(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "(", Comma<TypeRef>, ")" => ActionFn(76);
@@ -36112,7 +36109,7 @@ internal fun reduce506(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "[", TypeRef, "]" => ActionFn(77);
@@ -36133,7 +36130,7 @@ internal fun reduce507(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "#", LrSymbol, "#" => ActionFn(78);
@@ -36154,7 +36151,7 @@ internal fun reduce508(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "&", Lifetime, "mut", TypeRef => ActionFn(609);
@@ -36176,7 +36173,7 @@ internal fun reduce509(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "&", "mut", TypeRef => ActionFn(610);
@@ -36197,7 +36194,7 @@ internal fun reduce510(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "&", Lifetime, TypeRef => ActionFn(611);
@@ -36218,7 +36215,7 @@ internal fun reduce511(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "&", TypeRef => ActionFn(612);
@@ -36238,7 +36235,7 @@ internal fun reduce512(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(80);
@@ -36261,7 +36258,7 @@ fun reduce513(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36278,7 +36275,7 @@ internal fun reduce514(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "dyn", Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(82);
@@ -36301,7 +36298,7 @@ internal fun reduce515(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "dyn", Path => ActionFn(83);
@@ -36321,7 +36318,7 @@ internal fun reduce516(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "dyn", "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(533);
@@ -36350,7 +36347,7 @@ internal fun reduce517(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "dyn", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(534);
@@ -36375,7 +36372,7 @@ internal fun reduce518(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "dyn", "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(535);
@@ -36402,7 +36399,7 @@ internal fun reduce519(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // TypeRef = "dyn", Path, "(", Comma<TypeRef>, ")" => ActionFn(536);
@@ -36426,7 +36423,7 @@ fun reduce520(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36444,7 +36441,7 @@ fun reduce521(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36461,7 +36458,7 @@ fun reduce522(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36479,7 +36476,7 @@ fun reduce523(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36497,7 +36494,7 @@ fun reduce524(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36515,7 +36512,7 @@ fun reduce525(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36531,7 +36528,7 @@ internal fun reduce526(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Use = "use", ";" => ActionFn(28);
@@ -36552,7 +36549,7 @@ fun reduce527(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36569,7 +36566,7 @@ fun reduce528(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36587,7 +36584,7 @@ fun reduce529(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36604,7 +36601,7 @@ internal fun reduce530(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Use+ = Use+, Use => ActionFn(208);
@@ -36624,7 +36621,7 @@ internal fun reduce531(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Visibility = "public", "(", Path, ")" => ActionFn(29);
@@ -36646,7 +36643,7 @@ internal fun reduce532(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int> {
     // Visibility = "public", "(", "in", Path, ")" => ActionFn(30);
@@ -36670,7 +36667,7 @@ fun reduce533(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36688,7 +36685,7 @@ fun reduce534(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
-        io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>,
+        io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>,
     >,
 ): Pair<Int, Int>
 {
@@ -36932,8 +36929,8 @@ internal fun reduce(
     action: Short,
     lookaheadStart: Int?,
     states: MutableList<Short>,
-    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.SymbolTriple<Int, LrSymbol>>,
-): io.github.kotlinmania.lalrpop.runtime.ParseResult<Top, Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.io.github.kotlinmania.lalrpop.tok.Error>? {
+    symbols: MutableList<io.github.kotlinmania.lalrpop.runtime.Triple<Int, LrSymbol, Int>>,
+): io.github.kotlinmania.lalrpop.runtime.ParseResult<Top, Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.Error>? {
     val (popStates, nonterminal) = when (action) {
         0.toShort() -> {
             reduce0(text, lookaheadStart, symbols)
@@ -38637,7 +38634,7 @@ class TopParser {
     fun parse(
         text: String,
         tokens: Iterator<Result<Triple<Int, io.github.kotlinmania.lalrpop.tok.Tok, Int>>>,
-    ): io.github.kotlinmania.lalrpop.runtime.ParseResult<Top, Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.io.github.kotlinmania.lalrpop.tok.Error> {
+    ): io.github.kotlinmania.lalrpop.runtime.ParseResult<Top, Int, io.github.kotlinmania.lalrpop.tok.Tok, io.github.kotlinmania.lalrpop.tok.Error> {
         val adapted = tokens.asSequence().map { token ->
             token.fold(
                 onSuccess = { io.github.kotlinmania.lalrpop.runtime.TokResult.Ok(it) },

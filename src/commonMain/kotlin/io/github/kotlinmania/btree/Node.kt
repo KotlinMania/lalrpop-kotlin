@@ -206,7 +206,7 @@ internal class NodeRef<BorrowType, K, V, Type> internal constructor(
         }
 
         /** Creates a new internal (height > 0) `NodeRef`. */
-        fun <K, V> newInternal(child: Root<K, V>): NodeRef<Marker.Owned, K, V, Marker.Internal> {
+        fun <K, V> newInternal(child: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>): NodeRef<Marker.Owned, K, V, Marker.Internal> {
             // SAFETY: we set up edges[0] before exposing the node; satisfies InternalNode.new invariant.
             val newNode = InternalNode.new<K, V>()
             newNode.edges[0] = child.node
@@ -504,7 +504,7 @@ internal fun <K, V, Type> NodeRef<Marker.Owned, K, V, Type>.intoDying():
 // ---- Owned, LeafOrInternal: tree-shape mutators -------------------------
 
 /** Returns a new owned tree, with its own root node that is initially empty. */
-internal fun <K, V> newOwnedTree(): Root<K, V> {
+internal fun <K, V> newOwnedTree(): NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal> {
     return NodeRef.newLeaf<K, V>().forgetType()
 }
 
@@ -517,7 +517,7 @@ internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.pushInter
     NodeRef<Marker.Mut, K, V, Marker.Internal> {
     // takeMut(self, |oldRoot| NodeRef::newInternal(oldRoot, alloc).forgetType())
     // In Kotlin we read self, build the new root, and write back fields.
-    val oldRoot: Root<K, V> = NodeRef(height = height, node = node)
+    val oldRoot: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal> = NodeRef(height = height, node = node)
     val newRoot = NodeRef.newInternal(oldRoot).forgetType()
     height = newRoot.height
     node = newRoot.node
@@ -693,7 +693,7 @@ internal fun <K, V, Type> NodeRef<Marker.Mut, K, V, Type>.readValArea(idx: Int):
  */
 internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.Internal>.writeEdgeArea(
     idx: Int,
-    edge: BoxedNode<K, V>,
+    edge: LeafNode<K, V>,
 ) {
     // SAFETY: idx is in 0..CAPACITY+1 by caller contract.
     asInternalMut().edges[idx] = edge
@@ -705,7 +705,7 @@ internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.Internal>.writeEdgeArea(
  * # Safety
  * `idx` is in bounds of `0..len + 1`, slot is initialised.
  */
-internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.Internal>.readEdgeArea(idx: Int): BoxedNode<K, V> {
+internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.Internal>.readEdgeArea(idx: Int): LeafNode<K, V> {
     // SAFETY: caller ensures idx <= len so slot is initialised.
     return asInternalMut().edges[idx]!!
 }
@@ -792,7 +792,7 @@ internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.Leaf>.push(key: K, value: V
 internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.Internal>.push(
     key: K,
     value: V,
-    edge: Root<K, V>,
+    edge: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>,
 ) {
     check(edge.height == this.height - 1) // assert(edge.height == self.height - 1)
 
@@ -1095,7 +1095,7 @@ internal fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Internal>, Marker.Ed
 private fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Internal>, Marker.Edge>.insertFit(
     key: K,
     value: V,
-    edge: Root<K, V>,
+    edge: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>,
 ) {
     check(node.len() < CAPACITY) // debugAssert(self.node.len() < CAPACITY)
     check(edge.height == node.height - 1) // debugAssert(edge.height == self.node.height - 1)
@@ -1119,7 +1119,7 @@ private fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Internal>, Marker.Edg
 private fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Internal>, Marker.Edge>.insert(
     key: K,
     value: V,
-    edge: Root<K, V>,
+    edge: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>,
 ): SplitResult<K, V, Marker.Internal>? {
     check(edge.height == node.height - 1) // assert(edge.height == self.node.height - 1)
 

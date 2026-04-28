@@ -41,7 +41,6 @@ import io.github.kotlinmania.lalrpop.lexer.dfa.buildDfa
 import io.github.kotlinmania.lalrpop.lexer.nfa.NfaConstructionError
 import io.github.kotlinmania.lalrpop.lexer.re.parseLiteral
 import io.github.kotlinmania.lalrpop.lexer.re.parseRegex
-import io.github.kotlinmania.lalrpop.normalize.NormResult
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 
 fun validate(grammar: Grammar): Grammar {

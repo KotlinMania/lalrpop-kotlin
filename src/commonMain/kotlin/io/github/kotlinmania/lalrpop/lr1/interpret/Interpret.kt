@@ -10,8 +10,6 @@ import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
 
-typealias Pair<State<L>, Token> = Pair<State<L>, Token>
-
 /** Feed in the given tokens and then EOF, returning the final parse tree that is reduced. */
 fun <L : LookaheadInterpret<L>> interpret(
     states: List<State<L>>,
