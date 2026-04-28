@@ -4,12 +4,11 @@ package io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet
 import io.github.kotlinmania.lalrpop.UnifyKey
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
 
-/**
- * Mirrors the Rust `type ContextSet = ContextSet;` associated type from
- * `implementation UnifyKey for StateSet`. Kotlin does not have associated types
- * on interface implementations, so we expose the binding as a
- * top-level typealias.
- */
+/** Mirrors the Value associated type bound by [StateSet] to [ContextSet]. */
+typealias Value = ContextSet
+
+/** Mirrors the Error associated type bound by [ContextSet] to a pair of context sets. */
+typealias Error = Pair<ContextSet, ContextSet>
 
 /**
  * The unification key for a set of states in the lane table
