@@ -1,4 +1,4 @@
-// port-lint: source src/grammar/freeVariables/mod.rs
+// port-lint: source grammar/freeVariables/mod.rs
 package io.github.kotlinmania.lalrpop.grammar.freeVariables
 
 import io.github.kotlinmania.lalrpop.Atom

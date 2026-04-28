@@ -1,10 +1,10 @@
-// port-lint: source src/lr1/laneTable/construct/mod.rs
+// port-lint: source lr1/laneTable/construct/mod.rs
 //! Generate rust parser code using the lane table algorithm
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
-import io.github.kotlinmania.lalrpop.collections.map.Map
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
@@ -16,8 +16,8 @@ import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Conflict
 import io.github.kotlinmania.lalrpop.lr1.core.Item
 import io.github.kotlinmania.lalrpop.lr1.core.Items
-import io.github.kotlinmania.lalrpop.lr1.core.Lr0State
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State<Nil>
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
@@ -45,8 +45,8 @@ class LaneTableConstruct(
             )
     }
 
-    fun construct(): MutableList<Lr1State> {
-        val lr0States: MutableList<Lr0State> = try {
+    fun construct(): MutableList<State<TokenSet>> {
+        val lr0States: MutableList<State<Nil>> = try {
             // In this case, the grammar is actually
             // LR(0). This is very rare -- it means that the
             // grammar does not need lookahead to execute. In
@@ -71,7 +71,7 @@ class LaneTableConstruct(
         }
 
         // Convert the LR(0) states into LR(0-1) states.
-        val states: MutableList<Lr1State> = promoteLr0States(lr0States)
+        val states: MutableList<State<TokenSet>> = promoteLr0States(lr0States)
 
         // For each inconsistent state, apply the lane-table algorithm to
         // resolve it.
@@ -104,7 +104,7 @@ class LaneTableConstruct(
      * is always `TokenSet::all()`. We refer to these states as LR(0-1)
      * states in the README.
      */
-    private fun promoteLr0States(lr0: List<Lr0State>): MutableList<Lr1State> {
+    private fun promoteLr0States(lr0: List<State<Nil>>): MutableList<State<TokenSet>> {
         val all = TokenSet.all()
         return lr0.map { s ->
             val items = s.items.vec
@@ -130,10 +130,10 @@ class LaneTableConstruct(
     }
 
     private fun resolveInconsistencies(
-        states: MutableList<Lr1State>,
+        states: MutableList<State<TokenSet>>,
         inconsistentState: StateIndex,
     ) {
-        var actions: Set<Action> = conflictingActions(states[inconsistentState.value])
+        var actions: BTreeSet<Action> = conflictingActions(states[inconsistentState.value])
         if (actions.isEmpty()) {
             // This can mean one of two things: only shifts, or a
             // single reduction. We have to be careful about states
@@ -145,7 +145,7 @@ class LaneTableConstruct(
             //
             // In particular, if there is too much lookahead, we will
             // reduce even when it is inappropriate to do so.
-            val collected: Set<Action> = io.github.kotlinmania.lalrpop.collections.set.set()
+            val collected: BTreeSet<Action> = io.github.kotlinmania.lalrpop.collections.set.set()
             for ((_, prod) in states[inconsistentState.value].reductions) {
                 collected.add(Action.Reduce(prod))
             }
@@ -169,7 +169,7 @@ class LaneTableConstruct(
         //
         // (To handle unification, we also map each state to a
         // `StateSet` that is its entry in the `ena` table.)
-        val rows: Map<StateIndex, ContextSet> = try {
+        val rows: BTreeMap<StateIndex, ContextSet> = try {
             table.rows()
         } catch (e: RowConflictException) {
             throw UnresolvedInconsistencyException(e.state)
@@ -178,7 +178,7 @@ class LaneTableConstruct(
             keyFromIndex = { idx -> StateSet.fromIndex(idx) },
             unifyValues = { a, b -> StateSet.unifyValues(a, b) },
         )
-        val stateSets: Map<StateIndex, StateSet> = map()
+        val stateSets: BTreeMap<StateIndex, StateSet> = map()
         for ((stateIndex, contextSet) in rows) {
             val stateSet = unify.newKey(contextSet.clone())
             stateSets[stateIndex] = stateSet
@@ -204,9 +204,9 @@ class LaneTableConstruct(
     }
 
     private fun attemptLalr(
-        state: Lr1State,
+        state: State<TokenSet>,
         table: LaneTable,
-        actions: Set<Action>,
+        actions: BTreeSet<Action>,
     ): Boolean =
         try {
             val columns = table.columns()
@@ -217,9 +217,9 @@ class LaneTableConstruct(
         }
 
     private fun buildLaneTable(
-        states: List<Lr1State>,
+        states: List<State<TokenSet>>,
         inconsistentState: StateIndex,
-        actions: Set<Action>,
+        actions: BTreeSet<Action>,
     ): LaneTable {
         val stateGraph = StateGraph.new(states)
         val tracer = LaneTracer.new<TokenSet>(

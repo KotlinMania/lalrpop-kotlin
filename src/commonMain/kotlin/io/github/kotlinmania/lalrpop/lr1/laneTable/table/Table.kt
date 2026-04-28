@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/laneTable/table/mod.rs
+// port-lint: source lr1/laneTable/table/mod.rs
 //! The "Lane Table". In the paper, this is depicted like so:
 //!
 //! ```text
@@ -11,9 +11,9 @@
 //! lookahead to the conflict.
 package io.github.kotlinmania.lalrpop.lr1.laneTable.table
 
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.multimap.SetCollection
 import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
 import io.github.kotlinmania.lalrpop.collections.map.map
@@ -35,11 +35,11 @@ data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
 class LaneTable(
     private val grammar: Grammar,
     private val conflicts: Int,
-    // Upstream: `Map<(StateIndex, ConflictIndex), TokenSet>` (BTreeMap
+    // Upstream: `BTreeMap<(StateIndex, ConflictIndex), TokenSet>` (BTreeMap
     // with auto-derived `Ord` on tuples). We use [ComparablePair] so
     // the Kotlin BTreeMap orders pairs the same way the upstream
     // `(A, B): Ord` does (compare `first`, then `second`).
-    private val lookaheads: Map<ComparablePair<StateIndex, ConflictIndex>, TokenSet> = map(),
+    private val lookaheads: BTreeMap<ComparablePair<StateIndex, ConflictIndex>, TokenSet> = map(),
     private val successors: Multimap<StateIndex, SetCollection<StateIndex>, StateIndex> =
         Multimap(collectionFactory = { SetCollection() }),
 ) {
@@ -75,7 +75,7 @@ class LaneTable(
         return columns
     }
 
-    fun successors(state: StateIndex): Set<StateIndex>? =
+    fun successors(state: StateIndex): BTreeSet<StateIndex>? =
         successors.get(state)?.asSet()
 
     /**
@@ -83,14 +83,14 @@ class LaneTable(
      * reachable from another state in the table. These are called
      * "beachhead states".
      */
-    fun beachheadStates(): Set<StateIndex> {
+    fun beachheadStates(): BTreeSet<StateIndex> {
         // set of all states that are reachable from another state
-        val reachable: Set<StateIndex> = set()
+        val reachable: BTreeSet<StateIndex> = set()
         for ((_, succ) in successors) {
             for (s in succ.asSet()) reachable.add(s)
         }
 
-        val result: Set<StateIndex> = set()
+        val result: BTreeSet<StateIndex> = set()
         for ((key, _) in lookaheads) {
             val (stateIndex, _) = key
             if (stateIndex !in reachable) {
@@ -118,8 +118,8 @@ class LaneTable(
      * wrapping the offending `StateIndex` if any state has a conflict
      * between the context sets even within its own row.
      */
-    fun rows(): Map<StateIndex, ContextSet> {
-        val map: Map<StateIndex, ContextSet> = map()
+    fun rows(): BTreeMap<StateIndex, ContextSet> {
+        val map: BTreeMap<StateIndex, ContextSet> = map()
         for ((key, tokenSet) in lookaheads) {
             val (stateIndex, conflictIndex) = key
             val cs = map.getOrPut(stateIndex) { ContextSet.new(this.conflicts) }
@@ -141,7 +141,7 @@ class LaneTable(
     }
 
     override fun toString(): String {
-        val indices: Set<StateIndex> = set()
+        val indices: BTreeSet<StateIndex> = set()
         for ((key, _) in lookaheads) {
             val (state, _) = key
             indices.add(state)

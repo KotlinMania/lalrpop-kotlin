@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/prevalidate/mod.rs
+// port-lint: source normalize/prevalidate/mod.rs
 //! Validate checks some basic safety conditions.
 package io.github.kotlinmania.lalrpop.normalize.prevalidate
 

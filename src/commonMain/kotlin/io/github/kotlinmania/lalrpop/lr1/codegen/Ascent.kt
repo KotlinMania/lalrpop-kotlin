@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/codegen/ascent.rs
+// port-lint: source lr1/codegen/ascent.rs
 //! A compiler from an LR(1) table to a [recursive ascent] parser.
 //!
 //! [recursive ascent]: https://en.wikipedia.org/wiki/RecursiveAscentParser
@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
 import io.github.kotlinmania.lalrpop.lr1.stateGraph.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
@@ -30,7 +30,7 @@ object Ascent {
         grammar: Grammar,
         userStartSymbol: NonterminalString,
         startSymbol: NonterminalString,
-        states: List<Lr1State>,
+        states: List<State<TokenSet>>,
         actionModule: String,
         out: RustWrite,
     ) {
@@ -42,7 +42,7 @@ fun compileAscent(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
-    states: List<Lr1State>,
+    states: List<State<TokenSet>>,
     actionModule: String,
     out: RustWrite,
 ) {
@@ -133,7 +133,7 @@ private fun newAscent(
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
     graph: StateGraph,
-    states: List<Lr1State>,
+    states: List<State<TokenSet>>,
     actionModule: String,
     out: RustWrite,
 ): CodeGenerator<RecursiveAscent> {
@@ -163,7 +163,7 @@ private fun newAscent(
 }
 
 /** Compute the stack suffix that the state expects on entry. */
-private fun stateInputFor(state: Lr1State): StackSuffix {
+private fun stateInputFor(state: State<TokenSet>): StackSuffix {
     val maxPrefix = state.maxPrefix()
     val willPop = state.willPop()
     return StackSuffix(

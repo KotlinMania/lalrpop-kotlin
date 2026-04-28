@@ -1,18 +1,18 @@
-// port-lint: source src/lr1/trace/traceGraph/mod.rs
+// port-lint: source lr1/trace/traceGraph/mod.rs
 package io.github.kotlinmania.lalrpop.lr1.trace.traceGraph
 
 import io.github.kotlinmania.lalrpop.EdgeDirection
 import io.github.kotlinmania.lalrpop.EdgeRef
 import io.github.kotlinmania.lalrpop.Graph
 import io.github.kotlinmania.lalrpop.NodeIndex
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr0Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1Item
+import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
+import io.github.kotlinmania.lalrpop.lr1.core.Item<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.SymbolSets
 import io.github.kotlinmania.lalrpop.lr1.example.Example
 import io.github.kotlinmania.lalrpop.lr1.example.ExampleSymbol
@@ -59,7 +59,7 @@ class TraceGraph(
     // labels are symbols that are pushed. Otherwise they are labels
     // that are popped.
     internal val graph: Graph<TraceGraphNode, SymbolSets>,
-    internal val indices: Map<TraceGraphNode, NodeIndex>,
+    internal val indices: BTreeMap<TraceGraphNode, NodeIndex>,
 ) {
     companion object {
         fun new(): TraceGraph = TraceGraph(
@@ -83,10 +83,10 @@ class TraceGraph(
         }
     }
 
-    fun lr0Examples(lr0Item: Lr0Item): PathEnumerator =
+    fun lr0Examples(lr0Item: Item<Nil>): PathEnumerator =
         PathEnumerator.new(this, lr0Item)
 
-    fun lr1Examples(firstSets: FirstSets, item: Lr1Item): FilteredPathEnumerator =
+    fun lr1Examples(firstSets: FirstSets, item: Item<TokenSet>): FilteredPathEnumerator =
         FilteredPathEnumerator.new(firstSets, this, item.toLr0(), item.lookahead.clone())
 
     override fun toString(): String {
@@ -113,7 +113,7 @@ class TraceGraph(
 
 sealed class TraceGraphNode : Comparable<TraceGraphNode> {
     data class Nonterminal(val nonterminal: NonterminalString) : TraceGraphNode()
-    data class ItemNode(val item: Lr0Item) : TraceGraphNode()
+    data class ItemNode(val item: Item<Nil>) : TraceGraphNode()
 
     override fun compareTo(other: TraceGraphNode): Int {
         val o1 = ordinal()
@@ -160,7 +160,7 @@ class PathEnumerator internal constructor(
     internal val stack: MutableList<EnumeratorState>,
 ) : Iterator<Example> {
     companion object {
-        internal fun new(graph: TraceGraph, lr0Item: Lr0Item): PathEnumerator {
+        internal fun new(graph: TraceGraph, lr0Item: Item<Nil>): PathEnumerator {
             val startState = graph.indices[TraceGraphNode.ItemNode(lr0Item)]!!
             val enumerator = PathEnumerator(graph = graph, stack = mutableListOf())
             val edges = enumerator.incomingEdges(startState).iterator()
@@ -400,7 +400,7 @@ class FilteredPathEnumerator internal constructor(
         internal fun new(
             firstSets: FirstSets,
             graph: TraceGraph,
-            lr0Item: Lr0Item,
+            lr0Item: Item<Nil>,
             lookahead: TokenSet,
         ): FilteredPathEnumerator = FilteredPathEnumerator(
             base = PathEnumerator.new(graph, lr0Item),

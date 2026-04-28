@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/tyinfer/test.rs
+// port-lint: source normalize/tyinfer/test.rs
 package io.github.kotlinmania.lalrpop.normalize.tyinfer
 
 /*

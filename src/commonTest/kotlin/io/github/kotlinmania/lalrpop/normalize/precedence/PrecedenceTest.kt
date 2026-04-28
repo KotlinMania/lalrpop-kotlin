@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/precedence/test.rs
+// port-lint: source normalize/precedence/test.rs
 package io.github.kotlinmania.lalrpop.normalize.precedence
 
 /*

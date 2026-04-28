@@ -1,4 +1,4 @@
-// port-lint: source src/grammar/consts.rs
+// port-lint: source grammar/consts.rs
 package io.github.kotlinmania.lalrpop.grammar.consts
 
 /** Recognized associated type for the token location */

@@ -138,7 +138,6 @@ internal class InternalNode<K, V> : LeafNode<K, V>() {
  * In Kotlin this becomes simply [LeafNode]: an [InternalNode] is a subclass
  * of [LeafNode], so a `LeafNode` reference can hold either kind of node.
  */
-internal typealias BoxedNode<K, V> = LeafNode<K, V>
 
 /**
  * A reference to a node.
@@ -843,7 +842,6 @@ internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.LeafOrInternal>.castToInter
 // =====================================================================
 
 /** The root node of an owned tree. */
-internal typealias Root<K, V> = NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>
 
 // =====================================================================
 // Handle

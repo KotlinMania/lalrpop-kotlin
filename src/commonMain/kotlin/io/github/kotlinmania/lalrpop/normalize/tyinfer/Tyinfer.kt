@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/tyinfer/mod.rs
+// port-lint: source normalize/tyinfer/mod.rs
 package io.github.kotlinmania.lalrpop.normalize.tyinfer
 
 import io.github.kotlinmania.lalrpop.Atom

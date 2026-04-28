@@ -1,4 +1,4 @@
-// port-lint: source src/grammar/parseTree.rs
+// port-lint: source grammar/parseTree.rs
 // The "parse-tree" is what is produced by the parser. We import it do
 // some pre-expansion and so forth before creating the proper AST.
 package io.github.kotlinmania.lalrpop.grammar.parseTree
@@ -13,7 +13,7 @@ import io.github.kotlinmania.lalrpop.lexer.dfa.Dfa
 import io.github.kotlinmania.lalrpop.message.message.Content
 import io.github.kotlinmania.lalrpop.message.builder.InlineBuilder
 import io.github.kotlinmania.lalrpop.tls.Tls
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
 import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
 import io.github.kotlinmania.lalrpop.grammar.consts.INPUT_LIFETIME
@@ -84,12 +84,12 @@ data class MatchContents(
     var items: MutableList<MatchItem>,
 )
 
-// FIXME: Validate that MatchSymbol is actually a TerminalString::Literal
+// FIXME: Validate that TerminalLiteral is actually a TerminalString::Literal
 //          and that MatchMapping is an Id or String
 sealed class MatchItem {
     data class CatchAll(val span: Span) : MatchItem()
-    data class Unmapped(val symbol: MatchSymbol, val span: Span) : MatchItem()
-    data class Mapped(val symbol: MatchSymbol, val mapping: MatchMapping, val span: Span) : MatchItem()
+    data class Unmapped(val symbol: TerminalLiteral, val span: Span) : MatchItem()
+    data class Mapped(val symbol: TerminalLiteral, val mapping: MatchMapping, val span: Span) : MatchItem()
 
     fun span(): Span = when (this) {
         is CatchAll -> span
@@ -98,7 +98,6 @@ sealed class MatchItem {
     }
 }
 
-typealias MatchSymbol = TerminalLiteral
 
 sealed class MatchMapping : Comparable<MatchMapping> {
     data class Terminal(val terminal: TerminalString) : MatchMapping() {
@@ -776,7 +775,7 @@ sealed class TerminalString : Comparable<TerminalString> {
 
     companion object {
         fun quoted(i: Atom): TerminalString = Literal(TerminalLiteral.Quoted(i))
-        fun regex(i: Atom): TerminalString = Literal(TerminalLiteral.Regex(i))
+        fun regex(i: Atom): TerminalString = Literal(TerminalLiteral.Hir(i))
     }
 }
 
@@ -792,7 +791,7 @@ sealed class TerminalLiteral : Comparable<TerminalLiteral> {
     data class Quoted(val atom: Atom) : TerminalLiteral() {
         override fun toString(): String = "\"${atom.asRef()}\""
     }
-    data class Regex(val atom: Atom) : TerminalLiteral() {
+    data class Hir(val atom: Atom) : TerminalLiteral() {
         // FIXME -- need to determine proper number of #
         override fun toString(): String = "r#\"${atom.asRef()}\"#"
     }
@@ -806,17 +805,17 @@ sealed class TerminalLiteral : Comparable<TerminalLiteral> {
      */
     fun basePrecedence(): Int = when (this) {
         is Quoted -> 1
-        is Regex -> 0
+        is Hir -> 0
     }
 
     fun displayLen(): Int = when (this) {
         is Quoted -> atom.len()
-        is Regex -> atom.len() + "####r".length
+        is Hir -> atom.len() + "####r".length
     }
 
     override fun toString(): String = when (this) {
         is Quoted -> "\"${atom.asRef()}\"" // the Debug implementation adds the `"` and escaping
-        is Regex -> "r#\"${atom.asRef()}\"#" // FIXME -- need to determine proper number of #
+        is Hir -> "r#\"${atom.asRef()}\"#" // FIXME -- need to determine proper number of #
     }
 }
 

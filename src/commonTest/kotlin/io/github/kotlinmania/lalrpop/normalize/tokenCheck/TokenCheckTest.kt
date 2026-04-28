@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/tokenCheck/test.rs
+// port-lint: source normalize/tokenCheck/test.rs
 package io.github.kotlinmania.lalrpop.normalize.tokenCheck
 
 /*

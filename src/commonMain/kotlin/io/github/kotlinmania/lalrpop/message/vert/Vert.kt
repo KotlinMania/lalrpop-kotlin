@@ -1,4 +1,4 @@
-// port-lint: source src/message/vert.rs
+// port-lint: source message/vert.rs
 package io.github.kotlinmania.lalrpop.message.vert
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.message.Content

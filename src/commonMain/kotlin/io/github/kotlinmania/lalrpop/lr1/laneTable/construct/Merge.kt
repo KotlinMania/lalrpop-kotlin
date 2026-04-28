@@ -1,17 +1,17 @@
-// port-lint: source src/lr1/laneTable/construct/merge.rs
+// port-lint: source lr1/laneTable/construct/merge.rs
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.collections.set.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.lr1.core.Action
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet.StateSet
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.LaneTable
@@ -30,9 +30,9 @@ import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
  */
 class Merge internal constructor(
     private val table: LaneTable,
-    private val states: MutableList<Lr1State>,
-    private val visited: Set<StateIndex>,
-    private val originalIndices: Map<StateIndex, StateIndex>,
+    private val states: MutableList<State<TokenSet>>,
+    private val visited: BTreeSet<StateIndex>,
+    private val originalIndices: BTreeMap<StateIndex, StateIndex>,
     private val clones: Multimap<StateIndex, VecCollection<StateIndex>, StateIndex>,
     private val targetStates: MutableList<StateIndex>,
     private val contextSets: ContextSets,
@@ -41,8 +41,8 @@ class Merge internal constructor(
         fun new(
             table: LaneTable,
             unify: InPlaceUnificationTable<StateSet, ContextSet>,
-            states: MutableList<Lr1State>,
-            stateSets: Map<StateIndex, StateSet>,
+            states: MutableList<State<TokenSet>>,
+            stateSets: BTreeMap<StateIndex, StateSet>,
             inconsistentState: StateIndex,
         ): Merge = Merge(
             table = table,
@@ -62,7 +62,7 @@ class Merge internal constructor(
         walk(beachheadState)
     }
 
-    fun patchTargetStarts(actions: Set<Action>) {
+    fun patchTargetStarts(actions: BTreeSet<Action>) {
         for (targetState in this.targetStates) {
             val contextSet = this.contextSets.contextSet(targetState)
             contextSet.apply(this.states[targetState.value], actions)
@@ -76,7 +76,7 @@ class Merge internal constructor(
     private fun originalIndex(state: StateIndex): StateIndex =
         this.originalIndices[state] ?: state
 
-    private fun successors(state: StateIndex): Set<StateIndex>? =
+    private fun successors(state: StateIndex): BTreeSet<StateIndex>? =
         this.table.successors(originalIndex(state))
 
     private fun walk(state: StateIndex) {
@@ -163,7 +163,7 @@ class Merge internal constructor(
 }
 
 internal class ContextSets(
-    private val stateSets: Map<StateIndex, StateSet>,
+    private val stateSets: BTreeMap<StateIndex, StateSet>,
     private val unify: InPlaceUnificationTable<StateSet, ContextSet>,
 ) {
     fun contextSet(state: StateIndex): ContextSet {

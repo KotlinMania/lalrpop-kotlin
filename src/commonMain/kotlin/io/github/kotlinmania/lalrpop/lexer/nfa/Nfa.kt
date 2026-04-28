@@ -1,10 +1,10 @@
-// port-lint: source src/lexer/nfa/mod.rs
+// port-lint: source lexer/nfa/mod.rs
 //! The Nfa we construct for each regex. Since the states are not
 //! really of interest, we represent this just as a vector of labeled
 //! edges.
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
-import io.github.kotlinmania.lalrpop.lexer.re.Regex
+import io.github.kotlinmania.lalrpop.lexer.re.Hir
 import io.github.kotlinmania.lalrpop.regexSyntax.ClassBytesRange
 import io.github.kotlinmania.lalrpop.regexSyntax.ClassUnicodeRange
 import io.github.kotlinmania.lalrpop.regexSyntax.HirKind
@@ -25,7 +25,7 @@ class Nfa private constructor(
     internal val edges: Edges,
 ) {
     companion object {
-        fun fromRe(regex: Regex): Result<Nfa> = runCatching {
+        fun fromRe(regex: Hir): Result<Nfa> = runCatching {
             val nfa = new()
             val s0 = nfa.expr(regex.kind(), ACCEPT, REJECT)
             nfa.pushEdge(START, EdgeLabel.Noop, s0)
@@ -700,12 +700,9 @@ enum class NfaConstructionError {
 /** Exception carrier for [NfaConstructionError] — thrown across the expr walk. */
 class NfaConstructionException(val error: NfaConstructionError) : RuntimeException(error.name)
 
-// Mirrors upstream `public type NFA = Nfa;` (lexer/nfa/mod.rs:27),
-// `public type NFAStateIndex = NfaStateIndex;` (line 83), and
-// `public type NFAConstructionError = NfaConstructionError;` (line 123).
+// Mirrors upstream `public type Nfa = Nfa;` (lexer/nfa/mod.rs:27),
+// `public type NfaStateIndex = NfaStateIndex;` (line 83), and
+// `public type NfaConstructionError = NfaConstructionError;` (line 123).
 // These are real `public type` aliases in upstream, so per AGENTS.md they
 // translate as Kotlin `typealias` (the only typealias case the project
 // permits — non-re-export, on a literal upstream `public type`).
-typealias NFA = Nfa
-typealias NFAStateIndex = NfaStateIndex
-typealias NFAConstructionError = NfaConstructionError

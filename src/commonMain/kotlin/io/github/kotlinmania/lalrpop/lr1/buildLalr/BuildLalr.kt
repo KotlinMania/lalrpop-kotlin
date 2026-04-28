@@ -1,8 +1,8 @@
-// port-lint: source src/lr1/buildLalr/mod.rs
+// port-lint: source lr1/buildLalr/mod.rs
 //! Mega naive LALR(1) generation algorithm.
 package io.github.kotlinmania.lalrpop.lr1.buildLalr
 
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
 import io.github.kotlinmania.lalrpop.collections.multimap.SetCollection
 import io.github.kotlinmania.lalrpop.collections.map.ComparableList
@@ -11,15 +11,12 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
-import io.github.kotlinmania.lalrpop.lr1.Lr1Result
+import io.github.kotlinmania.lalrpop.lr1.lookahead.Nil
 import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.build.buildLr1States
 import io.github.kotlinmania.lalrpop.lr1.build.useLaneTable
 import io.github.kotlinmania.lalrpop.lr1.core.Item
 import io.github.kotlinmania.lalrpop.lr1.core.Items
-import io.github.kotlinmania.lalrpop.lr1.core.Lr0Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
@@ -30,13 +27,13 @@ import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
 // set of actions, as well.
 private class Lalr1State(
     var index: StateIndex,
-    var items: MutableList<Lr1Item>,
-    var shifts: Map<TerminalString, StateIndex>,
+    var items: MutableList<Item<TokenSet>>,
+    var shifts: BTreeMap<TerminalString, StateIndex>,
     var reductions: Multimap<Production, SetCollection<TokenSet>, TokenSet>,
-    var gotos: Map<NonterminalString, StateIndex>,
+    var gotos: BTreeMap<NonterminalString, StateIndex>,
 )
 
-fun buildLalrStates(grammar: Grammar, start: NonterminalString): Lr1Result {
+fun buildLalrStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
     // First build the LR(1) states
     val lrStates = buildLr1States(grammar, start)
 
@@ -52,19 +49,19 @@ fun buildLalrStates(grammar: Grammar, start: NonterminalString): Lr1Result {
     return collapseToLalrStates(lrStates)
 }
 
-fun collapseToLalrStates(lrStates: List<Lr1State>): Lr1Result {
+fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<State<TokenSet>> {
     // Now compress them. This vector stores, for each state, the
     // LALR(1) state to which we will remap it.
     val remap: MutableList<StateIndex> = MutableList(lrStates.size) { StateIndex(0) }
-    // Upstream: `Map<Vec<Lr0Item>, StateIndex>` (BTreeMap with
+    // Upstream: `BTreeMap<Vec<Item<Nil>>, StateIndex>` (BTreeMap with
     // auto-derived `Ord` on `Vec<T>`). We wrap the kernel in a
     // [ComparableList] so the Kotlin BTreeMap orders by the same
     // lexicographic compare Rust derives.
-    val lalr1Map: Map<ComparableList<Lr0Item>, StateIndex> = map()
+    val lalr1Map: BTreeMap<ComparableList<Item<Nil>>, StateIndex> = map()
     val lalr1States: MutableList<Lalr1State> = mutableListOf()
 
     for ((lr1Index, lr1State) in lrStates.withIndex()) {
-        val lr0Kernel: ComparableList<Lr0Item> = ComparableList(
+        val lr0Kernel: ComparableList<Item<Nil>> = ComparableList(
             lr1State.items.vec
                 .map { it.toLr0() }
                 .dedup()
@@ -103,13 +100,13 @@ fun collapseToLalrStates(lrStates: List<Lr1State>): Lr1Result {
         val items = lalr1State.items
         lalr1State.items = mutableListOf()
 
-        val itemsMap: Multimap<Lr0Item, UnionTokenSetCollection, TokenSet> =
+        val itemsMap: Multimap<Item<Nil>, UnionTokenSetCollection, TokenSet> =
             Multimap(collectionFactory = { UnionTokenSetCollection() })
         for (item in items) {
             itemsMap.push(Item.lr0(item.production, item.index), item.lookahead)
         }
 
-        val newItems: MutableList<Lr1Item> = mutableListOf()
+        val newItems: MutableList<Item<TokenSet>> = mutableListOf()
         for ((lr0Item, coll) in itemsMap) {
             newItems.add(lr0Item.withLookahead(coll.value ?: TokenSet.new()))
         }
@@ -180,7 +177,7 @@ private fun <T> Iterable<T>.dedup(): List<T> {
 }
 
 // Collection variant that keeps a rolling union of TokenSets — used to
-// merge per-Lr0Item lookaheads across lalr1 compression.
+// merge per-Item<Nil> lookaheads across lalr1 compression.
 private class UnionTokenSetCollection(
     var value: TokenSet? = null,
 ) : io.github.kotlinmania.lalrpop.collections.multimap.Collection<TokenSet> {

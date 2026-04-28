@@ -1,4 +1,4 @@
-// port-lint: source src/lexer/dfa/test.rs
+// port-lint: source lexer/dfa/test.rs
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
 import io.github.kotlinmania.lalrpop.lexer.re.parseRegex

@@ -1,8 +1,8 @@
-// port-lint: source src/lr1/first/mod.rs
+// port-lint: source lr1/first/mod.rs
 //! First set construction and computation.
 package io.github.kotlinmania.lalrpop.lr1.first
 
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
 
 data class FirstSets(
-    val map: Map<NonterminalString, TokenSet>,
+    val map: BTreeMap<NonterminalString, TokenSet>,
 ) {
     companion object {
         fun new(grammar: Grammar): FirstSets {

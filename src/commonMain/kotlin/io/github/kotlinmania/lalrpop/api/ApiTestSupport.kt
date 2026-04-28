@@ -1,4 +1,4 @@
-// port-lint: source src/api/test.rs (platform glue, test support)
+// port-lint: source api/test.rs (platform glue, test support)
 package io.github.kotlinmania.lalrpop.api
 
 /*

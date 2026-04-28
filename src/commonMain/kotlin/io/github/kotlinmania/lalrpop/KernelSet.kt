@@ -1,13 +1,13 @@
-// port-lint: source src/kernelSet.rs
+// port-lint: source kernelSet.rs
 package io.github.kotlinmania.lalrpop
 
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
 
 class KernelSet<K : Kernel<K, Index>, Index> {
     private var counter: Int = 0
     private val kernels: ArrayDeque<K> = ArrayDeque()
-    private val map: Map<K, Index> = map()
+    private val map: BTreeMap<K, Index> = map()
 
     companion object {
         fun <K : Kernel<K, Index>, Index> new(): KernelSet<K, Index> = KernelSet()

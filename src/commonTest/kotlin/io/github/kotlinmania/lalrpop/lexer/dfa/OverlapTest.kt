@@ -1,4 +1,4 @@
-// port-lint: source src/lexer/dfa/overlap.rs
+// port-lint: source lexer/dfa/overlap.rs
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
 import io.github.kotlinmania.lalrpop.collections.set.set

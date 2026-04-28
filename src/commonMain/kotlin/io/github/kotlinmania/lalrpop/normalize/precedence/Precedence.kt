@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/precedence/mod.rs
+// port-lint: source normalize/precedence/mod.rs
 //! Precedence expander.
 //!
 //! Precedence expansion rewrites rules that contain precedence attribute into several rules

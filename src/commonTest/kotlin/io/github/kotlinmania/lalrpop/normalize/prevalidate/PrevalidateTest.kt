@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/prevalidate/test.rs
+// port-lint: source normalize/prevalidate/test.rs
 package io.github.kotlinmania.lalrpop.normalize.prevalidate
 
 /*

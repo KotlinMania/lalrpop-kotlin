@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/condComp/mod.rs
+// port-lint: source normalize/condComp/mod.rs
 //! Compute cfg directives.
 package io.github.kotlinmania.lalrpop.normalize.condComp
 

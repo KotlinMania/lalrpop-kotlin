@@ -580,7 +580,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
      *
      * After calling, the map is left empty.
      */
-    fun intoIter(): IntoIter<K, V> {
+    fun intoIter(): Iterator<Pair<K, V>> {
         val r = root
         root = null
         val savedLen = length
@@ -937,7 +937,7 @@ internal class MutEntry<K : Comparable<K>, V>(
  * a dying tree, deallocating nodes (in Rust) as it goes; in Kotlin GC
  * supersedes the deallocation but the traversal pattern is identical.
  */
-class IntoIter<K, V> internal constructor(
+class Iterator<Pair<K, V>> internal constructor(
     internal var range: LazyLeafRange<Marker.Dying, K, V>,
     internal var length: Int,
 ) : Iterator<Pair<K, V>> {
@@ -1031,7 +1031,7 @@ class ValuesMut<K : Comparable<K>, V> internal constructor(internal val inner: I
 }
 
 /** An owning iterator over the keys of a `BTreeMap`. */
-class IntoKeys<K, V> internal constructor(internal val inner: IntoIter<K, V>) : Iterator<K> {
+class IntoKeys<K, V> internal constructor(internal val inner: Iterator<Pair<K, V>>) : Iterator<K> {
     override fun hasNext(): Boolean = inner.hasNext()
     override fun next(): K = inner.next().first
     fun nextBack(): K? = inner.nextBack()?.first
@@ -1040,7 +1040,7 @@ class IntoKeys<K, V> internal constructor(internal val inner: IntoIter<K, V>) : 
 }
 
 /** An owning iterator over the values of a `BTreeMap`. */
-class IntoValues<K, V> internal constructor(internal val inner: IntoIter<K, V>) : Iterator<V> {
+class IntoValues<K, V> internal constructor(internal val inner: Iterator<Pair<K, V>>) : Iterator<V> {
     override fun hasNext(): Boolean = inner.hasNext()
     override fun next(): V = inner.next().second
     fun nextBack(): V? = inner.nextBack()?.second

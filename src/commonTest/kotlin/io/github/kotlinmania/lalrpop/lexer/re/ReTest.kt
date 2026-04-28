@@ -1,4 +1,4 @@
-// port-lint: source src/lexer/re/test.rs
+// port-lint: source lexer/re/test.rs
 package io.github.kotlinmania.lalrpop.lexer.re
 
 import kotlin.test.Test

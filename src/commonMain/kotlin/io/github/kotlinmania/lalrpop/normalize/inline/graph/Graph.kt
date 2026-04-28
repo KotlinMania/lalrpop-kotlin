@@ -1,10 +1,10 @@
-// port-lint: source src/normalize/inline/graph/mod.rs
+// port-lint: source normalize/inline/graph/mod.rs
 package io.github.kotlinmania.lalrpop.normalize.inline.graph
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Graph
 import io.github.kotlinmania.lalrpop.NodeIndex
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.consts.INLINE
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
@@ -30,7 +30,7 @@ fun inlineOrder(grammar: Grammar): List<NonterminalString> {
 private class NonterminalGraph(
     val grammar: Grammar,
     val graph: Graph<NonterminalString, Unit>,
-    val nonterminalMap: Map<NonterminalString, NodeIndex>,
+    val nonterminalMap: BTreeMap<NonterminalString, NodeIndex>,
 ) {
     companion object {
         fun new(grammar: Grammar): NonterminalGraph = NonterminalGraph(

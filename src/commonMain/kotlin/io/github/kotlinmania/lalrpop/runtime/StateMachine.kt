@@ -2,7 +2,7 @@
 package io.github.kotlinmania.lalrpop.runtime
 
 /**
- * State machine for import by lalrpop generated parsers.
+ * State machine for use by lalrpop generated parsers.
  *
  * This provides grammar-independent state machine support for generated
  * parsers. It is intended to be linked by the generated parser, not used
@@ -42,10 +42,8 @@ sealed class TokResult<L, T, E> {
 }
 
 /** `(Location, Token, Location)` triple produced by the tokenizer. */
-typealias TokenTriple<L, T> = Triple<L, T, L>
 
 /** `(Location, Symbol, Location)` triple pushed on the parser stack. */
-typealias SymbolTriple<L, S> = Triple<L, S, L>
 
 /**
  * The core trait implemented by every LALRPOP-generated parser.
@@ -442,7 +440,7 @@ class Parser<
         // this first, before we pop any symbols off the stack. There are
         // several possibilities, in order of preference.
         //
-        // For the **start** of the message, we prefer to import the start of
+        // For the **start** of the message, we prefer to use the start of
         // any popped states. This represents parts of the input we had
         // consumed but had to roll back and ignore.
         //
@@ -473,7 +471,7 @@ class Parser<
 
         // For the end span, here are the possibilities:
         //
-        // We prefer to import the end of the last dropped token.
+        // We prefer to use the end of the last dropped token.
         //
         // Examples:
         //

@@ -1,4 +1,4 @@
-// port-lint: source src/testUtil.rs
+// port-lint: source testUtil.rs
 package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.normalize.NormError
 import io.github.kotlinmania.lalrpop.normalize.normalizeWithoutValidating
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
 
-private val SPAN: Regex = Regex("Span\\([0-9 ,\\n]*\\)")
+private val SPAN: Hir = Hir("Span\\([0-9 ,\\n]*\\)")
 
 private class ExpectedDebug(private val s: String) {
     override fun toString(): String {
@@ -55,7 +55,7 @@ fun normalizedGrammar(s: String): Grammar =
     normalizeWithoutValidating(parseGrammar(s).getOrThrow())
 
 fun checkNormErr(expectedErr: String, span: String, err: NormError) {
-    val expected = Regex(expectedErr)
+    val expected = Hir(expectedErr)
     val startIndex = span.indexOf('~')
     val endIndex = span.lastIndexOf('~') + 1
     check(expected.containsMatchIn(err.message)) {

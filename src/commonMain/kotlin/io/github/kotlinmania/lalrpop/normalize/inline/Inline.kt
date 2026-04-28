@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/inline/mod.rs
+// port-lint: source normalize/inline/mod.rs
 //! Inlining of nonterminals
 package io.github.kotlinmania.lalrpop.normalize.inline
 

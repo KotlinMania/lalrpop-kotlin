@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/mod.rs
+// port-lint: source normalize/mod.rs
 //! Normalization processes a parse tree until it is in suitable form to
 //! be converted to the more canonical form. This is done as a series of
 //! passes, each contained in their own module below.
@@ -20,7 +20,6 @@ import io.github.kotlinmania.lalrpop.normalize.tokenCheck.validate as tokenCheck
 import io.github.kotlinmania.lalrpop.normalize.tyinfer.inferTypes
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
 
-typealias NormResult<T> = Result<T>
 
 data class NormError(
     val message: String,

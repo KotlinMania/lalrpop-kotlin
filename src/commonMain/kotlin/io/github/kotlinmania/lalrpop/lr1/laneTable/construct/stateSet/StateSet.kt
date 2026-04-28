@@ -1,16 +1,15 @@
-// port-lint: source src/lr1/laneTable/construct/stateSet.rs
+// port-lint: source lr1/laneTable/construct/stateSet.rs
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet
 
 import io.github.kotlinmania.lalrpop.UnifyKey
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
 
 /**
- * Mirrors the Rust `type Value = ContextSet;` associated type from
+ * Mirrors the Rust `type ContextSet = ContextSet;` associated type from
  * `implementation UnifyKey for StateSet`. Kotlin does not have associated types
  * on interface implementations, so we expose the binding as a
  * top-level typealias.
  */
-typealias Value = ContextSet
 
 /**
  * The unification key for a set of states in the lane table

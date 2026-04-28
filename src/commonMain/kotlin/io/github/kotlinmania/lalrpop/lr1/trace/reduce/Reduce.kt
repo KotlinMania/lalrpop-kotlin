@@ -1,9 +1,9 @@
-// port-lint: source src/lr1/trace/reduce/mod.rs
+// port-lint: source lr1/trace/reduce/mod.rs
 package io.github.kotlinmania.lalrpop.lr1.trace.reduce
 
 import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.lr1.core.Lr0Item
+import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.lr1.trace.traceGraph.TraceGraph
@@ -11,13 +11,13 @@ import io.github.kotlinmania.lalrpop.lr1.trace.traceGraph.TraceGraphNode
 
 fun Tracer.backtraceReduce(
     itemState: StateIndex,
-    item: Lr0Item,
+    item: Item<Nil>,
 ): TraceGraph {
     traceReduceItem(itemState, item)
     return this.traceGraph
 }
 
-private fun Tracer.traceReduceItem(itemState: StateIndex, item: Lr0Item) {
+private fun Tracer.traceReduceItem(itemState: StateIndex, item: Item<Nil>) {
     // We start out with an item
     //
     //     X = ...p (*) ...s

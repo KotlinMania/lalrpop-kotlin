@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/tokenCheck/mod.rs
+// port-lint: source normalize/tokenCheck/mod.rs
 //! If an extern token is provided, then this pass validates that
 //! terminal IDs have conversions. Otherwise, it generates a
 //! tokenizer. This can only be done after macro expansion because
@@ -8,9 +8,9 @@
 package io.github.kotlinmania.lalrpop.normalize.tokenCheck
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.set.set
 import io.github.kotlinmania.lalrpop.grammar.consts.INPUT_PARAMETER
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
@@ -52,7 +52,7 @@ fun validate(grammar: Grammar): Grammar {
                 check(grammar.matchToken() == null) {
                     "validator permitted both an extern/match section"
                 }
-                val conversions: Set<TerminalString> = set()
+                val conversions: BTreeSet<TerminalString> = set()
                 for (conversion in enumToken.conversions) {
                     conversions.add(conversion.from)
                 }
@@ -98,7 +98,7 @@ private sealed class TokenMode {
      * set of those terminals. These are the only terminals that the
      * user should be using.
      */
-    data class Extern(val conversions: Set<TerminalString>) : TokenMode()
+    data class Extern(val conversions: BTreeSet<TerminalString>) : TokenMode()
 
     /**
      * Otherwise, we are synthesizing the tokenizer. In that case,
@@ -125,7 +125,7 @@ private class MatchBlock(
      * terminal literals in the grammar, we will add them to this
      * set.
      */
-    val matchUserNames: Set<TerminalString> = set(),
+    val matchUserNames: BTreeSet<TerminalString> = set(),
 
     /**
      * For each terminal literal that we have to match, the span
@@ -133,7 +133,7 @@ private class MatchBlock(
      * `match { }` section or else in the grammar somewhere (if added
      * due to a catch-all, or there is no match section).
      */
-    val spans: Map<TerminalLiteral, Span> = map(),
+    val spans: BTreeMap<TerminalLiteral, Span> = map(),
 
     /** True if we should permit unrecognized literals to be used. */
     var catchAll: Precedence? = null,
@@ -308,7 +308,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
 
     // Build up two vectors, one of parsed regular expressions and
     // one of precedences, that are parallel with `literals`.
-    val regexs = ArrayList<io.github.kotlinmania.lalrpop.lexer.re.Regex>(matchEntries.size)
+    val regexs = ArrayList<io.github.kotlinmania.lalrpop.lexer.re.Hir>(matchEntries.size)
     val precedences = ArrayList<Precedence>(matchEntries.size)
     for (matchEntry in matchEntries) {
         precedences.add(Precedence(matchEntry.precedence))
@@ -316,7 +316,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
             is TerminalLiteral.Quoted -> {
                 regexs.add(parseLiteral(lit.atom.toString()))
             }
-            is TerminalLiteral.Regex -> {
+            is TerminalLiteral.Hir -> {
                 val parsed = parseRegex(lit.atom.toString())
                 parsed.fold(
                     onSuccess = { regex -> regexs.add(regex) },

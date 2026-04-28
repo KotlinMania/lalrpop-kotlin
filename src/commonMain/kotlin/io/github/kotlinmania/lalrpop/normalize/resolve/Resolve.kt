@@ -1,10 +1,10 @@
-// port-lint: source src/normalize/resolve/mod.rs
+// port-lint: source normalize/resolve/mod.rs
 //! Resolves identifiers to decide if they are macros, terminals, or
 //! nonterminals. Rewrites the parse tree accordingly.
 package io.github.kotlinmania.lalrpop.normalize.resolve
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
@@ -72,7 +72,7 @@ private fun resolveInPlace(grammar: Grammar) {
 
         val allIdentifiers = nonterminalIdentifiers + terminalIdentifiers + matchIdentifiers
 
-        val identifiers: Map<Atom, Def> = map()
+        val identifiers: BTreeMap<Atom, Def> = map()
         for ((span, id, def) in allIdentifiers) {
             val oldDef = identifiers.put(id, def)
             if (oldDef != null) {
@@ -130,7 +130,7 @@ private sealed class Def {
 
 private class ScopeChain(
     val previous: ScopeChain?,
-    val identifiers: Map<Atom, Def>,
+    val identifiers: BTreeMap<Atom, Def>,
 ) {
     fun def(id: Atom): Def? =
         identifiers[id] ?: previous?.def(id)
@@ -161,13 +161,13 @@ private fun Validator.validate(grammar: Grammar) {
 private fun Validator.validateMacroArgs(
     span: Span,
     args: List<NonterminalString>,
-): Map<Atom, Def> {
+): BTreeMap<Atom, Def> {
     for ((index, arg) in args.withIndex()) {
         if (args.subList(0, index).contains(arg)) {
             returnErr(span, "multiple macro arguments declared with the name `$arg`")
         }
     }
-    val result: Map<Atom, Def> = map()
+    val result: BTreeMap<Atom, Def> = map()
     for (nt in args) {
         result[nt.atom] = Def.MacroArg
     }

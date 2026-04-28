@@ -1,4 +1,4 @@
-// port-lint: source src/message/message.rs
+// port-lint: source message/message.rs
 package io.github.kotlinmania.lalrpop.message
 
 import io.github.kotlinmania.lalrpop.Style

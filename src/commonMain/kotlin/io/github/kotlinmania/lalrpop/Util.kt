@@ -1,4 +1,4 @@
-// port-lint: source src/util.rs
+// port-lint: source util.rs
 package io.github.kotlinmania.lalrpop
 
 class Sep<S>(val sep: String, val vec: Iterable<S>) {

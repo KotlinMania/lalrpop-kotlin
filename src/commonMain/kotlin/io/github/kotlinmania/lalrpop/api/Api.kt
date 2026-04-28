@@ -1,4 +1,4 @@
-// port-lint: source src/api/mod.rs
+// port-lint: source api/mod.rs
 package io.github.kotlinmania.lalrpop.api
 
 /*
@@ -20,7 +20,7 @@ import io.github.kotlinmania.lalrpop.Session
 
 /**
  * Configure various aspects of how LALRPOP works.
- * Intended for import within a `build.rs` script.
+ * Intended for use within a `build.rs` script.
  * To get the default configuration, use `Configuration::new`.
  *
  * Mirrors `class Configuration { session: Session }` from
@@ -72,7 +72,7 @@ class Configuration internal constructor(
     }
 
     /**
-     * Specify a custom directory to import when writing output files.
+     * Specify a custom directory to use when writing output files.
      *
      * By default, the output directory is the same as the input
      * directory.

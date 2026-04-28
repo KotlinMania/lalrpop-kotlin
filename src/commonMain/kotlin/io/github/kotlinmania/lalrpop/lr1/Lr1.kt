@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/mod.rs
+// port-lint: source lr1/mod.rs
 /** Naive LR(1) generation algorithm. */
 package io.github.kotlinmania.lalrpop.lr1
 
@@ -6,25 +6,24 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.build.buildLr1States
 import io.github.kotlinmania.lalrpop.lr1.buildLalr.buildLalrStates
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State
+import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.error.reportError as reportErrorImpl
 import io.github.kotlinmania.lalrpop.lr1.report.generateReport as generateReportImpl
-
-// Re-exports from submodules
-typealias Lr1Result = MutableList<Lr1State>
 
 fun reportError(
     out: StringBuilder,
     grammar: Grammar,
-    error: io.github.kotlinmania.lalrpop.lr1.core.Lr1TableConstructionError,
+    error: io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<TokenSet>,
 ) {
     reportErrorImpl(grammar, error) { message ->
         message.emitToCanvas(80).writeTo(out)
     }
 }
 
-fun buildStates(grammar: Grammar, start: NonterminalString): Lr1Result {
-    val lr1States: Lr1Result = if (!grammar.algorithm.lalr) {
+fun buildStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
+    val lr1States: MutableList<State<TokenSet>> = if (!grammar.algorithm.lalr) {
         buildLr1States(grammar, start)
     } else {
         buildLalrStates(grammar, start)
@@ -37,7 +36,7 @@ fun buildStates(grammar: Grammar, start: NonterminalString): Lr1Result {
 
 fun generateReport(
     out: StringBuilder,
-    lr1result: Lr1Result,
+    lr1result: MutableList<State<TokenSet>>,
 ) {
     generateReportImpl(out, lr1result)
 }
@@ -46,7 +45,7 @@ fun generateReport(
  * By packing all states which start a reduction we can generate a smaller goto table as any
  * states not starting a reduction will not need a row
  */
-private fun rewriteStateIndices(grammar: Grammar, states: MutableList<Lr1State>) {
+private fun rewriteStateIndices(grammar: Grammar, states: MutableList<State<TokenSet>>) {
     val startStates = MutableList(states.size) { false }
     for ((index, state) in states.withIndex()) {
         check(state.index.value == index)

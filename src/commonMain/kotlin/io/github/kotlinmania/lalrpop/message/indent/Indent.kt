@@ -1,4 +1,4 @@
-// port-lint: source src/message/indent.rs
+// port-lint: source message/indent.rs
 package io.github.kotlinmania.lalrpop.message.indent
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.shift

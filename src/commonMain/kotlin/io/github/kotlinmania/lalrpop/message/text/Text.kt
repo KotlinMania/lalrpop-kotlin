@@ -1,4 +1,4 @@
-// port-lint: source src/message/text.rs
+// port-lint: source message/text.rs
 package io.github.kotlinmania.lalrpop.message.text
 
 import io.github.kotlinmania.lalrpop.Style
@@ -27,7 +27,7 @@ class Text private constructor(
     }
 
     override fun intoWrapItems(wrapItems: MutableList<Content>) {
-        for (word in this.text.split(Regex("\\s+")).filter { it.isNotEmpty() }) {
+        for (word in this.text.split(Hir("\\s+")).filter { it.isNotEmpty() }) {
             wrapItems.add(Text.new(word))
         }
     }

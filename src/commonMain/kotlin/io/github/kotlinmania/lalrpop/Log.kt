@@ -1,4 +1,4 @@
-// port-lint: source src/log.rs
+// port-lint: source log.rs
 package io.github.kotlinmania.lalrpop
 
 class Log(var level: Level) {

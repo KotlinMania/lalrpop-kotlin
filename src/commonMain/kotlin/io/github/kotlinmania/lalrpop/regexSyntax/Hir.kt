@@ -4,7 +4,7 @@
 // crate is a compilation dependency of LALRPOP that has no Kotlin analog;
 // the full crate is out-of-scope for line-by-line translation, so this
 // helper stands in as an equivalent-shape library. Consumers:
-//   - src/lexer/re/mod.rs       -> uses Hir as `Regex`, plus ParserBuilder
+//   - src/lexer/re/mod.rs       -> uses Hir as `Hir`, plus ParserBuilder
 //   - src/lexer/nfa/mod.rs      -> walks HirKind, Class, ClassUnicodeRange,
 //                                  ClassBytesRange, Repetition, Literal
 package io.github.kotlinmania.lalrpop.regexSyntax
@@ -262,6 +262,6 @@ enum class LookKind {
 /**
  * Parsing error raised by [ParserBuilder.parse]. Mirrors
  * `regexSyntax::Error`. LALRPOP wraps this in a `Box<Error>` aliased as
- * `RegexError` — see `lexer/re/mod.rs`.
+ * `RegexSyntaxError` — see `lexer/re/mod.rs`.
  */
 class RegexSyntaxError(message: String, val position: Int = -1) : RuntimeException(message)

@@ -1,4 +1,4 @@
-// port-lint: source src/api/mod.rs (platform glue, wasmJs target)
+// port-lint: source api/mod.rs (platform glue, wasmJs target)
 package io.github.kotlinmania.lalrpop.api
 
 import io.github.kotlinmania.lalrpop.Session

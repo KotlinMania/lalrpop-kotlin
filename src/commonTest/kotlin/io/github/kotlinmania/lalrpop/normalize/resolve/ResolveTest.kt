@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/resolve/test.rs
+// port-lint: source normalize/resolve/test.rs
 package io.github.kotlinmania.lalrpop.normalize.resolve
 
 /*
@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 private fun checkErr(expectedErr: String, grammar: String) {
-    val expectedErrRegex = Regex(expectedErr)
+    val expectedErrRegex = Hir(expectedErr)
 
     // the string will have a `>>>` and `<<<` in it, which serve to
     // indicate the span where an error is expected.

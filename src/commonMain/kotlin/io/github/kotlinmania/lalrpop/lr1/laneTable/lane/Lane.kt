@@ -1,10 +1,10 @@
-// port-lint: source src/lr1/laneTable/lane/mod.rs
+// port-lint: source lr1/laneTable/lane/mod.rs
 //! Code to trace out a single lane, collecting information into the
 //! lane table as we go.
 package io.github.kotlinmania.lalrpop.lr1.laneTable.lane
 
 import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.set.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
@@ -14,7 +14,7 @@ import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
 import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr0Item
+import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
@@ -52,9 +52,9 @@ class LaneTracer<L : Lookahead<L>>(
         conflict: ConflictIndex,
         action: Action,
     ) {
-        // Upstream: `BTreeSet<(StateIndex, Lr0Item)>`. Wrap in
+        // Upstream: `BTreeSet<(StateIndex, Item<Nil>)>`. Wrap in
         // [ComparablePair] so the BTreeSet sees a `Comparable` key.
-        val visitedSet: Set<ComparablePair<StateIndex, Lr0Item>> = set()
+        val visitedSet: BTreeSet<ComparablePair<StateIndex, Item<Nil>>> = set()
 
         // if the conflict item is a "shift" item, then the context
         // is always the terminal to shift (and conflicts only arise
@@ -78,8 +78,8 @@ class LaneTracer<L : Lookahead<L>>(
     private fun continueTrace(
         state: StateIndex,
         conflict: ConflictIndex,
-        item: Lr0Item,
-        visited: Set<ComparablePair<StateIndex, Lr0Item>>,
+        item: Item<Nil>,
+        visited: BTreeSet<ComparablePair<StateIndex, Item<Nil>>>,
     ) {
         // debug("continueTrace:  state={:?}, index={:?}", state, item.index);
         if (!visited.add(ComparablePair(state, item))) {

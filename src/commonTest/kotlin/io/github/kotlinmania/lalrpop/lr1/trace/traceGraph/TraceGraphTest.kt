@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/trace/traceGraph/test.rs
+// port-lint: source lr1/trace/traceGraph/test.rs
 package io.github.kotlinmania.lalrpop.lr1.trace.traceGraph
 
 /*

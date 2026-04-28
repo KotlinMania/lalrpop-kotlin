@@ -1,7 +1,7 @@
-// port-lint: source src/lr1/report/mod.rs
+// port-lint: source lr1/report/mod.rs
 package io.github.kotlinmania.lalrpop.lr1.report
 
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
@@ -41,14 +41,14 @@ fun <L : Lookahead<L>> generateReport(
  */
 fun generateReport(
     out: Appendable,
-    lr1result: List<io.github.kotlinmania.lalrpop.lr1.core.Lr1State>,
+    lr1result: List<io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>>,
 ) {
     generateReport(out, LrResult.Ok(lr1result))
 }
 
 private const val INDENT_STRING: String = "    "
 
-private typealias ConflictStateMap<L> = Map<StateIndex, MutableList<Conflict<L>>>
+private typealias BTreeMap<StateIndex, MutableList<Conflict<L>>> = BTreeMap<StateIndex, MutableList<Conflict<L>>>
 
 private class ReportGenerator<W : Appendable>(
     val out: W,
@@ -89,10 +89,10 @@ private class ReportGenerator<W : Appendable>(
 
     private fun <L : Lookahead<L>> processConflicts(
         conflicts: List<Conflict<L>>,
-    ): Triple<Int, Int, ConflictStateMap<L>> {
+    ): Triple<Int, Int, BTreeMap<StateIndex, MutableList<Conflict<L>>>> {
         var sr = 0
         var rr = 0
-        val conflictMap: ConflictStateMap<L> = map()
+        val conflictMap: BTreeMap<StateIndex, MutableList<Conflict<L>>> = map()
         for (conflict in conflicts) {
             when (conflict.action) {
                 is Action.Shift -> sr += 1
@@ -105,7 +105,7 @@ private class ReportGenerator<W : Appendable>(
 
     private fun <L : Lookahead<L>> reportStates(
         states: List<State<L>>,
-        conflictMap: ConflictStateMap<L>,
+        conflictMap: BTreeMap<StateIndex, MutableList<Conflict<L>>>,
     ) {
         writeSectionHeader("State Table")
         for (state in states) {
@@ -206,7 +206,7 @@ private class ReportGenerator<W : Appendable>(
     }
 
     private fun writeShifts(
-        shifts: Map<TerminalString, StateIndex>,
+        shifts: BTreeMap<TerminalString, StateIndex>,
         maxWidth: Int,
     ) {
         for (entry in shifts) {
@@ -252,7 +252,7 @@ private class ReportGenerator<W : Appendable>(
     }
 
     private fun writeGotos(
-        gotos: Map<NonterminalString, StateIndex>,
+        gotos: BTreeMap<NonterminalString, StateIndex>,
         maxWidth: Int,
     ) {
         for (entry in gotos) {

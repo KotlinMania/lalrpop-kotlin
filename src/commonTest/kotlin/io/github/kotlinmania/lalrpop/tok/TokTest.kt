@@ -1,4 +1,4 @@
-// port-lint: source src/tok/test.rs
+// port-lint: source tok/test.rs
 package io.github.kotlinmania.lalrpop.tok
 
 import kotlin.test.Test

@@ -1,4 +1,4 @@
-// port-lint: source src/grammar/freeVariables/test.rs
+// port-lint: source grammar/freeVariables/test.rs
 package io.github.kotlinmania.lalrpop.grammar.freeVariables
 
 /*

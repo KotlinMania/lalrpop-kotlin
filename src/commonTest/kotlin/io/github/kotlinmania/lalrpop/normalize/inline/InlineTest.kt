@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/inline/test.rs
+// port-lint: source normalize/inline/test.rs
 package io.github.kotlinmania.lalrpop.normalize.inline
 
 /*

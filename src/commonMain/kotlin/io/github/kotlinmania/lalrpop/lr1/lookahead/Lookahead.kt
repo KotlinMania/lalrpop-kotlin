@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/lookahead.rs
+// port-lint: source lr1/lookahead.rs
 package io.github.kotlinmania.lalrpop.lr1.lookahead
 
 import io.github.kotlinmania.lalrpop.collections.multimap.Collection
@@ -80,7 +80,7 @@ class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
 }
 
 /**
- * I have semi-arbitrarily decided to import the term "token" to mean
+ * I have semi-arbitrarily decided to use the term "token" to mean
  * either one of the terminals of our language, or else the
  * pseudo-symbol EOF that represents "end of input".
  */

@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/first/test.rs
+// port-lint: source lr1/first/test.rs
 package io.github.kotlinmania.lalrpop.lr1.first
 
 import io.github.kotlinmania.lalrpop.Atom

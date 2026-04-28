@@ -1,9 +1,9 @@
-// port-lint: source src/lr1/error/mod.rs
+// port-lint: source lr1/error/mod.rs
 //! Error reporting. For now very stupid and simplistic.
 package io.github.kotlinmania.lalrpop.lr1.error
 
 import io.github.kotlinmania.lalrpop.Level
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.set.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
@@ -18,10 +18,10 @@ import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Conflict
 import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr0Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1Conflict
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
+import io.github.kotlinmania.lalrpop.lr1.core.Conflict<TokenSet>
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
+import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.example.Example
 import io.github.kotlinmania.lalrpop.lr1.example.ExampleStyles
@@ -40,7 +40,7 @@ import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
 
 fun reportError(
     grammar: Grammar,
-    error: Lr1TableConstructionError,
+    error: TableConstructionError<TokenSet>,
     reporter: (Message) -> Unit,
 ) {
     val cx = ErrorReportingCx.new(grammar, error.states, error.conflicts)
@@ -50,14 +50,14 @@ fun reportError(
 internal class ErrorReportingCx private constructor(
     val grammar: Grammar,
     val firstSets: FirstSets,
-    val states: List<Lr1State>,
-    val conflicts: List<Lr1Conflict>,
+    val states: List<State<TokenSet>>,
+    val conflicts: List<Conflict<TokenSet>>,
 ) {
     companion object {
         fun new(
             grammar: Grammar,
-            states: List<Lr1State>,
-            conflicts: List<Lr1Conflict>,
+            states: List<State<TokenSet>>,
+            conflicts: List<Conflict<TokenSet>>,
         ): ErrorReportingCx = ErrorReportingCx(
             grammar = grammar,
             firstSets = FirstSets.new(grammar),
@@ -68,12 +68,12 @@ internal class ErrorReportingCx private constructor(
 
     fun reportErrors(reporter: (Message) -> Unit) {
         for (conflictGroup in tokenConflicts(this.conflicts)) {
-            val classified: List<Pair<TokenConflict, ConflictClassification>> =
+            val classified: List<Pair<Conflict<Token>, ConflictClassification>> =
                 conflictGroup.map { c -> Pair(c, this.classify(c)) }
             val (naiveMutable, betterConflicts) =
                 classified.partition { it.second is ConflictClassification.Naive }
             val naiveConflicts = naiveMutable.toMutableList()
-            val conflicts: List<Pair<TokenConflict, ConflictClassification>> =
+            val conflicts: List<Pair<Conflict<Token>, ConflictClassification>> =
                 if (betterConflicts.isEmpty()) {
                     // If we have a reduce/reduce conflict, we end up with one conflict per token, but
                     // they are all the same reduce/reduce. We do not have a meaningful way to determine
@@ -95,7 +95,7 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun reportError(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         conflictClass: ConflictClassification,
     ): Message = when (conflictClass) {
         is ConflictClassification.Ambiguity ->
@@ -135,7 +135,7 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun reportErrorAmbiguityCore(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         shift: Example,
         reduce: Example,
     ): Builder<MessageBuilder> {
@@ -160,7 +160,7 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun reportErrorAmbiguity(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         shift: Example,
         reduce: Example,
     ): Message =
@@ -174,7 +174,7 @@ internal class ErrorReportingCx private constructor(
             .end()
 
     fun reportErrorPrecedence(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         shift: Example,
         reduce: Example,
         nonterminal: NonterminalString,
@@ -193,7 +193,7 @@ internal class ErrorReportingCx private constructor(
             .end()
 
     fun reportErrorNotLr1Core(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         action: Example,
         reduce: Example,
     ): Builder<MessageBuilder> {
@@ -310,7 +310,7 @@ internal class ErrorReportingCx private constructor(
             .end()
 
     fun reportErrorSuggestInline(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         shift: Example,
         reduce: Example,
         nonterminal: NonterminalString,
@@ -334,7 +334,7 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun reportErrorSuggestQuestion(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         shift: Example,
         reduce: Example,
         nonterminal: NonterminalString,
@@ -402,7 +402,7 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun reportErrorInsufficientLookahead(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         action: Example,
         reduce: Example,
     ): Message {
@@ -438,7 +438,7 @@ internal class ErrorReportingCx private constructor(
      * Naive error reporting. This is a fallback path which (I think)
      * never actually executes.
      */
-    fun reportErrorNaive(conflict: TokenConflict): Message {
+    fun reportErrorNaive(conflict: Conflict<Token>): Message {
         var builder: Builder<Builder<MessageBuilder>> = MessageBuilder.new(conflict.production.span)
             .heading()
             .text("Conflict detected")
@@ -467,7 +467,7 @@ internal class ErrorReportingCx private constructor(
         return afterWrap.end().end().end()
     }
 
-    fun classify(conflict: TokenConflict): ConflictClassification {
+    fun classify(conflict: Conflict<Token>): ConflictClassification {
         // Find examples from the conflicting action (either a shift
         // or a reduce).
         val actionExamples: MutableList<Example> = when (val action = conflict.action) {
@@ -513,7 +513,7 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun tryClassifyAmbiguity(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         actionExamples: List<Example>,
         reduceExamples: List<Example>,
     ): ConflictClassification? =
@@ -559,7 +559,7 @@ internal class ErrorReportingCx private constructor(
             .firstOrNull()
 
     fun tryClassifyQuestion(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         actionExamples: List<Example>,
         reduceExamples: List<Example>,
     ): ConflictClassification? {
@@ -602,7 +602,7 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun tryClassifyInline(
-        conflict: TokenConflict,
+        conflict: Conflict<Token>,
         actionExamples: List<Example>,
         reduceExamples: List<Example>,
     ): ConflictClassification? {
@@ -698,7 +698,7 @@ internal class ErrorReportingCx private constructor(
 
         // Make sure that all the things we are suggesting inlining
         // are distinct so that we are not introducing a cycle.
-        val duplicates: Set<NonterminalString> = set()
+        val duplicates: BTreeSet<NonterminalString> = set()
         if (reduce.reductions.subList(0, i + 1).any { r -> !duplicates.add(r.nonterminal) }) {
             return false
         }
@@ -733,7 +733,7 @@ internal class ErrorReportingCx private constructor(
             ?: false
     }
 
-    fun shiftExamples(conflict: TokenConflict): MutableList<Example> {
+    fun shiftExamples(conflict: Conflict<Token>): MutableList<Example> {
         Tls.session().log.log(Level.Verbose) { "Gathering shift examples" }
         val state = this.states[conflict.state.value]
         val conflictingItems = this.conflictingShiftItems(state, conflict)
@@ -773,13 +773,13 @@ internal class ErrorReportingCx private constructor(
     }
 
     fun conflictingShiftItems(
-        state: Lr1State,
-        conflict: TokenConflict,
-    ): Set<Lr0Item> {
+        state: State<TokenSet>,
+        conflict: Conflict<Token>,
+    ): BTreeSet<Item<Nil>> {
         // Lookahead must be a terminal, not EOF.
         // Find an item J like `Bar = ... (*) L ...`.
         val lookahead: Symbol = Symbol.Terminal(conflict.lookahead.unwrapTerminal())
-        val out: Set<Lr0Item> = set()
+        val out: BTreeSet<Item<Nil>> = set()
         for (i in state.items.vec) {
             if (!i.canShift()) continue
             if (i.production.symbols[i.index] != lookahead) continue
@@ -851,13 +851,12 @@ internal sealed class ConflictClassification {
     object Naive : ConflictClassification()
 }
 
-internal typealias TokenConflict = Conflict<Token>
 
 internal fun tokenConflicts(
     conflicts: List<Conflict<TokenSet>>,
-): List<List<TokenConflict>> =
+): List<List<Conflict<Token>>> =
     conflicts.map { conflict ->
-        val out: MutableList<TokenConflict> = mutableListOf()
+        val out: MutableList<Conflict<Token>> = mutableListOf()
         for (token in conflict.lookahead) {
             out.add(
                 Conflict(

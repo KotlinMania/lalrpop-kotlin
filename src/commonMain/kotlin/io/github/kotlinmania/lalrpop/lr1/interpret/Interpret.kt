@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/interpret.rs
+// port-lint: source lr1/interpret.rs
 /** LR(1) interpreter. Just builds up parse trees. Intended for testing. */
 package io.github.kotlinmania.lalrpop.lr1.interpret
 
@@ -10,7 +10,7 @@ import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
 
-typealias InterpretError<L> = Pair<State<L>, Token>
+typealias Pair<State<L>, Token> = Pair<State<L>, Token>
 
 /** Feed in the given tokens and then EOF, returning the final parse tree that is reduced. */
 fun <L : LookaheadInterpret<L>> interpret(

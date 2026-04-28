@@ -1,20 +1,17 @@
-// port-lint: source src/collections/map.rs
+// port-lint: source collections/map.rs
 package io.github.kotlinmania.lalrpop.collections.map
 
 import io.github.kotlinmania.btree.BTreeMap
 
-typealias Entry<K, V> = io.github.kotlinmania.btree.Entry<K, V>
-
 /**
  * In general, we avoid coding directly against any particular map,
- * but rather build against `util::Map` (and `util::map` to construct
- * an instance). This should be a deterministic map, such that two
- * runs of LALRPOP produce the same output, but otherwise it does not
- * matter much. I'd probably prefer to use `HashMap` with an
- * alternative hasher, but that not stable.
+ * but rather build against [BTreeMap][io.github.kotlinmania.btree.BTreeMap]
+ * (and [map] to construct an instance). This should be a deterministic
+ * map, such that two runs of LALRPOP produce the same output, but
+ * otherwise it does not matter much. I would probably prefer to use
+ * [HashMap][kotlin.collections.HashMap] with an alternative hasher,
+ * but that is not stable.
  */
-typealias Map<K, V> = BTreeMap<K, V>
-
-fun <K : Comparable<K>, V> map(): Map<K, V> {
-    return BTreeMap()
+fun <K : Comparable<K>, V> map(): BTreeMap<K, V> {
+    return BTreeMap<K, V>()
 }

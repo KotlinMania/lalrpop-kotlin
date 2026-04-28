@@ -1,4 +1,4 @@
-// port-lint: source src/collections/multimap.rs
+// port-lint: source collections/multimap.rs
 package io.github.kotlinmania.lalrpop.collections.multimap
 
 import kotlin.test.Test

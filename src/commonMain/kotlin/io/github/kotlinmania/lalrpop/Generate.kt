@@ -1,4 +1,4 @@
-// port-lint: source src/generate.rs
+// port-lint: source generate.rs
 /** Generate valid parse trees. */
 package io.github.kotlinmania.lalrpop
 

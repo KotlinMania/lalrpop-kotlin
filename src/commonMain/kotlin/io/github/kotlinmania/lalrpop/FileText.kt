@@ -1,4 +1,4 @@
-// port-lint: source src/fileText.rs
+// port-lint: source fileText.rs
 package io.github.kotlinmania.lalrpop
 
 /*

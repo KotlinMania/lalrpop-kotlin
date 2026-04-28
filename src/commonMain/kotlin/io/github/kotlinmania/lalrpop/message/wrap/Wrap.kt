@@ -1,4 +1,4 @@
-// port-lint: source src/message/wrap.rs
+// port-lint: source message/wrap.rs
 package io.github.kotlinmania.lalrpop.message.wrap
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.message.Content

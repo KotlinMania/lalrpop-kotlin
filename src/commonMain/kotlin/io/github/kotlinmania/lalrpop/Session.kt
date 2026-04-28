@@ -1,4 +1,4 @@
-// port-lint: source src/session.rs
+// port-lint: source session.rs
 /**
  * Internal configuration and session-specific settings. This is similar
  * to `configuration::Configuration`, but it is not exported outside the
@@ -15,7 +15,7 @@ enum class ColorConfig {
     /** Use ANSI colors. */
     Yes,
 
-    /** Do NOT import ANSI colors. */
+    /** Do NOT use ANSI colors. */
     No,
 
     /** Use them if we detect a TTY output (default). */
@@ -30,7 +30,7 @@ enum class ColorConfig {
  * Various options to control debug output. Although this struct is
  * technically part of LALRPOP exported interface, it is not
  * considered part of the semver guarantees as end-users are not
- * expected to import it.
+ * expected to use it.
  */
 data class Session(
     var log: Log,
@@ -71,7 +71,7 @@ data class Session(
      */
     var macroRecursionLimit: Int,
 
-    // Styles to import when formatting error reports
+    // Styles to use when formatting error reports
     /** Applied to the heading in a message. */
     var heading: Style,
 
@@ -96,7 +96,7 @@ data class Session(
     /** Applied to nonterminal symbols, in addition to the above styles */
     var nonterminalSymbol: Style,
 
-    /** Style to import when printing "Hint:" */
+    /** Style to use when printing "Hint:" */
     var hintText: Style,
 
     /** Unit testing (lalrpop-test) configuration */
@@ -130,7 +130,7 @@ data class Session(
             features = null,
         )
 
-        /** A session suitable for import in testing. */
+        /** A session suitable for use in testing. */
         fun test(): Session = Session(
             log = Log(Level.Debug),
             inDir = null,

@@ -1,4 +1,4 @@
-// port-lint: source src/lexer/dfa/interpret.rs
+// port-lint: source lexer/dfa/interpret.rs
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
 fun interpret(dfa: Dfa, input: String): Pair<NfaIndex, String>? {

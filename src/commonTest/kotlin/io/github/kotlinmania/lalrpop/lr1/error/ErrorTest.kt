@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/error/test.rs
+// port-lint: source lr1/error/test.rs
 package io.github.kotlinmania.lalrpop.lr1.error
 
 /*
@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
 import io.github.kotlinmania.lalrpop.message.AsciiCanvas
 import io.github.kotlinmania.lalrpop.normalizedGrammar
@@ -34,12 +34,12 @@ private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
 private fun buildStatesError(
     grammar: io.github.kotlinmania.lalrpop.grammar.repr.Grammar,
     start: NonterminalString,
-): Lr1TableConstructionError =
+): TableConstructionError<TokenSet> =
     try {
         buildStates(grammar, start)
         error("expected build_states to fail")
     } catch (e: TableConstructionErrorException) {
-        e.inner as Lr1TableConstructionError
+        e.inner as TableConstructionError<TokenSet>
     }
 
 class ErrorTest {

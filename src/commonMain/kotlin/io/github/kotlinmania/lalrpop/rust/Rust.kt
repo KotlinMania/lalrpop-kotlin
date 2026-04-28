@@ -1,4 +1,4 @@
-// port-lint: source src/rust/mod.rs
+// port-lint: source rust/mod.rs
 //! Simple Rust AST. This is what the various code generators create,
 //! which then gets serialized.
 package io.github.kotlinmania.lalrpop.rust

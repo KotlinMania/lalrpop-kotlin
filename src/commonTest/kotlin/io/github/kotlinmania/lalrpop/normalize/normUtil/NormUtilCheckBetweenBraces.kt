@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/normUtil.rs
+// port-lint: source normalize/normUtil.rs
 package io.github.kotlinmania.lalrpop.normalize.normUtil
 
 import kotlin.test.Test

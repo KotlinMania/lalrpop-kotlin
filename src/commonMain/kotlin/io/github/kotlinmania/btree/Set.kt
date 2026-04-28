@@ -578,7 +578,7 @@ class BTreeSet<T : Comparable<T>> : MutableSet<T> {
      * Created by the upstream `intoIter`; in Kotlin spell as a manual call.
      */
     class IntoIter<T> internal constructor(
-        internal val inner: io.github.kotlinmania.btree.IntoIter<T, SetValZst>,
+        internal val inner: io.github.kotlinmania.btree.Iterator<Pair<T, SetValZst>>,
     ) : Iterator<T> {
         override fun hasNext(): Boolean = inner.hasNext()
         override fun next(): T = inner.next().first

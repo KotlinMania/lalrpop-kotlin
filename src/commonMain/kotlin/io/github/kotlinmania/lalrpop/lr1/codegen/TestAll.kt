@@ -1,8 +1,8 @@
-// port-lint: source src/lr1/codegen/testAll.rs
+// port-lint: source lr1/codegen/testAll.rs
 //! Test module for comparing code generation strategies
 //!
 //! The TestAll code generation strategy uses both parse tables and recursive ascent, and then
-//! compares the parsing return values to ensure they are both identical.  This is for import in the
+//! compares the parsing return values to ensure they are both identical.  This is for use in the
 //! `lalrpop-test` test suite and not intended for external consumption.
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
@@ -10,7 +10,7 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
@@ -26,7 +26,7 @@ object TestAll {
         grammar: Grammar,
         userStartSymbol: NonterminalString,
         startSymbol: NonterminalString,
-        states: List<Lr1State>,
+        states: List<State<TokenSet>>,
         out: RustWrite,
     ) {
         compileTestAll(grammar, userStartSymbol, startSymbol, states, out)
@@ -37,7 +37,7 @@ internal fun compileTestAll(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
-    states: List<Lr1State>,
+    states: List<State<TokenSet>>,
     out: RustWrite,
 ) {
     val ascent = newTestAll(grammar, userStartSymbol, startSymbol, states, out)
@@ -48,7 +48,7 @@ private fun newTestAll(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
-    states: List<Lr1State>,
+    states: List<State<TokenSet>>,
     out: RustWrite,
 ): CodeGenerator<TestAll> = CodeGenerator.new(
     grammar,

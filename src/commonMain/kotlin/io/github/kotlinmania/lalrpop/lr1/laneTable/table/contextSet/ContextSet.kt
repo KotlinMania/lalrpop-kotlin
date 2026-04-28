@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/laneTable/table/contextSet/mod.rs
+// port-lint: source lr1/laneTable/table/contextSet/mod.rs
 //! A key part of the lane-table algorithm is the idea of a CONTEXT
 //! SET (my name, the paper has no name for this). Basically it
 //! represents the LR1 context under which a given conflicting action
@@ -34,12 +34,12 @@
 //! lookahead `y`.
 package io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet
 
-import io.github.kotlinmania.lalrpop.collections.map.Map
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.ConflictIndex
 
 class ContextSet(
@@ -88,9 +88,9 @@ class ContextSet(
         return values[conflict.index].unionWith(set)
     }
 
-    fun apply(state: Lr1State, actions: Set<Action>) {
+    fun apply(state: State<TokenSet>, actions: BTreeSet<Action>) {
         // create a map from each action to its lookahead
-        val lookaheads: Map<Action, TokenSet> = map()
+        val lookaheads: BTreeMap<Action, TokenSet> = map()
         val actionsIter = actions.iterator()
         var idx = 0
         while (actionsIter.hasNext() && idx < values.size) {
@@ -111,9 +111,8 @@ object OverlappingLookaheadException : RuntimeException() {
 }
 
 /**
- * Marker type matching the upstream Rust `class OverlappingLookahead;` --
+ * Marker type matching the upstream Rust `class OverlappingLookaheadException;` --
  * a unit struct used as an `Err` payload. The Kotlin port models the
  * error as the [OverlappingLookaheadException] singleton; this
  * typealias preserves the original Rust name for parity tooling.
  */
-typealias OverlappingLookahead = OverlappingLookaheadException

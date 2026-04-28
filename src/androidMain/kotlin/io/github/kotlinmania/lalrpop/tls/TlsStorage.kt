@@ -1,4 +1,4 @@
-// port-lint: source src/tls/mod.rs (threadLocal! definition, JVM target)
+// port-lint: source tls/mod.rs (threadLocal! definition, JVM target)
 package io.github.kotlinmania.lalrpop.tls
 
 /**

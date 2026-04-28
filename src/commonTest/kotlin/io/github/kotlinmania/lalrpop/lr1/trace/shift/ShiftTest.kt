@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/trace/shift/test.rs
+// port-lint: source lr1/trace/shift/test.rs
 package io.github.kotlinmania.lalrpop.lr1.trace.shift
 
 /*
@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
@@ -50,12 +50,12 @@ pub Ty: () = {
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val firstSets = FirstSets.new(grammar)
-                val err: Lr1TableConstructionError = try {
+                val err: TableConstructionError<TokenSet> = try {
                     buildStates(grammar, nt("Ty"))
                     error("expected build_states to fail")
                 } catch (e: TableConstructionErrorException) {
                     @Suppress("UNCHECKED_CAST")
-                    e.inner as Lr1TableConstructionError
+                    e.inner as TableConstructionError<TokenSet>
                 }
                 val conflict = err.conflicts[0]
                 println("conflict=$conflict")

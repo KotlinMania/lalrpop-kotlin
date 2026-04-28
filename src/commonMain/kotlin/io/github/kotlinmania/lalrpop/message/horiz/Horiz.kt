@@ -1,4 +1,4 @@
-// port-lint: source src/message/horiz.rs
+// port-lint: source message/horiz.rs
 package io.github.kotlinmania.lalrpop.message.horiz
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.message.Content

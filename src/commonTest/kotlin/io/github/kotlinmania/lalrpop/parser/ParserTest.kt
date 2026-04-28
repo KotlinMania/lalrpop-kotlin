@@ -1,4 +1,4 @@
-// port-lint: source src/parser/test.rs
+// port-lint: source parser/test.rs
 package io.github.kotlinmania.lalrpop.parser
 
 import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
@@ -17,7 +17,7 @@ class ParserTest {
             """grammar; match { "abc" }""",                 // Single token
             """grammar; match { "abc" => "QUOTED" }""",     // Single token with quoted alias
             """grammar; match { "abc" => UNQUOTED }""",     // Single token with unquoted alias
-            """grammar; match { r"(?i)begin" => BEGIN }""", // Regex
+            """grammar; match { r"(?i)begin" => BEGIN }""", // Hir
             """grammar; match { "abc", "def" => "DEF", _ } else { "foo" => BAR, r"(?i)begin" => BEGIN, _ }""", // Complex
             """grammar; match { "abc" } else { "def" } else { _ }""", // Multi-chain
         )

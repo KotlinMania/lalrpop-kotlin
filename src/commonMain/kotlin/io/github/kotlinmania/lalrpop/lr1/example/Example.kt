@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/example/mod.rs
+// port-lint: source lr1/example/mod.rs
 //! Code to compute example inputs given a backtrace.
 package io.github.kotlinmania.lalrpop.lr1.example
 

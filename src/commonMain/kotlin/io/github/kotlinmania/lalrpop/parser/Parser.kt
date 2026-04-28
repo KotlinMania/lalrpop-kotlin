@@ -1,4 +1,4 @@
-// port-lint: source src/parser/mod.rs
+// port-lint: source parser/mod.rs
 package io.github.kotlinmania.lalrpop.parser
 
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
@@ -38,7 +38,6 @@ sealed class Top {
 }
 
 /** `public type ParseError<'input> = lalrpopUtil::ParseError<usize, tok::Tok<'input>, tok::Error>;` */
-typealias LrParseError = ParseError<Int, Tok, TokError>
 
 /**
  * Builds the iterator of `Result<(Int, Tok, Int)>` that the upstream `parser!` macro

@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/codegen/base.rs
+// port-lint: source lr1/codegen/base.rs
 //! Base helper routines for a code generator.
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
@@ -12,11 +12,11 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.Types
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 import io.github.kotlinmania.lalrpop.tls.Tls
-import io.github.kotlinmania.lalrpop.collections.set.Set
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
 
 /**
@@ -41,7 +41,7 @@ class CodeGenerator<C>(
     val startSymbol: NonterminalString,
 
     /** the vector of states */
-    val states: List<Lr1State>,
+    val states: List<State<TokenSet>>,
 
     /** where we write output */
     val out: RustWrite,
@@ -62,7 +62,7 @@ class CodeGenerator<C>(
             grammar: Grammar,
             userStartSymbol: NonterminalString,
             startSymbol: NonterminalString,
-            states: List<Lr1State>,
+            states: List<State<TokenSet>>,
             out: RustWrite,
             repeatable: Boolean,
             actionModule: String,
@@ -123,7 +123,7 @@ class CodeGenerator<C>(
             grammar: Grammar,
             tys: Iterable<TypeRepr>,
         ): Pair<List<TypeParameter>, List<WhereClause>> {
-            val referencedTyParams: Set<TypeParameter> = tys
+            val referencedTyParams: BTreeSet<TypeParameter> = tys
                 .asSequence()
                 .flatMap { t -> t.freeVariables(grammar.typeParameters).asSequence() }
                 .toCollection(set())

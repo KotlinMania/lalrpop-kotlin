@@ -1,4 +1,4 @@
-// port-lint: source src/normalize/macroExpand/test.rs
+// port-lint: source normalize/macroExpand/test.rs
 package io.github.kotlinmania.lalrpop.normalize.macroExpand
 
 /*

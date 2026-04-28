@@ -1,4 +1,4 @@
-// port-lint: source src/lexer/internToken/mod.rs
+// port-lint: source lexer/internToken/mod.rs
 //! Generates an iterator type `Matcher` that emits a state-machine-based
 //! tokenizer.
 //!
@@ -45,7 +45,7 @@ fun compileInternToken(
         .map { matchEntry ->
             val regex = when (val literal = matchEntry.matchLiteral) {
                 is TerminalLiteral.Quoted -> parseLiteral(literal.atom.toString())
-                is TerminalLiteral.Regex -> parseRegex(literal.atom.toString()).getOrThrow()
+                is TerminalLiteral.Hir -> parseRegex(literal.atom.toString()).getOrThrow()
             }
             val skip = when (matchEntry.userName) {
                 is MatchMapping.Terminal -> false

@@ -1,9 +1,9 @@
-// port-lint: source src/lr1/core/mod.rs
+// port-lint: source lr1/core/mod.rs
 //! Core LR(1) types.
 package io.github.kotlinmania.lalrpop.lr1.core
 
 import io.github.kotlinmania.lalrpop.Prefix
-import io.github.kotlinmania.lalrpop.collections.map.Map
+import io.github.kotlinmania.btree.BTreeMap
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
@@ -45,7 +45,7 @@ data class Item<L : Lookahead<L>>(
         }
     }
 
-    fun toLr0(): Lr0Item = Item(
+    fun toLr0(): Item<Nil> = Item(
         production = production,
         index = index,
         lookahead = Nil(),
@@ -99,7 +99,7 @@ data class Item<L : Lookahead<L>>(
     }
 
     companion object {
-        fun lr0(production: Production, index: Int): Lr0Item = Item(
+        fun lr0(production: Production, index: Int): Item<Nil> = Item(
             production = production,
             index = index,
             lookahead = Nil(),
@@ -107,9 +107,7 @@ data class Item<L : Lookahead<L>>(
     }
 }
 
-typealias Lr0Item = Item<Nil>
 
-typealias Lr1Item = Item<TokenSet>
 
 data class StateIndex(var value: Int) : Comparable<StateIndex> {
     override fun toString(): String = "S$value"
@@ -121,15 +119,13 @@ data class Items<L : Lookahead<L>>(
     val vec: MutableList<Item<L>>,
 )
 
-typealias Lr0Items = Items<Nil>
-typealias Lr1Items = Items<TokenSet>
 
 data class State<L : Lookahead<L>>(
     val index: StateIndex,
     val items: Items<L>,
-    val shifts: Map<TerminalString, StateIndex> = map(),
+    val shifts: BTreeMap<TerminalString, StateIndex> = map(),
     val reductions: MutableList<Pair<L, Production>> = mutableListOf(),
-    val gotos: Map<NonterminalString, StateIndex> = map(),
+    val gotos: BTreeMap<NonterminalString, StateIndex> = map(),
 ) {
     /**
      * Returns the set of symbols which must appear on the stack to
@@ -208,8 +204,6 @@ private fun <T> Iterable<T>.dedup(): List<T> {
     return out
 }
 
-typealias Lr0State = State<Nil>
-typealias Lr1State = State<TokenSet>
 
 sealed class Action : Comparable<Action> {
     data class Shift(val terminal: TerminalString, val state: StateIndex) : Action()
@@ -246,8 +240,6 @@ data class Conflict<L>(
     val action: Action,
 )
 
-typealias Lr0Conflict = Conflict<Nil>
-typealias Lr1Conflict = Conflict<TokenSet>
 
 data class TableConstructionError<L : Lookahead<L>>(
     // LR(1) state set, possibly incomplete if construction is
@@ -257,9 +249,7 @@ data class TableConstructionError<L : Lookahead<L>>(
     val conflicts: MutableList<Conflict<L>>,
 )
 
-typealias Lr0TableConstructionError = TableConstructionError<Nil>
-typealias Lr1TableConstructionError = TableConstructionError<TokenSet>
-// LrResult and Lr1Result exist in Rust as Result type aliases.
+// LrResult and MutableList<State<TokenSet>> exist in Rust as Result type aliases.
 // In Kotlin they would be sealed sum types; they are elided here
 // in favor of throwing TableConstructionError directly at the call site.
 

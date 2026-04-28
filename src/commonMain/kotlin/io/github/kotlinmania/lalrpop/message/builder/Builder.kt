@@ -1,4 +1,4 @@
-// port-lint: source src/message/builder.rs
+// port-lint: source message/builder.rs
 package io.github.kotlinmania.lalrpop.message.builder
 
 import io.github.kotlinmania.lalrpop.Style
@@ -49,9 +49,8 @@ class MessageBuilder(
 }
 
 class HeadingCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
-    // Mirrors the `type End = MessageBuilder;` line in the Rust
+    // Mirrors the `type MessageBuilder = MessageBuilder;` line in the Rust
     // `implementation Character for HeadingCharacter` block (builder.rs:52).
-    internal typealias End = MessageBuilder
 
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setHeading(Vert.new(items, 1))
@@ -60,9 +59,8 @@ class HeadingCharacter(internal val message: MessageBuilder) : Character<Message
 }
 
 class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
-    // Mirrors the `type End = MessageBuilder;` line in the Rust
+    // Mirrors the `type MessageBuilder = MessageBuilder;` line in the Rust
     // `implementation Character for BodyCharacter` block (builder.rs:65).
-    internal typealias End = MessageBuilder
 
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setBody(Vert.new(items, 2))
@@ -77,11 +75,10 @@ class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBui
 // adjacent to one another horizontally (no spaces in between).
 
 class InlineBuilder : Character<Content> {
-    // Mirrors the `type End = Box<dyn Content>;` line in the Rust
+    // Mirrors the `type Content = Box<dyn Content>;` line in the Rust
     // `implementation Character for InlineBuilder` block (builder.rs:93). Kotlin
     // reifies the trait object as the bare interface — `Content` here
     // is the equivalent of the upstream `Box<dyn Content>`.
-    internal typealias End = Content
 
     companion object {
         fun new(): Builder<Content> = Builder.new(InlineBuilder())
@@ -225,7 +222,6 @@ class HorizCharacter<C>(
     // parameter, so the binding here uses a star-projection — the upstream
     // semantic shape (`Builder<C>`) is preserved on the supertype declaration
     // above, and the typealias exists to surface the symbol for parity checks.
-    internal typealias End = Builder<*>
 
     override fun end(items: MutableList<Content>): Builder<C> =
         this.base.push(Horiz.new(items, this.separate))
@@ -237,7 +233,6 @@ class VertCharacter<C>(
 ) : Character<Builder<C>> {
     // Mirrors the `type End = Builder<C>;` line in the Rust
     // `implementation<C: Character> Character for VertCharacter<C>` block (builder.rs:276).
-    internal typealias End = Builder<*>
 
     override fun end(items: MutableList<Content>): Builder<C> =
         this.base.push(Vert.new(items, this.separate))
@@ -248,7 +243,6 @@ class WrapCharacter<C>(
 ) : Character<Builder<C>> {
     // Mirrors the `type End = Builder<C>;` line in the Rust
     // `implementation<C: Character> Character for WrapCharacter<C>` block (builder.rs:290).
-    internal typealias End = Builder<*>
 
     override fun end(items: MutableList<Content>): Builder<C> =
         this.base.push(Wrap.new(items))

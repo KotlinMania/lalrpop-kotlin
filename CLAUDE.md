@@ -74,8 +74,9 @@ See [AGENTS.md](./AGENTS.md) for complete porting patterns.
 1. **Semantic parity** - Port behavior, not just syntax
 2. **Research first** - Don't guess at Rust semantics
 3. **Line-by-line** - Maintain file structure
-4. **Documentation** - Translate all doc comments to KDoc
+4. **Documentation** - Translate all doc comments to KDoc, **including any Rust code or path syntax that appears inside the comments**. A comment that mentions `crate::util::Map`, `Vec<T>`, `Option<&str>`, `Self::foo()`, `cfg(test)`, `#[derive(...)]`, lifetimes like `'a`, or any other Rust syntax must be rewritten to its Kotlin equivalent (e.g. `BTreeMap`, `List<T>`, `String?`, `foo()`, KDoc links like `[BTreeMap]`). The "no Rust in comments" rule covers prose **and** code references — `ast_distance`'s cheat detector flags Rust syntax inside Kotlin comments and zeroes the file's score. Translate the code-in-comment, do not delete the comment to silence the detector.
 5. **No oversimplification** - Replicate grammar-language semantics, LR(1) table construction, macro expansion, and code generation faithfully
+6. **No typealiases** - The project forbids typealias re-exports (root-package and otherwise). When upstream Rust uses `pub type Foo = Bar;`, do not write `typealias Foo = Bar` in Kotlin. Update callers to use `Bar` directly. The factory functions Rust ships alongside (e.g. `pub fn map() -> Map<K, V> { ... }`) stay as ordinary Kotlin functions returning the underlying concrete type (e.g. `fun map(): BTreeMap<K, V>`).
 
 ## STRICT RULES — Translation, Not Engineering
 

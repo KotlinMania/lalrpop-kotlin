@@ -1,4 +1,4 @@
-// port-lint: source src/lr1/codegen/parseTable.rs
+// port-lint: source lr1/codegen/parseTable.rs
 //! A compiler from an LR(1) table to a traditional table driven parser.
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
@@ -16,7 +16,7 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
 import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop.lr1.core.Lr1State
+import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 import io.github.kotlinmania.lalrpop.tls.Tls
@@ -28,7 +28,7 @@ object ParseTable {
         grammar: Grammar,
         userStartSymbol: NonterminalString,
         startSymbol: NonterminalString,
-        states: List<Lr1State>,
+        states: List<State<TokenSet>>,
         actionModule: String,
         out: RustWrite,
     ) {
@@ -40,7 +40,7 @@ fun compileParseTable(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
-    states: List<Lr1State>,
+    states: List<State<TokenSet>>,
     actionModule: String,
     out: RustWrite,
 ) {
@@ -103,7 +103,7 @@ private fun newTableDriven(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
-    states: List<Lr1State>,
+    states: List<State<TokenSet>>,
     actionModule: String,
     out: RustWrite,
 ): CodeGenerator<TableDriven> {
@@ -118,7 +118,7 @@ private fun newTableDriven(
 
     val machine = MachineParameters.new(grammar)
 
-    // Assign each production a unique index to import as the values for reduce
+    // Assign each production a unique index to use as the values for reduce
     // actions in the ACTION and EOF_ACTION tables.
     val reduceIndices: MutableMap<Production, Int> = map()
     var idx = 0
@@ -618,7 +618,7 @@ private fun <K, K2, T> emitGotoMatch(
 
 private fun writeReduction(
     custom: TableDriven,
-    state: Lr1State,
+    state: State<TokenSet>,
     token: Token,
 ): Pair<Int, Comment<Token>> {
     val reduction = state
@@ -1228,7 +1228,7 @@ private fun CodeGenerator<TableDriven>.spannedSymbolType(): String {
     return "($locType,${this.symbolType()},$locType)"
 }
 
-/** Emit the array of terminal tokens for import in generating error output */
+/** Emit the array of terminal tokens for use in generating error output */
 private fun CodeGenerator<TableDriven>.emitTerminalReprList() {
     rust(this.out, "#[allow(clippy::needless_raw_string_hashes)]")
     rust(this.out, "const ${this.prefix}TERMINAL: &[&str] = &[")
