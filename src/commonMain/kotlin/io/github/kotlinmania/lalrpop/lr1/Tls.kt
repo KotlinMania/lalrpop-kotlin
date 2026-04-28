@@ -15,6 +15,9 @@ private object TERMINALS {
 private class RefCell<T>(private var value: T) {
     fun borrow(): T = value
     fun borrowMut(): RefCell<T> = this
+    fun set(other: T) {
+        value = other
+    }
     fun replace(other: T): T {
         val old = value
         value = other
@@ -29,7 +32,7 @@ class Lr1Tls private constructor(
 ) : AutoCloseable {
 
     fun drop() {
-        TERMINALS.with { s -> s.borrowMut().replace(this.oldValue.take()) }
+        TERMINALS.with { s -> s.borrowMut().set(this.oldValue.take()) }
     }
 
     override fun close() = drop()

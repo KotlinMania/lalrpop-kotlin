@@ -6,6 +6,30 @@
   "agents_md": "",
   "tasks": [
     {
+      "source_path": "collections/set.rs",
+      "source_qualified": "collections.set",
+      "target_path": "collections/Set.kt",
+      "dependent_count": 6,
+      "status": "completed",
+      "assigned_to": "8",
+      "assigned_at": "2026-04-28T08:08:50",
+      "completed_at": "2026-04-28T08:10:11"
+    },
+    {
+      "source_path": "lr1/interpret.rs",
+      "source_qualified": "lr1.interpret",
+      "target_path": "lr1/Interpret.kt",
+      "dependent_count": 4,
+      "status": "pending"
+    },
+    {
+      "source_path": "test_util.rs",
+      "source_qualified": "test_util",
+      "target_path": "TestUtil.kt",
+      "dependent_count": 2,
+      "status": "pending"
+    },
+    {
       "source_path": "file_text.rs",
       "source_qualified": "file_text",
       "target_path": "FileText.kt",
@@ -307,28 +331,12 @@
       "status": "pending"
     },
     {
-      "source_path": "collections/set.rs",
-      "source_qualified": "collections.set",
-      "target_path": "collections/Set.kt",
-      "dependent_count": 6,
-      "status": "completed",
-      "completed_at": "2026-04-28T06:08:10"
-    },
-    {
-      "source_path": "lr1/interpret.rs",
-      "source_qualified": "lr1.interpret",
-      "target_path": "lr1/Interpret.kt",
-      "dependent_count": 4,
-      "status": "completed",
-      "completed_at": "2026-04-28T06:09:46"
-    },
-    {
       "source_path": "lr1/tls.rs",
       "source_qualified": "lr1.tls",
       "target_path": "lr1/Tls.kt",
       "dependent_count": 16,
       "status": "completed",
-      "completed_at": "2026-04-28T06:04:19"
+      "completed_at": "2026-04-28T08:06:06"
     },
     {
       "source_path": "session.rs",
@@ -336,15 +344,7 @@
       "target_path": "Session.kt",
       "dependent_count": 8,
       "status": "completed",
-      "completed_at": "2026-04-28T06:06:15"
-    },
-    {
-      "source_path": "test_util.rs",
-      "source_qualified": "test_util",
-      "target_path": "TestUtil.kt",
-      "dependent_count": 2,
-      "status": "completed",
-      "completed_at": "2026-04-28T06:14:36"
+      "completed_at": "2026-04-28T08:07:31"
     }
   ]
 }
