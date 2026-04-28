@@ -8763,9 +8763,9 @@ internal fun action79(
 ): io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
 {
     return io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef.Ref(
-        lifetime = l.second,
-        mutable = m.second != null,
-        referent = t.second,
+        l.second,
+        m.second != null,
+        t.second,
     )
 }
 
