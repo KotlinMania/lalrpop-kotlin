@@ -32,7 +32,7 @@ import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
 import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeAction
 import io.github.kotlinmania.lalrpop.normalize.returnErr
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
+import io.github.kotlinmania.lalrpop.lr1.Token
 
 fun inferTypes(grammar: Grammar): Types {
     val inferencer = TypeInferencer.new(grammar)

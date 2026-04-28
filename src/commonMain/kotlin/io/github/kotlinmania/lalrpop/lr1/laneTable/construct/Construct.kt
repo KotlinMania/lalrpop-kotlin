@@ -1,15 +1,15 @@
-// port-lint: source lr1/laneTable/construct/mod.rs
+// port-lint: source lr1/lane_table/construct/mod.rs
 //! Generate rust parser code using the lane table algorithm
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
-import io.github.kotlinmania.btree.BTreeMap
-import io.github.kotlinmania.btree.BTreeSet
+import io.github.kotlinmania.lalrpop.collections.Map
+import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.stateGraph.StateGraph
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.StateGraph
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.build.buildLr0States
 import io.github.kotlinmania.lalrpop.lr1.core.Action
@@ -67,7 +67,7 @@ class LaneTableConstruct(
             // algorithm.
             buildLr0States(grammar, startNt)
         } catch (e: TableConstructionErrorException) {
-            (e.inner as TableConstructionError<io.github.kotlinmania.lalrpop.lr1.lookahead.Nil>).states
+            (e.inner as TableConstructionError<io.github.kotlinmania.lalrpop.lr1.Nil>).states
         }
 
         // Convert the LR(0) states into LR(0-1) states.
@@ -133,7 +133,7 @@ class LaneTableConstruct(
         states: MutableList<State<TokenSet>>,
         inconsistentState: StateIndex,
     ) {
-        var actions: BTreeSet<Action> = conflictingActions(states[inconsistentState.value])
+        var actions: Set<Action> = conflictingActions(states[inconsistentState.value])
         if (actions.isEmpty()) {
             // This can mean one of two things: only shifts, or a
             // single reduction. We have to be careful about states
@@ -145,7 +145,7 @@ class LaneTableConstruct(
             //
             // In particular, if there is too much lookahead, we will
             // reduce even when it is inappropriate to do so.
-            val collected: BTreeSet<Action> = io.github.kotlinmania.lalrpop.collections.set.set()
+            val collected: Set<Action> = io.github.kotlinmania.lalrpop.collections.set()
             for ((_, prod) in states[inconsistentState.value].reductions) {
                 collected.add(Action.Reduce(prod))
             }
@@ -169,7 +169,7 @@ class LaneTableConstruct(
         //
         // (To handle unification, we also map each state to a
         // `StateSet` that is its entry in the `ena` table.)
-        val rows: BTreeMap<StateIndex, ContextSet> = try {
+        val rows: Map<StateIndex, ContextSet> = try {
             table.rows()
         } catch (e: RowConflictException) {
             throw UnresolvedInconsistencyException(e.state)
@@ -178,7 +178,7 @@ class LaneTableConstruct(
             keyFromIndex = { idx -> StateSet.fromIndex(idx) },
             unifyValues = { a, b -> StateSet.unifyValues(a, b) },
         )
-        val stateSets: BTreeMap<StateIndex, StateSet> = map()
+        val stateSets: Map<StateIndex, StateSet> = map()
         for ((stateIndex, contextSet) in rows) {
             val stateSet = unify.newKey(contextSet.clone())
             stateSets[stateIndex] = stateSet
@@ -206,7 +206,7 @@ class LaneTableConstruct(
     private fun attemptLalr(
         state: State<TokenSet>,
         table: LaneTable,
-        actions: BTreeSet<Action>,
+        actions: Set<Action>,
     ): Boolean =
         try {
             val columns = table.columns()
@@ -219,7 +219,7 @@ class LaneTableConstruct(
     private fun buildLaneTable(
         states: List<State<TokenSet>>,
         inconsistentState: StateIndex,
-        actions: BTreeSet<Action>,
+        actions: Set<Action>,
     ): LaneTable {
         val stateGraph = StateGraph.new(states)
         val tracer = LaneTracer.new<TokenSet>(

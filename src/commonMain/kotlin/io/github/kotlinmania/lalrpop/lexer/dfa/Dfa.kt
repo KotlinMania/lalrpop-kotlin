@@ -5,8 +5,8 @@ package io.github.kotlinmania.lalrpop.lexer.dfa
 
 import io.github.kotlinmania.lalrpop.Kernel
 import io.github.kotlinmania.lalrpop.KernelSet
-import io.github.kotlinmania.btree.BTreeSet
-import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.collections.Set
+import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.lexer.nfa.Nfa
 import io.github.kotlinmania.lalrpop.lexer.nfa.NfaConstructionError
 import io.github.kotlinmania.lalrpop.lexer.nfa.NfaConstructionException
@@ -80,7 +80,7 @@ private class DfaBuilder(
 
             // collect all the specific tests we expect from any of
             // the items in this state
-            val tests: BTreeSet<Test> = set()
+            val tests: Set<Test> = set()
             for (item in itemSet.items) {
                 for (edge in nfa(item).testEdges(item.nfaState)) {
                     tests.add(edge.label)

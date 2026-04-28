@@ -1,10 +1,10 @@
-// port-lint: source lr1/codegen/parseTable.rs
+// port-lint: source lr1/codegen/parse_table.rs
 //! A compiler from an LR(1) table to a traditional table driven parser.
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.map.map
-import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
@@ -15,7 +15,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
+import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust

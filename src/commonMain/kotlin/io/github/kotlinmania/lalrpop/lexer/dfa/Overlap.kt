@@ -25,10 +25,10 @@
  */
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
-import io.github.kotlinmania.btree.BTreeSet
+import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.lexer.nfa.Test
 
-fun removeOverlap(ranges: BTreeSet<Test>): List<Test> {
+fun removeOverlap(ranges: Set<Test>): List<Test> {
     // We will do this in the dumbest possible way to start. :)
     // Maintain a result vector that contains disjoint ranges.  To
     // insert a new range, we walk over this vector and split things

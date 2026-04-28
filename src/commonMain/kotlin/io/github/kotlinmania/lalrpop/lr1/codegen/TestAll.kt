@@ -1,4 +1,4 @@
-// port-lint: source lr1/codegen/testAll.rs
+// port-lint: source lr1/codegen/test_all.rs
 //! Test module for comparing code generation strategies
 //!
 //! The TestAll code generation strategy uses both parse tables and recursive ascent, and then

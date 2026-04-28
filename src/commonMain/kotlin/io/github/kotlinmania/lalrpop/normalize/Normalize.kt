@@ -18,7 +18,7 @@ import io.github.kotlinmania.lalrpop.normalize.prevalidate.validate as prevalida
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 import io.github.kotlinmania.lalrpop.normalize.tokenCheck.validate as tokenCheckValidate
 import io.github.kotlinmania.lalrpop.normalize.tyinfer.inferTypes
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
+import io.github.kotlinmania.lalrpop.lr1.Token
 
 
 data class NormError(

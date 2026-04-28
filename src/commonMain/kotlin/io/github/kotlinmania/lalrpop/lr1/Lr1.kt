@@ -8,7 +8,7 @@ import io.github.kotlinmania.lalrpop.lr1.build.buildLr1States
 import io.github.kotlinmania.lalrpop.lr1.buildLalr.buildLalrStates
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.error.reportError as reportErrorImpl
 import io.github.kotlinmania.lalrpop.lr1.report.generateReport as generateReportImpl
 

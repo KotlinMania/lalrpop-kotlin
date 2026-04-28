@@ -5,7 +5,7 @@ package io.github.kotlinmania.lalrpop.normalize.lower
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Session
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
@@ -52,7 +52,7 @@ import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeExpr
 import io.github.kotlinmania.lalrpop.normalize.normUtil.checkBetweenBraces
 import io.github.kotlinmania.lalrpop.normalize.condComp.cfgActive
 import io.github.kotlinmania.lalrpop.normalize.returnErr
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
+import io.github.kotlinmania.lalrpop.lr1.Token
 
 fun lower(session: Session, grammar: PtGrammar, types: Types): RGrammar {
     val state = LowerState.new(session, types, grammar)
@@ -63,7 +63,7 @@ private class LowerState(
     val session: Session,
     var prefix: String,
     val actionFnDefns: MutableList<ActionFnDefn>,
-    val nonterminals: BTreeMap<NonterminalString, NonterminalData>,
+    val nonterminals: Map<NonterminalString, NonterminalData>,
     val conversions: MutableList<Pair<TerminalString, Pattern<TypeRepr>>>,
     var internToken: InternToken?,
     var types: Types,
@@ -222,7 +222,7 @@ private fun LowerState.lower(session: Session, grammar: PtGrammar): RGrammar {
             }
         }
 
-    val terminalBits: BTreeMap<TerminalString, Int> = map<TerminalString, Int>().also { m ->
+    val terminalBits: Map<TerminalString, Int> = map<TerminalString, Int>().also { m ->
         for ((i, t) in allTerminals.withIndex()) {
             m[t] = i
         }
@@ -254,8 +254,8 @@ private fun LowerState.lower(session: Session, grammar: PtGrammar): RGrammar {
 
 private fun LowerState.synthesizeStartSymbols(
     grammar: PtGrammar,
-): BTreeMap<NonterminalString, NonterminalString> {
-    val result: BTreeMap<NonterminalString, NonterminalString> = map()
+): Map<NonterminalString, NonterminalString> {
+    val result: Map<NonterminalString, NonterminalString> = map()
     for (nt in grammar.items.mapNotNull { it.asNonterminal() }.filter { it.visibility.isPub() }) {
         // create a synthetic symbol `__Foo` for each public symbol `Foo`
         // with a rule like:

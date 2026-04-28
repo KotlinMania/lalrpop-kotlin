@@ -1,5 +1,5 @@
-// port-lint: source lr1/stateGraph.rs
-package io.github.kotlinmania.lalrpop.lr1.stateGraph
+// port-lint: source lr1/state_graph.rs
+package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.EdgeDirection
 import io.github.kotlinmania.lalrpop.Graph
@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.NodeIndex
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
 // Each state `s` corresponds to the node in the graph with index
 // `s`. The edges are the shift transitions.

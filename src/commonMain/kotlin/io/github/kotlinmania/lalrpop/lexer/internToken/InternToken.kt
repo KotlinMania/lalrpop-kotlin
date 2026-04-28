@@ -1,4 +1,4 @@
-// port-lint: source lexer/internToken/mod.rs
+// port-lint: source lexer/intern_token/mod.rs
 //! Generates an iterator type `Matcher` that emits a state-machine-based
 //! tokenizer.
 //!

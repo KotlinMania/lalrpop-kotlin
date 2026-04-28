@@ -1,10 +1,11 @@
 // port-lint: source collections/multimap.rs
 package io.github.kotlinmania.lalrpop.collections.multimap
 
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.btree.BTreeSet
-import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.collections.Set
+import io.github.kotlinmania.lalrpop.collections.set
 
 class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
     private val collectionFactory: () -> C,
@@ -16,7 +17,7 @@ class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
     // class. Every Multimap instantiated by the rest of the codebase
     // already keys on a Comparable type (Production, Item<Nil>,
     // StateIndex, Symbol, Atom, NonterminalString).
-    private val map: BTreeMap<K, C> = map()
+    private val map: Map<K, C> = map()
 
     companion object {
         fun <K : Comparable<K>, C : Collection<Item>, Item> new(
@@ -87,11 +88,11 @@ class VecCollection<T> : Collection<T> {
 class SetCollection<T : Comparable<T>> : Collection<T> {
     // Mirrors `implementation<T: Ord> Default for BTreeSet<T>` — Rust adds the bound
     // implicitly via `BTreeSet<T>: Default` requiring `T: Ord`.
-    private val inner: BTreeSet<T> = set()
+    private val inner: Set<T> = set()
 
     override fun push(item: T): Boolean = inner.add(item)
 
-    fun asSet(): BTreeSet<T> = inner
+    fun asSet(): Set<T> = inner
 }
 
 class MultimapCollection<K : Comparable<K>, C : Collection<Item>, Item>(

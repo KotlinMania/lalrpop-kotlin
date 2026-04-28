@@ -1,4 +1,4 @@
-// port-lint: source lr1/laneTable/table/contextSet/mod.rs
+// port-lint: source lr1/lane_table/table/context_set/mod.rs
 //! A key part of the lane-table algorithm is the idea of a CONTEXT
 //! SET (my name, the paper has no name for this). Basically it
 //! represents the LR1 context under which a given conflicting action
@@ -34,10 +34,10 @@
 //! lookahead `y`.
 package io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet
 
-import io.github.kotlinmania.btree.BTreeMap
-import io.github.kotlinmania.btree.BTreeSet
+import io.github.kotlinmania.lalrpop.collections.Map
+import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.map.map
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.ConflictIndex
@@ -88,9 +88,9 @@ class ContextSet(
         return values[conflict.index].unionWith(set)
     }
 
-    fun apply(state: State<TokenSet>, actions: BTreeSet<Action>) {
+    fun apply(state: State<TokenSet>, actions: Set<Action>) {
         // create a map from each action to its lookahead
-        val lookaheads: BTreeMap<Action, TokenSet> = map()
+        val lookaheads: Map<Action, TokenSet> = map()
         val actionsIter = actions.iterator()
         var idx = 0
         while (actionsIter.hasNext() && idx < values.size) {

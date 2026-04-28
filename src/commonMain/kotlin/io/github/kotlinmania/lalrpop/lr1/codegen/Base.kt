@@ -4,7 +4,7 @@ package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.Sep
-import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.freeVariables.freeVariables
@@ -17,7 +17,7 @@ import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.btree.BTreeSet
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
+import io.github.kotlinmania.lalrpop.lr1.Token
 
 /**
  * Base struct for various kinds of code generator. The flavor of

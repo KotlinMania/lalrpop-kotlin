@@ -1,14 +1,8 @@
-// port-lint: source lr1/laneTable/construct/stateSet.rs
+// port-lint: source lr1/lane_table/construct/state_set.rs
 package io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet
 
 import io.github.kotlinmania.lalrpop.UnifyKey
 import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
-
-/** Mirrors the Value associated type bound by [StateSet] to [ContextSet]. */
-typealias Value = ContextSet
-
-/** Mirrors the Error associated type bound by [ContextSet] to a pair of context sets. */
-typealias Error = Pair<ContextSet, ContextSet>
 
 /**
  * The unification key for a set of states in the lane table

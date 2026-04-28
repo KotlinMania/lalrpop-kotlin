@@ -1,8 +1,8 @@
-// port-lint: source lr1/buildLalr/mod.rs
+// port-lint: source lr1/build_lalr/mod.rs
 //! Mega naive LALR(1) generation algorithm.
 package io.github.kotlinmania.lalrpop.lr1.buildLalr
 
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
 import io.github.kotlinmania.lalrpop.collections.multimap.SetCollection
 import io.github.kotlinmania.lalrpop.collections.map.ComparableList
@@ -11,8 +11,8 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Nil
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.Nil
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.build.buildLr1States
 import io.github.kotlinmania.lalrpop.lr1.build.useLaneTable
 import io.github.kotlinmania.lalrpop.lr1.core.Item
@@ -28,9 +28,9 @@ import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
 private class Lalr1State(
     var index: StateIndex,
     var items: MutableList<Item<TokenSet>>,
-    var shifts: BTreeMap<TerminalString, StateIndex>,
+    var shifts: Map<TerminalString, StateIndex>,
     var reductions: Multimap<Production, SetCollection<TokenSet>, TokenSet>,
-    var gotos: BTreeMap<NonterminalString, StateIndex>,
+    var gotos: Map<NonterminalString, StateIndex>,
 )
 
 fun buildLalrStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
@@ -57,7 +57,7 @@ fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<State<Tok
     // auto-derived `Ord` on `Vec<T>`). We wrap the kernel in a
     // [ComparableList] so the Kotlin BTreeMap orders by the same
     // lexicographic compare Rust derives.
-    val lalr1Map: BTreeMap<ComparableList<Item<Nil>>, StateIndex> = map()
+    val lalr1Map: Map<ComparableList<Item<Nil>>, StateIndex> = map()
     val lalr1States: MutableList<Lalr1State> = mutableListOf()
 
     for ((lr1Index, lr1State) in lrStates.withIndex()) {

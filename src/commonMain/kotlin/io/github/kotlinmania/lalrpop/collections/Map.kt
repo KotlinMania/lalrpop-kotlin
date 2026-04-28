@@ -1,5 +1,5 @@
 // port-lint: source collections/map.rs
-package io.github.kotlinmania.lalrpop.collections.map
+package io.github.kotlinmania.lalrpop.collections
 
 import io.github.kotlinmania.btree.BTreeMap
 
@@ -11,6 +11,8 @@ import io.github.kotlinmania.btree.BTreeMap
  * matter much. I'd probably prefer to use `HashMap` with an
  * alternative hasher, but that's not stable.
  */
-typealias Map<K, V> = BTreeMap<K, V>
+class Map<K : Comparable<K>, V>(
+    internal val inner: BTreeMap<K, V> = BTreeMap(),
+) : MutableMap<K, V> by inner
 
-fun <K : Comparable<K>, V> map(): Map<K, V> = BTreeMap<K, V>()
+fun <K : Comparable<K>, V> map(): Map<K, V> = Map()

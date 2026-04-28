@@ -1,7 +1,7 @@
 // port-lint: source tok/mod.rs
 //! A tokenizer for use in LALRPOP itself.
 package io.github.kotlinmania.lalrpop.tok
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
 
 data class Error(

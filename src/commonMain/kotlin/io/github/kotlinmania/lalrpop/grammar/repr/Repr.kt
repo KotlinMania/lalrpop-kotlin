@@ -6,7 +6,7 @@ package io.github.kotlinmania.lalrpop.grammar.repr
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.freeVariables.freeVariables
 import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
@@ -27,7 +27,7 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.parseTree.display
 import io.github.kotlinmania.lalrpop.grammar.parseTree.toContent
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
 data class Grammar(
     // a unique prefix that can be appended to identifiers to ensure
@@ -44,7 +44,7 @@ data class Grammar(
     // key is the user name for the symbol, the value is the
     // artificial symbol we introduce, which will always have a single
     // production like `Foo' = Foo`.
-    var startNonterminals: BTreeMap<NonterminalString, NonterminalString>,
+    var startNonterminals: Map<NonterminalString, NonterminalString>,
 
     // the "import foo;" statements that the user declared
     var uses: MutableList<String>,
@@ -65,8 +65,8 @@ data class Grammar(
     // the grammar proper:
     var actionFnDefns: MutableList<ActionFnDefn>,
     var terminals: TerminalSet,
-    var nonterminals: BTreeMap<NonterminalString, NonterminalData>,
-    var conversions: BTreeMap<TerminalString, Pattern<TypeRepr>>,
+    var nonterminals: Map<NonterminalString, NonterminalData>,
+    var conversions: Map<TerminalString, Pattern<TypeRepr>>,
     var types: Types,
     var moduleAttributes: MutableList<String>,
 ) {
@@ -95,7 +95,6 @@ data class Grammar(
         }
 }
 
-@Suppress("unused")
 sealed class WhereClause : Comparable<WhereClause> {
     data class Forall(
         val binder: MutableList<TypeParameter>,
@@ -126,7 +125,7 @@ sealed class WhereClause : Comparable<WhereClause> {
  */
 data class TerminalSet(
     var all: MutableList<TerminalString>,
-    var bits: BTreeMap<TerminalString, Int>,
+    var bits: Map<TerminalString, Int>,
 )
 
 data class NonterminalData(
@@ -534,8 +533,8 @@ class Types(
     private var errorType: TypeRepr?,
     private var terminalTokenType: TypeRepr,
 ) {
-    private var terminalTypes: BTreeMap<TerminalString, TypeRepr> = map()
-    private var nonterminalTypes: BTreeMap<NonterminalString, TypeRepr> = map()
+    private var terminalTypes: Map<TerminalString, TypeRepr> = map()
+    private var nonterminalTypes: Map<NonterminalString, TypeRepr> = map()
     // the following two will be overwritten later
     private var parseErrorType: TypeRepr = TypeRepr.Tuple(mutableListOf())
     private var errorRecoveryType: TypeRepr = TypeRepr.Tuple(mutableListOf())

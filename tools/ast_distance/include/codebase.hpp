@@ -1037,6 +1037,34 @@ public:
         std::string code = strip_kotlin_comments_and_strings(source);
         std::string comments = extract_kotlin_comments(source);
 
+        // Strip port-lint header lines from the comments scan: those lines
+        // legitimately contain snake_case Rust paths and would otherwise
+        // false-positive the snake_case-in-comments check.
+        {
+            std::string filtered;
+            filtered.reserve(comments.size());
+            size_t pos = 0;
+            while (pos < comments.size()) {
+                size_t eol = comments.find('\n', pos);
+                size_t end = (eol == std::string::npos) ? comments.size() : eol;
+                std::string line = comments.substr(pos, end - pos);
+                size_t first = line.find_first_not_of(" \t*/");
+                bool is_port_lint = false;
+                if (first != std::string::npos) {
+                    std::string trimmed = line.substr(first);
+                    if (trimmed.rfind("port-lint:", 0) == 0) {
+                        is_port_lint = true;
+                    }
+                }
+                if (!is_port_lint) {
+                    filtered.append(line);
+                }
+                filtered.push_back('\n');
+                pos = (eol == std::string::npos) ? comments.size() : eol + 1;
+            }
+            comments = std::move(filtered);
+        }
+
         auto add_reason = [&](const std::string& reason) {
             if (std::find(reasons.begin(), reasons.end(), reason) == reasons.end()) {
                 reasons.push_back(reason);
@@ -1102,7 +1130,7 @@ public:
              "translator-note comment (`Kotlin:`) in Kotlin comments"},
             {std::regex(R"(\(\s*from\s+impl\b[^)]*\))", std::regex_constants::icase),
              "Rust impl provenance note in Kotlin comments"},
-            {std::regex(R"(\b(lifetime|lifetimes|'[A-Za-z_][A-Za-z0-9_]*)\b)", std::regex_constants::icase),
+            {std::regex(R"((\blifetimes?\b|(?:^|[\s<,(])'[A-Za-z_][A-Za-z0-9_]*\b))", std::regex_constants::icase),
              "Rust lifetime explanation in Kotlin comments"},
             {std::regex(R"(\b(dyn|usize|Box|transmute|unsafe)\b)"),
              "Rust-only type/unsafe terminology in Kotlin comments"},

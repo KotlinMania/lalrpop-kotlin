@@ -4,7 +4,7 @@
 package io.github.kotlinmania.lalrpop.normalize.resolve
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
@@ -72,7 +72,7 @@ private fun resolveInPlace(grammar: Grammar) {
 
         val allIdentifiers = nonterminalIdentifiers + terminalIdentifiers + matchIdentifiers
 
-        val identifiers: BTreeMap<Atom, Def> = map()
+        val identifiers: Map<Atom, Def> = map()
         for ((span, id, def) in allIdentifiers) {
             val oldDef = identifiers.put(id, def)
             if (oldDef != null) {
@@ -130,7 +130,7 @@ private sealed class Def {
 
 private class ScopeChain(
     val previous: ScopeChain?,
-    val identifiers: BTreeMap<Atom, Def>,
+    val identifiers: Map<Atom, Def>,
 ) {
     fun def(id: Atom): Def? =
         identifiers[id] ?: previous?.def(id)
@@ -161,13 +161,13 @@ private fun Validator.validate(grammar: Grammar) {
 private fun Validator.validateMacroArgs(
     span: Span,
     args: List<NonterminalString>,
-): BTreeMap<Atom, Def> {
+): Map<Atom, Def> {
     for ((index, arg) in args.withIndex()) {
         if (args.subList(0, index).contains(arg)) {
             returnErr(span, "multiple macro arguments declared with the name `$arg`")
         }
     }
-    val result: BTreeMap<Atom, Def> = map()
+    val result: Map<Atom, Def> = map()
     for (nt in args) {
         result[nt.atom] = Def.MacroArg
     }

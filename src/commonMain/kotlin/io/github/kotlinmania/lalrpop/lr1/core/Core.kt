@@ -3,16 +3,16 @@
 package io.github.kotlinmania.lalrpop.lr1.core
 
 import io.github.kotlinmania.lalrpop.Prefix
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Nil
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Nil
+import io.github.kotlinmania.lalrpop.lr1.Token
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 
 data class Item<L : Lookahead<L>>(
     val production: Production,
@@ -123,9 +123,9 @@ data class Items<L : Lookahead<L>>(
 data class State<L : Lookahead<L>>(
     val index: StateIndex,
     val items: Items<L>,
-    val shifts: BTreeMap<TerminalString, StateIndex> = map(),
+    val shifts: Map<TerminalString, StateIndex> = map(),
     val reductions: MutableList<Pair<L, Production>> = mutableListOf(),
-    val gotos: BTreeMap<NonterminalString, StateIndex> = map(),
+    val gotos: Map<NonterminalString, StateIndex> = map(),
 ) {
     /**
      * Returns the set of symbols which must appear on the stack to

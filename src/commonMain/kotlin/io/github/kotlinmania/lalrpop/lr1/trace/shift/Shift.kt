@@ -8,7 +8,7 @@ import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.lr1.trace.traceGraph.TraceGraph
 import io.github.kotlinmania.lalrpop.lr1.trace.traceGraph.TraceGraphNode
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
+import io.github.kotlinmania.lalrpop.lr1.Token
 
 /**
  * A backtrace explaining how a particular shift:

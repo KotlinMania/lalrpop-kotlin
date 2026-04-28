@@ -1,4 +1,4 @@
-// port-lint: source normalize/normUtil.rs
+// port-lint: source normalize/norm_util.rs
 package io.github.kotlinmania.lalrpop.normalize.normUtil
 
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind

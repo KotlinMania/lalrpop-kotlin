@@ -3,8 +3,8 @@
 package io.github.kotlinmania.lalrpop.lr1.error
 
 import io.github.kotlinmania.lalrpop.Level
-import io.github.kotlinmania.btree.BTreeSet
-import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.collections.Set
+import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
@@ -13,8 +13,8 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.grammar.repr.toContent
 import io.github.kotlinmania.lalrpop.grammar.parseTree.toContent
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.Token
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Conflict
 import io.github.kotlinmania.lalrpop.lr1.core.Item
@@ -36,7 +36,7 @@ import io.github.kotlinmania.lalrpop.message.builder.Character
 import io.github.kotlinmania.lalrpop.message.Message
 import io.github.kotlinmania.lalrpop.message.builder.MessageBuilder
 import io.github.kotlinmania.lalrpop.tls.Tls
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
 fun reportError(
     grammar: Grammar,
@@ -698,7 +698,7 @@ internal class ErrorReportingCx private constructor(
 
         // Make sure that all the things we are suggesting inlining
         // are distinct so that we are not introducing a cycle.
-        val duplicates: BTreeSet<NonterminalString> = set()
+        val duplicates: Set<NonterminalString> = set()
         if (reduce.reductions.subList(0, i + 1).any { r -> !duplicates.add(r.nonterminal) }) {
             return false
         }
@@ -775,11 +775,11 @@ internal class ErrorReportingCx private constructor(
     fun conflictingShiftItems(
         state: State<TokenSet>,
         conflict: Conflict<Token>,
-    ): BTreeSet<Item<Nil>> {
+    ): Set<Item<Nil>> {
         // Lookahead must be a terminal, not EOF.
         // Find an item J like `Bar = ... (*) L ...`.
         val lookahead: Symbol = Symbol.Terminal(conflict.lookahead.unwrapTerminal())
-        val out: BTreeSet<Item<Nil>> = set()
+        val out: Set<Item<Nil>> = set()
         for (i in state.items.vec) {
             if (!i.canShift()) continue
             if (i.production.symbols[i.index] != lookahead) continue

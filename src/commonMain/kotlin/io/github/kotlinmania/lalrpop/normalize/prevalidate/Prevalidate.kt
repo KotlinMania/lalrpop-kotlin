@@ -6,7 +6,7 @@ import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
 import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
-import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute

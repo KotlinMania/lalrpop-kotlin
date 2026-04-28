@@ -1,4 +1,4 @@
-// port-lint: source ../lalrpop-util/src/stateMachine.rs
+// port-lint: source ../lalrpop-util/src/state_machine.rs
 package io.github.kotlinmania.lalrpop.runtime
 
 /**

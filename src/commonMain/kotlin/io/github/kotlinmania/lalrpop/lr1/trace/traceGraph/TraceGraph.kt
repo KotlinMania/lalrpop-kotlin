@@ -1,15 +1,15 @@
-// port-lint: source lr1/trace/traceGraph/mod.rs
+// port-lint: source lr1/trace/trace_graph/mod.rs
 package io.github.kotlinmania.lalrpop.lr1.trace.traceGraph
 
 import io.github.kotlinmania.lalrpop.EdgeDirection
 import io.github.kotlinmania.lalrpop.EdgeRef
 import io.github.kotlinmania.lalrpop.Graph
 import io.github.kotlinmania.lalrpop.NodeIndex
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Item
 import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
 import io.github.kotlinmania.lalrpop.lr1.core.Item<TokenSet>
@@ -59,7 +59,7 @@ class TraceGraph(
     // labels are symbols that are pushed. Otherwise they are labels
     // that are popped.
     internal val graph: Graph<TraceGraphNode, SymbolSets>,
-    internal val indices: BTreeMap<TraceGraphNode, NodeIndex>,
+    internal val indices: Map<TraceGraphNode, NodeIndex>,
 ) {
     companion object {
         fun new(): TraceGraph = TraceGraph(

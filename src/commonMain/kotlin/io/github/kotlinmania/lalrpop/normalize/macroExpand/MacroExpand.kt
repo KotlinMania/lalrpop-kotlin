@@ -1,4 +1,4 @@
-// port-lint: source normalize/macroExpand/mod.rs
+// port-lint: source normalize/macro_expand/mod.rs
 package io.github.kotlinmania.lalrpop.normalize.macroExpand
 
 import io.github.kotlinmania.lalrpop.Atom
@@ -32,7 +32,7 @@ import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
 import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeExpr
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 import io.github.kotlinmania.lalrpop.normalize.returnErr
-import io.github.kotlinmania.btree.BTreeMap
+import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 
 fun expandMacros(input: Grammar, recursionLimit: Int): Grammar {
@@ -220,7 +220,7 @@ private fun MacroExpander.expandMacroSymbol(span: Span, msym: MacroSymbol): Gram
         )
     }
 
-    val args: BTreeMap<NonterminalString, SymbolKind> = map<NonterminalString, SymbolKind>().also { out ->
+    val args: Map<NonterminalString, SymbolKind> = map<NonterminalString, SymbolKind>().also { out ->
         for ((name, kind) in mdef.args.zip(msym.args.map { it.kind })) {
             out[name] = kind
         }
@@ -256,14 +256,14 @@ private fun MacroExpander.expandMacroSymbol(span: Span, msym: MacroSymbol): Gram
 }
 
 private fun MacroExpander.macroExpandTypeRefs(
-    args: BTreeMap<NonterminalString, SymbolKind>,
+    args: Map<NonterminalString, SymbolKind>,
     typeRefs: List<TypeRef>,
 ): MutableList<TypeRef> {
     return typeRefs.map { tr -> this.macroExpandTypeRef(args, tr) }.toMutableList()
 }
 
 private fun MacroExpander.macroExpandTypeRef(
-    args: BTreeMap<NonterminalString, SymbolKind>,
+    args: Map<NonterminalString, SymbolKind>,
     typeRef: TypeRef,
 ): TypeRef {
     return when (typeRef) {
@@ -305,7 +305,7 @@ private fun MacroExpander.macroExpandTypeRef(
 }
 
 private fun MacroExpander.evaluateCond(
-    args: BTreeMap<NonterminalString, SymbolKind>,
+    args: Map<NonterminalString, SymbolKind>,
     optCond: Condition?,
 ): Boolean {
     if (optCond != null) {
@@ -351,14 +351,14 @@ private fun MacroExpander.reMatch(span: Span, lhs: Atom, regex: Atom): Boolean {
 }
 
 private fun MacroExpander.macroExpandSymbols(
-    args: BTreeMap<NonterminalString, SymbolKind>,
+    args: Map<NonterminalString, SymbolKind>,
     expr: List<Symbol>,
 ): MutableList<Symbol> {
     return expr.map { s -> this.macroExpandSymbol(args, s) }.toMutableList()
 }
 
 private fun MacroExpander.macroExpandExprSymbol(
-    args: BTreeMap<NonterminalString, SymbolKind>,
+    args: Map<NonterminalString, SymbolKind>,
     expr: ExprSymbol,
 ): ExprSymbol {
     return ExprSymbol(
@@ -367,7 +367,7 @@ private fun MacroExpander.macroExpandExprSymbol(
 }
 
 private fun MacroExpander.macroExpandSymbol(
-    args: BTreeMap<NonterminalString, SymbolKind>,
+    args: Map<NonterminalString, SymbolKind>,
     symbol: Symbol,
 ): Symbol {
     val kind: SymbolKind = when (val k = symbol.kind) {
