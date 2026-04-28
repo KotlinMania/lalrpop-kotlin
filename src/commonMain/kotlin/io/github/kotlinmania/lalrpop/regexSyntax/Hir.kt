@@ -219,7 +219,7 @@ data class RegexRepetition(
  * Mirrors the `Display` shape of `regexSyntax::hir::Look` for the
  * subset of patterns LALRPOP does not reject. None of these emit through
  * the codegen path (LALRPOP rejects look-around at Nfa construction),
- * so the strings here are placeholders that match upstream symbols.
+ * so the strings here mirror upstream symbol spellings verbatim.
  */
 internal fun LookKind.regexSource(): String = when (this) {
     LookKind.StartLine -> "(?m:^)"
