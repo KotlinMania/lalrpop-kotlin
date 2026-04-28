@@ -46,7 +46,10 @@ class Lr1Tls private constructor(
         fun <RET> with(
             op: (TerminalSet) -> RET,
         ): RET {
-            return TERMINALS.with { s -> op(s.borrow() ?: error("LR1 TLS not installed")) }
+            return TERMINALS.with { s ->
+                val terminals = s.borrow()
+                op(terminals ?: error("LR1 TLS not installed"))
+            }
         }
     }
 }
