@@ -293,11 +293,15 @@ class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInter
 
     operator fun iterator(): Iterator<Token> = iter()
 
-    override fun toString(): String {
+    fun intoIter(): TokenSetIter = iter()
+
+    fun fmt(fmt: StringBuilder) {
         val terminals: MutableList<Token> = mutableListOf()
         for (t in iter()) terminals.add(t)
-        return terminals.toString()
+        fmt.append(terminals.toString())
     }
+
+    override fun toString(): String = buildString { fmt(this) }
 
     override fun equals(other: Any?): Boolean = other is TokenSet && other.bitSet == this.bitSet
     override fun hashCode(): Int = bitSet.hashCode()
