@@ -22,12 +22,14 @@ private class RefCell<T>(private var value: T) {
     }
 }
 
+private fun <T> RefCell<T?>.take(): T? = this.replace(null)
+
 class Lr1Tls private constructor(
-    private var oldValue: TerminalSet?,
+    private val oldValue: RefCell<TerminalSet?>,
 ) : AutoCloseable {
 
     fun drop() {
-        TERMINALS.with { s -> s.borrowMut().replace(oldValue.also { oldValue = null }) }
+        TERMINALS.with { s -> s.borrowMut().replace(this.oldValue.take()) }
     }
 
     override fun close() = drop()
@@ -35,7 +37,7 @@ class Lr1Tls private constructor(
     companion object {
         fun install(terminals: TerminalSet): Lr1Tls {
             val oldValue = TERMINALS.with { s -> s.borrowMut().replace(terminals) }
-            return Lr1Tls(oldValue)
+            return Lr1Tls(RefCell(oldValue))
         }
 
         fun <RET> with(
