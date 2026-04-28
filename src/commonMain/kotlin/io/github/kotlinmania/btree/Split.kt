@@ -9,7 +9,7 @@ package io.github.kotlinmania.btree
 //     call-sites in `calcSplitLength` below are unresolved; this is the
 //     documented "Compile-time-incomplete files are OK" pattern from
 //     AGENTS.md. `fixRightBorder` / `fixLeftBorder` (also `public(super)` on
-//     `NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>` upstream) already live in Fix.kt and resolve cleanly.
+//     `Root<K, V>` upstream) already live in Fix.kt and resolve cleanly.
 // (PORTING.md tracks this cross-file dependency.)
 
 /**
@@ -18,8 +18,8 @@ package io.github.kotlinmania.btree
  */
 internal fun <K, V> calcSplitLength(
     totalNum: Int,
-    rootA: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>,
-    rootB: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>,
+    rootA: Root<K, V>,
+    rootB: Root<K, V>,
 ): Pair<Int, Int> {
     val lengthA: Int
     val lengthB: Int
@@ -44,7 +44,7 @@ internal fun <K, V> calcSplitLength(
  */
 internal fun <K, V, Q : Comparable<Q>> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.splitOff(
     key: Q,
-): NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>
+): Root<K, V>
     where K : Comparable<Q> {
     val leftRoot = this
     val rightRoot = newPillar<K, V>(leftRoot.height())
@@ -83,7 +83,7 @@ internal fun <K, V, Q : Comparable<Q>> NodeRef<Marker.Owned, K, V, Marker.LeafOr
 }
 
 /** Creates a tree consisting of empty nodes. */
-private fun <K, V> newPillar(height: Int): NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal> {
+private fun <K, V> newPillar(height: Int): Root<K, V> {
     val root = newOwnedTree<K, V>()
     for (i in 0 until height) {
         root.pushInternalLevel()

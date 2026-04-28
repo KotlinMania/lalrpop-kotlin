@@ -130,6 +130,16 @@ No `python -c '... os.walk ...'`, no `find ... -exec sed`, no `for f in ...; do 
 
 If you find yourself wanting to script a fix across many files, the correct response is to slow down and edit each file individually with `Edit`. The "I'll save time with a loop" reflex is exactly what created the mess that this rule exists to prevent.
 
+### Commit after every file edit. No exceptions.
+
+After every `Edit`, `Write`, or single-file `sed` that touches a source file, immediately `git add <that file>` and `git commit` it before editing anything else. **One file edited → one commit.** Do not batch edits across files into a single commit, do not "stage a few more changes first," do not defer the commit until "after the next thing works." This rule is non-negotiable because:
+
+- It bounds the blast radius of every mistake to one file's worth of work.
+- It produces a per-file audit trail so a corrupt edit can be located by `git log -p <file>` and reverted with `git revert` without losing unrelated work.
+- It guarantees the precondition for the single-file `sed` rule above (clean working tree for that file).
+
+The commit message should describe what changed in that one file (e.g. "Build.kt: inline Lr1Result typealias at use sites"). If the change is part of a larger refactor, say so in the message but still keep one file per commit. Squashing into a logical unit, if desired, happens later via `git rebase -i` — never by withholding commits up front.
+
 ## Progress Tracking
 
 ```bash

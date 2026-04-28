@@ -8,14 +8,14 @@ package io.github.kotlinmania.btree
 //     in Navigate.kt (port of navigate.rs). Until that file lands the two
 //     call-sites below are unresolved; this is the documented
 //     "Compile-time-incomplete files are OK" pattern from AGENTS.md.
-//   - `fixRightBorderOfPlentiful` on `NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>` lives in Fix.kt (port of
+//   - `fixRightBorderOfPlentiful` on `Root<K, V>` lives in Fix.kt (port of
 //     fix.rs); already landed.
 // (PORTING.md tracks this cross-file dependency.)
 //
 // Translation notes:
-//   - The upstream `implementation<K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal> { function bulkPush... }` becomes a
-//     Kotlin extension function on the `NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>` typealias from Node.kt
-//     (`NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal> = NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>`).
+//   - The upstream `implementation<K, V> Root<K, V> { function bulkPush... }` becomes a
+//     Kotlin extension function on the `Root<K, V>` typealias from Node.kt
+//     (`Root<K, V> = NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>`).
 //   - The `length: &mut usize` out-parameter is preserved as an `IntArray`
 //     of size 1 — Kotlin cannot pass a primitive by reference, and the
 //     caller (Map.kt `append`) needs the side-effect of "increment per
@@ -75,7 +75,7 @@ internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.bulkPush(
 
             // Push key-value pair and new right subtree.
             val treeHeight = openNode.height() - 1
-            val rightTree: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal> = newOwnedTree()
+            val rightTree: Root<K, V> = newOwnedTree()
             for (i in 0 until treeHeight) {
                 rightTree.pushInternalLevel()
             }

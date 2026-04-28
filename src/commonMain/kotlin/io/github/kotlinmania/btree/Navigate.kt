@@ -197,7 +197,7 @@ private fun <BorrowType, K, V> LeafRange<BorrowType, K, V>.isEmptyInternal(): Bo
  */
 internal sealed class LazyLeafHandle<BorrowType, K, V> {
     /** Not yet descended. */
-    data class NodeRef<Marker.Owned, BorrowType, K, V, Marker.LeafOrInternal>(
+    data class Root<BorrowType, K, V>(
         val node: NodeRef<BorrowType, K, V, Marker.LeafOrInternal>,
     ) : LazyLeafHandle<BorrowType, K, V>()
 

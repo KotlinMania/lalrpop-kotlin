@@ -97,7 +97,7 @@ internal fun <K, V> NodeRef<Marker.Mut, K, V, Marker.LeafOrInternal>.fixNodeAndA
 }
 
 /** Removes empty levels on the top, but keeps an empty leaf if the entire tree is empty. */
-internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.fixTop() {
+internal fun <K, V> Root<K, V>.fixTop() {
     while (this.height() > 0 && this.len() == 0) {
         this.popInternalLevel()
     }
@@ -108,7 +108,7 @@ internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.fixTop() 
  * tree. The other nodes, those that are not the root nor a rightmost edge,
  * must already have at least MIN_LEN elements.
  */
-internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.fixRightBorder() {
+internal fun <K, V> Root<K, V>.fixRightBorder() {
     this.fixTop()
     if (this.len() > 0) {
         this.borrowMut().lastKv().fixRightBorderOfRightEdge()
@@ -117,7 +117,7 @@ internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.fixRightB
 }
 
 /** The symmetric clone of [fixRightBorder]. */
-internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.fixLeftBorder() {
+internal fun <K, V> Root<K, V>.fixLeftBorder() {
     this.fixTop()
     if (this.len() > 0) {
         this.borrowMut().firstKv().fixLeftBorderOfLeftEdge()
@@ -130,7 +130,7 @@ internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.fixLeftBo
  * The other nodes, those that are neither the root nor a rightmost edge,
  * must be prepared to have up to MIN_LEN elements stolen.
  */
-internal fun <K, V> NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>.fixRightBorderOfPlentiful() {
+internal fun <K, V> Root<K, V>.fixRightBorderOfPlentiful() {
     var curNode: NodeRef<Marker.Mut, K, V, Marker.LeafOrInternal> = this.borrowMut()
     while (true) {
         val internal = when (val f = curNode.force()) {

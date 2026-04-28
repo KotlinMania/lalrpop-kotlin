@@ -80,7 +80,7 @@ internal const val MIN_LEN: Int = MIN_LEN_AFTER_SPLIT
  * system enforces it once at the class parameter rather than at every method.
  */
 class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
-    internal var root: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>? = null
+    internal var root: Root<K, V>? = null
     internal var length: Int = 0
 
     /**
@@ -580,7 +580,7 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
      *
      * After calling, the map is left empty.
      */
-    fun intoIter(): Iterator<Pair<K, V>> {
+    fun intoIter(): IntoIter<K, V> {
         val r = root
         root = null
         val savedLen = length
@@ -937,7 +937,7 @@ internal class MutEntry<K : Comparable<K>, V>(
  * a dying tree, deallocating nodes (in Rust) as it goes; in Kotlin GC
  * supersedes the deallocation but the traversal pattern is identical.
  */
-class Iterator<Pair<K, V>> internal constructor(
+class IntoIter<K, V> internal constructor(
     internal var range: LazyLeafRange<Marker.Dying, K, V>,
     internal var length: Int,
 ) : Iterator<Pair<K, V>> {
@@ -1031,7 +1031,7 @@ class ValuesMut<K : Comparable<K>, V> internal constructor(internal val inner: I
 }
 
 /** An owning iterator over the keys of a `BTreeMap`. */
-class IntoKeys<K, V> internal constructor(internal val inner: Iterator<Pair<K, V>>) : Iterator<K> {
+class IntoKeys<K, V> internal constructor(internal val inner: IntoIter<K, V>) : Iterator<K> {
     override fun hasNext(): Boolean = inner.hasNext()
     override fun next(): K = inner.next().first
     fun nextBack(): K? = inner.nextBack()?.first
@@ -1040,7 +1040,7 @@ class IntoKeys<K, V> internal constructor(internal val inner: Iterator<Pair<K, V
 }
 
 /** An owning iterator over the values of a `BTreeMap`. */
-class IntoValues<K, V> internal constructor(internal val inner: Iterator<Pair<K, V>>) : Iterator<V> {
+class IntoValues<K, V> internal constructor(internal val inner: IntoIter<K, V>) : Iterator<V> {
     override fun hasNext(): Boolean = inner.hasNext()
     override fun next(): V = inner.next().second
     fun nextBack(): V? = inner.nextBack()?.second
@@ -1152,7 +1152,7 @@ class ExtractIf<K : Comparable<K>, V, Q : Comparable<Q>> internal constructor(
 internal class ExtractIfInner<K : Comparable<K>, V, Q : Comparable<Q>>(
     internal val map: BTreeMap<K, V>,
     /** Buried reference to the root field in the borrowed map. */
-    internal var dormantRoot: DormantMutRef<NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>>?,
+    internal var dormantRoot: DormantMutRef<Root<K, V>>?,
     /** Contains a leaf edge preceding the next element to be returned, or the last leaf edge. */
     internal var curLeafEdge: Handle<NodeRef<Marker.Mut, K, V, Marker.Leaf>, Marker.Edge>?,
     /** Range over which iteration was requested. */
@@ -1223,7 +1223,7 @@ internal class ExtractIfInner<K : Comparable<K>, V, Q : Comparable<Q>>(
  */
 class Cursor<K : Comparable<K>, V> internal constructor(
     internal var current: Handle<NodeRef<Marker.Immut, K, V, Marker.Leaf>, Marker.Edge>?,
-    internal var root: NodeRef<Marker.Owned, K, V, Marker.LeafOrInternal>?,
+    internal var root: Root<K, V>?,
 ) {
     /**
      * Advances the cursor to the next gap, returning the key and value of
