@@ -88,8 +88,8 @@ data class MatchContents(
 //          and that MatchMapping is an Id or String
 sealed class MatchItem {
     data class CatchAll(val span: Span) : MatchItem()
-    data class Unmapped(val symbol: TerminalLiteral, val span: Span) : MatchItem()
-    data class Mapped(val symbol: TerminalLiteral, val mapping: MatchMapping, val span: Span) : MatchItem()
+    data class Unmapped(val symbol: MatchSymbol, val span: Span) : MatchItem()
+    data class Mapped(val symbol: MatchSymbol, val mapping: MatchMapping, val span: Span) : MatchItem()
 
     fun span(): Span = when (this) {
         is CatchAll -> span
@@ -97,6 +97,10 @@ sealed class MatchItem {
         is Mapped -> span
     }
 }
+
+// Rust: `pub type MatchSymbol = TerminalLiteral;`
+// Kotlin: no `typealias`; use a marker interface instead so call sites can still pass `TerminalLiteral`.
+sealed interface MatchSymbol
 
 
 sealed class MatchMapping : Comparable<MatchMapping> {
@@ -760,7 +764,7 @@ fun TerminalString.toContent(): Content {
         .end()
 }
 
-sealed class TerminalLiteral : Comparable<TerminalLiteral> {
+sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
     data class Quoted(val atom: Atom) : TerminalLiteral() {
         override fun toString(): String = "\"${atom.asRef()}\""
     }
