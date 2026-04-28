@@ -84,7 +84,7 @@ data class MatchContents(
     var items: MutableList<MatchItem>,
 )
 
-// FIXME: Validate that TerminalLiteral is actually a TerminalString::Literal
+// NOTE: Validate that TerminalLiteral is actually a TerminalString::Literal
 //          and that MatchMapping is an Id or String
 sealed class MatchItem {
     data class CatchAll(val span: Span) : MatchItem()
@@ -770,7 +770,7 @@ sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
         override fun toString(): String = "\"${atom.asRef()}\""
     }
     data class Hir(val atom: Atom) : TerminalLiteral() {
-        // FIXME -- need to determine proper number of #
+        // NOTE: determine proper number of # characters
         override fun toString(): String = "r#\"${atom.asRef()}\"#"
     }
 
@@ -793,7 +793,7 @@ sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
 
     override fun toString(): String = when (this) {
         is Quoted -> "\"${atom.asRef()}\"" // the Debug implementation adds the `"` and escaping
-        is Hir -> "r#\"${atom.asRef()}\"#" // FIXME -- need to determine proper number of #
+        is Hir -> "r#\"${atom.asRef()}\"#" // NOTE: determine proper number of # characters
     }
 }
 
