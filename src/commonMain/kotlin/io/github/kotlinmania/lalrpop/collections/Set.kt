@@ -3,9 +3,13 @@ package io.github.kotlinmania.lalrpop.collections
 
 import io.github.kotlinmania.btree.BTreeSet
 
-/** As [Map], but for sets. */
-typealias Set<K> = BTreeSet<K>
+/**
+ * As [Map], but for sets.
+ */
+class Set<K : Comparable<K>>(
+    internal val inner: BTreeSet<K> = BTreeSet(),
+) : MutableSet<K> by inner
 
 fun <K : Comparable<K>> set(): Set<K> {
-    return Set<K>()
+    return Set()
 }
