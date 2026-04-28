@@ -3,19 +3,8 @@ package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.api.Configuration
 
-/**
- * Direct port of upstream `const VERSION: &str = env("CARGO_PKG_VERSION");`.
- *
- * the upstream `env!` macro substitutes `CARGO_PKG_VERSION` at compile time from
- * Cargo.toml. Kotlin has no equivalent of cargo metadata at compile time,
- * so we mirror the upstream value used at the time of porting. Bump in
- * lockstep with the Cargo.toml version when re-syncing from upstream.
- */
 const val VERSION: String = "0.22.2"
 
-/**
- * Direct port of upstream `const USAGE: &str = "..."`.
- */
 const val USAGE: String = "" +
     "Usage: lalrpop [options] <inputs>...\n" +
     "       lalrpop --help\n" +
@@ -34,17 +23,6 @@ const val USAGE: String = "" +
     "    --comments           Enable comments in the generated code.\n" +
     "    --report             Generate report files."
 
-/**
- * Direct port of upstream `(derive(Debug)) struct Args { ... }`.
- *
- * the upstream `OsString` (`argInputs`) is modelled here as `String`: Kotlin
- * `Array<String>` (the `main` argv) is already decoded by the platform,
- * matching what `Arguments::fromEnv`/`fromVec` produces.
- *
- * `flagOutDir` (Rust `Option<PathBuf>`) → `String?` since Kotlin lacks a
- * dedicated `PathBuf`; conversion to a filesystem path happens at the
- * `Configuration::setOutDir` boundary.
- */
 internal data class Args(
     val argInputs: List<String>,
     val flagOutDir: String?,
@@ -59,9 +37,6 @@ internal data class Args(
     val flagVersion: Boolean,
 )
 
-/**
- * Direct port of upstream `(derive(...)) enum LevelFlag { Quiet, Info, Verbose, Debug }`.
- */
 internal enum class LevelFlag {
     Quiet,
     Info,
@@ -69,10 +44,6 @@ internal enum class LevelFlag {
     Debug;
 
     companion object {
-        /**
-         * Direct port of upstream `implementation FromStr for LevelFlag { function fromStr(...) }`.
-         * Returns `Result<LevelFlag>` mirroring the upstream `Result<LevelFlag, String>`.
-         */
         fun fromStr(s: String): Result<LevelFlag> = when (s) {
             "quiet" -> Result.success(Quiet)
             "info" -> Result.success(Info)
@@ -83,17 +54,6 @@ internal enum class LevelFlag {
     }
 }
 
-/**
- * Tiny hand-rolled translation of the upstream `picoArgs::Arguments` covering
- * exactly the surface `parseArgs` uses: `optValueFromFn`,
- * `optValueFromStr`, `contains`, and `finish`. Upstream `picoArgs`
- * is not a project dependency and the AGENTS.md "no new deps" rule
- * forbids adding one; this is the minimum faithful equivalent.
- *
- * `contains` and `optValueFrom*` consume matching tokens (and any
- * required option-argument) from the internal buffer; `finish` returns
- * the remaining positional inputs, matching picoArgs contract.
- */
 internal class Arguments(args: List<String>) {
     private val args: MutableList<String> = args.toMutableList()
 
@@ -135,10 +95,6 @@ internal class Arguments(args: List<String>) {
     }
 }
 
-/**
- * Direct port of upstream `function parseArgs(mut args: Arguments) -> Result<Args, picoArgs::Error>`.
- * Field-evaluation order matches the Rust struct literal.
- */
 internal fun parseArgs(args: Arguments): Result<Args> {
     val flagOutDir = args.optValueFromFn(arrayOf("-o", "--out-dir")) { Result.success(it) }
         .getOrElse { return Result.failure(it) }
@@ -171,15 +127,6 @@ internal fun parseArgs(args: Arguments): Result<Args> {
     )
 }
 
-/**
- * Direct port of upstream `function main() -> Result<(), Box<dyn std::error::Error>>`.
- *
- * Returns the exit code instead of relying on `process::exit`; per-target
- * `main(args: Array<String>)` thunks call this and feed the result into
- * `kotlin.system.exitProcess`. This split is the same shape Atom.kt /
- * FileText.kt import for native-specific glue: keep the logic in commonMain,
- * keep the platform plumbing per-target.
- */
 fun main(args: Array<String>): Int {
     val parsed = parseArgs(Arguments.fromEnv(args))
     val parsedArgs = parsed.getOrElse { err ->
@@ -251,12 +198,3 @@ fun main(args: Array<String>): Int {
 
     return 0
 }
-
-// Per-target `fun main(args: Array<String>)` thunks (calling
-// `kotlin.system.exitProcess(main(args))`) belong in target-specific
-// source sets — JVM, macosArm64, linuxX64, mingwX64, etc. Wiring them up
-// is exit-process plumbing only; the upstream Rust logic above is fully
-// translated. The lalrpop-kotlin Gradle module currently exposes the
-// library API only, so the binary thunk is left to a downstream consumer
-// (or a future `cli/` target) to add — this mirrors how Atom.kt /
-// FileText.kt keep platform-specific concerns out of commonMain.
