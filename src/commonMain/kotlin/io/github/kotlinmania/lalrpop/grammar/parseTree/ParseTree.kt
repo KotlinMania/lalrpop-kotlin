@@ -99,7 +99,7 @@ sealed class MatchItem {
 }
 
 // Rust: `pub type MatchSymbol = TerminalLiteral;`
-// Kotlin: no `typealias`; use a marker interface instead so call sites can still pass `TerminalLiteral`.
+// No `typealias`: use a marker interface so call sites can still pass `TerminalLiteral`.
 sealed interface MatchSymbol
 
 
@@ -141,15 +141,16 @@ data class InternToken(
 
 /**
  * In `tokenCheck`, as we prepare to generate a tokenizer, we
- * combine any `match` declaration the user may have given with the
+ * combine any token-mapping declaration the user may have given with the
  * set of literals (e.g. `"foo"` or `r"[a-z]"`) that appear elsewhere
  * in their in the grammar to produce a series of `MatchEntry`. Each
- * `MatchEntry` roughly corresponds to one line in a `match` declaration.
+ * `MatchEntry` roughly corresponds to one line in that declaration.
  *
  * So e.g. if you had
  *
  * ```lalrpop
- * match {
+ * (token-mapping declaration)
+ * {
  *    r"(?i)BEGIN" => "BEGIN",
  *    "+" => "+",
  * } else {
@@ -159,7 +160,7 @@ data class InternToken(
  * ID = r"[a-zA-Z]+"
  * ```
  *
- * This would correspond to three match entries:
+ * This would correspond to three mapping entries:
  * - `MatchEntry { matchLiteral: r"(?i)BEGIN", userName: "BEGIN", precedence: 2 }`
  * - `MatchEntry { matchLiteral: "+", userName: "+", precedence: 3 }`
  * - `MatchEntry { matchLiteral: "r[a-zA-Z]+"", userName: r"[a-zA-Z]+", precedence: 0 }`
@@ -167,12 +168,12 @@ data class InternToken(
  * A couple of things to note:
  *
  * - Literals appearing in the grammar are converting into an "identity" mapping
- * - Each match group G is combined with the implicit priority IP of 1 for literals and 0 for
+ * - Each group G is combined with the implicit priority IP of 1 for literals and 0 for
  *   regex to yield the final precedence; the formula is `G*2 + IP`.
  */
 data class MatchEntry(
     /**
-     * The precedence of this match entry.
+     * The precedence of this mapping entry.
      *
      * NB: This field must go first, so that `PartialOrd` sorts by precedence first!
      */
@@ -261,7 +262,7 @@ sealed class TypeRef {
         override fun toString(): String = "[${ty}]"
     }
 
-    // Foo<'a, 'b, T1, T2>, Foo::Bar, etc
+    // Foo<...>, Foo::Bar, etc
     data class Nominal(val path: Path, val types: MutableList<TypeRef>) : TypeRef() {
         override fun toString(): String =
             if (types.isEmpty()) "$path" else "$path<${Sep(", ", types)}>"
@@ -276,13 +277,13 @@ sealed class TypeRef {
         }
     }
 
-    // `dyn Trait`
+    // Trait object
     data class TraitObject(val path: Path, val types: MutableList<TypeRef>) : TypeRef() {
         override fun toString(): String =
             if (types.isEmpty()) "dyn $path" else "dyn $path<${Sep(", ", types)}>"
     }
 
-    // 'x ==> only should appear within nominal types, but what do we care
+    // Only should appear within nominal types, but what do we care
     data class LifetimeRef(val lifetime: Lifetime) : TypeRef() {
         override fun toString(): String = "$lifetime"
     }
@@ -348,7 +349,7 @@ sealed class TypeRef {
 }
 
 sealed class WhereClause<T> : Comparable<WhereClause<T>> {
-    // 'a: 'b + 'c
+    // Clause form (a: b + c)
     data class LifetimeClause<T>(
         val lifetime: Lifetime,
         val bounds: MutableList<Lifetime>,
@@ -391,7 +392,7 @@ sealed class WhereClause<T> : Comparable<WhereClause<T>> {
 fun <T> WhereClause<T>.display(): String = toString()
 
 sealed class TypeBound<T> : Comparable<TypeBound<T>> {
-    // The `'a` in `T: 'a`.
+    // A bound parameter in a type constraint.
     data class LifetimeBound<T>(val lifetime: Lifetime) : TypeBound<T>()
 
     data class Fn<T>(
@@ -468,9 +469,9 @@ sealed class TypeBound<T> : Comparable<TypeBound<T>> {
 fun <T> TypeBound<T>.display(): String = toString()
 
 sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
-    // 'a
+    // Bound parameter
     data class LifetimeParam<T>(val lifetime: Lifetime) : TypeBoundParameter<T>()
-    // `T` or `'a`
+    // Type parameter or bound parameter
     data class TypeParameterParam<T>(val ty: T) : TypeBoundParameter<T>()
     // `Item = T`
     data class Associated<T>(val id: Atom, val ty: T) : TypeBoundParameter<T>()
@@ -603,9 +604,9 @@ enum class ConditionOp {
     Equals,
     // X != "Foo", inequality
     NotEquals,
-    // X ~~ "Foo", regexp match
+    // X ~~ "Foo", regex positive
     Match,
-    // X !~ "Foo", regexp non-match
+    // X !~ "Foo", regex negative
     NotMatch,
 }
 
@@ -776,9 +777,9 @@ sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
     override fun compareTo(other: TerminalLiteral): Int = toString().compareTo(other.toString())
 
     /**
-     * The *base precedence* is the precedence within a `match { }`
+     * The *base precedence* is the precedence within the token-mapping declaration
      * block level. It indicates that quoted things like `"foo"` get
-     * precedence over regex matches.
+     * precedence over regex comparisons.
      */
     fun basePrecedence(): Int = when (this) {
         is Quoted -> 1
