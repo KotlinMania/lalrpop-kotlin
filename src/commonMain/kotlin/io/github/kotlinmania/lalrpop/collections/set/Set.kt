@@ -4,6 +4,8 @@ package io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.btree.BTreeSet
 
 /** As [BTreeMap][io.github.kotlinmania.btree.BTreeMap], but for sets. */
-fun <K : Comparable<K>> set(): BTreeSet<K> {
-    return BTreeSet<K>()
+typealias Set<K> = BTreeSet<K>
+
+fun <K : Comparable<K>> set(): Set<K> {
+    return Set<K>()
 }
