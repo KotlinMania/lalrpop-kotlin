@@ -21,21 +21,9 @@ class FileText(
     private val newlines: List<Int>,
 ) {
     companion object {
-        fun fromPath(path: String): FileText {
-            // Rust: std::fs::File::open + readToString
-            // commonMain has no filesystem; callers that need disk I/O
-            // should supply the content from a platform-specific source
-            // and invoke `new` directly.
-            throw UnsupportedOperationException(
-                "FileText.fromPath is not available in commonMain; use FileText.new(path, inputStr)",
-            )
-        }
-
         fun new(path: String, inputStr: String): FileText {
             val newlineIndices: List<Int> = buildList {
                 add(0)
-                // Kotlin tokenizer locations are reported as String indices,
-                // so we track newline boundaries in the same coordinate space.
                 for ((i, ch) in inputStr.withIndex()) {
                     if (ch == '\n') {
                         add(i + 1) // index of first char in the line
@@ -123,10 +111,11 @@ class FileText(
 private fun saturatingSub(a: Int, b: Int): Int = if (a >= b) a - b else 0
 
 private class Repeat(private val ch: Char, private val count: Int) {
-    fun fmt(fmt: StringBuilder) {
+    override fun toString(): String {
+        val sb = StringBuilder()
         for (i in 0 until count) {
-            fmt.append(ch)
+            sb.append(ch)
         }
+        return sb.toString()
     }
-    override fun toString(): String = StringBuilder().also { fmt(it) }.toString()
 }
