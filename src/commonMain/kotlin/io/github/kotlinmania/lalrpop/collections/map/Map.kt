@@ -5,13 +5,12 @@ import io.github.kotlinmania.btree.BTreeMap
 
 /**
  * In general, we avoid coding directly against any particular map,
- * but rather build against [BTreeMap][io.github.kotlinmania.btree.BTreeMap]
- * (and [map] to construct an instance). This should be a deterministic
- * map, such that two runs of LALRPOP produce the same output, but
- * otherwise it does not matter much. I would probably prefer to use
- * [HashMap][kotlin.collections.HashMap] with an alternative hasher,
- * but that is not stable.
+ * but rather build against [Map] (and [map] to construct
+ * an instance). This should be a deterministic map, such that two
+ * runs of LALRPOP produce the same output, but otherwise it doesn't
+ * matter much. I'd probably prefer to use `HashMap` with an
+ * alternative hasher, but that's not stable.
  */
-fun <K : Comparable<K>, V> map(): BTreeMap<K, V> {
-    return BTreeMap<K, V>()
-}
+typealias Map<K, V> = BTreeMap<K, V>
+
+fun <K : Comparable<K>, V> map(): Map<K, V> = BTreeMap<K, V>()
