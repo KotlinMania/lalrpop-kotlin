@@ -136,6 +136,22 @@ No `python -c '... os.walk ...'`, no `find ... -exec sed`, no `for f in ...; do 
 
 If you find yourself wanting to script a fix across many files, the correct response is to slow down and edit each file individually with `Edit`. The "I'll save time with a loop" reflex is exactly what created the mess that this rule exists to prevent.
 
+### Wrapper class policy
+
+Faithful ports use Kotlin idioms for Kotlin types and only wrap when Rust itself wraps. Specifically:
+
+- **If Rust uses a stdlib type directly** (`BTreeMap`, `Vec`, `HashSet`), Kotlin uses the Kotlin stdlib equivalent directly. Don't write a wrapper class to host Rust-named methods (`len()`, `iter()`, `insert()`) — those add no domain logic and exist only to inflate ast_distance scores. Use Kotlin's `size`, `iterator()`, `add()`.
+
+- **If Rust wraps a stdlib type in a domain struct** (`pub struct InternTable { map: HashTable<...> }` with real methods like `intern()`), Kotlin wraps the same way. The class is the port; the underlying storage is plain Kotlin collections.
+
+- **Rust language primitives without Kotlin equivalents** (`Box<T>`, `Cell<T>`, `RefCell<T>`, `Arc<T>`, `Rc<T>`, `NonNull<T>`, `MaybeUninit<T>`, `dyn Trait`) are not ported as classes. They get inlined or replaced with the closest Kotlin idiom (plain reference, `var`, atomic ref where threaded). A `private class RefCell<T>` inside a port file with `borrow()`/`borrowMut()`/`replace()` mirroring Rust's primitive is a shim, not a port — delete it and use `var`.
+
+- **Rust `pub type X = Y`** becomes a Kotlin `typealias X = Y`. Add `// port-lint: typealias-of <rust-fqname>` so ast_distance credits it as parity instead of flagging "Kotlin-only typealias detected."
+
+- **Iterator types**: classes implementing `kotlin.collections.Iterator` are the faithful port of `impl Iterator for X` in Rust. The forced `hasNext()` is the documented Kotlin idiom collision; don't add Rust-named `nextBack()`/`len()`/`map()` shim methods alongside unless Rust actually has the corresponding struct (e.g. `IntoIter`, `Range` in `library/alloc/src/collections/btree/`). Pure forwarding shims like `class Keys<K,V>(val inner: Iter<K,V>) : Iterator<K>` are rustification, not port — delete them, use `myMap.keys` directly.
+
+- **ast_distance score is a signal, not a target.** If a faithful port scores poorly, fix ast_distance — don't bend the code. If you find yourself adding Rust-named methods to a Kotlin built-in wrapper to push the score, you're rustifying.
+
 ### Commit after every file edit. No exceptions.
 
 After every `Edit`, `Write`, or single-file `sed` that touches a source file, immediately `git add <that file>` and `git commit` it before editing anything else. **One file edited → one commit.** Do not batch edits across files into a single commit, do not "stage a few more changes first," do not defer the commit until "after the next thing works." This rule is non-negotiable because:
