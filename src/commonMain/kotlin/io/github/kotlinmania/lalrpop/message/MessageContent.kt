@@ -70,6 +70,12 @@ class Message private constructor(
         wrapItems.add(this)
     }
 
-    override fun toString(): String =
-        "Message { span: $span, heading: $heading, body: $body }"
+    fun fmt(fmt: StringBuilder) {
+        fmt.append("Message { span: ").append(span)
+            .append(", heading: ").append(heading.toString())
+            .append(", body: ").append(body.toString())
+            .append(" }")
+    }
+
+    override fun toString(): String = buildString { fmt(this) }
 }
