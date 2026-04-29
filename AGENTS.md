@@ -280,7 +280,6 @@ When porting platform-specific Rust code:
 - [LALRPOP Book](https://lalrpop.github.io/lalrpop/)
 - [Kotlin Multiplatform Docs](https://kotlinlang.org/docs/multiplatform.html)
 - [CLAUDE.md](./CLAUDE.md) — project-specific rules and the parity gate
-- [PORTING.md](./PORTING.md) — porting workflow
 
 ## Questions?
 
