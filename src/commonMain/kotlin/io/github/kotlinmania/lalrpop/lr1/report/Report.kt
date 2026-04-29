@@ -274,22 +274,11 @@ private class ReportGenerator<W : Appendable>(
 
 // helpers
 
-/**
- * Rust: `trait LookaheadPrinter<W: Write> { function print(&self, out: &mut W); function hasAnythingToPrint(&self) -> bool; }`.
- * Kotlin: an explicit interface preserves the symbol so parity
- * tooling can see it. The generic Rust `<W: Write>` bound becomes
- * `Appendable` in Kotlin.
- */
 private interface LookaheadPrinter {
     fun print(out: Appendable)
     fun hasAnythingToPrint(): Boolean
 }
 
-/**
- * `LookaheadPrinter` for `Nil`: prints nothing and reports nothing to
- * print. Mirrors `implementation<W: Write> LookaheadPrinter<W> for Nil` in
- * Rust.
- */
 private object NilLookaheadPrinter : LookaheadPrinter {
     override fun print(out: Appendable) {
         // no-op
@@ -298,11 +287,6 @@ private object NilLookaheadPrinter : LookaheadPrinter {
     override fun hasAnythingToPrint(): Boolean = false
 }
 
-/**
- * `LookaheadPrinter` for `TokenSet`: prints each terminal preceded by
- * a space. Mirrors `implementation<W: Write> LookaheadPrinter<W> for TokenSet`
- * in Rust.
- */
 private class TokenSetLookaheadPrinter(val ts: TokenSet) : LookaheadPrinter {
     override fun print(out: Appendable) {
         for (i in ts.bitSet) {
@@ -319,11 +303,6 @@ private fun <L : Lookahead<L>> L.lookaheadPrinter(): LookaheadPrinter = when (th
     else -> error("unsupported Lookahead type: $this")
 }
 
-/**
- * `LookaheadPrinter<W>` trait equivalent: Kotlin dispatches through
- * these two extensions using runtime type checks since neither `Nil`
- * nor `TokenSet` can gain parameterized-Writer methods generically.
- */
 private fun <L : Lookahead<L>> L.printTo(out: Appendable) {
     this.lookaheadPrinter().print(out)
 }
