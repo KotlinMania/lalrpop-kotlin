@@ -1,5 +1,5 @@
-// port-lint: source grammar/freeVariables/test.rs
-package io.github.kotlinmania.lalrpop.grammar.freeVariables
+// port-lint: source grammar/free_variables/test.rs
+package io.github.kotlinmania.lalrpop.grammar.freevariables
 
 /*
  * Copyright 2015-2025 The LALRPOP Project Developers.

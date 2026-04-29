@@ -1,5 +1,5 @@
 // port-lint: source grammar/free_variables/mod.rs
-package io.github.kotlinmania.lalrpop.grammar.freeVariables
+package io.github.kotlinmania.lalrpop.grammar.freevariables
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime

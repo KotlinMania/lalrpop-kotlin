@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
-import io.github.kotlinmania.lalrpop.grammar.freeVariables.freeVariables
+import io.github.kotlinmania.lalrpop.grammar.freevariables.freeVariables
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.Types
