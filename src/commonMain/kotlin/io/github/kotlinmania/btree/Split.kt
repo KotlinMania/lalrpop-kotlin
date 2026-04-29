@@ -10,7 +10,6 @@ package io.github.kotlinmania.btree
 //     documented "Compile-time-incomplete files are OK" pattern from
 //     AGENTS.md. `fixRightBorder` / `fixLeftBorder` (also `public(super)` on
 //     `Root<K, V>` upstream) already live in Fix.kt and resolve cleanly.
-// (PORTING.md tracks this cross-file dependency.)
 
 /**
  * Calculates the length of both trees that result from splitting up
