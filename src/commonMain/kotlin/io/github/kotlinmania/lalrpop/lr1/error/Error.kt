@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /** Error reporting. For now very stupid and simplistic. */
 package io.github.kotlinmania.lalrpop.lr1.error

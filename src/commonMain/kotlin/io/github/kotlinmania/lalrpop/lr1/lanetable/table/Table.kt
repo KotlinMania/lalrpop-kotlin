@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * The "Lane Table". In the paper, this is depicted like so:

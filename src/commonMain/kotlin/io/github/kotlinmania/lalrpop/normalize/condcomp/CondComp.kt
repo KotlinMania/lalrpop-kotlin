@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /** Compute cfg directives. */
 package io.github.kotlinmania.lalrpop.normalize.condcomp

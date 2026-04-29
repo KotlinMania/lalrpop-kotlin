@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * Resolves identifiers to decide if they are macros, terminals, or

@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * If an extern token is provided, then this pass validates that

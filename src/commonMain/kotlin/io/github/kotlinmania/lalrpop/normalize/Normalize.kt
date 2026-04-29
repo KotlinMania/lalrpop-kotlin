@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * Normalization processes a parse tree until it is in suitable form to

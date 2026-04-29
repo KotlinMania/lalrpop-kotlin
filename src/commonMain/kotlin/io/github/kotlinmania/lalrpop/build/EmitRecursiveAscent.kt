@@ -1,4 +1,3 @@
-// port-lint: ignore
 // Transliterated from upstream module root.
 /**
  * The orchestrator that walks the LR(1) construction pipeline and feeds

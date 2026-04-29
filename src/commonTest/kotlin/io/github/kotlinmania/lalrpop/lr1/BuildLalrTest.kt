@@ -1,4 +1,4 @@
-// port-lint: source api/test.rs
+// port-lint: source lr1/build_lalr/test.rs
 package io.github.kotlinmania.lalrpop.lr1
 
 /*

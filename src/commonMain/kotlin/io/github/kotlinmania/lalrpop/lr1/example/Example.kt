@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /** Code to compute example inputs given a backtrace. */
 package io.github.kotlinmania.lalrpop.lr1.example

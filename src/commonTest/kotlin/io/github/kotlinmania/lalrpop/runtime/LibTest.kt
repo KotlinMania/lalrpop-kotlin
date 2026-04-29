@@ -1,5 +1,5 @@
-// port-lint: ignore
-// transliterated from upstream module root
+// port-lint: source lalrpop-util/src/lib.rs
+// transliterated from upstream lalrpop-util module root
 package io.github.kotlinmania.lalrpop.runtime
 
 import kotlin.test.Test

@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * A key part of the lane-table algorithm is the idea of a CONTEXT

@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /** Lower */
 package io.github.kotlinmania.lalrpop.normalize.lower

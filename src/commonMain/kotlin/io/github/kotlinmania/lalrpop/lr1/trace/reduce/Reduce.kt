@@ -1,4 +1,3 @@
-// port-lint: ignore
 // Transliterated from upstream module root.
 package io.github.kotlinmania.lalrpop.lr1.trace.reduce
 

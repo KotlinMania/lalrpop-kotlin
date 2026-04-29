@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * Generates an iterator type `Matcher` that emits a state-machine-based

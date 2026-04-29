@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /** A tokenizer for use in LALRPOP itself. */
 package io.github.kotlinmania.lalrpop.tok
