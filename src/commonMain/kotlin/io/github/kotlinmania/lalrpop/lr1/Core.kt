@@ -26,7 +26,9 @@ data class Item<L : Lookahead<L>>(
         lookahead = l,
     )
 
-    fun prefix(): List<Symbol> = production.symbols.subList(0, index)
+    fun prefix(): List<Symbol> {
+        return production.symbols.subList(0, index)
+    }
 
     fun symbolSets(): SymbolSets {
         val symbols = production.symbols
@@ -51,15 +53,23 @@ data class Item<L : Lookahead<L>>(
         lookahead = Nil(),
     )
 
-    fun canShift(): Boolean = index < production.symbols.size
-
-    fun canShiftNonterminal(nt: NonterminalString): Boolean {
-        val s = shiftSymbol() ?: return false
-        val head = s.first
-        return head is Symbol.Nonterminal && head.nt == nt
+    fun canShift(): Boolean {
+        return index < production.symbols.size
     }
 
-    fun canReduce(): Boolean = index == production.symbols.size
+    fun canShiftNonterminal(nt: NonterminalString): Boolean {
+        return when (val pair = shiftSymbol()) {
+            null -> false
+            else -> {
+                val shifted = pair.first
+                shifted is Symbol.Nonterminal && shifted.nt == nt
+            }
+        }
+    }
+
+    fun canReduce(): Boolean {
+        return index == production.symbols.size
+    }
 
     fun shiftedItem(): Pair<Symbol, Item<L>>? =
         if (canShift()) {
@@ -107,7 +117,9 @@ data class Item<L : Lookahead<L>>(
     }
 }
 
+typealias Lr0Item = Item<Nil>
 
+typealias Lr1Item = Item<TokenSet>
 
 data class StateIndex(var value: Int) : Comparable<StateIndex> {
     override fun toString(): String = "S$value"
@@ -119,6 +131,8 @@ data class Items<L : Lookahead<L>>(
     val vec: MutableList<Item<L>>,
 )
 
+typealias Lr0Items = Items<Nil>
+typealias Lr1Items = Items<TokenSet>
 
 data class State<L : Lookahead<L>>(
     val index: StateIndex,
@@ -242,6 +256,8 @@ data class Conflict<L>(
     val action: Action,
 )
 
+typealias Lr0Conflict = Conflict<Nil>
+typealias Lr1Conflict = Conflict<TokenSet>
 
 data class TableConstructionError<L : Lookahead<L>>(
     // LR(1) state set, possibly incomplete if construction is
@@ -250,6 +266,9 @@ data class TableConstructionError<L : Lookahead<L>>(
     // Conflicts (non-empty) found in those states.
     val conflicts: MutableList<Conflict<L>>,
 )
+
+typealias Lr0TableConstructionError = TableConstructionError<Nil>
+typealias Lr1TableConstructionError = TableConstructionError<TokenSet>
 
 /** `A = B C (*) D E F` or `A = B C (*)` */
 data class SymbolSets(
