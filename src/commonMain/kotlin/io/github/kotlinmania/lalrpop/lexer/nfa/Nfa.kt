@@ -1,7 +1,9 @@
 // port-lint: source lexer/nfa/mod.rs
-//! The Nfa we construct for each regex. Since the states are not
-//! really of interest, we represent this just as a vector of labeled
-//! edges.
+/**
+ * The Nfa we construct for each regex. Since the states are not
+ * really of interest, we represent this just as a vector of labeled
+ * edges.
+ */
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
 import io.github.kotlinmania.lalrpop.lexer.Hir
@@ -13,12 +15,15 @@ import io.github.kotlinmania.lalrpop.regexsyntax.RegexClass
 // Mirrors the upstream `public const ACCEPT/REJECT/START: NfaStateIndex = ...`
 // (mod.rs lines 110-112). Kotlin compile-time `const val` is limited
 // to primitives/Strings, so the typed [NfaStateIndex] constants are
-// plain top-level `val`s. SAFETY: callers treat them as effectively
+// plain top-level `val`s. Note: callers treat them as effectively
 // constant — they are immutable and the NfaStateIndex value type is
 // itself a single-Int wrapper.
 val ACCEPT: NfaStateIndex = NfaStateIndex(0)
 val REJECT: NfaStateIndex = NfaStateIndex(1)
 val START: NfaStateIndex = NfaStateIndex(2)
+
+@Deprecated("Use `Nfa` instead", ReplaceWith("Nfa"))
+typealias NFA = Nfa
 
 class Nfa private constructor(
     internal val states: MutableList<NfaState>,
@@ -54,9 +59,9 @@ class Nfa private constructor(
     // Public methods for querying an Nfa
 
     /**
-     * `fun edges<L: EdgeLabel>(&self, from: NfaStateIndex) -> EdgeIterator<'_, L>`.
+     * Mirrors `fun edges<L: EdgeLabel>(from: NfaStateIndex): EdgeIterator<L>`.
      *
-     * Rust dispatches via the type parameter `L`; in Kotlin we
+     * Upstream dispatches via the type parameter `L`; in Kotlin we
      * dispatch on the variant of [EdgeLabel] passed by the caller.
      * Each branch reads the corresponding edge vector and the
      * matching `first_*_edge` index off the state.
@@ -387,7 +392,7 @@ class Nfa private constructor(
     /**
      * Mirrors `implementation Display for Nfa` (line 616 of mod.rs).
      *
-     * SAFETY: upstream the upstream `mod.rs` has only `Debug` impls for
+     * Note: upstream `mod.rs` has only `Debug` implementations for
      * `Test`, `NfaStateIndex`, and `Edge<L>`; the `fmt` at line 616 is
      * `implementation<L: Debug> Debug for Edge<L>`. We surface a higher-level
      * `toString()` on the Nfa itself for ergonomics; the real per-edge
@@ -475,9 +480,10 @@ data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
         // are companion-object methods called directly by `Nfa`.
         fun vecMut(nfa: Edges): MutableList<Edge<Test>> = nfa.testEdges
         fun vec(nfa: Edges): List<Edge<Test>> = nfa.testEdges
-        // SAFETY: Rust returns `&mut usize`; Kotlin returns the value
-        // and the mutation is performed via `state.copy(firstTestEdge=...)`
-        // in the caller. Keeping the symbol so symbol-parity passes.
+        // Note: upstream returns a mutable reference to the index;
+        // Kotlin returns the value and the mutation is performed via
+        // `state.copy(firstTestEdge=...)` in the caller. Keeping the
+        // symbol so symbol-parity passes.
         fun firstMut(state: NfaState): Int = state.firstTestEdge
         fun first(state: NfaState): Int = state.firstTestEdge
     }
@@ -565,13 +571,16 @@ enum class StateKind : Comparable<StateKind> {
     Neither,
 }
 
+@Deprecated("Use `NfaStateIndex` instead", ReplaceWith("NfaStateIndex"))
+typealias NFAStateIndex = NfaStateIndex
+
 data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
     override fun compareTo(other: NfaStateIndex): Int = value.compareTo(other.value)
 
     /**
      * Mirrors `implementation Debug for NfaStateIndex` (mod.rs:609-613):
-     * `function fmt(&self, fmt: &mut Formatter<'_>) -> Result<(), FmtError> {
-     *      write(fmt, "Nfa{}", self.0)
+     * `function fmt(fmt: Formatter): Result<Unit, FmtError> {
+     *      write(fmt, "Nfa{}", this.value)
      *  }`.
      *
      * Translated as a string-builder write; [toString] delegates to it
@@ -634,7 +643,7 @@ class Edge<L>(
 }
 
 /**
- * Mirrors `class EdgeIterator<'nfa, L: EdgeLabel>` plus the
+ * Mirrors `class EdgeIterator<L: EdgeLabel>` plus the
  * `Iterator` implementation at line 483.
  */
 class EdgeIterator<L>(
@@ -689,6 +698,9 @@ class EdgeIterator<L>(
  * Raised (via [NfaConstructionException]) when LALRPOP encounters a
  * regex feature it does not support.
  */
+@Deprecated("Use `NfaConstructionError` instead", ReplaceWith("NfaConstructionError"))
+typealias NFAConstructionError = NfaConstructionError
+
 enum class NfaConstructionError {
     NamedCaptures,
     NonGreedy,
