@@ -610,8 +610,8 @@ internal class ErrorReportingCx private constructor(
         // it defers the need to reduce. In particular, if we inlined
         // all the reductions up until the last one, then we would be
         // able to *shift* the lookahead instead of having to reduce.
-        // This can be helpful if we can see that shifting would let
-        // us delay reducing until the lookahead diverges.
+        // This can be helpful if we can see that shifting would
+        // delay reducing until the lookahead diverges.
 
         // Only applicable to shift/reduce:
         if (conflict.action is Action.Reduce) {
