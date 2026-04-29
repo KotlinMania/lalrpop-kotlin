@@ -10,7 +10,6 @@ package io.github.kotlinmania.btree
 //     "Compile-time-incomplete files are OK" pattern from AGENTS.md.
 //   - `fixRightBorderOfPlentiful` on `Root<K, V>` lives in Fix.kt (port of
 //     fix.rs); already landed.
-// (PORTING.md tracks this cross-file dependency.)
 //
 // Translation notes:
 //   - The upstream `implementation<K, V> Root<K, V> { function bulkPush... }` becomes a
