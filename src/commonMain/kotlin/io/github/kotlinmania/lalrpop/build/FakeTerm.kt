@@ -25,6 +25,8 @@ import io.github.kotlinmania.lalrpop.Terminal
  * `Terminal` methods are no-op `Result.success(Unit)` per the Rust
  * `Ok(())` returns.
  */
+internal typealias Output = Appendable
+
 class FakeTerminal(private var write: Appendable) : Terminal {
 
     /** `implementation<W: Write> Write for FakeTerminal<W> { function write(&mut self, buf: &[u8]) -> io::Result<size> }` */
