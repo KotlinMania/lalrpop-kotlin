@@ -7,5 +7,5 @@ import io.github.kotlinmania.btree.BTreeSet
 typealias Set<K> = BTreeSet<K>
 
 fun <K : Comparable<K>> set(): Set<K> {
-    return BTreeSet.default<K>()
+    return Set.default<K>()
 }
