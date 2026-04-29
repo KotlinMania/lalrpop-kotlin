@@ -4749,6 +4749,7 @@ int main(int argc, char* argv[]) {
                 options.target_lang = Language::KOTLIN;
             }
 
+            std::vector<std::string> tgt_roots{tgt_root};
             for (int i = arg_start; i < argc; ++i) {
                 std::string arg = argv[i];
                 if (arg == "--json") {
@@ -4763,9 +4764,11 @@ int main(int argc, char* argv[]) {
                     options.filter_kind = argv[++i];
                 } else if (arg == "--file" && i + 1 < argc) {
                     options.filter_file = argv[++i];
+                } else if ((arg == "--kotlin-test-root" || arg == "--target-root") && i + 1 < argc) {
+                    tgt_roots.push_back(argv[++i]);
                 }
             }
-            cmd_symbol_parity(src_root, tgt_root, options);
+            cmd_symbol_parity(src_root, tgt_roots, options);
             write_missing_config_after_comparison(
                 {src_root, language_config_name(options.source_lang)},
                 {tgt_root, language_config_name(options.target_lang)});

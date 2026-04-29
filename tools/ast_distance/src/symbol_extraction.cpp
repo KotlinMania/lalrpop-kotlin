@@ -1050,34 +1050,41 @@ SymbolTable extract_rust_symbols(const std::string& root) {
     return table;
 }
 
-SymbolTable extract_kotlin_symbols(const std::string& root) {
+SymbolTable extract_kotlin_symbols(const std::vector<std::string>& roots) {
     SymbolTable table;
     TSParser* parser = ts_parser_new();
     const TSLanguage* lang = tree_sitter_kotlin();
     ts_parser_set_language(parser, lang);
 
-    for (const auto& entry : fs::recursive_directory_iterator(root)) {
-        if (!entry.is_regular_file()) continue;
-        std::string path = entry.path().string();
-        if (should_skip_path(path)) continue;
-        if (!path.ends_with(".kt")) continue;
+    for (const auto& root : roots) {
+        if (root.empty() || !fs::exists(root)) continue;
+        for (const auto& entry : fs::recursive_directory_iterator(root)) {
+            if (!entry.is_regular_file()) continue;
+            std::string path = entry.path().string();
+            if (should_skip_path(path)) continue;
+            if (!path.ends_with(".kt")) continue;
 
-        std::string content = read_file_content(entry.path());
-        if (content.empty()) continue;
+            std::string content = read_file_content(entry.path());
+            if (content.empty()) continue;
 
-        std::string rel_path = fs::relative(entry.path(), root).string();
+            std::string rel_path = fs::relative(entry.path(), root).string();
 
-        TSTree* tree = ts_parser_parse_string(parser, nullptr, content.c_str(), content.length());
-        if (!tree) continue;
+            TSTree* tree = ts_parser_parse_string(parser, nullptr, content.c_str(), content.length());
+            if (!tree) continue;
 
-        TSNode root_node = ts_tree_root_node(tree);
-        kotlin_extract_symbols_recursive(root_node, content, rel_path, "", table);
+            TSNode root_node = ts_tree_root_node(tree);
+            kotlin_extract_symbols_recursive(root_node, content, rel_path, "", table);
 
-        ts_tree_delete(tree);
+            ts_tree_delete(tree);
+        }
     }
 
     ts_parser_delete(parser);
     return table;
+}
+
+SymbolTable extract_kotlin_symbols(const std::string& root) {
+    return extract_kotlin_symbols(std::vector<std::string>{root});
 }
 
 SymbolParityReport build_parity_report(const SymbolTable& rust, const SymbolTable& kotlin) {
@@ -1411,12 +1418,23 @@ void SymbolParityReport::print_json() const {
 void cmd_symbol_parity(const std::string& rust_root,
                        const std::string& kotlin_root,
                        const SymbolParityOptions& options) {
+    cmd_symbol_parity(rust_root, std::vector<std::string>{kotlin_root}, options);
+}
+
+void cmd_symbol_parity(const std::string& rust_root,
+                       const std::vector<std::string>& kotlin_roots,
+                       const SymbolParityOptions& options) {
     std::cerr << "Extracting Rust symbols from " << rust_root << "...\n";
     SymbolTable rust = extract_rust_symbols(rust_root);
     std::cerr << "Found " << rust.size() << " Rust symbols\n";
 
-    std::cerr << "Extracting Kotlin symbols from " << kotlin_root << "...\n";
-    SymbolTable kotlin = extract_kotlin_symbols(kotlin_root);
+    std::string kotlin_root_label;
+    for (size_t i = 0; i < kotlin_roots.size(); ++i) {
+        if (i) kotlin_root_label += ", ";
+        kotlin_root_label += kotlin_roots[i];
+    }
+    std::cerr << "Extracting Kotlin symbols from " << kotlin_root_label << "...\n";
+    SymbolTable kotlin = extract_kotlin_symbols(kotlin_roots);
     std::cerr << "Found " << kotlin.size() << " Kotlin symbols\n";
 
     // Apply filters

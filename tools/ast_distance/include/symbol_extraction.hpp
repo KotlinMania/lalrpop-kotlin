@@ -156,6 +156,7 @@ std::string rust_qualified_to_kotlin(const std::string& qualified);
 // Extract symbols from a codebase root
 SymbolTable extract_rust_symbols(const std::string& root);
 SymbolTable extract_kotlin_symbols(const std::string& root);
+SymbolTable extract_kotlin_symbols(const std::vector<std::string>& roots);
 
 // Build parity report
 SymbolParityReport build_parity_report(const SymbolTable& rust, const SymbolTable& kotlin);
@@ -163,6 +164,9 @@ SymbolParityReport build_parity_report(const SymbolTable& rust, const SymbolTabl
 // CLI command
 void cmd_symbol_parity(const std::string& rust_root,
                        const std::string& kotlin_root,
+                       const SymbolParityOptions& options);
+void cmd_symbol_parity(const std::string& rust_root,
+                       const std::vector<std::string>& kotlin_roots,
                        const SymbolParityOptions& options);
 
 // ============================================================================
