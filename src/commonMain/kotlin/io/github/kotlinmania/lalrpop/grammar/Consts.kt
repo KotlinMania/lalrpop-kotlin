@@ -1,5 +1,5 @@
 // port-lint: source grammar/consts.rs
-package io.github.kotlinmania.lalrpop.grammar.consts
+package io.github.kotlinmania.lalrpop.grammar
 
 /** Recognized associated type for the token location */
 const val LOCATION: String = "Location"

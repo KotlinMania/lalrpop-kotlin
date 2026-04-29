@@ -11,7 +11,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.ConditionOp
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.consts.INLINE
+import io.github.kotlinmania.lalrpop.grammar.INLINE
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MacroSymbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Name
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalData

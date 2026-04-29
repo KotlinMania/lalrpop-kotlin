@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.set
-import io.github.kotlinmania.lalrpop.grammar.consts.INPUT_PARAMETER
+import io.github.kotlinmania.lalrpop.grammar.INPUT_PARAMETER
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar

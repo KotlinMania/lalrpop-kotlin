@@ -6,7 +6,7 @@ import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Attribute
 import io.github.kotlinmania.lalrpop.grammar.parsetree.AttributeArg
-import io.github.kotlinmania.lalrpop.grammar.consts.CFG
+import io.github.kotlinmania.lalrpop.grammar.CFG
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
 

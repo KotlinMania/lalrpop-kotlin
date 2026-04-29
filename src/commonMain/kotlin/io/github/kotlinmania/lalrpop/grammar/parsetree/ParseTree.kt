@@ -16,11 +16,11 @@ import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
-import io.github.kotlinmania.lalrpop.grammar.consts.INPUT_LIFETIME
-import io.github.kotlinmania.lalrpop.grammar.consts.LALR
-import io.github.kotlinmania.lalrpop.grammar.consts.TABLE_DRIVEN
-import io.github.kotlinmania.lalrpop.grammar.consts.RECURSIVE_ASCENT
-import io.github.kotlinmania.lalrpop.grammar.consts.TEST_ALL
+import io.github.kotlinmania.lalrpop.grammar.INPUT_LIFETIME
+import io.github.kotlinmania.lalrpop.grammar.LALR
+import io.github.kotlinmania.lalrpop.grammar.TABLE_DRIVEN
+import io.github.kotlinmania.lalrpop.grammar.RECURSIVE_ASCENT
+import io.github.kotlinmania.lalrpop.grammar.TEST_ALL
 
 data class Grammar(
     // see field `prefix` in `grammar::repr::Grammar`

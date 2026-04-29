@@ -5,10 +5,10 @@ import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ArgPattern
-import io.github.kotlinmania.lalrpop.grammar.consts.ERROR
+import io.github.kotlinmania.lalrpop.grammar.ERROR
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.consts.LOCATION
+import io.github.kotlinmania.lalrpop.grammar.LOCATION
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Lifetime
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalData
