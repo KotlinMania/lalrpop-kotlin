@@ -6,8 +6,8 @@ package io.github.kotlinmania.lalrpop.normalize
 
 import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.Session
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar as PtGrammar
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar as PtGrammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar as RGrammar
 import io.github.kotlinmania.lalrpop.normalize.condcomp.removeDisabledDecls
 import io.github.kotlinmania.lalrpop.normalize.inline.inline

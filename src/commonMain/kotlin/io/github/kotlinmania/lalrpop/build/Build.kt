@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.ColorConfig
 import io.github.kotlinmania.lalrpop.FileText
 import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.Session
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.message.Message
 import io.github.kotlinmania.lalrpop.message.builder.InlineBuilder

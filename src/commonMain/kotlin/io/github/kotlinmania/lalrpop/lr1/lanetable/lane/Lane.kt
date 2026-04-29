@@ -6,7 +6,7 @@ package io.github.kotlinmania.lalrpop.lr1.lanetable.lane
 import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.set
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.StateGraph

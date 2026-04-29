@@ -2,7 +2,7 @@
 /** Naive LR(1) generation algorithm. */
 package io.github.kotlinmania.lalrpop.lr1
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.build.buildLr1States
 import io.github.kotlinmania.lalrpop.lr1.buildlalr.buildLalrStates

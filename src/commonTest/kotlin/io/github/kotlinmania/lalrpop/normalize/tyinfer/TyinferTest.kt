@@ -14,7 +14,7 @@ package io.github.kotlinmania.lalrpop.normalize.tyinfer
  */
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros

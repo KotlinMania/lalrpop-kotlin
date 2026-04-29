@@ -1,7 +1,7 @@
 // port-lint: source test_util.rs
 package io.github.kotlinmania.lalrpop
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.normalize.NormError
 import io.github.kotlinmania.lalrpop.normalize.normalizeWithoutValidating

@@ -3,21 +3,19 @@
 //! which then gets serialized.
 package io.github.kotlinmania.lalrpop.rust
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Parameter
 import io.github.kotlinmania.lalrpop.tls.Tls
 
 /**
- * Rust: `public const function assertRustWrite<W>(_: &RustWrite<W>) {}`.
- *
- * Compile-time guard that the `rust!` macro is being invoked on a
- * `RustWrite`. In Kotlin the corresponding type check is enforced by
- * [rust]'s parameter type, so this function is effectively a no-op
- * preserved for parity with the upstream Rust source.
+ * The `rust` helper should be called only on a `RustWrite` instance.
+ * Compile-time guard preserved from the upstream Rust source; in
+ * Kotlin the type check is enforced by [rust]'s parameter type, so
+ * the body is empty.
  */
-fun assertRustWrite(@Suppress("UNUSED_PARAMETER") w: RustWrite) {
-    // intentionally empty; see Rust source comment about (cfg(debugAssertions))
+fun assertRustWrite(w: RustWrite) {
+    val _unused = w
 }
 
 /**

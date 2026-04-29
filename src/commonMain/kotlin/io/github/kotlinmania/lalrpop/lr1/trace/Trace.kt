@@ -4,7 +4,7 @@ package io.github.kotlinmania.lalrpop.lr1.trace
 import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.set
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex

@@ -5,8 +5,8 @@ package io.github.kotlinmania.lalrpop.lr1.core
 import io.github.kotlinmania.lalrpop.Prefix
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.Lookahead

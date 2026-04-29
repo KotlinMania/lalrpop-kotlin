@@ -13,20 +13,20 @@ import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
 import io.github.kotlinmania.lalrpop.message.message.Content
 // Kotlin callers import them directly from their defining package
 // (grammar.parseTree).
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
-import io.github.kotlinmania.lalrpop.grammar.parseTree.InternToken
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Path
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalLiteral
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
-import io.github.kotlinmania.lalrpop.grammar.parseTree.display
-import io.github.kotlinmania.lalrpop.grammar.parseTree.toContent
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ArgPattern
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Attribute
+import io.github.kotlinmania.lalrpop.grammar.parsetree.InternToken
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Lifetime
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalLiteral
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBound
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
+import io.github.kotlinmania.lalrpop.grammar.parsetree.display
+import io.github.kotlinmania.lalrpop.grammar.parsetree.toContent
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
 data class Grammar(

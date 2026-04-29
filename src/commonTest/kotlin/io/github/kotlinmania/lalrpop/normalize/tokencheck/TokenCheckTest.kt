@@ -14,9 +14,9 @@ package io.github.kotlinmania.lalrpop.normalize.tokencheck
  */
 
 import io.github.kotlinmania.lalrpop.checkNormErr
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
-import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping
-import io.github.kotlinmania.lalrpop.grammar.parseTree.internToken
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
+import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
+import io.github.kotlinmania.lalrpop.grammar.parsetree.internToken
 import io.github.kotlinmania.lalrpop.lexer.dfa.interpret
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve

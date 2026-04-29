@@ -2,12 +2,12 @@
 package io.github.kotlinmania.lalrpop.grammar.freevariables
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Path
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBoundParameter
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
-import io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause as ParseTreeWhereClause
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Lifetime
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBound
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBoundParameter
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
+import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause as ParseTreeWhereClause
 import io.github.kotlinmania.lalrpop.grammar.repr.NominalTypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause as ReprWhereClause

@@ -14,7 +14,7 @@ package io.github.kotlinmania.lalrpop.message
  */
 
 import io.github.kotlinmania.lalrpop.expectDebug
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.message.builder.MessageBuilder
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test

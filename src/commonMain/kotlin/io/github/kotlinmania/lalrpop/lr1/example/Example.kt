@@ -3,7 +3,7 @@
 package io.github.kotlinmania.lalrpop.lr1.example
 
 import io.github.kotlinmania.lalrpop.Style
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.grammar.repr.toContent
 import io.github.kotlinmania.lalrpop.message.AsciiView

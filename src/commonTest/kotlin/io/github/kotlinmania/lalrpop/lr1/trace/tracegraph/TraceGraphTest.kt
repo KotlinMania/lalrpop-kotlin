@@ -15,8 +15,8 @@ package io.github.kotlinmania.lalrpop.lr1.trace.tracegraph
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.expectDebug
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFn
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol

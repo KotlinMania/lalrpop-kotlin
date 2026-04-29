@@ -7,28 +7,28 @@ import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.parseTree.InternToken
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Lifetime
-import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Name
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Path
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Symbol as PtSymbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeBound
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
-import io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause as PtWhereClause
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar as PtGrammar
-import io.github.kotlinmania.lalrpop.grammar.parseTree.asNonterminal
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ArgPattern
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.InternToken
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Lifetime
+import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Name
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol as PtSymbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBound
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeRef
+import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause as PtWhereClause
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar as PtGrammar
+import io.github.kotlinmania.lalrpop.grammar.parsetree.asNonterminal
 import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
 import io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind
-import io.github.kotlinmania.lalrpop.grammar.parseTree.readAlgorithm
+import io.github.kotlinmania.lalrpop.grammar.parsetree.readAlgorithm
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFn
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFnDefn
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFnDefnKind

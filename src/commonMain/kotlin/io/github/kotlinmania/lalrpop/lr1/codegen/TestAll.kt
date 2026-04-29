@@ -7,8 +7,8 @@
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Sep
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.rust.RustWrite

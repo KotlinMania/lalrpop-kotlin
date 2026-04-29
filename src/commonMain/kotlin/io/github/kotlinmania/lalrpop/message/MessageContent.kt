@@ -2,7 +2,7 @@
 package io.github.kotlinmania.lalrpop.message
 
 import io.github.kotlinmania.lalrpop.Style
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.lalrpop.message.horiz.Horiz
 import io.github.kotlinmania.lalrpop.message.message.Content

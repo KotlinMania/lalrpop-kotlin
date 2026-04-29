@@ -2,7 +2,7 @@
 package io.github.kotlinmania.lalrpop.lr1.trace.reduce
 
 import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer

@@ -1,8 +1,8 @@
 // port-lint: source parser/test.rs
 package io.github.kotlinmania.lalrpop.parser
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchItem
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

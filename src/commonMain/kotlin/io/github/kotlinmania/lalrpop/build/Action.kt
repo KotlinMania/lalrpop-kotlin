@@ -32,7 +32,7 @@
 //!   the "internal tokenizer".
 package io.github.kotlinmania.lalrpop.build
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFnDefn
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFnDefnKind
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar

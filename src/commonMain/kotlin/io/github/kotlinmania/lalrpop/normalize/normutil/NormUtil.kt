@@ -1,12 +1,12 @@
 // port-lint: source normalize/norm_util.rs
 package io.github.kotlinmania.lalrpop.normalize.normutil
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ArgPattern
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Symbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ArgPattern
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 
 sealed class AlternativeAction {
     data class User(val code: ActionKind) : AlternativeAction()

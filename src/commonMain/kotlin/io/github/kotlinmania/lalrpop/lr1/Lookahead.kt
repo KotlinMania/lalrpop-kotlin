@@ -3,8 +3,8 @@ package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.collections.multimap.Collection
 import io.github.kotlinmania.lalrpop.grammar.repr.TerminalSet
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.build.LookaheadBuild

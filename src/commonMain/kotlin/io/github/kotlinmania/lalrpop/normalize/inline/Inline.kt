@@ -2,7 +2,7 @@
 //! Inlining of nonterminals
 package io.github.kotlinmania.lalrpop.normalize.inline
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFn
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFnDefn
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFnDefnKind

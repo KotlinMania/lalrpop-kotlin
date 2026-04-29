@@ -13,7 +13,7 @@ package io.github.kotlinmania.lalrpop.normalize.resolve
  * at your option.
  */
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
 import kotlin.test.Test

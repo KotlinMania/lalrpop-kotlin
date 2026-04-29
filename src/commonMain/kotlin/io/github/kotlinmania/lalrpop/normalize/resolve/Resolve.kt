@@ -6,17 +6,17 @@ package io.github.kotlinmania.lalrpop.normalize.resolve
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
-import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchItem
-import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Symbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
+import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 
 fun resolve(grammar: Grammar): Grammar {

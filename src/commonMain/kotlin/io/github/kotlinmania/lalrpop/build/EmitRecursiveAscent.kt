@@ -12,7 +12,7 @@ package io.github.kotlinmania.lalrpop.build
 import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.Session
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.LrCodeGeneration
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause

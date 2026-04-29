@@ -15,8 +15,8 @@ package io.github.kotlinmania.lalrpop.lr1.trace.reduce
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.expectDebug
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.buildStates

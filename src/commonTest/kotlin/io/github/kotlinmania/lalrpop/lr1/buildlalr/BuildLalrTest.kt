@@ -14,8 +14,8 @@ package io.github.kotlinmania.lalrpop.lr1.buildlalr
  */
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.lr1.interpret.interpret
 import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
 import io.github.kotlinmania.lalrpop.normalizedGrammar

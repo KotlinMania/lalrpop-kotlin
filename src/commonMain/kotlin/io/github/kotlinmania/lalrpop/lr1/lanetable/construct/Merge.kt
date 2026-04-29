@@ -8,8 +8,8 @@ import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.collections.set
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex

@@ -8,13 +8,13 @@ import io.github.kotlinmania.lalrpop.Escape
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
 import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeParameter
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
 import io.github.kotlinmania.lalrpop.lr1.StateGraph

@@ -11,14 +11,14 @@
 package io.github.kotlinmania.lalrpop.normalize.precedence
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative
-import io.github.kotlinmania.lalrpop.grammar.parseTree.ExprSymbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
-import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalData
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Symbol
-import io.github.kotlinmania.lalrpop.grammar.parseTree.SymbolKind
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
+import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
+import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalData
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
+import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 
 const val PREC_ATTR: String = "precedence"

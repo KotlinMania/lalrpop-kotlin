@@ -6,8 +6,8 @@ package io.github.kotlinmania.lalrpop.grammar.pattern
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Path
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 
 data class Pattern<T>(
     var span: Span,

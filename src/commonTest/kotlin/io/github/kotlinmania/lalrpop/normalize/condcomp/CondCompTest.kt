@@ -15,7 +15,7 @@ package io.github.kotlinmania.lalrpop.normalize.condcomp
 
 import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.compare
-import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
 import kotlin.test.Test
 

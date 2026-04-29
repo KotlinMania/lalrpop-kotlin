@@ -1,10 +1,10 @@
 // port-lint: source parser/mod.rs
 package io.github.kotlinmania.lalrpop.parser
 
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
-import io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping
-import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
-import io.github.kotlinmania.lalrpop.grammar.parseTree.WhereClause
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
+import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeRef
+import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause
 import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
 import io.github.kotlinmania.lalrpop.runtime.ParseError
 import io.github.kotlinmania.lalrpop.runtime.ParseResult
@@ -20,9 +20,9 @@ import io.github.kotlinmania.lalrpop.tok.Error as TokError
 // points across several files to define both a test variant and a non-test
 // variant, reducing readability.
 sealed class Top {
-    data class Grammar(val grammar: io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar) : Top()
+    data class Grammar(val grammar: io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar) : Top()
     data class Pattern(val pattern: io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<TypeRef>) : Top()
-    data class MatchMapping(val matchMapping: io.github.kotlinmania.lalrpop.grammar.parseTree.MatchMapping) : Top()
+    data class MatchMapping(val matchMapping: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping) : Top()
     data class TypeRefTop(val typeRef: TypeRef) : Top()
     data class GrammarWhereClauses(val whereClauses: List<WhereClause<TypeRef>>) : Top()
 }
@@ -48,7 +48,7 @@ private fun startPrefixed(start: Tok, offset: Int, input: String): Iterator<Resu
 
 fun parseGrammar(
     input: String,
-): Result<io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar> {
+): Result<io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar> {
     val tokens = startPrefixed(Tok.StartGrammar, 0, input)
     val grammar = when (val r = TopParser.new().parse(input, tokens)) {
         is ParseResult.Success -> (r.value as Top.Grammar).grammar

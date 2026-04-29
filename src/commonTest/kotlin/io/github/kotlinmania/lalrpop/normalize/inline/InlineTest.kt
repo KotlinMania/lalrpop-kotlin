@@ -15,7 +15,7 @@ package io.github.kotlinmania.lalrpop.normalize.inline
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Session
-import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.normalize.lowerHelper
 import io.github.kotlinmania.lalrpop.parser.parseGrammar

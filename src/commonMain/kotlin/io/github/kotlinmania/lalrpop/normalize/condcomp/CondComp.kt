@@ -4,11 +4,11 @@ package io.github.kotlinmania.lalrpop.normalize.condcomp
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Session
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Attribute
-import io.github.kotlinmania.lalrpop.grammar.parseTree.AttributeArg
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Attribute
+import io.github.kotlinmania.lalrpop.grammar.parsetree.AttributeArg
 import io.github.kotlinmania.lalrpop.grammar.consts.CFG
-import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar
-import io.github.kotlinmania.lalrpop.grammar.parseTree.GrammarItem
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
+import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
 
 fun removeDisabledDecls(session: Session, grammar: Grammar): Grammar {
     grammar.items.retainAll { item ->

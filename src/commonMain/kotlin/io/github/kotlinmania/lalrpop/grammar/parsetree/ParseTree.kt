@@ -1,7 +1,7 @@
 // port-lint: source grammar/parse_tree.rs
 // The "parse-tree" is what is produced by the parser. We import it do
 // some pre-expansion and so forth before creating the proper AST.
-package io.github.kotlinmania.lalrpop.grammar.parseTree
+package io.github.kotlinmania.lalrpop.grammar.parsetree
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
@@ -56,9 +56,9 @@ fun Span.toContent(): Content {
 }
 
 sealed class GrammarItem {
-    data class MatchToken(val inner: io.github.kotlinmania.lalrpop.grammar.parseTree.MatchToken) : GrammarItem()
-    data class ExternToken(val inner: io.github.kotlinmania.lalrpop.grammar.parseTree.ExternToken) : GrammarItem()
-    data class InternToken(val inner: io.github.kotlinmania.lalrpop.grammar.parseTree.InternToken) : GrammarItem()
+    data class MatchToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchToken) : GrammarItem()
+    data class ExternToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.ExternToken) : GrammarItem()
+    data class InternToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.InternToken) : GrammarItem()
     data class Nonterminal(val data: NonterminalData) : GrammarItem()
     data class Use(val code: String) : GrammarItem()
 }
@@ -651,7 +651,7 @@ sealed class SymbolKind {
     data class Choose(val sym: Symbol) : SymbolKind()
 
     // <x:X> or <mut x:X>
-    data class Name(val name: io.github.kotlinmania.lalrpop.grammar.parseTree.Name, val sym: Symbol) : SymbolKind()
+    data class Name(val name: io.github.kotlinmania.lalrpop.grammar.parsetree.Name, val sym: Symbol) : SymbolKind()
 
     // <(x, y):X)> or <(x, (mut y, z)):X>
     data class TupleKind(val tuple: Tuple, val sym: Symbol) : SymbolKind()
@@ -707,7 +707,7 @@ data class Tuple(
 sealed class ArgPattern {
     abstract override fun toString(): String
 
-    data class NamePat(val name: io.github.kotlinmania.lalrpop.grammar.parseTree.Name) : ArgPattern() {
+    data class NamePat(val name: io.github.kotlinmania.lalrpop.grammar.parsetree.Name) : ArgPattern() {
         override fun toString(): String = name.toString()
     }
 
