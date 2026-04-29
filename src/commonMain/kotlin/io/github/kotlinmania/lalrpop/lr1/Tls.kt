@@ -23,8 +23,6 @@ class Lr1Tls private constructor(
     }
 
     fun drop() {
-        val taken = oldValue
-        oldValue = null
-        TERMINALS = taken
+        TERMINALS = oldValue.also { oldValue = null }
     }
 }
