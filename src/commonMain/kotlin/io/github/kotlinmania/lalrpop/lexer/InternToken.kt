@@ -6,7 +6,7 @@
 //! `Mod.kt`, the `compile` function from upstream `lexer/internToken/mod.rs`
 //! lives here as a top-level function. Callers from `build/...` invoke it
 //! by name.
-package io.github.kotlinmania.lalrpop.lexer.interntoken
+package io.github.kotlinmania.lalrpop.lexer
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.InternToken
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping

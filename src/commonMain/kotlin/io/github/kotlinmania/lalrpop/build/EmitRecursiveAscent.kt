@@ -16,7 +16,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.LrCodeGeneration
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
-import io.github.kotlinmania.lalrpop.lexer.interntoken.compileInternToken
+import io.github.kotlinmania.lalrpop.lexer.compileInternToken
 import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.codegen.Ascent
 import io.github.kotlinmania.lalrpop.lr1.codegen.ParseTable
