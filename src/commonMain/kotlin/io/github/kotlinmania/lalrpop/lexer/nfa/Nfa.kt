@@ -5,10 +5,10 @@
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
 import io.github.kotlinmania.lalrpop.lexer.re.Hir
-import io.github.kotlinmania.lalrpop.regexSyntax.ClassBytesRange
-import io.github.kotlinmania.lalrpop.regexSyntax.ClassUnicodeRange
-import io.github.kotlinmania.lalrpop.regexSyntax.HirKind
-import io.github.kotlinmania.lalrpop.regexSyntax.RegexClass
+import io.github.kotlinmania.lalrpop.regexsyntax.ClassBytesRange
+import io.github.kotlinmania.lalrpop.regexsyntax.ClassUnicodeRange
+import io.github.kotlinmania.lalrpop.regexsyntax.HirKind
+import io.github.kotlinmania.lalrpop.regexsyntax.RegexClass
 
 // Mirrors the upstream `public const ACCEPT/REJECT/START: NfaStateIndex = ...`
 // (mod.rs lines 110-112). Kotlin compile-time `const val` is limited

@@ -2,10 +2,10 @@
 // A parser and representation of regular expressions.
 package io.github.kotlinmania.lalrpop.lexer.re
 
-import io.github.kotlinmania.lalrpop.regexSyntax.Hir
-import io.github.kotlinmania.lalrpop.regexSyntax.ParserBuilder
-import io.github.kotlinmania.lalrpop.regexSyntax.RegexSyntaxError
-import io.github.kotlinmania.lalrpop.regexSyntax.escape as regexSyntaxEscape
+import io.github.kotlinmania.lalrpop.regexsyntax.Hir
+import io.github.kotlinmania.lalrpop.regexsyntax.ParserBuilder
+import io.github.kotlinmania.lalrpop.regexsyntax.RegexSyntaxError
+import io.github.kotlinmania.lalrpop.regexsyntax.escape as regexSyntaxEscape
 
 typealias Regex = Hir
 typealias RegexError = RegexSyntaxError

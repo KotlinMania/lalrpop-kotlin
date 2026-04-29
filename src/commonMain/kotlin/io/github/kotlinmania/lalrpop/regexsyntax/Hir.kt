@@ -7,7 +7,7 @@
 //   - src/lexer/re/mod.rs       -> uses Hir as `Hir`, plus ParserBuilder
 //   - src/lexer/nfa/mod.rs      -> walks HirKind, Class, ClassUnicodeRange,
 //                                  ClassBytesRange, Repetition, Literal
-package io.github.kotlinmania.lalrpop.regexSyntax
+package io.github.kotlinmania.lalrpop.regexsyntax
 
 /**
  * High-level intermediate representation of a regular expression.

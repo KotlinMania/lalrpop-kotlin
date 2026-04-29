@@ -2,7 +2,7 @@
 // Helper: escape() and ParserBuilder match the `regexSyntax` crate
 // public surface that LALRPOP lexer/re/mod.rs consumes. The parse
 // implementation lives in Parser.kt.
-package io.github.kotlinmania.lalrpop.regexSyntax
+package io.github.kotlinmania.lalrpop.regexsyntax
 
 /**
  * Escape all regex metacharacters in `s` so that the result matches `s`

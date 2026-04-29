@@ -5,7 +5,7 @@
 // and negations), repetitions, groups (capturing, non-capturing, named),
 // alternation, `.`, and `^`/`$` anchors. Lookaround is recognized only as
 // `^`/`$` (emitted as `HirKind.Look`, which LALRPOP Nfa builder rejects).
-package io.github.kotlinmania.lalrpop.regexSyntax
+package io.github.kotlinmania.lalrpop.regexsyntax
 
 internal class RegexParser(
     private val input: String,
