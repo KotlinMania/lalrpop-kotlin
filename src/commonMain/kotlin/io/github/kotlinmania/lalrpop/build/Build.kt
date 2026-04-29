@@ -1,10 +1,11 @@
 // port-lint: source build/mod.rs
-//! Top-level orchestrator entry points distilled from upstream
-//! `src/build/mod.rs`. The `mod.rs` itself is not translated as a single
-//! `Mod.kt` per project rules; its functions are split between
-//! [EmitRecursiveAscent.kt] (the emit pipeline) and this file (the
-//! parse-and-normalise driver plus a buffer-based entry point used by
-//! the codegen-parity harness).
+/**
+ * Top-level orchestrator entry points ported from upstream
+ * `src/build/mod.rs`. The `mod.rs` itself is not translated as a
+ * single `Mod.kt` per project rules; its functions are split between
+ * [EmitRecursiveAscent.kt] (the emit pipeline) and this file
+ * (the parse-and-normalise driver and the file-IO orchestrators).
+ */
 package io.github.kotlinmania.lalrpop.build
 
 import io.github.kotlinmania.lalrpop.ColorConfig
@@ -31,9 +32,7 @@ import io.github.kotlinmania.lalrpop.tok.ErrorCode
  * Direct port of upstream `LALRPOP_VERSION_HEADER` constant, expanded
  * via `concat("// auto-generated: \"", env("CARGO_PKG_NAME"), " ",
  * env("CARGO_PKG_VERSION"), "\"")`. The version string is captured at
- * upstream build time; the Kotlin port mirrors the value used by the
- * checked-in oracle outputs under
- * `src/commonTest/resources/codegen-parity/expected/`.
+ * upstream build time.
  */
 const val LALRPOP_VERSION_HEADER: String = "// auto-generated: \"lalrpop 0.23.1\""
 
@@ -68,86 +67,6 @@ fun parseAndNormalizeGrammar(session: Session, fileText: FileText): Grammar {
         //       Err(error) => Err(reportError(fileText, error.span, &error.message))?,
         //   }
         throw reportError(fileText, e.err.span, e.err.message)
-    }
-}
-
-/**
- * Buffer-based entry point used by the codegen-parity test harness.
- *
- * Mirrors the body of upstream `processFileInto` but without the
- * filesystem layer: rather than reading from disk and writing to a
- * `.rs` file, this function takes the grammar source as a string and
- * returns the emitted Rust source as a string, prefixed with the
- * `LALRPOP_VERSION_HEADER` and a `// sha3: ...` line that hashes the
- * input bytes (matching upstream `hashFile`).
- *
- * Callers in tests import this to diff the emitted output against the
- * upstream-emitted oracle files.
- *
- * @param input the contents of the `.lalrpop` source file.
- * @param sourceLabel a label used for error reporting in place of the
- *   path that upstream embeds; for the parity harness this is just the
- *   grammar name.
- * @param session optional session; defaults to a freshly-constructed
- *   session with `emitWhitespace = true` to when upstream.
- * @param hashHex optional precomputed SHA3-256 of the input. Upstream
- *   reads the file off disk and computes the hash in
- *   `hashFile`; here we val the caller supply the hash so that
- *   common-test code can avoid pulling in a SHA3 implementation. Pass
- *   the upstream value (the `// sha3: ...` line of the oracle file) to
- *   produce a byte-identical header.
- */
-fun compileGrammarToString(
-    input: String,
-    sourceLabel: String,
-    session: Session = Session.new().also {
-        it.unitTest = true
-        it.emitComments = true
-    },
-    hashHex: String? = null,
-): String {
-    // The staged parity oracles under
-    // src/commonTest/resources/codegen-parity/expected/ were generated
-    // by upstream `lalrpop-test/build.rs`, which runs lalrpop with
-    // `Session.unitTest = true`; that flag flips
-    // `algorithm.codegen` to `LrCodeGeneration.TestAll` in
-    // `normalize/lower.rs`, which wraps the parser in twin
-    // `__ascent` / `__parse_table` sub-modules. The default
-    // `session` argument enables `unitTest` so the harness emits the
-    // same shape as the oracles.
-    val fileText = FileText.new(sourceLabel, input)
-    val tlsGuard = Tls.install(session, fileText)
-    try {
-        val grammar = parseAndNormalizeGrammar(session, fileText)
-        val body = emitRecursiveAscent(session, grammar)
-        // Mirror upstream `processFileInto`s final byte sequence:
-        // `writeln(outputFile, "{LALRPOP_VERSION_HEADER}")` +
-        // `writeln(outputFile, "{sha3}")` +
-        // `outputFile.writeAll(&buffer)` — single trailing newline at
-        // EOF (the buffer ends with `}\n` from the last `rust(rust, "}}")`
-        // in `emitToTripleTrait`). The Kotlin port currently picks up
-        // an extra trailing newline somewhere upstream of this function;
-        // trim it here so the parity harness sees byte-identical EOF.
-        val trimmedBody = body.trimEnd() + "\n"
-        return buildString {
-            append(LALRPOP_VERSION_HEADER)
-            append('\n')
-            if (hashHex != null) {
-                append("// sha3: ")
-                append(hashHex)
-                append('\n')
-            } else {
-                // Upstream always emits a sha3 line; emit a sentinel
-                // when the caller did not pre-compute one so the line
-                // count of the header stays byte-equivalent. The parity
-                // harness must always supply the real hash.
-                append("// sha3: <missing>")
-                append('\n')
-            }
-            append(trimmedBody)
-        }
-    } finally {
-        tlsGuard.close()
     }
 }
 
