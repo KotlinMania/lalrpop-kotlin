@@ -74,7 +74,7 @@ private fun Tracer.traceReduceFromState(
         //
         //     Z = ...p (*) Y ...s
         //
-        // If `...s` does not match `\epsilon`, then we are done,
+        // If `...s` is not `\epsilon`, then we are done,
         // because `FIRST(...s)` will provide a token of context.
         // But otherwise we have to keep searching backwards.
 

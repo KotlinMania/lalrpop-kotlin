@@ -212,17 +212,15 @@ class Style private constructor(private val bits: Long) {
 }
 
 /**
- * `class StyleCursor<'term, T: ?Sized + Terminal>` — tracks the
- * currently applied style so `setStyle` can skip redundant apply calls.
+ * Tracks the currently applied style so `setStyle` can skip redundant apply
+ * calls.
  */
 class StyleCursor private constructor(
     private var currentStyle: Style,
     private val terminal: Terminal,
 ) {
-    /** `fun term(&mut self) -> &mut T` */
     fun term(): Terminal = terminal
 
-    /** `fun setStyle(&mut self, style: Style) -> term::Result<()>` */
     fun setStyle(style: Style): Result<Unit> {
         if (style != currentStyle) {
             style.apply(terminal).getOrElse { return Result.failure(it) }
@@ -232,7 +230,6 @@ class StyleCursor private constructor(
     }
 
     companion object {
-        /** `fun new(term: &'term mut T) -> term::Result<StyleCursor<'term, T>>` */
         fun new(term: Terminal): Result<StyleCursor> {
             val currentStyle = Style.DEFAULT
             currentStyle.apply(term).getOrElse { return Result.failure(it) }

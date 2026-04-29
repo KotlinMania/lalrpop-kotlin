@@ -1,35 +1,37 @@
 // port-lint: source build/action.rs
-//! Code for generating action code.
-//!
-//! From the outside, action fns have one of two forms. If they take
-//! symbols as input, e.g. from a production like `X = Y Z => ...`
-//! (which takes Y and Z as input), they have this form:
-//!
-//! ```text
-//! function __action17<
-//!     input,                       // user-declared type parameters (*)
-//! >(
-//!     input: &input str,           // user-declared parameters
-//!     __0: (size, size, size),   // symbols being reduced, if any
-//!     ...
-//!     __N: (size, Foo, size),     // each has a type (L, T, L)
-//! ) -> Box-like<Expr<input>>
-//! ```
-//!
-//! Otherwise, they have this form:
-//!
-//! ```noCompile
-//! function __action17<
-//!     input,                       // user-declared type parameters (*)
-//! >(
-//!     input: &input str,           // user-declared parameters
-//!    __lookbehind: &size,          // value for @R -- "end of previous token"
-//!    __lookahead: &size,           // value for @L -- "start of next token"
-//! ) -> Box-like<Expr<input>>
-//! ```
-//!
-//! * -- in this case, those "user-declared" parameters are inserted by
-//!   the "internal tokenizer".
+/**
+ * Code for generating action code.
+ *
+ * From the outside, action fns have one of two forms. If they take
+ * symbols as input, e.g. from a production like `X = Y Z => ...`
+ * (which takes Y and Z as input), they have this form:
+ *
+ * ```text
+ * function __action17<
+ *     input,                       // user-declared type parameters (*)
+ * >(
+ *     input: &input str,           // user-declared parameters
+ *     __0: (size, size, size),     // symbols being reduced, if any
+ *     ...
+ *     __N: (size, Foo, size),      // each has a type (L, T, L)
+ * ) -> boxed-like Expr
+ * ```
+ *
+ * Otherwise, they have this form:
+ *
+ * ```text
+ * function __action17<
+ *     input,                       // user-declared type parameters (*)
+ * >(
+ *     input: &input str,           // user-declared parameters
+ *    __lookbehind: &size,          // value for @R -- "end of previous token"
+ *    __lookahead: &size,           // value for @L -- "start of next token"
+ * ) -> boxed-like Expr
+ * ```
+ *
+ * * -- in this case, those "user-declared" parameters are inserted by
+ *   the "internal tokenizer".
+ */
 package io.github.kotlinmania.lalrpop.build
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
