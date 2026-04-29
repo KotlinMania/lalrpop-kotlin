@@ -35,10 +35,6 @@ data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
 class LaneTable(
     private val grammar: Grammar,
     private val conflicts: Int,
-    // Upstream: `BTreeMap<(StateIndex, ConflictIndex), TokenSet>` (BTreeMap
-    // with auto-derived `Ord` on tuples). We use [ComparablePair] so
-    // the Kotlin BTreeMap orders pairs the same way the upstream
-    // `(A, B): Ord` does (compare `first`, then `second`).
     private val lookaheads: Map<ComparablePair<StateIndex, ConflictIndex>, TokenSet> = map(),
     private val successors: Multimap<StateIndex, SetCollection<StateIndex>, StateIndex> =
         Multimap(collectionFactory = { SetCollection() }),
