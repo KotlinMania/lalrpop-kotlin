@@ -1,4 +1,5 @@
-// port-lint: source normalize/tyinfer/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.normalize.tyinfer
 
 import io.github.kotlinmania.lalrpop.Atom

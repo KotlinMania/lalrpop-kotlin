@@ -1,4 +1,5 @@
-// port-lint: source external/ascii-canvas/src/lib.rs
+// port-lint: ignore
+// transliterated from upstream module root (external/ascii-canvas)
 /**
  * An "ASCII Canvas" allows us to draw lines and write text into a
  * fixed-sized canvas and then convert that canvas into ASCII

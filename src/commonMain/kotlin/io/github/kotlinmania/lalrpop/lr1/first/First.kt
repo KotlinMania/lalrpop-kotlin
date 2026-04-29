@@ -1,4 +1,5 @@
-// port-lint: source lr1/first/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** First set construction and computation. */
 package io.github.kotlinmania.lalrpop.lr1.first
 

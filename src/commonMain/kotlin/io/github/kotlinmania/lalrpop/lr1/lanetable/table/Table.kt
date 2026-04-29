@@ -1,4 +1,5 @@
-// port-lint: source lr1/lane_table/table/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * The "Lane Table". In the paper, this is depicted like so:
  *

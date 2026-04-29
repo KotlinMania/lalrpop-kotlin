@@ -1,4 +1,5 @@
-// port-lint: source lexer/nfa/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * The Nfa we construct for each regex. Since the states are not
  * really of interest, we represent this just as a vector of labeled

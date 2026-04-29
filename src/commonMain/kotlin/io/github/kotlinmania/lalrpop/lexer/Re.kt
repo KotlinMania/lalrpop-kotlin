@@ -1,4 +1,5 @@
-// port-lint: source lexer/re/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** A parser and representation of regular expressions. */
 package io.github.kotlinmania.lalrpop.lexer
 

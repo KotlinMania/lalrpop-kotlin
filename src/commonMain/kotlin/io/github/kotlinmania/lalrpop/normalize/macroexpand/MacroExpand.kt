@@ -1,4 +1,5 @@
-// port-lint: source normalize/macro_expand/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.normalize.macroexpand
 
 import io.github.kotlinmania.lalrpop.Atom

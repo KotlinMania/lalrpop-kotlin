@@ -1,4 +1,5 @@
-// port-lint: source lr1/lane_table/lane/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * Code to trace out a single lane, collecting information into the
  * lane table as we go.

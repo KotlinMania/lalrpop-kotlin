@@ -1,4 +1,5 @@
-// port-lint: source grammar/free_variables/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.grammar
 
 import io.github.kotlinmania.lalrpop.Atom

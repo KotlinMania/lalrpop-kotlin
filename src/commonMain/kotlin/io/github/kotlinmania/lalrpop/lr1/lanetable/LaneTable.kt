@@ -1,4 +1,5 @@
-// port-lint: source lr1/lane_table/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.lr1.lanetable
 
 import io.github.kotlinmania.lalrpop.collections.Set

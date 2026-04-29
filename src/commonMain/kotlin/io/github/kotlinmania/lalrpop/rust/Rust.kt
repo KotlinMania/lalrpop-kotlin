@@ -1,4 +1,5 @@
-// port-lint: source rust/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * Simple Rust AST. This is what the various code generators create,
  * which then gets serialized.

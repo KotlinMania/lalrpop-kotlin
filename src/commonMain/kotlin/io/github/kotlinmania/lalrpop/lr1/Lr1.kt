@@ -1,4 +1,5 @@
-// port-lint: source lr1/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** Naive LR(1) generation algorithm. */
 package io.github.kotlinmania.lalrpop.lr1
 

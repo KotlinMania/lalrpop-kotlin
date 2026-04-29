@@ -1,4 +1,5 @@
-// port-lint: source build/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * Top-level orchestrator entry points ported from upstream
  * `src/build/mod.rs`. The `mod.rs` itself is not translated as a

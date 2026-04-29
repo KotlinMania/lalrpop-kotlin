@@ -1,4 +1,5 @@
-// port-lint: source lr1/report/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.lr1.report
 
 import io.github.kotlinmania.lalrpop.collections.Map

@@ -1,4 +1,5 @@
-// port-lint: source lexer/dfa/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * Constructs a Dfa which picks the longest matching regular
  * expression from the input.

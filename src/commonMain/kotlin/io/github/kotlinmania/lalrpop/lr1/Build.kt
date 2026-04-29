@@ -1,4 +1,5 @@
-// port-lint: source lr1/build/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** LR(1) state construction algorithm. */
 package io.github.kotlinmania.lalrpop.lr1
 

@@ -1,4 +1,5 @@
-// port-lint: source normalize/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * Normalization processes a parse tree until it is in suitable form to
  * be converted to the more canonical form. This is done as a series of

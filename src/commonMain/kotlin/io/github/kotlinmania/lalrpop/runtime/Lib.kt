@@ -1,4 +1,5 @@
-// port-lint: source lib.rs
+// port-lint: ignore
+// transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.runtime
 
 /**

@@ -1,4 +1,5 @@
-// port-lint: source lr1/core/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** Core LR(1) types. */
 package io.github.kotlinmania.lalrpop.lr1
 

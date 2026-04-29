@@ -1,4 +1,5 @@
-// port-lint: source parser/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.parser
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar

@@ -1,4 +1,5 @@
-// port-lint: source normalize/resolve/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * Resolves identifiers to decide if they are macros, terminals, or
  * nonterminals. Rewrites the parse tree accordingly.

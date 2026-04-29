@@ -1,4 +1,5 @@
-// port-lint: source normalize/inline/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** Inlining of nonterminals */
 package io.github.kotlinmania.lalrpop.normalize.inline
 

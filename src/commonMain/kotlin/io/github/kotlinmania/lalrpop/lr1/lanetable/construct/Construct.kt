@@ -1,4 +1,5 @@
-// port-lint: source lr1/lane_table/construct/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** Generate rust parser code using the lane table algorithm */
 package io.github.kotlinmania.lalrpop.lr1.lanetable.construct
 

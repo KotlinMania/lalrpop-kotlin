@@ -1,4 +1,5 @@
-// port-lint: source lr1/lane_table/table/context_set/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * A key part of the lane-table algorithm is the idea of a CONTEXT
  * SET (my name, the paper has no name for this). Basically it

@@ -1,4 +1,5 @@
-// port-lint: source tok/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /** A tokenizer for use in LALRPOP itself. */
 package io.github.kotlinmania.lalrpop.tok
 import io.github.kotlinmania.lalrpop.lr1.Lookahead

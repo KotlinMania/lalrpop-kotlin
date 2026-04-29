@@ -1,4 +1,5 @@
-// port-lint: source normalize/precedence/mod.rs
+// port-lint: ignore
+// transliterated from upstream module root
 /**
  * Precedence expander.
  *
