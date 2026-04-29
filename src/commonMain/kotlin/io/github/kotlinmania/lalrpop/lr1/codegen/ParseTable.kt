@@ -1,5 +1,5 @@
 // port-lint: source lr1/codegen/parse_table.rs
-//! A compiler from an LR(1) table to a traditional table driven parser.
+/** A compiler from an LR(1) table to a traditional table driven parser. */
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Sep
@@ -56,14 +56,6 @@ fun compileParseTable(
 }
 
 sealed class Comment<T> {
-    /**
-     * Mirrors `implementation<T: fmt::Display> fmt::Display for Comment<'_, T>`.
-     * Each variant overrides `toString()` so dispatchers like
-     * `format("{}", comment)` produce the same text as upstream.
-     * Without these overrides the parse-table emitter wrote
-     * `Goto(token=Terminal(terminalString="b"), newState=2)` into the
-     * generated Rust source instead of ` // on "b", goto 2`.
-     */
     abstract override fun toString(): String
 
     data class Goto<T>(val token: T, val newState: Int) : Comment<T>() {
@@ -529,8 +521,8 @@ private fun <K, K2, T> emitGotoMatch(
 
         row.sortBy { it.first }
 
-        // Since the parser will always select a non-error (non-zero) nextState we can import the
-        // catch all in the match to represent the largest variant
+        // Since the parser will always select a non-error (non-zero) nextState we can use the
+        // catch-all branch of the emitted dispatch to represent the largest variant
         var largestVariantIndex = 0
         var largestVariant = 0
 
@@ -679,7 +671,7 @@ private fun CodeGenerator<TableDriven>.writeTokenToIntegerFn() {
         .emit()
     rust(this.out, "{")
 
-    // This match contains user-supplied token names.  Reenable some warnings to help them
+    // The dispatch contains user-supplied token names.  Reenable some warnings to help them
     // catch errors if they've got a bug in their custom lexer implementation
     rust(this.out, "#[warn(unused_variables)]")
     rust(this.out, "match ${this.prefix}token {")
@@ -1098,19 +1090,10 @@ private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
 }
 
 /**
- * The `accepts` function
- *
- * ```ignore
- * function __accepts() {
- * errorState: Option<i32>,
- * states: &Vec<i32>,
- * optInteger: Option<usize>,
- * ) -> bool {
- * ...
- * }
- * ```
- *
- * has the job of figuring out whether the given state stack (with the
+ * The `accepts` function (signature shape: an `__accepts` taking the
+ * optional error-state index, a reference to the state stack, and the
+ * optional integer-encoded lookahead, returning a boolean) has the
+ * job of figuring out whether the given state stack (with the
  * optional error state appended) would "accept" the given lookahead. We
  * basically trace through the LR automaton looking for one of two
  * outcomes:
@@ -1326,7 +1309,7 @@ class MachineParameters(
                 )
             }
 
-            // Put lifetimes first (this is stable, mind, so order remains
+            // Put the `LifetimeTp` variant first (this is stable, mind, so order remains
             // largely unperturbed):
             typeParameters.sortBy { tp ->
                 when (tp) {

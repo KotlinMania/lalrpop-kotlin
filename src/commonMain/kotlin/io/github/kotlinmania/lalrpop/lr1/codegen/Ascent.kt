@@ -1,7 +1,7 @@
 // port-lint: source lr1/codegen/ascent.rs
-//! A compiler from an LR(1) table to a [recursive ascent] parser.
-//!
-//! [recursive ascent]: https://en.wikipedia.org/wiki/RecursiveAscentParser
+/**
+ * A compiler from an LR(1) table to a [recursive ascent](https://en.wikipedia.org/wiki/RecursiveAscentParser) parser.
+ */
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Escape
@@ -611,7 +611,7 @@ private fun CodeGenerator<RecursiveAscent>.fnArgs(
 /**
  * Examine the states that we may transition to. Unless this is
  * the start state, we will always take at least 1 fixed input:
- * the most recently pushed symbol (let call it `symX`), and we
+ * the most recently pushed symbol (call it `symX`), and we
  * may have others as well. But if this state can transition to
  * another state can takes some of those inputs as optional
  * parameters, we need to convert them them options. This
