@@ -16,7 +16,7 @@ package io.github.kotlinmania.btree
 // switch to the closer-to-source pattern: return a sealed [BifurcationResult]
 // with `Ok(value)` and `LeafEdge(handle)` variants, mirroring the upstream
 // `Result::Ok` / `Result::Err`. This is the more transliteration-faithful
-// of the two valid Kotlin/Native workarounds (see PORTING.md row).
+// of the two valid Kotlin/Native workarounds.
 
 /**
  * `SearchBound` mirrors `core::ops::Bound` but adds two unconditional
