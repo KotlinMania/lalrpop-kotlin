@@ -159,7 +159,7 @@ data class InternToken(
  * ID = r"[a-zA-Z]+"
  * ```
  *
- * This would correspond to three match entries:
+ * This would correspond to three `MatchEntry` instances:
  * - `MatchEntry { matchLiteral: r"(?i)BEGIN", userName: "BEGIN", precedence: 2 }`
  * - `MatchEntry { matchLiteral: "+", userName: "+", precedence: 3 }`
  * - `MatchEntry { matchLiteral: "r[a-zA-Z]+"", userName: r"[a-zA-Z]+", precedence: 0 }`
@@ -172,7 +172,7 @@ data class InternToken(
  */
 data class MatchEntry(
     /**
-     * The precedence of this match entry.
+     * The precedence of this `MatchEntry`.
      *
      * NB: This field must go first, so that `PartialOrd` sorts by precedence first!
      */
