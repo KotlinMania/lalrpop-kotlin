@@ -8,9 +8,11 @@ import io.github.kotlinmania.btree.BTreeMap
  * but rather build against [Map] (and [map] to construct
  * an instance). This should be a deterministic map, such that two
  * runs of LALRPOP produce the same output, but otherwise it doesn't
- * matter much. I'd probably prefer to use `HashMap` with an
+ * matter much. I would probably prefer to use [HashMap] with an
  * alternative hasher, but that's not stable.
  */
 typealias Map<K, V> = BTreeMap<K, V>
 
-fun <K : Comparable<K>, V> map(): Map<K, V> = BTreeMap.default()
+fun <K : Comparable<K>, V> map(): Map<K, V> {
+    return Map.default<K, V>()
+}
