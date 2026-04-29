@@ -61,11 +61,6 @@ fun parseAndNormalizeGrammar(session: Session, fileText: FileText): Grammar {
     return try {
         normalize(session, ptGrammar)
     } catch (e: NormErrorException) {
-        // Upstream:
-        //   when normalize::normalize(session, grammar) {
-        //       Ok(grammar) => Ok(grammar),
-        //       Err(error) => Err(reportError(fileText, error.span, &error.message))?,
-        //   }
         throw reportError(fileText, e.err.span, e.err.message)
     }
 }
