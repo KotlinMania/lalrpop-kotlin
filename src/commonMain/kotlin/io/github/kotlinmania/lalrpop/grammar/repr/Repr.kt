@@ -109,14 +109,12 @@ sealed class WhereClause : Comparable<WhereClause> {
 
     override fun compareTo(other: WhereClause): Int = toString().compareTo(other.toString())
 
-    override fun toString(): String = when (this) {
+    fun fmt(): String = when (this) {
         is Forall -> "for<${Sep(", ", binder)}> $clause"
-        is Bound -> "$subject: ${bound.whereClauseDisplayPlaceholder()}"
+        is Bound -> "$subject: ${bound.fmt()}"
     }
 
-    // `TypeBound.display()` is defined in parseTree.kt as an extension.
-    private fun TypeBound<TypeRepr>.whereClauseDisplayPlaceholder(): String =
-        this.display()
+    override fun toString(): String = fmt()
 }
 
 /**
@@ -155,7 +153,9 @@ data class Parameter(
     var name: Atom,
     var ty: TypeRepr,
 ) {
-    override fun toString(): String = "$name: $ty"
+    fun fmt(): String = "$name: $ty"
+
+    override fun toString(): String = fmt()
 }
 
 data class Production(
@@ -181,8 +181,10 @@ data class Production(
         return span.compareTo(other.span)
     }
 
-    override fun toString(): String =
+    fun fmt(): String =
         "$nonterminal = ${Sep(", ", symbols)} => $action;"
+
+    override fun toString(): String = fmt()
 }
 
 sealed class Symbol : Comparable<Symbol> {
@@ -191,11 +193,16 @@ sealed class Symbol : Comparable<Symbol> {
     // by Kotlin `data class`-generated toString. Mirrors the upstream
     // symbol formatting contract.
     data class Nonterminal(val nt: NonterminalString) : Symbol() {
-        override fun toString(): String = "$nt"
+        override fun toString(): String = fmt()
     }
 
     data class Terminal(val term: TerminalString) : Symbol() {
-        override fun toString(): String = "$term"
+        override fun toString(): String = fmt()
+    }
+
+    fun fmt(): String = when (this) {
+        is Nonterminal -> "$nt"
+        is Terminal -> "$term"
     }
 
     override fun compareTo(other: Symbol): Int {
@@ -310,47 +317,38 @@ sealed class TypeRepr : Comparable<TypeRepr> {
      * Mirrors upstream formatting for type representations (the "pretty" form
      * and the debug form share the same string surface upstream).
      *
-     * Each subclass overrides `toString()` explicitly because Kotlin `data class`
-     * auto-generates its own `toString()` and will silently shadow any override
-     * placed on the sealed parent.
+     * Each subclass overrides `toString()` explicitly to delegate to fmt()
+     * because Kotlin `data class` auto-generates its own `toString()` and
+     * will silently shadow any override placed on the sealed parent.
      */
     abstract override fun toString(): String
 
     data class Tuple(val types: MutableList<TypeRepr>) : TypeRepr() {
-        override fun toString(): String = "(${Sep(", ", types)})"
+        override fun toString(): String = fmt()
     }
 
     data class Slice(val ty: TypeRepr) : TypeRepr() {
-        override fun toString(): String = "[$ty]"
+        override fun toString(): String = fmt()
     }
 
     data class Nominal(val data: NominalTypeRepr) : TypeRepr() {
-        override fun toString(): String = "$data"
+        override fun toString(): String = fmt()
     }
 
     data class Associated(val typeParameter: Atom, val id: Atom) : TypeRepr() {
-        override fun toString(): String = "$typeParameter::$id"
+        override fun toString(): String = fmt()
     }
 
     data class LifetimeRepr(val lifetime: Lifetime) : TypeRepr() {
-        override fun toString(): String = "$lifetime"
+        override fun toString(): String = fmt()
     }
 
     data class Ref(val lifetime: Lifetime?, val mutable: Boolean, val referent: TypeRepr) : TypeRepr() {
-        override fun toString(): String {
-            val amp = "&"
-            val mutKeyword = "mut"
-            return when {
-                lifetime == null && !mutable -> "$amp$referent"
-                lifetime != null && !mutable -> "$amp$lifetime $referent"
-                lifetime == null && mutable -> "$amp$mutKeyword $referent"
-                else -> "$amp$lifetime $mutKeyword $referent"
-            }
-        }
+        override fun toString(): String = fmt()
     }
 
     data class TraitObject(val data: NominalTypeRepr) : TypeRepr() {
-        override fun toString(): String = "dyn $data"
+        override fun toString(): String = fmt()
     }
 
     data class Fn(
@@ -359,7 +357,23 @@ sealed class TypeRepr : Comparable<TypeRepr> {
         val parameters: MutableList<TypeRepr>,
         val ret: TypeRepr?,
     ) : TypeRepr() {
-        override fun toString(): String = buildString {
+        override fun toString(): String = fmt()
+    }
+
+    fun fmt(): String = when (this) {
+        is Tuple -> "(${Sep(", ", types)})"
+        is Slice -> "[$ty]"
+        is Nominal -> "$data"
+        is Associated -> "$typeParameter::$id"
+        is LifetimeRepr -> "$lifetime"
+        is TraitObject -> "dyn $data"
+        is Ref -> when {
+            lifetime == null && !mutable -> "&$referent"
+            lifetime != null && !mutable -> "&$lifetime $referent"
+            lifetime == null && mutable -> "&mut $referent"
+            else -> "&$lifetime mut $referent"
+        }
+        is Fn -> buildString {
             append("dyn ")
             if (forall.isNotEmpty()) {
                 append("for<${Sep(", ", forall)}> ")
@@ -512,11 +526,13 @@ data class NominalTypeRepr(
 ) : Comparable<NominalTypeRepr> {
     override fun compareTo(other: NominalTypeRepr): Int = toString().compareTo(other.toString())
 
-    override fun toString(): String = if (types.isEmpty()) {
+    fun fmt(): String = if (types.isEmpty()) {
         "$path"
     } else {
         "$path<${Sep(", ", types)}>"
     }
+
+    override fun toString(): String = fmt()
 }
 
 class Types(
@@ -558,6 +574,20 @@ class Types(
             types = args,
         ))
         terminalTypes[TerminalString.Error] = errorRecoveryType
+    }
+
+    companion object {
+        fun new(
+            prefix: String,
+            terminalLocType: TypeRepr?,
+            errorType: TypeRepr?,
+            terminalTokenType: TypeRepr,
+        ): Types = Types(
+            prefix = prefix,
+            terminalLocType = terminalLocType,
+            errorType = errorType,
+            terminalTokenType = terminalTokenType,
+        )
     }
 
     fun addType(ntId: NonterminalString, ty: TypeRepr) {
