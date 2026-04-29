@@ -213,7 +213,6 @@ class Configuration internal constructor(
      * Enables "unit-testing" configuration. This is only for
      * lalrpop-test.
      */
-    @Suppress("unused")
     fun unitTest(): Configuration {
         session.unitTest = true
         return this
