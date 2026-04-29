@@ -6,7 +6,6 @@ import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.MutableList<State<TokenSet>>
 import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
