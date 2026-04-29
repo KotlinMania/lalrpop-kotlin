@@ -4,8 +4,8 @@
 
 This is **lalrpop-kotlin**, a Kotlin Multiplatform port of LALRPOP (the
 Rust LR(1) parser generator by Niko Matsakis and the LALRPOP Project
-Developers). The upstream Rust sources live in `tmp/lalrpop-rs/` and are
-read-only oracles; the Kotlin implementation is built under `src/`.
+Developers). The upstream Rust sources live in `tmp/lalrpop-rs/` and
+are read-only oracles; the Kotlin implementation is built under `src/`.
 
 Upstream: https://github.com/lalrpop/lalrpop
 
@@ -28,44 +28,61 @@ seems to conflict with one of these, the goals win.
    coverage and cheat-detection tool. Earlier revisions of this doc
    forbade piping/redirecting its output; that restriction is lifted.
    The blocker survives as opt-in policy via the `"strict_redirects"`
-   field in `.ast_distance_config.json` (default `false`).
-4. **Anything goes that is faithful to Rust.** A faithful translation is
-   one that produces the same observable behavior on the same input.
-   Within that constraint, use Kotlin idioms, Kotlin stdlib, kotlinx
-   libraries, sealed classes, data classes, extension functions,
-   coroutines — whatever makes the Kotlin clearer. The default is still
-   "translate the Rust line-by-line" because that produces parity with
-   the lowest cognitive cost; deviate when the Rust idiom has a strictly
-   better Kotlin counterpart with no behavioral change.
-5. **No hacks. Hacks are bugs.** Stub functions, empty shells,
-   `TODO()`/`FIXME` markers, score-padding `@Suppress` annotations,
-   placeholder classes, operator-graded test gates, "fix it later"
-   comments — all bugs. Fix the root cause. If you can't, stop and ask.
-   Do not park the problem.
+   field in `.ast_distance_config.json` (default `false`). Do **not**
+   chase ast_distance similarity scores — a faithful Kotlin port using
+   stdlib idioms can score low because identifier overlap is the
+   dominant signal. Coverage (zero missing symbols, zero stubs) is the
+   gate; per-file similarity is diagnostic only.
+4. **Anything goes that is faithful to Rust.** A faithful translation
+   is one that produces the same observable behavior on the same
+   input. Within that constraint, use Kotlin idioms, Kotlin stdlib,
+   kotlinx libraries, sealed classes, data classes, extension
+   functions, coroutines — whatever makes the Kotlin clearer. The
+   default is still "translate the Rust line-by-line" because that
+   produces parity with the lowest cognitive cost; deviate when the
+   Rust idiom has a strictly better Kotlin counterpart with no
+   behavioral change.
+5. **No hacks. Hacks are bugs.** No stubs, no `TODO()`, no `FIXME`, no
+   `@Suppress` annotations, no JVM imports, no porter-invented
+   typealiases, no operator-graded test gates, no "fix it later"
+   comments. Warnings are errors — fix the cause. If you can't, stop
+   and ask. Do not park the problem.
 
 ## Verification
 
-The gate is **ported tests pass against the same inputs as upstream.**
+The build gate is **`./gradlew test`** — the ported Rust tests must
+pass on the same inputs the Rust tests use. The Kotlin compiler is a
+precondition, not the gate. The earlier `astDistanceParity` Gradle gate
+that short-circuited every build target on coverage / stub thresholds
+has been removed; that style of gate ranks symbol counts above test
+correctness and pushes the port toward rust-ifying Kotlin to chase
+numbers.
 
 For each module you touch:
 
-1. Find the corresponding Rust tests in `tmp/lalrpop-rs/lalrpop/src/<path>`
-   (inline `#[cfg(test)] mod tests` or sibling `tests.rs`).
-2. Port them to `src/commonTest/kotlin/io/github/kotlinmania/lalrpop/<path>/`,
+1. Find the corresponding Rust tests in
+   `tmp/lalrpop-rs/lalrpop/src/<path>` (inline `#[cfg(test)] mod tests`
+   or sibling `tests.rs`).
+2. Port them to
+   `src/commonTest/kotlin/io/github/kotlinmania/lalrpop/<path>/`,
    using `kotlin.test`. Test fixtures (`.lalrpop` grammars, expected
    tables, etc.) move under `src/commonTest/resources/`.
-3. Run the test on the Kotlin port. It must pass on the same input the
-   Rust test uses.
+3. Run `./gradlew test` (or the platform-specific test task). Tests
+   must pass on the same input the Rust test uses.
+4. Spot-check coverage by running `ast_distance --symbol-parity` on
+   the file pair (see commands below). Use the result diagnostically:
+   missing-symbol counts are real coverage gaps; per-file similarity
+   numbers are noisy and should not be chased.
 
-ast_distance is the secondary tool, used to check coverage and detect
-specific cheat patterns. It does **not** make a port "done" — passing
-tests does.
+ast_distance is the working tool for narrower questions:
 
 ```bash
 # Coverage map: which Rust symbols are missing from the Kotlin tree
 ./tools/ast_distance/ast_distance --symbol-parity \
   tmp/lalrpop-rs/lalrpop/src \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop
+  src/commonMain/kotlin/io/github/kotlinmania/lalrpop \
+  --kotlin-test-root src/commonTest/kotlin/io/github/kotlinmania/lalrpop \
+  --missing-only
 
 # Function-by-function comparison for a single file pair
 ./tools/ast_distance/ast_distance --compare-functions \
@@ -79,13 +96,57 @@ tests does.
 ```
 
 Pipe and redirect freely. The redirect-guard is now off by default. If
-you want to re-enforce it on a branch, set `"strict_redirects": true` in
-`.ast_distance_config.json`.
+you want to re-enforce it on a branch, set `"strict_redirects": true`
+in `.ast_distance_config.json`.
 
-A low ast_distance score on a faithful port whose tests pass is a
-tooling signal, not a verdict — usually it means the score model
-doesn't like Kotlin's stdlib idioms. A high score on a port whose tests
-fail is worthless.
+A low ast_distance score on a faithful port whose tests pass and whose
+coverage is 100% is a tooling signal, not a verdict — usually it means
+the score model doesn't like Kotlin's stdlib idioms. A high score on a
+port whose tests fail is worthless.
+
+## Targets — Kotlin Multiplatform, no JVM
+
+The project ships these targets (see `build.gradle.kts`):
+
+- `macosArm64`, `macosX64`
+- `linuxX64`
+- `mingwX64`
+- `iosArm64`, `iosX64`, `iosSimulatorArm64`
+- `js` (browser + nodejs)
+- `wasmJs` (browser + nodejs)
+- `androidLibrary`
+
+**There is no `jvm()` target.** The `jvmToolchain(21)` line in the
+build script configures the JDK that runs Gradle itself; it does not
+add a JVM target.
+
+### Forbidden imports
+
+- `import kotlin.jvm.JvmName`
+- `import kotlin.jvm.JvmStatic`
+- `import kotlin.jvm.JvmField`
+- `import kotlin.jvm.JvmOverloads`
+- any `import kotlin.jvm.*`
+- any `import java.*`
+- any `import javax.*`
+
+If you find yourself reaching for one of these, the answer is in the
+Kotlin stdlib or a kotlinx library. If neither covers the case, raise
+on Slack — do not import a JVM-only API.
+
+### Approved dependencies
+
+- `kotlinx-coroutines-core`
+- `kotlinx-serialization-core`, `kotlinx-serialization-json`
+- `kotlinx-collections-immutable`
+- `kotlinx-datetime`
+- `kotlinx-atomicfu` (when atomic operations are required)
+
+Add a new dependency only when stdlib + the above cannot reproduce the
+Rust crate's behavior, and only after confirming the dependency
+publishes artifacts for **every** target listed above. Document the
+addition in the commit message with the Rust crate it replaces and why
+stdlib was insufficient.
 
 ## Port-Lint Headers (REQUIRED)
 
@@ -114,98 +175,110 @@ Test files use the same convention:
 package io.github.kotlinmania.lalrpop.lr1
 ```
 
+Files with no single Rust source (because the implementation came from
+a `mod.rs` re-home) use `// port-lint: ignore` and a short prose note
+like `// re-homed from upstream module root`.
+
 ## Naming Conventions
 
-Faithful Kotlin names — Rust naming idioms map mechanically.
+Faithful Kotlin names — Rust naming idioms map mechanically. **No
+underscores in Kotlin identifiers** except in the four contexts where
+Kotlin's coding conventions explicitly permit `SCREAMING_SNAKE_CASE`
+(see below).
 
 ### Identifiers
 
-| Rust                                 | Kotlin                                     |
-|--------------------------------------|--------------------------------------------|
-| `fn parse_grammar()`                 | `fun parseGrammar()`                       |
-| `let mut state_count`                | `var stateCount`                           |
-| `const MAX_STATES: usize`            | `const val MAX_STATES: Int`                |
-| `static GLOBAL_TABLE: ...`           | `val GLOBAL_TABLE: ...`                    |
-| `struct ParseTable`                  | `class ParseTable` / `data class ParseTable` |
+| Rust                                 | Kotlin                                                       |
+|--------------------------------------|--------------------------------------------------------------|
+| `fn parse_grammar()`                 | `fun parseGrammar()`                                         |
+| `let mut state_count`                | `var stateCount`                                             |
+| `struct ParseTable`                  | `class ParseTable` / `data class ParseTable`                 |
 | `enum Action { Shift, Reduce(...) }` | `sealed class Action { object Shift; data class Reduce(...) }` |
-| `trait Display`                      | `interface Display`                        |
-| `impl Display for Foo { ... }`       | `class Foo : Display { ... }`              |
-| `pub type Lr1Result<T> = ...`        | `typealias Lr1Result<T> = ...`             |
-| `mod lr1`                            | package `lalrpop.lr1`                      |
-| `r#type` (raw identifier)            | `` `type` `` (backtick literal)            |
+| `trait Display`                      | `interface Display`                                          |
+| `impl Display for Foo { ... }`       | `class Foo : Display { ... }`                                |
+| `pub type Lr1Result<T> = ...`        | `typealias Lr1Result<T> = ...`                               |
+| `mod lr1`                            | package `lalrpop.lr1`                                        |
+| `r#type` (raw identifier)            | `` `type` `` (backtick literal)                              |
+
+### `SCREAMING_SNAKE_CASE` — the only place underscores appear
+
+Per the Kotlin coding conventions, `SCREAMING_SNAKE_CASE` is permitted
+in exactly four contexts:
+
+1. `const val` compile-time constants.
+   `const val MAX_STATES: Int = 256`
+2. Top-level or `object` `val` properties holding immutable data with
+   no custom getter.
+   `val USER_AGENT_HEADER = "lalrpop-kotlin/1.0"`
+3. `enum class` entries (either `SCREAMING_SNAKE_CASE` or
+   `UpperCamelCase` — pick one and be consistent within a given enum).
+4. Nowhere else.
+
+Rust → Kotlin mechanical rule for constants:
+
+| Rust                                       | Kotlin                            |
+|--------------------------------------------|-----------------------------------|
+| `const MAX_STATES: usize = 256;`           | `const val MAX_STATES: Int = 256` |
+| `static GLOBAL_TABLE: Lazy<...> = ...;`    | `val GLOBAL_TABLE: ... = ...`     |
+| `static mut COUNTER: u32 = 0;`             | (avoid mutable static; prefer a class-scoped property or `kotlinx-atomicfu`) |
+
+Function names, parameter names, local `var`/`val` bindings, class
+names, property names with custom getters, type aliases, generic
+parameters: **camelCase / PascalCase only**. If you find yourself
+writing `parse_table` or `stateCount_` in Kotlin, you've broken the
+rule.
 
 ### Tests
 
-| Rust                                  | Kotlin                                       |
-|---------------------------------------|----------------------------------------------|
-| `#[test] fn test_first_set()`         | `@Test fun testFirstSet()`                   |
-| `#[cfg(test)] mod tests { ... }`      | one `class FirstTest { ... }` in commonTest  |
-| `assert_eq!(a, b)`                    | `assertEquals(b, a)`                         |
-| `assert!(cond)`                       | `assertTrue(cond)`                           |
-| `#[should_panic]`                     | `assertFailsWith<...> { ... }`               |
-| `#[ignore]`                           | `@Ignore`                                    |
+| Rust                              | Kotlin                                       |
+|-----------------------------------|----------------------------------------------|
+| `#[test] fn test_first_set()`     | `@Test fun testFirstSet()`                   |
+| `#[cfg(test)] mod tests { ... }`  | one `class FirstTest { ... }` in commonTest  |
+| `assert_eq!(a, b)`                | `assertEquals(b, a)` (note: Kotlin order is expected first) |
+| `assert!(cond)`                   | `assertTrue(cond)`                           |
+| `#[should_panic]`                 | `assertFailsWith<...> { ... }`               |
+| `#[ignore]`                       | `@Ignore`                                    |
 
 ### Visibility
 
-| Rust            | Kotlin                  |
-|-----------------|-------------------------|
-| `pub`           | `public` (default — omit) |
-| `pub(crate)`    | `internal`              |
-| `pub(super)`    | `internal`              |
-| (no modifier)   | `private`               |
+| Rust            | Kotlin                       |
+|-----------------|------------------------------|
+| `pub`           | `public` (default — omit)    |
+| `pub(crate)`    | `internal`                   |
+| `pub(super)`    | `internal`                   |
+| (no modifier)   | `private`                    |
 
 ### Types
 
-| Rust                | Kotlin                                                                                |
-|---------------------|---------------------------------------------------------------------------------------|
-| `i8 / u8`           | `Byte / UByte`                                                                        |
-| `i16 / u16`         | `Short / UShort`                                                                      |
-| `i32 / u32`         | `Int / UInt`                                                                          |
-| `i64 / u64`         | `Long / ULong`                                                                        |
-| `usize / isize`     | `Int` (or `Long` if 64-bit indices are required)                                      |
-| `f32 / f64`         | `Float / Double`                                                                      |
-| `bool`              | `Boolean`                                                                             |
-| `char`              | `Char` (24-bit Rust scalar value vs 16-bit Kotlin code unit — note when this matters) |
-| `String / &str`     | `String`                                                                              |
-| `Option<T>`         | `T?`                                                                                  |
-| `Result<T, E>`      | `Result<T>` (E carried via exception) or sealed `Either<E, T>` if the error type carries data and the call sites pattern-match on it |
-| `Vec<T>`            | `MutableList<T>` (mutable) or `List<T>` (read-only)                                   |
-| `&[T]`              | `List<T>`                                                                             |
-| `HashMap<K, V>`     | `MutableMap<K, V>` / `Map<K, V>`                                                      |
-| `BTreeMap<K, V>`    | `sortedMapOf` or kotlinx-collections-immutable persistent ordered map                 |
-| `HashSet<T>`        | `MutableSet<T>` / `Set<T>`                                                            |
-| `BTreeSet<T>`       | sorted set                                                                            |
-| `Box<T>`            | plain `T` (GC owns)                                                                   |
-| `Rc<T> / Arc<T>`    | plain reference                                                                       |
-| `Cell<T> / RefCell<T>` | mutable property (single-threaded) or atomic ref (threaded)                        |
-| `NonNull<T>`        | non-null `T` (Kotlin's type system encodes this)                                      |
-| `MaybeUninit<T>`    | nullable `T?` initialized lazily, or `lateinit var`                                   |
-| `dyn Trait`         | interface type (Kotlin interfaces are already polymorphic)                            |
-| `&'a T`             | `T` (lifetimes are erased; Kotlin GC owns)                                            |
-| `Pin<T>`            | plain `T` (Kotlin has no pinning concept)                                             |
-| `()`                | `Unit`                                                                                |
-| `!` (never)         | `Nothing`                                                                             |
-
-## Test Porting Discipline
-
-Every Rust test must have a Kotlin counterpart in `commonTest`. Use
-ast_distance to check coverage:
-
-```bash
-./tools/ast_distance/ast_distance --compare-functions \
-  tmp/lalrpop-rs/lalrpop/src/<file>.rs rust \
-  src/commonTest/kotlin/.../<File>Test.kt kotlin
-```
-
-`@Test` functions and `#[test] fn` should pair 1:1 by canonicalised
-name. Helpers used inside the test module port alongside (private
-top-level functions or members of the test class).
-
-Test fixtures in `tmp/lalrpop-rs/lalrpop-test/src/` mirror to
-`src/commonTest/resources/lalrpop-test/`, loaded via the platform
-resource API in commonTest. If a fixture exercises a code path the
-Kotlin port doesn't yet implement, port the implementation — do not
-skip the test.
+| Rust                  | Kotlin                                                                                |
+|-----------------------|---------------------------------------------------------------------------------------|
+| `i8 / u8`             | `Byte / UByte`                                                                        |
+| `i16 / u16`           | `Short / UShort`                                                                      |
+| `i32 / u32`           | `Int / UInt`                                                                          |
+| `i64 / u64`           | `Long / ULong`                                                                        |
+| `usize / isize`       | `Int` (or `Long` if 64-bit indices are required)                                      |
+| `f32 / f64`           | `Float / Double`                                                                      |
+| `bool`                | `Boolean`                                                                             |
+| `char`                | `Char` (24-bit Rust scalar value vs 16-bit Kotlin code unit — note when this matters) |
+| `String / &str`       | `String`                                                                              |
+| `Option<T>`           | `T?`                                                                                  |
+| `Result<T, E>`        | `Result<T>` (E carried via exception) or sealed `Either<E, T>` if the error type carries data and call sites pattern-match on it |
+| `Vec<T>`              | `MutableList<T>` (mutable) or `List<T>` (read-only)                                   |
+| `&[T]`                | `List<T>`                                                                             |
+| `HashMap<K, V>`       | `MutableMap<K, V>` / `Map<K, V>`                                                      |
+| `BTreeMap<K, V>`      | `sortedMapOf` or kotlinx-collections-immutable persistent ordered map                 |
+| `HashSet<T>`          | `MutableSet<T>` / `Set<T>`                                                            |
+| `BTreeSet<T>`         | sorted set                                                                            |
+| `Box<T>`              | plain `T` (GC owns)                                                                   |
+| `Rc<T> / Arc<T>`      | plain reference                                                                       |
+| `Cell<T> / RefCell<T>`| mutable property (single-threaded) or `kotlinx-atomicfu` ref (threaded)               |
+| `NonNull<T>`          | non-null `T`                                                                          |
+| `MaybeUninit<T>`      | nullable `T?` initialized lazily, or `lateinit var`                                   |
+| `dyn Trait`           | interface type (Kotlin interfaces are already polymorphic)                            |
+| `&'a T`               | `T` (lifetimes are erased; Kotlin GC owns)                                            |
+| `Pin<T>`              | plain `T` (Kotlin has no pinning concept)                                             |
+| `()`                  | `Unit`                                                                                |
+| `!` (never)           | `Nothing`                                                                             |
 
 ## Translation Discipline
 
@@ -223,6 +296,18 @@ What "behaviorally identical" rules out: lazy where Rust was eager,
 unboxed where Rust was boxed, throwing where Rust returned `Result`,
 collecting where Rust streamed, swallowing where Rust propagated.
 
+### No `@Suppress`, ever. Warnings are errors.
+
+Warnings indicate the port is wrong. Fix the cause. The annotation is
+never the answer.
+
+- "unused" → the Kotlin code is genuinely dead; un-collapse the Rust
+  concept the port flattened.
+- "UNCHECKED_CAST" → the Kotlin lost a Rust invariant; encode it in
+  the type system (sealed classes, generics, `inline class`).
+- "UNUSED_VARIABLE" → port the binding as `_` or destructure without
+  it.
+
 ### No stubs, no shims, no operator-graded gates
 
 - No `class Foo` with an empty body when the Rust struct has fields.
@@ -234,7 +319,8 @@ collecting where Rust streamed, swallowing where Rust propagated.
   (`drop_in_place`, `mem::forget`, `Pin`, `Box<T>`, `Cell<T>`,
   `RefCell<T>`, `Arc<T>`, `Rc<T>`, `NonNull<T>`, `MaybeUninit<T>`,
   `dyn Trait`). Delete them or inline the wrapped value; do not
-  translate as `fun dropInPlace() {}` shells.
+  translate as `fun dropInPlace() {}` shells. Empty shells inflate
+  symbol counts without porting any behavior.
 - No tests whose pass/fail is determined by an operator-set status
   field. A test fails when the actual output differs from the expected
   output, full stop.
@@ -250,43 +336,48 @@ Do not port them as `Mod.kt` and do not mirror their `pub use` chain
 with `internal typealias Bar = foo.Bar`. Rewire callers to import from
 the defining package directly.
 
-A `mod.rs` with real type or function definitions in addition to its
-`pub use` chain is a normal port target — only the reexports are
-dropped.
+A `mod.rs` (or any other file) that contains real type or function
+definitions in addition to its `pub use` chain is a normal port
+target — only the reexports are dropped, not the real definitions.
 
-Porter-invented typealiases (no corresponding Rust `pub type`) are
-forbidden. A typealias with no Rust counterpart is a name pretending to
-be part of the API that exists because the porter found the underlying
-type inconvenient. Inline the type instead.
+When upstream Rust **does** declare a `pub type X = Y;` (common in
+`typing` and similar modules), make a conscious decision: if the alias
+carries semantic meaning that's load-bearing in the Rust code, mirror
+it 1:1 in Kotlin. If it exists only because the underlying Rust type
+was syntactically inconvenient, inline the type and skip the alias.
+Default toward mirroring when the Rust source has the alias; default
+toward inlining when it doesn't.
+
+Porter-invented typealiases — ones with no corresponding Rust `pub
+type` — are forbidden. They're a name pretending to be part of the API
+that exists because the porter found the underlying type inconvenient.
+Inline the type instead.
 
 ### Doc comments are part of the port
 
-Translate Rust doc comments to KDoc, **including the Rust syntax inside
-them**. A comment that mentions `crate::util::Map`, `Vec<T>`,
-`Option<&str>`, `Self::foo()`, `cfg(test)`, `#[derive(...)]`, lifetimes
-like `'a`, or any other Rust syntax must be rewritten to its Kotlin
-equivalent (`BTreeMap`, `List<T>`, `String?`, `foo()`, KDoc links like
-`[BTreeMap]`).
+Translate Rust doc comments to KDoc, **including the Rust syntax
+inside them**. A comment that mentions `crate::util::Map`, `Vec<T>`,
+`Option<&str>`, `Self::foo()`, `cfg(test)`, `#[derive(...)]`,
+lifetimes like `'a`, or any other Rust syntax must be rewritten to its
+Kotlin equivalent (`BTreeMap`, `List<T>`, `String?`, `foo()`, KDoc
+links like `[BTreeMap]`).
 
-Translate the code-in-comment. Do not delete the comment to silence the
-cheat detector.
+Translate the code-in-comment. Do not delete the comment to silence
+the cheat detector.
 
-### Score-padding annotations are bugs
+### Do not delegate edits to sub-agents
 
-`@Suppress("unused")` / `@Suppress("UNCHECKED_CAST")` /
-`@Suppress("UNUSED_VARIABLE")` to silence warnings on a faithful port
-are bugs in the port, not in the source. The cause is usually one of:
+Anthropic and OpenAI both expose Task / Agent tools that spawn cheaper,
+less thoughtful agents for grunt work. Those agents cheat on
+translation: they hollow out KDoc, add Kotlin-only filler to inflate
+scores, drop semantically load-bearing Rust constructs because they
+"look unused," and produce confident summaries that mask the damage.
+The only signal back is a tidy report.
 
-- The Kotlin code is genuinely dead because the port collapsed two Rust
-  concepts into one — the right fix is to un-collapse them.
-- The cast is unsafe because the Kotlin model lost a Rust invariant —
-  the right fix is to encode the invariant in the Kotlin types
-  (sealed classes, generics, `inline class`).
-- The variable is unused because the Rust binding existed only for
-  pattern-matching — the right fix is `_` or destructuring without the
-  binding.
-
-Resolve the underlying issue. Do not annotate the warning away.
+**All `.kt` edits happen in the main loop.** The Task / Agent tool is
+allowed for searches, file location, and read-only reports — never for
+writing or editing source files. If translation volume feels
+overwhelming, slow down; do not parallelize.
 
 ### Operational rules
 
@@ -297,25 +388,82 @@ Resolve the underlying issue. Do not annotate the warning away.
   `port_status_report.md`, `NEXT_ACTIONS.md`, etc. at the project
   root — those are derived artifacts, not staging files; don't edit
   them by hand.
-- **Do not run scripts that edit code across multiple files.**
-  No `find ... -exec sed`, no `for f in ...; do sed ...; done`,
-  no Python/Bash one-liners that open more than one source file for
-  writing. Each `.kt` edit goes through `Edit` or `Write`, one file at
-  a time. `sed -i` on a single file is allowed only when the working
-  tree is clean for that file, the substitution is a single specific
-  token (not a regex over many patterns), and you re-read the file
-  afterward to verify.
+- **Blast Radius Rule.**
+  - **No repo-wide scripting.** No `find … -exec`, no global `sed` /
+    `perl`, no blanket regex replacements across many files.
+  - **Changes must be task-scoped, not pattern-scoped.** Every touched
+    file is named up front by path, or discovered as a direct
+    compiler/test failure caused by the initial change.
+  - **Small multi-file edits are allowed when they're mechanically
+    coupled** — one Rust→Kotlin transliteration plus its directly
+    corresponding tests (`commonTest` / `nativeTest` / `jsTest`) and
+    any required call-site rewires. No drive-by refactors, renames, or
+    formatting churn outside that slice.
+  - **A follow-on fix must be justified by a concrete signal** — a
+    compilation error, a failing test, or a proven missing
+    symbol/wire-up caused by the primary change.
+  - **Comments and docstrings are first-class.** Never edited by bulk
+    operations. Any comment change is intentional and reviewed in the
+    diff like code.
+  - **More than ~5 files in a single change?** Stop and ask before
+    applying it. The only exception is a deletion that requires
+    scrubbing references from every caller — and even then, name the
+    referrers up front.
+  - `sed -i` on a single file is allowed only when the working tree is
+    clean for that file, the substitution is a single specific token
+    (not a regex over many patterns), and you re-read the file
+    afterward to verify.
 - **Commit after every file edit.** One file edited → one commit. Do
   not batch edits across files. The commit message describes what
   changed in that one file (e.g. "Build.kt: inline `Lr1Result`
   typealias at use sites"). Squash later via `git rebase -i` if you
   want a logical unit; never withhold commits up front.
-- **When the user asks for a file to be deleted, `git rm` it and
-  scrub the references that point to it.** Plain `rm` leaves the file
-  in git and the next branch op restores it; surviving references in
-  other files (`[Foo](./Foo.md)`, `// see Foo.md`) tell future
-  instances to recreate the file. Both halves are required for a
-  deletion to stick.
+- **Deletions require `git rm` plus reference scrubs.** Plain `rm`
+  leaves the file in git and the next branch op restores it; surviving
+  references in other files (`[Foo](./Foo.md)`, `// see Foo.md`) tell
+  future instances to recreate the file. Both halves are required for
+  a deletion to stick.
+
+## Cross-Project Coordination
+
+The `*-kotlin` repos under `kotlinmania/` import each other as
+published Maven artifacts (`io.github.kotlinmania:btree-kotlin`,
+`io.github.kotlinmania:starlarkmap-kotlin`, etc.). When you touch one,
+check that the version pinned by every consumer matches what's
+published.
+
+```bash
+# Find every Gradle build script that imports a kotlinmania artifact
+find /Volumes/stuff/Projects/kotlinmania -name "build.gradle.kts" \
+  -not -path "*/tmp/*" -not -path "*/build/*" \
+  -exec grep -l "io.github.kotlinmania" {} \;
+```
+
+If versions are mismatched, raise on Slack before bumping — version
+bumps cascade and a cheap-agent might miss call sites.
+
+## CI
+
+Use the `gh` CLI to check workflow status when work affects multiple
+repos.
+
+```bash
+gh run list --repo <owner>/<repo> --workflow ci.yml --limit 5
+gh pr checks <pr-number>
+```
+
+Read failing logs before claiming the change is done.
+
+## New Ports / Large Work
+
+If you discover a Rust crate that needs porting and isn't yet a
+project under `kotlinmania/`, you may create a new `<crate>-kotlin`
+project using existing projects as templates. **For any port estimated
+at more than ~5,000 lines of Rust**, raise on Slack first with the
+crate name, line count, and which existing kotlinmania projects depend
+on it. Mention any blockers (missing dependencies, KMP-incompatible
+Rust crates, unclear semantics). Wait for Sydney's reply before
+starting.
 
 ## Backend Phases
 
@@ -338,26 +486,26 @@ LALRPOP and lalrpop-kotlin, diff the emitted Rust. Any divergence is a
 phase-1 bug. The diff comparison can be a Kotlin test that invokes
 upstream as a subprocess and asserts byte-equality, or a manual
 side-by-side run during development. There is currently no in-tree
-harness — earlier instances added one with operator-graded status; that
-was a bug per goal 5 and was removed. If a new harness is added it must
-fail on any divergence with no porter-toggleable status.
+harness — earlier instances added one with operator-graded status;
+that was a bug per goal 5 and was removed. If a new harness is added
+it must fail on any divergence with no porter-toggleable status.
 
 ### Phase 2: Kotlin-output back-end
 
 After phase 1 produces matching Rust output, add a Kotlin-emitting
-backend under a distinct namespace (`codegen.kotlinTarget`) and make it
-the project default. Keep the phase-1 Rust-emitting backend
+backend under a distinct namespace (`codegen.kotlinTarget`) and make
+it the project default. Keep the phase-1 Rust-emitting backend
 (`codegen.rustTarget`) as a reference until you no longer need it. In
 phase 2 only, replace output leaves that write Rust syntax (`return
 Ok(...)`, struct literals, lifetime parameters) with Kotlin syntax
-(`return Result.success(...)`, Kotlin constructors, generic parameters,
-`when`, etc.). Document each phase-2 substitution inline so a future
-reader can audit what changed and why.
+(`return Result.success(...)`, Kotlin constructors, generic
+parameters, `when`, etc.). Document each phase-2 substitution inline
+so a future reader can audit what changed and why.
 
 The primary downstream consumer is `starlark-kotlin`'s
-`grammar.lalrpop`. Once phase 2 works, regenerating that grammar should
-produce drop-in replacements for the hand-transliterated `Grammar.kt`
-and `GrammarReducers.kt` (~12.5k lines).
+`grammar.lalrpop`. Once phase 2 works, regenerating that grammar
+should produce drop-in replacements for the hand-transliterated
+`Grammar.kt` and `GrammarReducers.kt` (~12.5k lines).
 
 ## File Organization
 
@@ -399,25 +547,32 @@ src/
 ## Build Commands
 
 ```bash
-./gradlew build
+# Tests across all targets (the gate)
 ./gradlew test
-./gradlew jvmTest
+
+# Compile every target without running tests
+./gradlew build
+
+# Specific platform tests
 ./gradlew macosArm64Test
+./gradlew linuxX64Test
+./gradlew jsNodeTest
+./gradlew wasmJsNodeTest
 ```
 
-## Dependencies
+`./gradlew jvmTest` is **not** a valid command — there is no JVM
+target.
 
-Minimal:
+## Final Report
 
-- `kotlinx-coroutines-core`
-- `kotlinx-serialization`
-- `kotlinx-collections-immutable`
-- `kotlinx-datetime`
+When a run finishes, post a status update via the Slack MCP / skill /
+connector. Include:
 
-Add new dependencies only when a Rust crate's behavior cannot be
-reproduced cleanly with Kotlin stdlib + the above. Document the addition
-in commit messages with the Rust crate it replaces and why stdlib was
-insufficient.
+- Files touched.
+- Tests added and passing.
+- ast_distance coverage delta (production / supplementary / tests /
+  stubs) if relevant.
+- Blockers that need a human decision.
 
 ## Commit Messages
 
@@ -439,10 +594,9 @@ Port first.rs to First.kt. Includes:
 
 ## Companion Documents
 
-- [AGENTS.md](./AGENTS.md) — older detailed porting patterns; the doc
-  is partly out of sync with this revision (it still references a
-  codegen-parity harness that has been removed). Treat CLAUDE.md as
-  authoritative when they conflict.
+- [AGENTS.md](./AGENTS.md) — agent-facing guidelines (mirrors this
+  document at a higher altitude; treat CLAUDE.md as authoritative when
+  they conflict).
 - [README.md](./README.md) — project overview.
 - [NOTICE](./NOTICE) — attribution and licensing.
 - Upstream: https://github.com/lalrpop/lalrpop
