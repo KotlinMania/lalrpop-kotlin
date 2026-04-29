@@ -5,7 +5,7 @@ package io.github.kotlinmania.lalrpop.lr1
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.build.buildLr1States
-import io.github.kotlinmania.lalrpop.lr1.buildLalr.buildLalrStates
+import io.github.kotlinmania.lalrpop.lr1.buildlalr.buildLalrStates
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
