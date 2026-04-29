@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
 import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.Token
-import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
+import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
