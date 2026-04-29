@@ -1,9 +1,11 @@
 // port-lint: source lr1/codegen/test_all.rs
-//! Test module for comparing code generation strategies
-//!
-//! The TestAll code generation strategy uses both parse tables and recursive ascent, and then
-//! compares the parsing return values to ensure they are both identical.  This is for use in the
-//! `lalrpop-test` test suite and not intended for external consumption.
+/**
+ * Test module for comparing code generation strategies
+ *
+ * The TestAll code generation strategy uses both parse tables and recursive ascent, and then
+ * compares the parsing return values to ensure they are both identical.  This is for use in the
+ * `lalrpop-test` test suite and not intended for external consumption.
+ */
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Sep

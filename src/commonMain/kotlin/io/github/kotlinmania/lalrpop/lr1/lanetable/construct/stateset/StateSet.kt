@@ -11,6 +11,8 @@ import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
  * sets are merged as well; this will fail if that would produce an
  * overlapping conflict set.
  */
+internal typealias Value = ContextSet
+
 data class StateSet(
     private val indexValue: Int,
 ) : UnifyKey<ContextSet> {

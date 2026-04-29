@@ -1,7 +1,9 @@
-// port-lint: source external/asciiCanvas/lib
-//! An "ASCII Canvas" allows us to draw lines and write text into a
-//! fixed-sized canvas and then convert that canvas into ASCII
-//! characters. ANSI styling is supported.
+// port-lint: source external/ascii-canvas/src/lib.rs
+/**
+ * An "ASCII Canvas" allows us to draw lines and write text into a
+ * fixed-sized canvas and then convert that canvas into ASCII
+ * characters. ANSI styling is supported.
+ */
 package io.github.kotlinmania.lalrpop.message
 
 import io.github.kotlinmania.lalrpop.Style

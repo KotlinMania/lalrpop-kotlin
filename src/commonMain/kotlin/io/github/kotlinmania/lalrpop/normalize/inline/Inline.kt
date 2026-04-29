@@ -1,5 +1,5 @@
 // port-lint: source normalize/inline/mod.rs
-//! Inlining of nonterminals
+/** Inlining of nonterminals */
 package io.github.kotlinmania.lalrpop.normalize.inline
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString

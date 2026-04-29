@@ -1,5 +1,5 @@
 // port-lint: source lr1/build_lalr/mod.rs
-//! Mega naive LALR(1) generation algorithm.
+/** Mega naive LALR(1) generation algorithm. */
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.collections.Map

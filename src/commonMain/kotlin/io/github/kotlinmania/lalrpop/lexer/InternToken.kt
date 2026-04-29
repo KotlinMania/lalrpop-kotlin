@@ -1,11 +1,8 @@
 // port-lint: source lexer/intern_token/mod.rs
-//! Generates an iterator type `Matcher` that emits a state-machine-based
-//! tokenizer.
-//!
-//! Per the project rule against translating `mod.rs` files as a single
-//! `Mod.kt`, the `compile` function from upstream `lexer/internToken/mod.rs`
-//! lives here as a top-level function. Callers from `build/...` invoke it
-//! by name.
+/**
+ * Generates an iterator type `Matcher` that emits a state-machine-based
+ * tokenizer.
+ */
 package io.github.kotlinmania.lalrpop.lexer
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.InternToken

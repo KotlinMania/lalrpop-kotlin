@@ -61,7 +61,7 @@ class TokTest {
     }
 
     @Test
-    fun eol_comment() {
+    fun eolComment() {
         test(
             "extern // This is a comment\$ foo",
             listOf(
@@ -72,7 +72,7 @@ class TokTest {
     }
 
     @Test
-    fun block_comment() {
+    fun blockComment() {
         test(
             "extern /* This is a block comment */\$ foo",
             listOf(
@@ -83,7 +83,7 @@ class TokTest {
     }
 
     @Test
-    fun block_comment_in_code() {
+    fun blockCommentInCode() {
         test(
             "=> ( test /* foo ) */ ),",
             listOf(
@@ -94,7 +94,7 @@ class TokTest {
     }
 
     @Test
-    fun nested_block_comment() {
+    fun nestedBlockComment() {
         test(
             "extern /* This is a /* nested */ block comment */\$ foo",
             listOf(
@@ -105,7 +105,7 @@ class TokTest {
     }
 
     @Test
-    fun block_comment_3_star() {
+    fun blockComment3Star() {
         test(
             "extern /***/\$ foo",
             listOf(
@@ -116,7 +116,7 @@ class TokTest {
     }
 
     @Test
-    fun block_comment_nested_3_star_with_linefeeds() {
+    fun blockCommentNested3StarWithLinefeeds() {
         test(
             "extern /** /***/ \$*/\$ foo",
             listOf(
@@ -127,7 +127,7 @@ class TokTest {
     }
 
     @Test
-    fun block_comment_5_star() {
+    fun blockComment5Star() {
         test(
             "extern /*****/\$ foo",
             listOf(
@@ -138,7 +138,7 @@ class TokTest {
     }
 
     @Test
-    fun block_comment_1_2_star() {
+    fun blockComment12Star() {
         test(
             "extern /* **/\$ foo",
             listOf(
@@ -149,7 +149,7 @@ class TokTest {
     }
 
     @Test
-    fun block_comment_extra_slashes() {
+    fun blockCommentExtraSlashes() {
         test(
             "extern /*//**/*/\$ foo",
             listOf(
@@ -160,7 +160,7 @@ class TokTest {
     }
 
     @Test
-    fun unterminated_block_comment() {
+    fun unterminatedBlockComment() {
         testErr(
             "/* This is unterminated",
             "~                      " to ErrorCode.UnterminatedBlockComment,
@@ -179,7 +179,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_id_then_equalsgreaterthancode_functioncall() {
+    fun ruleIdThenEqualsgreaterthancodeFunctioncall() {
         test(
             "id => a(b, c),",
             listOf(
@@ -191,7 +191,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_stringliteral_slash_dot_then_equalsgreaterthancode_functioncall() {
+    fun ruleStringliteralSlashDotThenEqualsgreaterthancodeFunctioncall() {
         test(
             """ "\." => a(b, c),""",
             listOf(
@@ -203,7 +203,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_stringliteral_slash_dot_then_equalsgreaterthancode_many_characters_in_stringliteral() {
+    fun ruleStringliteralSlashDotThenEqualsgreaterthancodeManyCharactersInStringliteral() {
         test(
             """ "\." => "Planet Earth" ,""",
             listOf(
@@ -215,7 +215,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_stringliteral_slash_dot_then_equalsgreaterthancode_one_character_dot_in_stringliteral() {
+    fun ruleStringliteralSlashDotThenEqualsgreaterthancodeOneCharacterDotInStringliteral() {
         test(
             """ "\." => "." ,""",
             listOf(
@@ -227,7 +227,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_stringliteral_slash_openningbracket_then_equalsgreaterthancode_one_character_openningbracket_in_stringliteral() {
+    fun ruleStringliteralSlashOpenningbracketThenEqualsgreaterthancodeOneCharacterOpenningbracketInStringliteral() {
         test(
             """ "\(" => "(" ,""",
             listOf(
@@ -239,7 +239,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_stringliteral_slash_openningbracket_then_equalsgreaterthancode_empty_stringliteral() {
+    fun ruleStringliteralSlashOpenningbracketThenEqualsgreaterthancodeEmptyStringliteral() {
         test(
             """ "\(" => "" ,""",
             listOf(
@@ -251,7 +251,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_stringliteral_slash_dot_then_equalsgreaterthancode_one_character_dot() {
+    fun ruleStringliteralSlashDotThenEqualsgreaterthancodeOneCharacterDot() {
         test(
             """ "\." => '.' ,""",
             listOf(
@@ -263,7 +263,7 @@ class TokTest {
     }
 
     @Test
-    fun rule_stringliteral_slash_openningbracket_then_equalsgreaterthancode_one_character_openningbracket() {
+    fun ruleStringliteralSlashOpenningbracketThenEqualsgreaterthancodeOneCharacterOpenningbracket() {
         test(
             """ "\(" => '(' ,""",
             listOf(
@@ -275,7 +275,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_openningbracket() {
+    fun equalsgreaterthancodeOneCharacterOpenningbracket() {
         test(
             """=> '(' ,""",
             listOf(
@@ -286,7 +286,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_escaped_n() {
+    fun equalsgreaterthancodeOneCharacterEscapedN() {
         test(
             """=> '\n' ,""",
             listOf(
@@ -297,7 +297,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_escaped_w() {
+    fun equalsgreaterthancodeOneCharacterEscapedW() {
         test(
             """=> '\w' ,""",
             listOf(
@@ -308,7 +308,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_escaped_planet123() {
+    fun equalsgreaterthancodeOneCharacterEscapedPlanet123() {
         test(
             """=> '\planet123' ,""",
             listOf(
@@ -319,7 +319,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_openningcurlybracket() {
+    fun equalsgreaterthancodeOneCharacterOpenningcurlybracket() {
         test(
             """=> '{' ,""",
             listOf(
@@ -330,7 +330,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_openningsquarebracket() {
+    fun equalsgreaterthancodeOneCharacterOpenningsquarebracket() {
         test(
             """=> '[' ,""",
             listOf(
@@ -341,7 +341,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_openningbracket_wrapped_by_brackets() {
+    fun equalsgreaterthancodeOneCharacterOpenningbracketWrappedByBrackets() {
         test(
             """=> ('(') ,""",
             listOf(
@@ -352,7 +352,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_one_character_closingbracket_wrapped_by_brackets() {
+    fun equalsgreaterthancodeOneCharacterClosingbracketWrappedByBrackets() {
         test(
             """=> (')') ,""",
             listOf(
@@ -363,7 +363,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_tuple() {
+    fun equalsgreaterthancodeTuple() {
         test(
             """=> (1,2,3) ,""",
             listOf(
@@ -374,7 +374,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_statement_with_lifetime() {
+    fun equalsgreaterthancodeStatementWithLifetime() {
         test(
             """=> HuffmanTable::<Code<'a>>::new() ,""",
             listOf(
@@ -386,7 +386,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_statement_with_many_lifetimes() {
+    fun equalsgreaterthancodeStatementWithManyLifetimes() {
         test(
             """=> (HuffmanTable::<Code<'a, 'b>>::new()),""",
             listOf(
@@ -398,7 +398,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_nested_function_with_lifetimes() {
+    fun equalsgreaterthancodeNestedFunctionWithLifetimes() {
         test(
             """=> fn foo<'a>(x: &'a i32, y: &'a i32) -> &'a i32 {} ,""",
             listOf(
@@ -410,7 +410,7 @@ class TokTest {
     }
 
     @Test
-    fun where_with_lifetimes() {
+    fun whereWithLifetimes() {
         test(
             """where <'a,bar<'b,'c>>,baz;""",
             listOf(
@@ -451,7 +451,7 @@ class TokTest {
     }
 
     @Test
-    fun where_forall_fnmut_with_return_type() {
+    fun whereForallFnmutWithReturnType() {
         test(
             """where F: for<'a> FnMut(&'a T) -> U;""",
             listOf(
@@ -476,17 +476,17 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_error_unbalanced() {
+    fun equalsgreaterthancodeErrorUnbalanced() {
         testErr("""=> (,""", """~    """ to ErrorCode.UnterminatedCode)
     }
 
     @Test
-    fun equalsgreaterthancode_error_unbalanced_closingbracket_character() {
+    fun equalsgreaterthancodeErrorUnbalancedClosingbracketCharacter() {
         testErr("""=> (,')',""", """~        """ to ErrorCode.UnterminatedCode)
     }
 
     @Test
-    fun equalsgreaterthancode_error_unterminated_string_literal() {
+    fun equalsgreaterthancodeErrorUnterminatedStringLiteral() {
         testErr(
             """=>  "Jan III Sobieski""",
             """    ~                """ to ErrorCode.UnterminatedStringLiteral,
@@ -494,7 +494,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_error_unterminated_character_literal() {
+    fun equalsgreaterthancodeErrorUnterminatedCharacterLiteral() {
         testErr(
             """=>  '\x233  """,
             """    ~       """ to ErrorCode.UnterminatedCharacterLiteral,
@@ -502,7 +502,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_error_end_of_input_instead_of_closing_normal_character_literal() {
+    fun equalsgreaterthancodeErrorEndOfInputInsteadOfClosingNormalCharacterLiteral() {
         testErr(
             """=>  'x""",
             """    ~ """ to ErrorCode.UnterminatedCharacterLiteral,
@@ -510,7 +510,7 @@ class TokTest {
     }
 
     @Test
-    fun equalsgreaterthancode_single_quote_literal() {
+    fun equalsgreaterthancodeSingleQuoteLiteral() {
         test(
             """=> { println!('\''); },""",
             listOf(
@@ -522,7 +522,7 @@ class TokTest {
     }
 
     @Test
-    fun code_paren() {
+    fun codeParen() {
         // Issue #25
         test(
             """=> a("(", c),""",
@@ -534,7 +534,7 @@ class TokTest {
     }
 
     @Test
-    fun code_regex_paren() {
+    fun codeRegexParen() {
         // Issue #25
         test(
             """=> a(r##"("#""##, c),""",
@@ -547,7 +547,7 @@ class TokTest {
     }
 
     @Test
-    fun code_comment_eol() {
+    fun codeCommentEol() {
         test(
             "=> a(// (\n),",
             listOf(
@@ -569,7 +569,7 @@ class TokTest {
     }
 
     @Test
-    fun code_forgot_comma() {
+    fun codeForgotComma() {
         // intentionally forget the comma token; this is more of a test of `test`
         assertFails {
             test(
@@ -580,7 +580,7 @@ class TokTest {
     }
 
     @Test
-    fun various_kinds_of_ids() {
+    fun variousKindsOfIds() {
         test(
             "foo<T<'a,U,`Z*{}`,r#type,r#use>>",
             listOf(
@@ -604,7 +604,7 @@ class TokTest {
     }
 
     @Test
-    fun string_literals() {
+    fun stringLiterals() {
         test(
             """foo "bar\"\n" baz""",
             listOf(
@@ -670,12 +670,12 @@ class TokTest {
     }
 
     @Test
-    fun hash_token() {
+    fun hashToken() {
         test(""" # """, listOf(""" ~ """ to Tok.Hash))
     }
 
     @Test
-    fun shebang_attribute_normal_text() {
+    fun shebangAttributeNormalText() {
         test(
             """ #![Attribute] """,
             listOf(""" ~~~~~~~~~~~~~ """ to Tok.ShebangAttribute("#![Attribute]")),
@@ -683,7 +683,7 @@ class TokTest {
     }
 
     @Test
-    fun shebang_attribute_special_characters_without_quotes() {
+    fun shebangAttributeSpecialCharactersWithoutQuotes() {
         test(
             """ #![set width = 80] """,
             listOf(""" ~~~~~~~~~~~~~~~~~~ """ to Tok.ShebangAttribute("#![set width = 80]")),
@@ -691,7 +691,7 @@ class TokTest {
     }
 
     @Test
-    fun shebang_attribute_special_characters_with_quotes() {
+    fun shebangAttributeSpecialCharactersWithQuotes() {
         test(
             """ #![set width = "80"] """,
             listOf(
@@ -702,7 +702,7 @@ class TokTest {
     }
 
     @Test
-    fun shebang_attribute_special_characters_closing_sqbracket_in_string_literal() {
+    fun shebangAttributeSpecialCharactersClosingSqbracketInStringLiteral() {
         test(
             """ #![set width = "80]"] """,
             listOf(
@@ -713,7 +713,7 @@ class TokTest {
     }
 
     @Test
-    fun shebang_attribute_special_characters_opening_sqbracket_in_string_literal() {
+    fun shebangAttributeSpecialCharactersOpeningSqbracketInStringLiteral() {
         test(
             """ #![set width = "[80"] """,
             listOf(
@@ -724,7 +724,7 @@ class TokTest {
     }
 
     @Test
-    fun shebang_attribute_special_characters_nested_sqbrackets() {
+    fun shebangAttributeSpecialCharactersNestedSqbrackets() {
         test(
             """ #![set width = [80]] """,
             listOf(
@@ -743,7 +743,7 @@ class TokTest {
     }
 
     @Test
-    fun char_literals() {
+    fun charLiterals() {
         test(
             """'foo' 'a 'b '!' '!!' '\'' 'c""",
             listOf(
@@ -759,7 +759,7 @@ class TokTest {
     }
 
     @Test
-    fun string_escapes() {
+    fun stringEscapes() {
         assertEquals("foo", applyStringEscapes("foo", 5).getOrThrow())
         assertEquals("""\""", applyStringEscapes("""\\""", 10).getOrThrow())
         assertEquals(""""""", applyStringEscapes("""\"""", 15).getOrThrow())

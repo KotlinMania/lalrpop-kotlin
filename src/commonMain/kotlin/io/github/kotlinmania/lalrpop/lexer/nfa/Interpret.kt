@@ -1,5 +1,5 @@
 // port-lint: source lexer/nfa/interpret.rs
-//! A depth-first interpreter for NFAs.
+/** A depth-first interpreter for NFAs. */
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
 /**

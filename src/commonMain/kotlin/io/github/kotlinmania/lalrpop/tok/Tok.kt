@@ -1,5 +1,5 @@
 // port-lint: source tok/mod.rs
-//! A tokenizer for use in LALRPOP itself.
+/** A tokenizer for use in LALRPOP itself. */
 package io.github.kotlinmania.lalrpop.tok
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
@@ -552,7 +552,7 @@ class Tokenizer(val text: String, val shift: Int) : Iterator<Spanned<Tok>> {
     }
 
     fun takeLifetimeOrCharacterLiteral(): Int? {
-        // Try to decide whether `'` is the start of a lifetime or a character literal.
+        // Try to decide whether `'` is the start of a scope binder or a character literal.
         val la = lookahead ?: return null
         val c = la.second
 
@@ -563,7 +563,7 @@ class Tokenizer(val text: String, val shift: Int) : Iterator<Spanned<Tok>> {
             bump()
             takeUntilAndConsumeTerminatingCharacter { cc -> cc == '\'' }
         } else {
-            // no escape, then we require to see next `'` or we assume it was lifetime
+            // no escape, then we require to see next `'` or we assume it was a scope binder
             val n = bump() ?: return null
             val (idx, cc) = n
             if (cc == '\'') {

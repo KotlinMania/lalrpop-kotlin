@@ -41,7 +41,7 @@ class DfaTest {
     }
 
     @Test
-    fun ambiguous_regex() {
+    fun ambiguousRegex() {
         // here the keyword and the regex have same precedence, so we have
         // an ambiguity
         assertTrue(
@@ -50,12 +50,12 @@ class DfaTest {
     }
 
     @Test
-    fun issue_32() {
+    fun issue32() {
         assertTrue(dfa(listOf(""".""" to P0)).isSuccess)
     }
 
     @Test
-    fun issue_35() {
+    fun issue35() {
         assertTrue(
             dfa(listOf(""".*""" to P0, """[-+]?[0-9]*\.?[0-9]+""" to P0)).isFailure,
         )
@@ -70,7 +70,7 @@ class DfaTest {
     }
 
     @Test
-    fun alternatives_extension() {
+    fun alternativesExtension() {
         val dfa = dfa(listOf("""abc|abcd""" to P0)).getOrThrow()
         assertEquals(NfaIndex(0) to "abc", interpret(dfa, "abc"))
         assertEquals(NfaIndex(0) to "abcd", interpret(dfa, "abcd"))
@@ -78,7 +78,7 @@ class DfaTest {
     }
 
     @Test
-    fun alternatives_contraction() {
+    fun alternativesContraction() {
         val dfa = dfa(listOf("""abcd|abc""" to P0)).getOrThrow()
         assertEquals(NfaIndex(0) to "abc", interpret(dfa, "abc"))
         assertEquals(NfaIndex(0) to "abcd", interpret(dfa, "abcd"))

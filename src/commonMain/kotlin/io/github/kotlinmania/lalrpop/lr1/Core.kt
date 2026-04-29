@@ -1,5 +1,5 @@
 // port-lint: source lr1/core/mod.rs
-//! Core LR(1) types.
+/** Core LR(1) types. */
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.Prefix
@@ -132,6 +132,7 @@ data class Items<L : Lookahead<L>>(
 )
 
 typealias Lr0Items = Items<Nil>
+
 typealias Lr1Items = Items<TokenSet>
 
 data class State<L : Lookahead<L>>(
@@ -201,6 +202,10 @@ data class State<L : Lookahead<L>>(
     }
 }
 
+typealias Lr0State = State<Nil>
+
+typealias Lr1State = State<TokenSet>
+
 private fun <T> endsWith(list: List<T>, suffix: List<T>): Boolean {
     if (suffix.size > list.size) return false
     val offset = list.size - suffix.size
@@ -217,9 +222,6 @@ private fun <T> Iterable<T>.dedup(): List<T> {
     }
     return out
 }
-
-typealias Lr0State = State<Nil>
-typealias Lr1State = State<TokenSet>
 
 sealed class Action : Comparable<Action> {
     data class Shift(val terminal: TerminalString, val state: StateIndex) : Action()
@@ -257,6 +259,7 @@ data class Conflict<L>(
 )
 
 typealias Lr0Conflict = Conflict<Nil>
+
 typealias Lr1Conflict = Conflict<TokenSet>
 
 data class TableConstructionError<L : Lookahead<L>>(
@@ -268,7 +271,12 @@ data class TableConstructionError<L : Lookahead<L>>(
 )
 
 typealias Lr0TableConstructionError = TableConstructionError<Nil>
+
 typealias Lr1TableConstructionError = TableConstructionError<TokenSet>
+
+typealias LrResult<L> = Result<MutableList<State<L>>>
+
+typealias Lr1Result = LrResult<TokenSet>
 
 /** `A = B C (*) D E F` or `A = B C (*)` */
 data class SymbolSets(

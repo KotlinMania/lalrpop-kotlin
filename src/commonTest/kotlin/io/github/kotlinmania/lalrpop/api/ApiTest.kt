@@ -91,30 +91,23 @@ private fun setup(): TestState {
     apiCreateDir(outDir)
 
     // Safety note:
-    // setVar is marked as unsafe starting in the 2025 rust edition.  This is because C calls to
-    // set and read environmental variables are not thread safe.  Specifically, reading an
-    // environmental variable while it is being written to can result in unspecified data being
-    // read.  In rust alone, these calls are protected via a mutex in the standard library, but if
-    // we call into C code (e.g. via libc in a dependency), we do not get those protections.
-    //
-    // In practice for us, we do have libc in some of our dependencies, and we cannot necessarily
-    // know or predict where they might read environmental variables.  These tests are under a
+    // Setting process environment variables is not thread safe on most platforms,
+    // because the underlying syscalls to set and read environment variables are not
+    // synchronized.  Specifically, reading an environment variable while it is being
+    // written can result in unspecified data being read.  These tests are under a
     // mutex for the tests in this file only, but may run concurrently with other tests.
     //
-    // It is recommended to run the lalrpop test suite using cargo-nextest.  See CONTRIBUTING.md
-    // for details and instructions on using cargo-nextest.  You can run cargo test at your own
-    // risk, knowing that this thread safety issue may cause undefined behavior.  The risk is
-    // mitigated by the following factors:
+    // It is recommended to run the lalrpop test suite with each test in its own process.
+    // You can run the test suite in-process at your own risk, knowing that this thread
+    // safety issue may cause undefined behavior.  The risk is mitigated by the following
+    // factors:
     //
-    // 1. This is only ran in test code.
+    // 1. This is only invoked in test code.
     // 2. Our testing so far has not encountered this issue in practice.
-    // 3. As stated above, it is only calls in C code that are a concern - any calls in rust
-    //    dependency would not introduce thread safety issues.
     //
-    // That said, cargo-nextest actually makes this safe.  In cargo-nextest, each test is ran in a
-    // separate process, and therefore will have its own copy of the environment.  As a result,
-    // this safety issue cannot occur under cargo-nextest, as this code will not run in a
-    // multi-threaded context.
+    // Running each test in its own process actually makes this safe.  Each test will then
+    // have its own copy of the environment, so this safety issue cannot occur because the
+    // code will not run in a multi-threaded context.
     apiSetEnvVar("OUT_DIR", outDir)
     return TestState.new(origDir, lock)
 }
@@ -182,7 +175,7 @@ private fun verifyFile(filename: String, expectedLocation: GenFileLoc) {
 
 class ApiTest {
     @Test
-    fun test_process_root() {
+    fun testProcessRoot() {
         val state = setup()
         try {
             processRoot()
@@ -196,7 +189,7 @@ class ApiTest {
     }
 
     @Test
-    fun test_process_src() {
+    fun testProcessSrc() {
         val state = setup()
         try {
             processSrc()
@@ -210,7 +203,7 @@ class ApiTest {
     }
 
     @Test
-    fun test_process_file() {
+    fun testProcessFile() {
         val state = setup()
         try {
             // This test is noting that with cargoDirConventions, "src/src.lalrpop"
@@ -231,7 +224,7 @@ class ApiTest {
     }
 
     @Test
-    fun test_explicit_in_out() {
+    fun testExplicitInOut() {
         val state = setup()
         try {
             val customDir = apiPathJoin(apiTempDir(), CUSTOM_TEST_DIR)
@@ -253,7 +246,7 @@ class ApiTest {
     }
 
     @Test
-    fun test_cargo_dir_conventions() {
+    fun testCargoDirConventions() {
         val state = setup()
         try {
             Configuration.new()

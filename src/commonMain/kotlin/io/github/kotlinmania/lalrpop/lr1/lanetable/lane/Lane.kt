@@ -1,6 +1,8 @@
 // port-lint: source lr1/lane_table/lane/mod.rs
-//! Code to trace out a single lane, collecting information into the
-//! lane table as we go.
+/**
+ * Code to trace out a single lane, collecting information into the
+ * lane table as we go.
+ */
 package io.github.kotlinmania.lalrpop.lr1.lanetable.lane
 
 import io.github.kotlinmania.lalrpop.collections.ComparablePair

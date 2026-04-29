@@ -1,5 +1,5 @@
 // port-lint: source lr1/build/mod.rs
-//! LR(1) state construction algorithm.
+/** LR(1) state construction algorithm. */
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.KernelSet as KKernelSet
@@ -24,6 +24,10 @@ import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.buildLaneTableStates
 import io.github.kotlinmania.lalrpop.tls.Tls
+
+internal typealias ConstructionFunction = (Grammar, NonterminalString) -> MutableList<State<TokenSet>>
+
+internal typealias Index = StateIndex
 
 private fun buildLr1StatesLegacy(
     grammar: Grammar,

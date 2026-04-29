@@ -9,7 +9,7 @@ import kotlin.test.assertNull
 
 class NfaTest {
     @Test
-    fun edge_iter() {
+    fun edgeIter() {
         val nfa = Nfa.new()
         val s0 = nfa.newState(StateKind.Neither)
         val s1 = nfa.newState(StateKind.Neither)
@@ -42,7 +42,7 @@ class NfaTest {
     }
 
     @Test
-    fun identifier_regex() {
+    fun identifierRegex() {
         val ident = parseRegex("""[a-zA-Z_][a-zA-Z0-9_]*""").getOrThrow()
         val nfa = Nfa.fromRe(ident).getOrThrow()
         assertNull(interpret(nfa, "0123"))
@@ -52,28 +52,28 @@ class NfaTest {
     }
 
     @Test
-    fun regex_star_group() {
+    fun regexStarGroup() {
         val ident = parseRegex("""(abc)*""").getOrThrow()
         val nfa = Nfa.fromRe(ident).getOrThrow()
         assertEquals("abcabcabc", interpret(nfa, "abcabcabcab"))
     }
 
     @Test
-    fun regex_number() {
+    fun regexNumber() {
         val num = parseRegex("""[0-9]+""").getOrThrow()
         val nfa = Nfa.fromRe(num).getOrThrow()
         assertEquals("123", interpret(nfa, "123"))
     }
 
     @Test
-    fun dot_newline() {
+    fun dotNewline() {
         val num = parseRegex(""".""").getOrThrow()
         val nfa = Nfa.fromRe(num).getOrThrow()
         assertNull(interpret(nfa, "\n"))
     }
 
     @Test
-    fun max_range() {
+    fun maxRange() {
         val num = parseRegex("""ab{2,4}""").getOrThrow()
         val nfa = Nfa.fromRe(num).getOrThrow()
         assertNull(interpret(nfa, "a"))
@@ -113,7 +113,7 @@ class NfaTest {
     }
 
     @Test
-    fun line_boundaries() {
+    fun lineBoundaries() {
         val num1 = parseRegex("""^aBCdeF""").getOrThrow()
         assertEquals(
             NfaConstructionError.LookAround,
@@ -128,7 +128,7 @@ class NfaTest {
     }
 
     @Test
-    fun text_boundaries() {
+    fun textBoundaries() {
         val num1 = parseRegex("""(?m)^aBCdeF""").getOrThrow()
         assertEquals(
             NfaConstructionError.LookAround,
@@ -143,7 +143,7 @@ class NfaTest {
     }
 
     @Test
-    fun word_boundaries() {
+    fun wordBoundaries() {
         val num1 = parseRegex("""\baBCdeF""").getOrThrow()
         assertEquals(
             NfaConstructionError.LookAround,
@@ -158,7 +158,7 @@ class NfaTest {
     }
 
     @Test
-    fun issue_101() {
+    fun issue101() {
         val num = parseRegex("""(1|0?)""").getOrThrow()
         Nfa.fromRe(num).getOrThrow()
     }

@@ -1,6 +1,8 @@
 // port-lint: source normalize/resolve/mod.rs
-//! Resolves identifiers to decide if they are macros, terminals, or
-//! nonterminals. Rewrites the parse tree accordingly.
+/**
+ * Resolves identifiers to decide if they are macros, terminals, or
+ * nonterminals. Rewrites the parse tree accordingly.
+ */
 package io.github.kotlinmania.lalrpop.normalize.resolve
 
 import io.github.kotlinmania.lalrpop.Atom

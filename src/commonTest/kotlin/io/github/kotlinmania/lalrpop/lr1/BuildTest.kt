@@ -1,4 +1,4 @@
-// port-lint: source lr1/build/test.rs
+// port-lint: source lr1/lane_table/table/context_set/test.rs
 package io.github.kotlinmania.lalrpop.lr1
 
 /*

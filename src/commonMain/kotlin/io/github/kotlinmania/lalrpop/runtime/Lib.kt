@@ -1,4 +1,4 @@
-// port-lint: source ../lalrpop-util/src/lib.rs
+// port-lint: source lib.rs
 package io.github.kotlinmania.lalrpop.runtime
 
 /**

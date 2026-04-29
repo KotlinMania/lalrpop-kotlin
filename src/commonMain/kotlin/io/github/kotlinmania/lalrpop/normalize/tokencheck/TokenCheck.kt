@@ -1,10 +1,12 @@
 // port-lint: source normalize/token_check/mod.rs
-//! If an extern token is provided, then this pass validates that
-//! terminal IDs have conversions. Otherwise, it generates a
-//! tokenizer. This can only be done after macro expansion because
-//! some macro arguments never make it into an actual production and
-//! are only used in `if` conditions; we import string literals for
-//! those, but they do not have to have a defined conversion.
+/**
+ * If an extern token is provided, then this pass validates that
+ * terminal IDs have conversions. Otherwise, it generates a
+ * tokenizer. This can only be done after macro expansion because
+ * some macro arguments never make it into an actual production and
+ * are only used in `if` conditions; we import string literals for
+ * those, but they do not have to have a defined conversion.
+ */
 package io.github.kotlinmania.lalrpop.normalize.tokencheck
 
 import io.github.kotlinmania.lalrpop.Atom

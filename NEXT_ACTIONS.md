@@ -4,22 +4,24 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Current Progress:** 95.3% (123/106 files)
-- **Matched Files:** 101
-- **Average Similarity:** 0.60
-- **Critical Issues:** 58 files with <0.60 function similarity
+- **Files Present:** 102/106 (96.2%)
+- **Function parity:** 2395/2426 matched (target 2824) — 98.7%
+- **Class/type parity:** 229/259 matched (target 602) — 88.4%
+- **Combined symbol parity:** 2624/2685 matched (target 3426) — 97.7%
+- **Cheat-zeroed Files:** 41
+- **Critical Issues:** 44 files with <0.60 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
 
 ### 1. lr1.tls
-- **Similarity:** 0.82 (needs 3% improvement)
+- **Similarity:** 0.67 (needs 18% improvement)
 - **Dependencies:** 16
-- **Priority Score:** 16000402.0
-- **Functions:** 3/3 matched (target 8)
+- **Priority Score:** 16000403.0
+- **Functions:** 3/3 matched
 - **Missing functions:** _none_
-- **Types:** 1/1 matched (target 3)
+- **Types:** 1/1 matched
 - **Missing types:** _none_
-- **Action:** Minor refinements needed
+- **Action:** Review and complete missing sections
 
 ## Priority 2: Port Missing High-Value Files
 
@@ -34,12 +36,12 @@ Every matched file is listed below with function and type symbol parity.
 ### 1. lr1.tls
 
 - **Target:** `lr1.Tls`
-- **Similarity:** 0.82
+- **Similarity:** 0.67
 - **Dependents:** 16
-- **Priority Score:** 16000402.0
-- **Functions:** 3/3 matched (target 8)
+- **Priority Score:** 16000403.0
+- **Functions:** 3/3 matched
 - **Missing functions:** _none_
-- **Types:** 1/1 matched (target 3)
+- **Types:** 1/1 matched
 - **Missing types:** _none_
 
 ### 2. session
@@ -57,10 +59,10 @@ Every matched file is listed below with function and type symbol parity.
 ### 3. collections.set
 
 - **Target:** `collections.Set`
-- **Similarity:** 0.21
+- **Similarity:** 0.71
 - **Dependents:** 6
-- **Priority Score:** 6000208.0
-- **Functions:** 1/1 matched
+- **Priority Score:** 6000203.0
+- **Functions:** 1/1 matched (target 8)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
@@ -79,107 +81,84 @@ Every matched file is listed below with function and type symbol parity.
 ### 5. lr1.interpret
 
 - **Target:** `lr1.Interpret`
-- **Similarity:** 0.78
+- **Similarity:** 0.82
 - **Dependents:** 4
-- **Priority Score:** 4001202.2
-- **Functions:** 9/9 matched (target 11)
+- **Priority Score:** 4001201.8
+- **Functions:** 9/9 matched (target 12)
 - **Missing functions:** _none_
 - **Types:** 3/3 matched (target 6)
 - **Missing types:** _none_
-- **Lint issues:** 1
 
 ### 6. lr1.lookahead
 
 - **Target:** `lr1.Lookahead`
-- **Similarity:** 0.76
+- **Similarity:** 0.81
 - **Dependents:** 2
-- **Priority Score:** 2043502.5
-- **Functions:** 26/28 matched (target 49)
-- **Missing functions:** `fmt`, `into_iter`
+- **Priority Score:** 2023501.9
+- **Functions:** 28/28 matched (target 51)
+- **Missing functions:** _none_
 - **Types:** 5/7 matched (target 8)
 - **Missing types:** `Item`, `IntoIter`
 
-### 7. construct.state_set
+### 7. file_text
 
-- **Target:** `stateSet.StateSet`
-- **Similarity:** 0.59
+- **Target:** `lalrpop.FileText`
+- **Similarity:** 0.73
 - **Dependents:** 2
-- **Priority Score:** 2020704.1
+- **Priority Score:** 2021202.8
+- **Functions:** 8/10 matched (target 11)
+- **Missing functions:** `test`, `fmt`
+- **Types:** 2/2 matched
+- **Missing types:** _none_
+- **Tests:** 0/1 matched
+
+### 8. construct.state_set
+
+- **Target:** `stateset.StateSet`
+- **Similarity:** 0.60
+- **Dependents:** 2
+- **Priority Score:** 2020704.0
 - **Functions:** 4/4 matched
 - **Missing functions:** _none_
 - **Types:** 1/3 matched (target 1)
 - **Missing types:** `Value`, `Error`
 
-### 8. file_text
-
-- **Target:** `lalrpop.FileText`
-- **Similarity:** 0.76
-- **Dependents:** 2
-- **Priority Score:** 2011202.4
-- **Functions:** 9/10 matched (target 12)
-- **Missing functions:** `test`
-- **Types:** 2/2 matched
-- **Missing types:** _none_
-- **Tests:** 0/1 matched
-
 ### 9. test_util
 
 - **Target:** `lalrpop.TestUtil`
-- **Similarity:** 0.61
+- **Similarity:** 0.63
 - **Dependents:** 2
-- **Priority Score:** 2010703.9
+- **Priority Score:** 2010703.6
 - **Functions:** 5/6 matched (target 7)
 - **Missing functions:** `fmt`
-- **Types:** 1/1 matched (target 5)
+- **Types:** 1/1 matched (target 6)
 - **Missing types:** _none_
 
 ### 10. grammar.pattern
 
-- **Target:** `pattern.Pattern`
-- **Similarity:** 0.44
+- **Target:** `grammar.Pattern`
+- **Similarity:** 0.59
 - **Dependents:** 2
-- **Priority Score:** 2010605.5
-- **Functions:** 2/3 matched (target 21)
-- **Missing functions:** `fmt`
+- **Priority Score:** 2000604.1
+- **Functions:** 3/3 matched (target 14)
+- **Missing functions:** _none_
 - **Types:** 3/3 matched (target 14)
 - **Missing types:** _none_
 
 ### 11. message.message
 
 - **Target:** `message.MessageContent`
-- **Similarity:** 0.67
+- **Similarity:** 0.79
 - **Dependents:** 2
-- **Priority Score:** 2010603.2
-- **Functions:** 4/5 matched
-- **Missing functions:** `fmt`
-- **Types:** 1/1 matched
+- **Priority Score:** 2000602.1
+- **Functions:** 5/5 matched (target 9)
+- **Missing functions:** _none_
+- **Types:** 1/1 matched (target 2)
 - **Missing types:** _none_
 
-### 12. grammar.parse_tree
+### 12. collections.multimap
 
-- **Target:** `parseTree.ParseTree [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 1
-- **Priority Score:** 1038210.0
-- **Functions:** 38/40 matched (target 109)
-- **Missing functions:** `from`, `fmt`
-- **Types:** 41/42 matched (target 87)
-- **Missing types:** `MatchSymbol`
-
-### 13. grammar.repr
-
-- **Target:** `repr.Repr [ZERO]`
-- **Similarity:** 0.00
-- **Dependents:** 1
-- **Priority Score:** 1025310.0
-- **Functions:** 32/34 matched (target 61)
-- **Missing functions:** `fmt`, `from`
-- **Types:** 19/19 matched (target 38)
-- **Missing types:** _none_
-
-### 14. collections.multimap
-
-- **Target:** `multimap.Multimap`
+- **Target:** `collections.Multimap`
 - **Similarity:** 0.59
 - **Dependents:** 1
 - **Priority Score:** 1021304.1
@@ -189,18 +168,29 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `Item`, `IntoIter`
 - **Tests:** 1/1 matched
 
-### 15. message.styled
+### 13. grammar.repr
 
-- **Target:** `styled.Styled`
-- **Similarity:** 0.73
+- **Target:** `repr.Repr`
+- **Similarity:** 0.66
 - **Dependents:** 1
-- **Priority Score:** 1010602.7
-- **Functions:** 4/5 matched
-- **Missing functions:** `fmt`
-- **Types:** 1/1 matched
+- **Priority Score:** 1015303.4
+- **Functions:** 33/34 matched (target 67)
+- **Missing functions:** `from`
+- **Types:** 19/19 matched (target 38)
 - **Missing types:** _none_
 
-### 16. construct.merge
+### 14. grammar.parse_tree
+
+- **Target:** `parsetree.ParseTree [ZERO]`
+- **Similarity:** 0.00
+- **Dependents:** 1
+- **Priority Score:** 1008210.0
+- **Functions:** 40/40 matched (target 112)
+- **Missing functions:** _none_
+- **Types:** 42/42 matched (target 88)
+- **Missing types:** _none_
+
+### 15. construct.merge
 
 - **Target:** `construct.Merge`
 - **Similarity:** 0.87
@@ -211,19 +201,19 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 2/2 matched
 - **Missing types:** _none_
 
-### 17. api.test
+### 16. api.test
 
-- **Target:** `api.ApiTest [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `api.ApiTest`
+- **Similarity:** 0.78
 - **Dependents:** 1
-- **Priority Score:** 1001210.0
-- **Functions:** 10/10 matched (target 15)
+- **Priority Score:** 1001202.2
+- **Functions:** 10/10 matched (target 18)
 - **Missing functions:** _none_
-- **Types:** 2/2 matched (target 5)
+- **Types:** 2/2 matched (target 6)
 - **Missing types:** _none_
 - **Tests:** 5/5 matched
 
-### 18. message.horiz
+### 17. message.horiz
 
 - **Target:** `horiz.Horiz`
 - **Similarity:** 0.77
@@ -234,7 +224,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 19. message.vert
+### 18. message.vert
 
 - **Target:** `vert.Vert`
 - **Similarity:** 0.86
@@ -245,13 +235,24 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
+### 19. message.styled
+
+- **Target:** `styled.Styled`
+- **Similarity:** 0.88
+- **Dependents:** 1
+- **Priority Score:** 1000601.2
+- **Functions:** 5/5 matched (target 6)
+- **Missing functions:** _none_
+- **Types:** 1/1 matched
+- **Missing types:** _none_
+
 ### 20. message.text
 
 - **Target:** `text.Text`
-- **Similarity:** 0.75
+- **Similarity:** 0.85
 - **Dependents:** 1
-- **Priority Score:** 1000502.5
-- **Functions:** 4/4 matched
+- **Priority Score:** 1000501.6
+- **Functions:** 4/4 matched (target 5)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
@@ -281,38 +282,27 @@ Every matched file is listed below with function and type symbol parity.
 ### 23. collections.map
 
 - **Target:** `collections.Map`
-- **Similarity:** 0.21
+- **Similarity:** 0.70
 - **Dependents:** 1
-- **Priority Score:** 1000207.9
-- **Functions:** 1/1 matched
+- **Priority Score:** 1000202.9
+- **Functions:** 1/1 matched (target 8)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
 ### 24. parser.lrgrammar
 
-- **Target:** `parser.LrGrammar [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `parser.LrGrammar`
+- **Similarity:** 0.70
 - **Dependents:** 0
-- **Priority Score:** 251110.0
+- **Priority Score:** 241103.0
 - **Functions:** 1498/1498 matched (target 1506)
 - **Missing functions:** _none_
-- **Types:** 3/13 matched (target 107)
-- **Missing types:** `___Symbol`, `Location`, `Error`, `Token`, `TokenIndex`, `Success`, `StateIndex`, `Action`, `ReduceIndex`, `NonterminalIndex`
-- **Lint issues:** 619
+- **Types:** 4/13 matched (target 107)
+- **Missing types:** `Location`, `Error`, `Token`, `TokenIndex`, `Success`, `StateIndex`, `Action`, `ReduceIndex`, `NonterminalIndex`
+- **Lint issues:** 874
 
-### 25. core.mod
-
-- **Target:** `core.Core [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 133610.0
-- **Functions:** 15/16 matched (target 24)
-- **Missing functions:** `fmt`
-- **Types:** 8/20 matched (target 10)
-- **Missing types:** `Lr0Item`, `Lr1Item`, `Lr0Items`, `Lr1Items`, `Lr0State`, `Lr1State`, `Lr0Conflict`, `Lr1Conflict`, `Lr0TableConstructionError`, `Lr1TableConstructionError`, `LrResult`, `Lr1Result`
-
-### 26. nfa.mod
+### 25. nfa.mod
 
 - **Target:** `nfa.Nfa [STUB]`
 - **Similarity:** 0.00
@@ -323,6 +313,20 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 11/13 matched
 - **Missing types:** `State`, `Item`
 - **Lint issues:** 2
+
+### 26. message.mod
+
+- **Target:** `lr1.Build [STUB] [PROVENANCE-FALLBACK]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 40410.0
+- **Functions:** 0/3 matched (target 12)
+- **Missing functions:** `emit_to_canvas`, `emit_at`, `into_wrap_items_map`
+- **Types:** 0/1 matched (target 5)
+- **Missing types:** `Content`
+- **Provenance warning:** port-lint provenance header matched only by basename: `lr1/build/mod.rs` vs expected `message/mod.rs`
+- **Proposed provenance header:** `// port-lint: source message/mod.rs` (current: `// port-lint: source lr1/build/mod.rs`)
+- **Lint issues:** 1
 
 ### 27. dfa.mod
 
@@ -407,7 +411,7 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 34. trace_graph.mod
 
-- **Target:** `traceGraph.TraceGraph [STUB]`
+- **Target:** `tracegraph.TraceGraph [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 22310.0
@@ -434,7 +438,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 20910.0
-- **Functions:** 5/7 matched (target 10)
+- **Functions:** 5/7 matched (target 8)
 - **Missing functions:** `test`, `test_string`
 - **Types:** 2/2 matched (target 3)
 - **Missing types:** _none_
@@ -452,23 +456,23 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `NormResult`
 - **Tests:** 0/1 matched
 
-### 38. re.mod
+### 38. core.mod
 
-- **Target:** `re.Re [STUB]`
+- **Target:** `lr1.Core [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
-- **Priority Score:** 20410.0
-- **Functions:** 2/2 matched
-- **Missing functions:** _none_
-- **Types:** 0/2 matched (target 0)
-- **Missing types:** `Regex`, `RegexError`
+- **Priority Score:** 13610.0
+- **Functions:** 15/16 matched (target 24)
+- **Missing functions:** `fmt`
+- **Types:** 20/20 matched (target 22)
+- **Missing types:** _none_
 
 ### 39. codegen.parse_table
 
-- **Target:** `codegen.ParseTable [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `codegen.ParseTable`
+- **Similarity:** 0.82
 - **Dependents:** 0
-- **Priority Score:** 13010.0
+- **Priority Score:** 13001.8
 - **Functions:** 26/27 matched (target 30)
 - **Missing functions:** `fmt`
 - **Types:** 3/3 matched (target 7)
@@ -498,41 +502,19 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 42. dfa.overlap
 
-- **Target:** `dfa.Overlap [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `dfa.Overlap`
+- **Similarity:** 0.64
 - **Dependents:** 0
-- **Priority Score:** 10710.0
+- **Priority Score:** 10703.6
 - **Functions:** 6/7 matched (target 8)
 - **Missing functions:** `null`
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 4/5 matched
 
-### 43. context_set.mod
+### 43. intern_token.mod
 
-- **Target:** `contextSet.ContextSet [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 10610.0
-- **Functions:** 4/4 matched (target 6)
-- **Missing functions:** _none_
-- **Types:** 1/2 matched
-- **Missing types:** `OverlappingLookahead`
-
-### 44. util
-
-- **Target:** `lalrpop.Util`
-- **Similarity:** 0.13
-- **Dependents:** 0
-- **Priority Score:** 10508.7
-- **Functions:** 1/2 matched (target 4)
-- **Missing functions:** `fmt`
-- **Types:** 3/3 matched
-- **Missing types:** _none_
-
-### 45. intern_token.mod
-
-- **Target:** `internToken.InternToken [STUB]`
+- **Target:** `lexer.InternToken [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 10110.0
@@ -541,19 +523,19 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched
 - **Missing types:** _none_
 
-### 46. tok.test
+### 44. tok.test
 
-- **Target:** `tok.TokTest [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `tok.TokTest`
+- **Similarity:** 0.62
 - **Dependents:** 0
-- **Priority Score:** 6610.0
+- **Priority Score:** 6603.8
 - **Functions:** 65/65 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched (target 4)
 - **Missing types:** _none_
 - **Tests:** 62/62 matched
 
-### 47. api.mod
+### 45. api.mod
 
 - **Target:** `api.Api [STUB]`
 - **Similarity:** 0.00
@@ -564,7 +546,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 48. prevalidate.test
+### 46. prevalidate.test
 
 - **Target:** `prevalidate.PrevalidateTest`
 - **Similarity:** 0.98
@@ -576,20 +558,20 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 25/25 matched
 
-### 49. codegen.ascent
+### 47. codegen.ascent
 
-- **Target:** `codegen.Ascent [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `codegen.Ascent`
+- **Similarity:** 0.87
 - **Dependents:** 0
-- **Priority Score:** 2410.0
+- **Priority Score:** 2401.3
 - **Functions:** 22/22 matched (target 23)
 - **Missing functions:** _none_
 - **Types:** 2/2 matched (target 3)
 - **Missing types:** _none_
 
-### 50. macro_expand.mod
+### 48. macro_expand.mod
 
-- **Target:** `macroExpand.MacroExpand [STUB]`
+- **Target:** `macroexpand.MacroExpand [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 2110.0
@@ -598,7 +580,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 51. rust.mod
+### 49. rust.mod
 
 - **Target:** `rust.Rust [STUB]`
 - **Similarity:** 0.00
@@ -609,9 +591,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 3/3 matched
 - **Missing types:** _none_
 
-### 52. token_check.test
+### 50. token_check.test
 
-- **Target:** `tokenCheck.TokenCheckTest [PROVENANCE-FALLBACK]`
+- **Target:** `tokencheck.TokenCheckTest`
 - **Similarity:** 0.82
 - **Dependents:** 0
 - **Priority Score:** 1901.8
@@ -620,11 +602,8 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 11/11 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `normalize/tokenCheck/test.rs` vs expected `normalize/token_check/test.rs`
-- **Proposed provenance header:** `// port-lint: source normalize/token_check/test.rs` (current: `// port-lint: source normalize/tokenCheck/test.rs`)
-- **Lint issues:** 1
 
-### 53. tyinfer.test
+### 51. tyinfer.test
 
 - **Target:** `tyinfer.TyinferTest`
 - **Similarity:** 0.62
@@ -636,9 +615,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 15/15 matched
 
-### 54. lane_table.test
+### 52. lane_table.test
 
-- **Target:** `laneTable.LaneTableTest [PROVENANCE-FALLBACK]`
+- **Target:** `lanetable.LaneTableTest`
 - **Similarity:** 0.87
 - **Dependents:** 0
 - **Priority Score:** 1601.3
@@ -647,22 +626,8 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 7/7 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `lr1/laneTable/test.rs` vs expected `lr1/lane_table/test.rs`
-- **Proposed provenance header:** `// port-lint: source lr1/lane_table/test.rs` (current: `// port-lint: source lr1/laneTable/test.rs`)
-- **Lint issues:** 1
 
-### 55. lower.mod
-
-- **Target:** `lower.Lower [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 1410.0
-- **Functions:** 13/13 matched (target 14)
-- **Missing functions:** _none_
-- **Types:** 1/1 matched
-- **Missing types:** _none_
-
-### 56. resolve.mod
+### 53. resolve.mod
 
 - **Target:** `resolve.Resolve [STUB]`
 - **Similarity:** 0.00
@@ -673,30 +638,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 3/3 matched (target 6)
 - **Missing types:** _none_
 
-### 57. nfa.test
+### 54. lower.mod
 
-- **Target:** `nfa.NfaTest [ZERO]`
+- **Target:** `lower.Lower [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
-- **Priority Score:** 1210.0
-- **Functions:** 12/12 matched
+- **Priority Score:** 1410.0
+- **Functions:** 13/13 matched (target 14)
 - **Missing functions:** _none_
-- **Types:** 0/0 matched (target 1)
-- **Missing types:** _none_
-- **Tests:** 11/11 matched
-
-### 58. token_check.mod
-
-- **Target:** `tokenCheck.TokenCheck [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 1210.0
-- **Functions:** 9/9 matched (target 10)
-- **Missing functions:** _none_
-- **Types:** 3/3 matched (target 5)
+- **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 59. tyinfer.mod
+### 55. tyinfer.mod
 
 - **Target:** `tyinfer.Tyinfer [STUB]`
 - **Similarity:** 0.00
@@ -707,9 +660,32 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 2/2 matched
 - **Missing types:** _none_
 
-### 60. normalize.norm_util
+### 56. token_check.mod
 
-- **Target:** `normUtil.NormUtil [PROVENANCE-FALLBACK]`
+- **Target:** `tokencheck.TokenCheck [STUB]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 1210.0
+- **Functions:** 9/9 matched (target 10)
+- **Missing functions:** _none_
+- **Types:** 3/3 matched (target 5)
+- **Missing types:** _none_
+
+### 57. nfa.test
+
+- **Target:** `nfa.NfaTest`
+- **Similarity:** 0.73
+- **Dependents:** 0
+- **Priority Score:** 1202.7
+- **Functions:** 12/12 matched
+- **Missing functions:** _none_
+- **Types:** 0/0 matched (target 1)
+- **Missing types:** _none_
+- **Tests:** 11/11 matched
+
+### 58. normalize.norm_util
+
+- **Target:** `normutil.NormUtil`
 - **Similarity:** 0.80
 - **Dependents:** 0
 - **Priority Score:** 1102.0
@@ -718,22 +694,8 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 3/3 matched (target 8)
 - **Missing types:** _none_
 - **Tests:** 4/4 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `normalize/normUtil.rs` vs expected `normalize/norm_util.rs`
-- **Proposed provenance header:** `// port-lint: source normalize/norm_util.rs` (current: `// port-lint: source normalize/normUtil.rs`)
-- **Lint issues:** 1
 
-### 61. codegen.base
-
-- **Target:** `codegen.Base [ZERO]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 1010.0
-- **Functions:** 9/9 matched
-- **Missing functions:** _none_
-- **Types:** 1/1 matched
-- **Missing types:** _none_
-
-### 62. example.test
+### 59. example.test
 
 - **Target:** `example.ExampleTest`
 - **Similarity:** 0.87
@@ -745,7 +707,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 5/5 matched
 
-### 63. error.test
+### 60. codegen.base
+
+- **Target:** `codegen.Base`
+- **Similarity:** 0.87
+- **Dependents:** 0
+- **Priority Score:** 1001.3
+- **Functions:** 9/9 matched
+- **Missing functions:** _none_
+- **Types:** 1/1 matched
+- **Missing types:** _none_
+
+### 61. error.test
 
 - **Target:** `error.ErrorTest`
 - **Similarity:** 0.92
@@ -757,7 +730,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 7/7 matched
 
-### 64. prevalidate.mod
+### 62. prevalidate.mod
 
 - **Target:** `prevalidate.Prevalidate [STUB]`
 - **Similarity:** 0.00
@@ -768,19 +741,19 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 65. dfa.test
+### 63. dfa.test
 
-- **Target:** `dfa.DfaTest [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `dfa.DfaTest`
+- **Similarity:** 0.73
 - **Dependents:** 0
-- **Priority Score:** 810.0
+- **Priority Score:** 802.7
 - **Functions:** 8/8 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 7/7 matched
 
-### 66. resolve.test
+### 64. resolve.test
 
 - **Target:** `resolve.ResolveTest`
 - **Similarity:** 0.96
@@ -792,18 +765,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 7/7 matched
 
-### 67. construct.mod
-
-- **Target:** `construct.Construct [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 710.0
-- **Functions:** 6/6 matched
-- **Missing functions:** _none_
-- **Types:** 1/1 matched (target 3)
-- **Missing types:** _none_
-
-### 68. graph.mod
+### 65. graph.mod
 
 - **Target:** `graph.Graph [STUB]`
 - **Similarity:** 0.00
@@ -814,7 +776,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 2/2 matched
 - **Missing types:** _none_
 
-### 69. reduce.test
+### 66. construct.mod
+
+- **Target:** `construct.Construct [STUB]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 710.0
+- **Functions:** 6/6 matched
+- **Missing functions:** _none_
+- **Types:** 1/1 matched (target 3)
+- **Missing types:** _none_
+
+### 67. reduce.test
 
 - **Target:** `reduce.ReduceTest`
 - **Similarity:** 0.90
@@ -826,7 +799,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 4/4 matched
 
-### 70. generate
+### 68. generate
 
 - **Target:** `lalrpop.Generate`
 - **Similarity:** 0.91
@@ -837,7 +810,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 2/2 matched (target 5)
 - **Missing types:** _none_
 
-### 71. first.test
+### 69. first.test
 
 - **Target:** `first.FirstTest`
 - **Similarity:** 0.91
@@ -849,7 +822,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 2/2 matched
 
-### 72. codegen.test_all
+### 70. context_set.mod
+
+- **Target:** `contextset.ContextSet [STUB]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 610.0
+- **Functions:** 4/4 matched (target 5)
+- **Missing functions:** _none_
+- **Types:** 2/2 matched
+- **Missing types:** _none_
+
+### 71. codegen.test_all
 
 - **Target:** `codegen.TestAll`
 - **Similarity:** 0.83
@@ -860,7 +844,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 73. lane.mod
+### 72. lane.mod
 
 - **Target:** `lane.Lane [STUB]`
 - **Similarity:** 0.00
@@ -871,19 +855,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 74. parser.test
-
-- **Target:** `parser.ParserTest [ZERO]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 510.0
-- **Functions:** 5/5 matched
-- **Missing functions:** _none_
-- **Types:** 0/0 matched (target 1)
-- **Missing types:** _none_
-- **Tests:** 5/5 matched
-
-### 75. kernel_set
+### 73. kernel_set
 
 - **Target:** `lalrpop.KernelSet`
 - **Similarity:** 0.65
@@ -892,6 +864,29 @@ Every matched file is listed below with function and type symbol parity.
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 2/2 matched
+- **Missing types:** _none_
+
+### 74. parser.test
+
+- **Target:** `parser.ParserTest`
+- **Similarity:** 0.68
+- **Dependents:** 0
+- **Priority Score:** 503.2
+- **Functions:** 5/5 matched
+- **Missing functions:** _none_
+- **Types:** 0/0 matched (target 1)
+- **Missing types:** _none_
+- **Tests:** 5/5 matched
+
+### 75. util
+
+- **Target:** `lalrpop.Util`
+- **Similarity:** 0.71
+- **Dependents:** 0
+- **Priority Score:** 502.9
+- **Functions:** 2/2 matched (target 7)
+- **Missing functions:** _none_
+- **Types:** 3/3 matched
 - **Missing types:** _none_
 
 ### 76. precedence.test
@@ -917,7 +912,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 2/2 matched
 - **Missing types:** _none_
 
-### 78. first.mod
+### 78. re.mod
+
+- **Target:** `lexer.Re [STUB]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 410.0
+- **Functions:** 2/2 matched
+- **Missing functions:** _none_
+- **Types:** 2/2 matched
+- **Missing types:** _none_
+
+### 79. first.mod
 
 - **Target:** `first.First [STUB]`
 - **Similarity:** 0.00
@@ -928,20 +934,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 79. message.mod
-
-- **Target:** `message.Message [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 410.0
-- **Functions:** 3/3 matched
-- **Missing functions:** _none_
-- **Types:** 1/1 matched
-- **Missing types:** _none_
-
 ### 80. free_variables.mod
 
-- **Target:** `freeVariables.FreeVariables [STUB]`
+- **Target:** `grammar.FreeVariables [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 410.0
@@ -952,7 +947,7 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 81. macro_expand.test
 
-- **Target:** `macroExpand.MacroExpandTest [PROVENANCE-FALLBACK]`
+- **Target:** `macroexpand.MacroExpandTest`
 - **Similarity:** 0.68
 - **Dependents:** 0
 - **Priority Score:** 403.2
@@ -961,13 +956,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 4/4 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `normalize/macroExpand/test.rs` vs expected `normalize/macro_expand/test.rs`
-- **Proposed provenance header:** `// port-lint: source normalize/macro_expand/test.rs` (current: `// port-lint: source normalize/macroExpand/test.rs`)
-- **Lint issues:** 1
 
-### 82. cond_comp.mod
+### 82. lr1.mod
 
-- **Target:** `condComp.CondComp [STUB]`
+- **Target:** `lr1.Lr1 [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 310.0
@@ -976,9 +968,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched
 - **Missing types:** _none_
 
-### 83. reduce.mod
+### 83. cond_comp.mod
 
-- **Target:** `reduce.Reduce [STUB]`
+- **Target:** `condcomp.CondComp [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 310.0
@@ -998,18 +990,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 85. lr1.mod
-
-- **Target:** `lr1.Lr1 [STUB]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 310.0
-- **Functions:** 3/3 matched (target 4)
-- **Missing functions:** _none_
-- **Types:** 0/0 matched
-- **Missing types:** _none_
-
-### 86. graph.test
+### 85. graph.test
 
 - **Target:** `graph.GraphTest`
 - **Similarity:** 0.73
@@ -1021,7 +1002,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 3/3 matched
 
-### 87. inline.test
+### 86. inline.test
 
 - **Target:** `inline.InlineTest`
 - **Similarity:** 0.77
@@ -1033,7 +1014,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 2/2 matched
 
-### 88. message.test
+### 87. message.test
 
 - **Target:** `message.MessageTest`
 - **Similarity:** 0.96
@@ -1045,19 +1026,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 2/2 matched
 
-### 89. re.test
-
-- **Target:** `re.ReTest [ZERO]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 210.0
-- **Functions:** 2/2 matched
-- **Missing functions:** _none_
-- **Types:** 0/0 matched (target 1)
-- **Missing types:** _none_
-- **Tests:** 2/2 matched
-
-### 90. trace.mod
+### 88. trace.mod
 
 - **Target:** `trace.Trace [STUB]`
 - **Similarity:** 0.00
@@ -1068,9 +1037,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 91. lane_table.mod
+### 89. lane_table.mod
 
-- **Target:** `laneTable.LaneTable [STUB]`
+- **Target:** `lanetable.LaneTable [STUB]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 210.0
@@ -1079,20 +1048,21 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched
 - **Missing types:** _none_
 
-### 92. shift.mod
+### 90. re.test
 
-- **Target:** `shift.Shift [STUB]`
-- **Similarity:** 0.00
+- **Target:** `lexer.ReTest`
+- **Similarity:** 0.71
 - **Dependents:** 0
-- **Priority Score:** 210.0
+- **Priority Score:** 202.9
 - **Functions:** 2/2 matched
 - **Missing functions:** _none_
-- **Types:** 0/0 matched
+- **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
+- **Tests:** 2/2 matched
 
-### 93. trace_graph.test
+### 91. trace_graph.test
 
-- **Target:** `traceGraph.TraceGraphTest [PROVENANCE-FALLBACK]`
+- **Target:** `tracegraph.TraceGraphTest`
 - **Similarity:** 0.80
 - **Dependents:** 0
 - **Priority Score:** 202.0
@@ -1101,11 +1071,8 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 2/2 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `lr1/trace/traceGraph/test.rs` vs expected `lr1/trace/trace_graph/test.rs`
-- **Proposed provenance header:** `// port-lint: source lr1/trace/trace_graph/test.rs` (current: `// port-lint: source lr1/trace/traceGraph/test.rs`)
-- **Lint issues:** 1
 
-### 94. nfa.interpret
+### 92. nfa.interpret
 
 - **Target:** `nfa.Interpret`
 - **Similarity:** 0.84
@@ -1116,7 +1083,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched
 - **Missing types:** _none_
 
-### 95. shift.test
+### 93. shift.test
 
 - **Target:** `shift.ShiftTest`
 - **Similarity:** 0.92
@@ -1128,9 +1095,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 1/1 matched
 
-### 96. cond_comp.test
+### 94. cond_comp.test
 
-- **Target:** `condComp.CondCompTest [PROVENANCE-FALLBACK]`
+- **Target:** `condcomp.CondCompTest`
 - **Similarity:** 0.68
 - **Dependents:** 0
 - **Priority Score:** 103.2
@@ -1139,11 +1106,8 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 1/1 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `normalize/condComp/test.rs` vs expected `normalize/cond_comp/test.rs`
-- **Proposed provenance header:** `// port-lint: source normalize/cond_comp/test.rs` (current: `// port-lint: source normalize/condComp/test.rs`)
-- **Lint issues:** 1
 
-### 97. report.test
+### 95. report.test
 
 - **Target:** `report.ReportTest`
 - **Similarity:** 0.80
@@ -1155,7 +1119,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** _none_
 - **Tests:** 1/1 matched
 
-### 98. dfa.interpret
+### 96. dfa.interpret
 
 - **Target:** `dfa.Interpret`
 - **Similarity:** 0.89
@@ -1166,9 +1130,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched
 - **Missing types:** _none_
 
-### 99. free_variables.test
+### 97. free_variables.test
 
-- **Target:** `freeVariables.FreeVariablesTest [PROVENANCE-FALLBACK]`
+- **Target:** `grammar.FreeVariablesTest`
 - **Similarity:** 0.95
 - **Dependents:** 0
 - **Priority Score:** 100.5
@@ -1177,29 +1141,10 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 1/1 matched
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `grammar/freeVariables/test.rs` vs expected `grammar/free_variables/test.rs`
-- **Proposed provenance header:** `// port-lint: source grammar/free_variables/test.rs` (current: `// port-lint: source grammar/freeVariables/test.rs`)
-- **Lint issues:** 1
 
-### 100. lib
+### 98. grammar.consts
 
-- **Target:** `runtime.Lib [STUB] [PROVENANCE-FALLBACK]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 10.0
-- **Functions:** 0/0 matched (target 12)
-- **Missing functions:** _none_
-- **Types:** 0/0 matched (target 8)
-- **Missing types:** _none_
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `../lalrpop-util/src/lib.rs` vs expected `lib.rs`
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `../lalrpop-util/src/lib.rs` vs expected `lib.rs`
-- **Proposed provenance header:** `// port-lint: source lib.rs` (current: `// port-lint: source ../lalrpop-util/src/lib.rs`)
-- **Proposed provenance header:** `// port-lint: source lib.rs` (current: `// port-lint: source ../lalrpop-util/src/lib.rs`)
-- **Lint issues:** 2
-
-### 101. grammar.consts
-
-- **Target:** `consts.Consts [ZERO]`
+- **Target:** `grammar.Consts [ZERO]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 10.0
@@ -1207,6 +1152,56 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing functions:** _none_
 - **Types:** 0/0 matched
 - **Missing types:** _none_
+
+### 99. context_set.test
+
+- **Target:** `lr1.BuildTest [ZERO]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 10.0
+- **Functions:** 0/0 matched (target 13)
+- **Missing functions:** _none_
+- **Types:** 0/0 matched (target 2)
+- **Missing types:** _none_
+
+### 100. lib
+
+- **Target:** `runtime.Lib [STUB] [PROVENANCE-FALLBACK]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 10.0
+- **Functions:** 0/0 matched (target 42)
+- **Missing functions:** _none_
+- **Types:** 0/0 matched (target 13)
+- **Missing types:** _none_
+- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `external/ascii-canvas/src/lib.rs` vs expected `lib.rs`
+- **Proposed provenance header:** `// port-lint: source lib.rs` (current: `// port-lint: source external/ascii-canvas/src/lib.rs`)
+- **Lint issues:** 1
+
+### 101. collections.mod
+
+- **Target:** `tls.TlsTest [STUB]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 10.0
+- **Functions:** 0/0 matched (target 2)
+- **Missing functions:** _none_
+- **Types:** 0/0 matched
+- **Missing types:** _none_
+
+### 102. grammar.mod
+
+- **Target:** `lr1.BuildLalr [STUB] [PROVENANCE-FALLBACK]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 10.0
+- **Functions:** 0/0 matched (target 4)
+- **Missing functions:** _none_
+- **Types:** 0/0 matched (target 2)
+- **Missing types:** _none_
+- **Provenance warning:** port-lint provenance header matched only by basename: `lr1/build_lalr/mod.rs` vs expected `grammar/mod.rs`
+- **Proposed provenance header:** `// port-lint: source grammar/mod.rs` (current: `// port-lint: source lr1/build_lalr/mod.rs`)
+- **Lint issues:** 1
 
 ## Success Criteria
 
@@ -1238,8 +1233,8 @@ do not treat them as the next implementation target by default.
 
 | Source | Expected target | Deps | Source path | Expected path |
 |--------|-----------------|------|-------------|---------------|
-| `collections.mod` | `collections.Mod` | 0 | `collections/mod.rs` | `collections/Mod.kt` |
-| `grammar.mod` | `grammar.Mod` | 0 | `grammar/mod.rs` | `grammar/Mod.kt` |
 | `lexer.mod` | `lexer.Mod` | 0 | `lexer/mod.rs` | `lexer/Mod.kt` |
 | `codegen.mod` | `lr1.codegen.Mod` | 0 | `lr1/codegen/mod.rs` | `lr1/codegen/Mod.kt` |
+| `reduce.mod` | `lr1.trace.reduce.Mod` | 0 | `lr1/trace/reduce/mod.rs` | `lr1/trace/reduce/Mod.kt` |
+| `shift.mod` | `lr1.trace.shift.Mod` | 0 | `lr1/trace/shift/mod.rs` | `lr1/trace/shift/Mod.kt` |
 

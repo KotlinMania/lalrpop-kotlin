@@ -1,5 +1,5 @@
 // port-lint: source lr1/codegen/base.rs
-//! Base helper routines for a code generator.
+/** Base helper routines for a code generator. */
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Level
@@ -12,12 +12,12 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.Types
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
-import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
+import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.btree.BTreeSet
-import io.github.kotlinmania.lalrpop.lr1.Token
 
 /**
  * Base struct for various kinds of code generator. The flavor of
@@ -90,23 +90,17 @@ class CodeGenerator<C>(
          * generic parameters, since that can be unnecessarily
          * restrictive.
          *
-         * In particular, consider something like this:
-         *
-         * ```notrust
-         * grammar<'a>(buffer: &'a mut Vec<u32>);
-         * ```
-         *
-         * Here, we likely do not want the `'a` in the type of `buffer` to appear
-         * in the nonterminal result. That because, if it did, then the
-         * action functions will have a signature like:
-         *
-         * ```ignore
-         * function foo<'a, T>(x: &'a mut Vec<T>) -> Result<'a> { ... }
-         * ```
-         *
-         * In that case, we would only be able to call one action function and
-         * will in fact get borrowck errors, because Rust would think we
-         * were potentially returning this `&'a mut Vec<T>`.
+         * In particular, consider a grammar declaration that introduces
+         * a scope-bound parameter L and threads it through a parameter
+         * `buffer` whose type is a mutable reference into a Vec<u32>
+         * tied to that scope. Here, we likely do not want the L scope
+         * binder in the type of `buffer` to appear in the nonterminal
+         * result. That is because, if it did, then the action function
+         * signatures would tie the result type back to the same scope
+         * binder as `buffer`, so we would only be able to call one
+         * action function and we would get borrow-check errors,
+         * because the emitter would think we were potentially returning
+         * the original mutable reference.
          *
          * Therefore, we take the full list of type parameters and we
          * filter them down to those that appear in the types that we
@@ -114,10 +108,11 @@ class CodeGenerator<C>(
          *
          * In some cases, we need to include a few more than just that
          * obviously appear textually: for example, if we have `T::Foo`,
-         * and we see a where-clause `T: Bar<'a>`, then we need to
-         * include both `T` and `'a`, since that bound may be important
-         * for resolving `T::Foo` (in other words, `T::Foo` may expand to
-         * `<T as Bar<'a>>::Foo`).
+         * and we see a where-clause that bounds `T` by a trait
+         * parameterised with the scope binder L, then we need to
+         * include both `T` and L, since that bound may be important
+         * for resolving `T::Foo` (in other words, `T::Foo` may expand
+         * to a projection through that bound).
          */
         fun filterTypeParametersAndWhereClauses(
             grammar: Grammar,
@@ -139,10 +134,10 @@ class CodeGenerator<C>(
             // `T: Hash` and a `HashSet<T>` or something) but it may also
             // be needed because of `T::Foo`-like types.
             //
-            // Do not however include a bound like `T: 'a` unless both `T`
-            // **and** `'a` are referenced -- same with bounds like `T:
-            // Foo<U>`. If those were needed, then `'a` or `U` would also
-            // have to appear in the types.
+            // Do not however include a bound that ties `T` to a scope
+            // binder L unless both `T` **and** L are referenced -- same
+            // with bounds like `T: Foo<U>`. If those were needed, then
+            // L or `U` would also have to appear in the types.
             Tls.session().log.log(Level.Debug) {
                 "filtered_type_params = $filteredTypeParams"
             }
@@ -307,7 +302,8 @@ class CodeGenerator<C>(
     }
 
     fun endParserFn() {
-        rust(this.out, "}") // function         rust(this.out, "}") // implementation
+        rust(this.out, "}") // fn
+        rust(this.out, "}") // impl
     }
 
     /**

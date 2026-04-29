@@ -1,6 +1,8 @@
 // port-lint: source grammar/parse_tree.rs
-// The "parse-tree" is what is produced by the parser. We import it do
-// some pre-expansion and so forth before creating the proper AST.
+/**
+ * The "parse-tree" is what is produced by the parser. We use it to
+ * do some pre-expansion and so forth before creating the proper AST.
+ */
 package io.github.kotlinmania.lalrpop.grammar.parsetree
 
 import io.github.kotlinmania.lalrpop.Atom
@@ -55,6 +57,8 @@ fun Span.toContent(): Content {
         .end()
 }
 
+fun from(val_: Span): Content = val_.toContent()
+
 sealed class GrammarItem {
     data class MatchToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchToken) : GrammarItem()
     data class ExternToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.ExternToken) : GrammarItem()
@@ -98,7 +102,7 @@ sealed class MatchItem {
     }
 }
 
-typealias MatchSymbol = TerminalLiteral
+sealed interface MatchSymbol
 
 
 sealed class MatchMapping : Comparable<MatchMapping> {
@@ -137,16 +141,15 @@ data class InternToken(
 
 /**
  * In `tokenCheck`, as we prepare to generate a tokenizer, we
- * combine any token-mapping declaration the user may have given with the
+ * combine any `match` declaration the user may have given with the
  * set of literals (e.g. `"foo"` or `r"[a-z]"`) that appear elsewhere
  * in their in the grammar to produce a series of `MatchEntry`. Each
- * `MatchEntry` roughly corresponds to one line in that declaration.
+ * `MatchEntry` roughly corresponds to one line in a `match` declaration.
  *
  * So e.g. if you had
  *
  * ```lalrpop
- * (token-mapping declaration)
- * {
+ * match {
  *    r"(?i)BEGIN" => "BEGIN",
  *    "+" => "+",
  * } else {
@@ -156,7 +159,7 @@ data class InternToken(
  * ID = r"[a-zA-Z]+"
  * ```
  *
- * This would correspond to three mapping entries:
+ * This would correspond to three match entries:
  * - `MatchEntry { matchLiteral: r"(?i)BEGIN", userName: "BEGIN", precedence: 2 }`
  * - `MatchEntry { matchLiteral: "+", userName: "+", precedence: 3 }`
  * - `MatchEntry { matchLiteral: "r[a-zA-Z]+"", userName: r"[a-zA-Z]+", precedence: 0 }`
@@ -164,12 +167,12 @@ data class InternToken(
  * A couple of things to note:
  *
  * - Literals appearing in the grammar are converting into an "identity" mapping
- * - Each group G is combined with the implicit priority IP of 1 for literals and 0 for
+ * - Each match group G is combined with the implicit priority IP of 1 for literals and 0 for
  *   regex to yield the final precedence; the formula is `G*2 + IP`.
  */
 data class MatchEntry(
     /**
-     * The precedence of this mapping entry.
+     * The precedence of this match entry.
      *
      * NB: This field must go first, so that `PartialOrd` sorts by precedence first!
      */
@@ -765,6 +768,8 @@ fun TerminalString.toContent(): Content {
         .end()
 }
 
+fun from(val_: TerminalString): Content = val_.toContent()
+
 sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
     data class Quoted(val atom: Atom) : TerminalLiteral()
     data class Hir(val atom: Atom) : TerminalLiteral()
@@ -788,7 +793,7 @@ sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
 
     fun fmt(): String = when (this) {
         is Quoted -> "\"${atom.asRef()}\"" // the Debug impl adds the `"` and escaping
-        is Hir -> "r#\"${atom.asRef()}\"#" // FIXME -- need to determine proper number of #
+        is Hir -> "r#\"${atom.asRef()}\"#" // NOTE -- need to determine proper number of #
     }
 
     override fun toString(): String = fmt()
@@ -811,6 +816,8 @@ fun NonterminalString.toContent(): Content {
         .styled(session.nonterminalSymbol)
         .end()
 }
+
+fun from(val_: NonterminalString): Content = val_.toContent()
 
 data class Lifetime(val atom: Atom) : Comparable<Lifetime> {
     companion object {

@@ -5,8 +5,8 @@ import io.github.kotlinmania.lalrpop.EdgeDirection
 import io.github.kotlinmania.lalrpop.Graph
 import io.github.kotlinmania.lalrpop.NodeIndex
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
 // Each state `s` corresponds to the node in the graph with index

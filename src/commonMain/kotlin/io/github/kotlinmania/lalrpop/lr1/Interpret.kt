@@ -1,5 +1,5 @@
 // port-lint: source lr1/interpret.rs
-//! LR(1) interpreter. Just builds up parse trees. Intended for testing.
+/** LR(1) interpreter. Just builds up parse trees. Intended for testing. */
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.ParseTree
@@ -86,7 +86,7 @@ private class Machine<L : LookaheadInterpret<L>>(
                 val more = reduce(production)
                 check(more)
             } else {
-                return Result.failure(InterpretErrorException(InterpretError(state, Token.Terminal(terminal))))
+                return Result.failure(InterpretErrorException(Pair(state, Token.Terminal(terminal))))
             }
         }
 
@@ -104,7 +104,7 @@ private class Machine<L : LookaheadInterpret<L>>(
             val state = topState()
             val production = dispatchReduction(state, Token.Eof)
             if (production == null) {
-                return Result.failure(InterpretErrorException(InterpretError(state, Token.Eof)))
+                return Result.failure(InterpretErrorException(Pair(state, Token.Eof)))
             }
             if (!reduce(production)) {
                 check(dataStack.size == 1)
@@ -168,7 +168,7 @@ private object DisplayForParseTree {
     }
 }
 
-class InterpretErrorException<L : LookaheadInterpret<L>>(val error: InterpretError<L>) :
+class InterpretErrorException<L : LookaheadInterpret<L>>(val error: Pair<State<L>, Token>) :
     RuntimeException()
 
 interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {

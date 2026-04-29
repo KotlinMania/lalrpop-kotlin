@@ -1,5 +1,5 @@
 // port-lint: source lr1/first/mod.rs
-//! First set construction and computation.
+/** First set construction and computation. */
 package io.github.kotlinmania.lalrpop.lr1.first
 
 import io.github.kotlinmania.lalrpop.collections.Map

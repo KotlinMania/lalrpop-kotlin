@@ -1,13 +1,15 @@
 // port-lint: source normalize/precedence/mod.rs
-//! Precedence expander.
-//!
-//! Precedence expansion rewrites rules that contain precedence attribute into several rules
-//! without attributes. A new rule is created for each level of precedence. Recursive occurrences
-//! of the original rule are syntactically substituted for a level rule in each alternative, where
-//! the choice of the precise rule is determined by the precedence level, the possible
-//! associativity and the position of this occurrence.
-//!
-//! For concrete examples, see the [`test`](../tests/index.html) module.
+/**
+ * Precedence expander.
+ *
+ * Precedence expansion rewrites rules that contain precedence attribute into several rules
+ * without attributes. A new rule is created for each level of precedence. Recursive occurrences
+ * of the original rule are syntactically substituted for a level rule in each alternative, where
+ * the choice of the precise rule is determined by the precedence level, the possible
+ * associativity and the position of this occurrence.
+ *
+ * For concrete examples, see the test module.
+ */
 package io.github.kotlinmania.lalrpop.normalize.precedence
 
 import io.github.kotlinmania.lalrpop.Atom

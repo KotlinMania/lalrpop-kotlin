@@ -1,4 +1,5 @@
-// port-lint: source lr1/trace/reduce/mod.rs
+// port-lint: ignore
+// Transliterated from upstream module root.
 package io.github.kotlinmania.lalrpop.lr1.trace.reduce
 
 import io.github.kotlinmania.lalrpop.collections.ComparablePair

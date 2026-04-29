@@ -1,6 +1,5 @@
 // port-lint: source normalize/lower/mod.rs
-//! Lower
-//!
+/** Lower */
 package io.github.kotlinmania.lalrpop.normalize.lower
 
 import io.github.kotlinmania.lalrpop.Atom

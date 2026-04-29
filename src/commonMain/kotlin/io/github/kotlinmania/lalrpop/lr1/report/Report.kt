@@ -48,6 +48,8 @@ fun generateReport(
 
 private const val INDENT_STRING: String = "    "
 
+private typealias ConflictStateMap<L> = Map<StateIndex, MutableList<Conflict<L>>>
+
 private class ReportGenerator<W : Appendable>(
     val out: W,
 ) {

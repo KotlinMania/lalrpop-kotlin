@@ -104,15 +104,15 @@ private fun makeTypes(grammar: Grammar): Types {
     // token, that specified by us, not user.
     val internToken = grammar.internToken()
     return if (internToken != null) {
-        val locType = // usize
+        val locType =
             TypeRepr.usize()
-        val inputStr = // &'input str
+        val inputStr =
             TypeRepr.Ref(
                 lifetime = Lifetime.input(),
                 mutable = false,
                 referent = TypeRepr.str(),
             )
-        val enumType = // Token<'input>
+        val enumType =
             TypeRepr.Nominal(NominalTypeRepr(
                 path = Path(
                     absolute = false,

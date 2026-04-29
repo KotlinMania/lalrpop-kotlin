@@ -6,12 +6,12 @@ import kotlin.test.assertTrue
 
 class ReTest {
     @Test
-    fun parse_unclosed_group() {
+    fun parseUnclosedGroup() {
         assertTrue(parseRegex("(123").isFailure)
     }
 
     @Test
-    fun alt_oom() {
+    fun altOom() {
         parseRegex("(%%|[^%])+").getOrThrow()
     }
 }

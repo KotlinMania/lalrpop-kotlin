@@ -1,4 +1,4 @@
-// port-lint: source message/mod.rs
+// port-lint: source message/message.rs
 package io.github.kotlinmania.lalrpop.message.message
 import io.github.kotlinmania.lalrpop.message.AsciiCanvas
 import io.github.kotlinmania.lalrpop.message.AsciiView

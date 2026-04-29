@@ -1,5 +1,5 @@
 // port-lint: source lr1/error/mod.rs
-//! Error reporting. For now very stupid and simplistic.
+/** Error reporting. For now very stupid and simplistic. */
 package io.github.kotlinmania.lalrpop.lr1.error
 
 import io.github.kotlinmania.lalrpop.Level
@@ -46,6 +46,8 @@ fun reportError(
     val cx = ErrorReportingCx.new(grammar, error.states, error.conflicts)
     cx.reportErrors(reporter)
 }
+
+internal typealias TokenConflict = Conflict<Token>
 
 internal class ErrorReportingCx private constructor(
     val grammar: Grammar,

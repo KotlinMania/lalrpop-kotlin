@@ -47,7 +47,7 @@ class OverlapTest {
     }
 
     @Test
-    fun empty_range() {
+    fun emptyRange() {
         val result = runOverlap(listOf('b'..'b', 'a'..'z'))
         assertEquals(listOf('a'..'a', 'b'..'b', 'c'..'z'), result)
     }

@@ -1,12 +1,11 @@
-// port-lint: source build/mod.rs
-//! The orchestrator that walks the LR(1) construction pipeline and feeds
-//! it into the codegen back-end. Translation of the `emitRecursiveAscent`
-//! /`emitModuleAttributes` /`emitUses` /`emitToTripleTrait`
-//! /`writeWhereClause` functions from upstream `src/build/mod.rs`.
-//!
-//! Per the project rule against translating `mod.rs` files as a single
-//! `Mod.kt`, these functions live in build/EmitRecursiveAscent.kt next to
-//! their action-emission siblings ([emitActionCode]).
+// port-lint: ignore
+// Transliterated from upstream module root.
+/**
+ * The orchestrator that walks the LR(1) construction pipeline and feeds
+ * it into the codegen back-end. Hosts [emitRecursiveAscent], [emitModuleAttributes],
+ * [emitUses], [emitToTripleTrait], and [writeWhereClause] alongside their
+ * action-emission sibling [emitActionCode].
+ */
 package io.github.kotlinmania.lalrpop.build
 
 import io.github.kotlinmania.lalrpop.Level

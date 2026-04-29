@@ -53,10 +53,10 @@ class ParserTest {
         val firstItem = parsed.items.first()
         val data = (firstItem as? GrammarItem.MatchToken)
             ?: fail("expected MatchToken, but was: $firstItem")
-        val match = data.inner
+        val matchData = data.inner
 
-        // match { ... }
-        val contents0 = match.contents.first()
+        // first match-block contents
+        val contents0 = matchData.contents.first()
         // r"(?i)begin" => "BEGIN"
         val item00 = contents0.items.first()
         (item00 as? MatchItem.Mapped)?.let { m ->
@@ -70,8 +70,8 @@ class ParserTest {
             assertEquals("\"END\"", m.mapping.toString())
         } ?: fail("expected MatchItem.Mapped, but was: $item01")
 
-        // else { ... }
-        val contents1 = match.contents[1]
+        // first else block
+        val contents1 = matchData.contents[1]
         // r"[a-zA-Z_][a-zA-Z0-9_]*" => IDENTIFIER,
         val item10 = contents1.items.first()
         (item10 as? MatchItem.Mapped)?.let { m ->
@@ -79,8 +79,8 @@ class ParserTest {
             assertEquals("IDENTIFIER", m.mapping.toString())
         } ?: fail("expected MatchItem.Mapped, but was: $item10")
 
-        // else { ... }
-        val contents2 = match.contents[2]
+        // second else block
+        val contents2 = matchData.contents[2]
         // "other",
         val item20 = contents2.items.first()
         (item20 as? MatchItem.Unmapped)?.let { u ->

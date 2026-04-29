@@ -1,5 +1,5 @@
 // port-lint: source normalize/cond_comp/mod.rs
-//! Compute cfg directives.
+/** Compute cfg directives. */
 package io.github.kotlinmania.lalrpop.normalize.condcomp
 
 import io.github.kotlinmania.lalrpop.Atom

@@ -1,5 +1,5 @@
 // port-lint: source lr1/lane_table/construct/mod.rs
-//! Generate rust parser code using the lane table algorithm
+/** Generate rust parser code using the lane table algorithm */
 package io.github.kotlinmania.lalrpop.lr1.lanetable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
@@ -12,15 +12,14 @@ import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.buildLr0States
-import io.github.kotlinmania.lalrpop.lr1.core.Action
-import io.github.kotlinmania.lalrpop.lr1.core.Conflict
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Items
-import io.github.kotlinmania.lalrpop.lr1.core.State<Nil>
-import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.Action
+import io.github.kotlinmania.lalrpop.lr1.Conflict
+import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.Items
+import io.github.kotlinmania.lalrpop.lr1.Nil
+import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.conflictingActions
 import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.StateSet

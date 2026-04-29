@@ -1,14 +1,16 @@
 // port-lint: source lr1/lane_table/table/mod.rs
-//! The "Lane Table". In the paper, this is depicted like so:
-//!
-//! ```text
-//! +-------+----+-----+----+------------+
-//! + State | C1 | ... | Cn | Successors |
-//! +-------+----+-----+----+------------+
-//! ```
-//!
-//! where each row summarizes some state that potentially contributes
-//! lookahead to the conflict.
+/**
+ * The "Lane Table". In the paper, this is depicted like so:
+ *
+ * ```text
+ * +-------+----+-----+----+------------+
+ * + State | C1 | ... | Cn | Successors |
+ * +-------+----+-----+----+------------+
+ * ```
+ *
+ * where each row summarizes some state that potentially contributes
+ * lookahead to the conflict.
+ */
 package io.github.kotlinmania.lalrpop.lr1.lanetable.table
 
 import io.github.kotlinmania.lalrpop.collections.Map
@@ -20,7 +22,7 @@ import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
 

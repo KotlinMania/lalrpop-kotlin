@@ -1,4 +1,4 @@
-// port-lint: source tls/mod.rs
+// port-lint: source collections/mod.rs
 package io.github.kotlinmania.lalrpop.tls
 
 import io.github.kotlinmania.lalrpop.FileText
