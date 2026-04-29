@@ -52,8 +52,6 @@ class LaneTracer<L : Lookahead<L>>(
         conflict: ConflictIndex,
         action: Action,
     ) {
-        // Upstream: `BTreeSet<(StateIndex, Item<Nil>)>`. Wrap in
-        // [ComparablePair] so the BTreeSet sees a `Comparable` key.
         val visitedSet: Set<ComparablePair<StateIndex, Item<Nil>>> = set()
 
         // if the conflict item is a "shift" item, then the context
