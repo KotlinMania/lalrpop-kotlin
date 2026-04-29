@@ -1,6 +1,8 @@
 // port-lint: source lexer/dfa/mod.rs
-//! Constructs a Dfa which picks the longest matching regular
-//! expression from the input.
+/**
+ * Constructs a Dfa which picks the longest matching regular
+ * expression from the input.
+ */
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
 import io.github.kotlinmania.lalrpop.Kernel
@@ -18,11 +20,8 @@ import io.github.kotlinmania.lalrpop.lexer.Hir
 
 data class Dfa(val states: List<State>)
 
-/**
- * Mirrors `(deprecated(...)) public type Dfa = Dfa;` from the upstream
- * Rust source. Kept for parity with the Rust API.
- */
 @Deprecated("use `Dfa` instead", ReplaceWith("Dfa"))
+typealias DFA = Dfa
 
 data class Precedence(val value: Int) : Comparable<Precedence> {
     override fun compareTo(other: Precedence): Int = value.compareTo(other.value)
@@ -40,13 +39,11 @@ sealed class DfaConstructionError {
 
 class DfaConstructionException(val error: DfaConstructionError) : RuntimeException(error.toString())
 
-/**
- * Mirrors `(deprecated(...)) public type DfaConstructionError = DfaConstructionError;`.
- */
 @Deprecated(
     "use `DfaConstructionError` instead",
     ReplaceWith("DfaConstructionError"),
 )
+typealias DFAConstructionError = DfaConstructionError
 
 fun buildDfa(regexs: List<Hir>, precedences: List<Precedence>): Result<Dfa> = runCatching {
     check(regexs.size == precedences.size)
@@ -244,8 +241,8 @@ data class NfaIndex(val value: Int) : Comparable<NfaIndex> {
     override fun toString(): String = "NfaIndex($value)"
 }
 
-/** Mirrors `(deprecated(...)) public type NfaIndex = NfaIndex;`. */
 @Deprecated("use `NfaIndex` instead", ReplaceWith("NfaIndex"))
+typealias NFAIndex = NfaIndex
 
 data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
     override fun compareTo(other: DfaStateIndex): Int = value.compareTo(other.value)
@@ -253,15 +250,12 @@ data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
     override fun toString(): String = "Dfa$value"
 }
 
-/** Mirrors `(deprecated(...)) public type DfaStateIndex = DfaStateIndex;`. */
 @Deprecated("use `DfaStateIndex` instead", ReplaceWith("DfaStateIndex"))
+typealias DFAStateIndex = DfaStateIndex
 
-/**
- * Mirrors `type DfaStateIndex = DfaStateIndex;` from `implementation Kernel for DfaItemSet`.
- * Kotlin does not have associated types on interface implementations,
- * so the binding is exposed as a top-level typealias for parity.
- */
+internal typealias DfaKernelSet = KernelSet<DfaItemSet, DfaStateIndex>
 
+internal typealias Index = DfaStateIndex
 
 data class DfaItemSet(val items: List<Item>) : Kernel<DfaItemSet, DfaStateIndex>, Comparable<DfaItemSet> {
     override fun index(c: Int): DfaStateIndex = DfaStateIndex(c)
