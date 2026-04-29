@@ -9,7 +9,7 @@ import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
-import io.github.kotlinmania.lalrpop.lr1.trace.traceGraph.TraceGraph
+import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraph
 
 class Tracer(
     internal val states: List<State<TokenSet>>,

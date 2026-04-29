@@ -1,5 +1,5 @@
-// port-lint: source lr1/trace/traceGraph/test.rs
-package io.github.kotlinmania.lalrpop.lr1.trace.traceGraph
+// port-lint: source lr1/trace/trace_graph/test.rs
+package io.github.kotlinmania.lalrpop.lr1.trace.tracegraph
 
 /*
  * Copyright 2015-2025 The LALRPOP Project Developers.

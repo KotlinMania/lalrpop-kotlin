@@ -1,5 +1,5 @@
 // port-lint: source lr1/trace/trace_graph/mod.rs
-package io.github.kotlinmania.lalrpop.lr1.trace.traceGraph
+package io.github.kotlinmania.lalrpop.lr1.trace.tracegraph
 
 import io.github.kotlinmania.lalrpop.EdgeDirection
 import io.github.kotlinmania.lalrpop.EdgeRef

@@ -6,8 +6,8 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
-import io.github.kotlinmania.lalrpop.lr1.trace.traceGraph.TraceGraph
-import io.github.kotlinmania.lalrpop.lr1.trace.traceGraph.TraceGraphNode
+import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraph
+import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraphNode
 import io.github.kotlinmania.lalrpop.lr1.Token
 
 /**
