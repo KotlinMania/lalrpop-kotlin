@@ -22,7 +22,9 @@ data class Pattern<T>(
         kind = kind.map(mapFn),
     )
 
-    override fun toString(): String = kind.toString()
+    fun fmt(): String = "$kind"
+
+    override fun toString(): String = fmt()
 }
 
 data class FieldPattern<T>(
@@ -36,68 +38,64 @@ data class FieldPattern<T>(
         pattern = pattern.map(mapFn),
     )
 
-    override fun toString(): String = "$fieldName: $pattern"
+    fun fmt(): String = "$fieldName: $pattern"
+
+    override fun toString(): String = fmt()
 }
 
 sealed class PatternKind<T> {
-    abstract override fun toString(): String
-
-    data class Enum<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
-        override fun toString(): String = "$path(${Sep(", ", pats)})"
-    }
+    data class Enum<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>()
 
     data class Struct<T>(
         val path: Path,
         val fields: MutableList<FieldPattern<T>>,
         /* trailing ..? */
         val dotdot: Boolean,
-    ) : PatternKind<T>() {
-        override fun toString(): String = when {
-            !dotdot -> "$path { ${Sep(", ", fields)} }"
-            fields.isEmpty() -> "$path { .. }"
-            else -> "$path { ${Sep(", ", fields)}, .. }"
-        }
-    }
+    ) : PatternKind<T>()
 
-    data class PathKind<T>(val path: Path) : PatternKind<T>() {
-        override fun toString(): String = "$path"
-    }
+    data class PathKind<T>(val path: Path) : PatternKind<T>()
 
-    data class Tuple<T>(val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
-        override fun toString(): String = "(${Sep(", ", pats)})"
-    }
+    data class Tuple<T>(val pats: MutableList<Pattern<T>>) : PatternKind<T>()
 
-    data class TupleStruct<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
-        override fun toString(): String = "$path(${Sep(", ", pats)})"
-    }
+    data class TupleStruct<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>()
 
-    data class Usize<T>(val value: Int) : PatternKind<T>() {
-        override fun toString(): String = "$value"
-    }
+    data class Usize<T>(val value: Int) : PatternKind<T>()
 
     class Underscore<T> : PatternKind<T>() {
         override fun equals(other: Any?): Boolean = other is Underscore<*>
         override fun hashCode(): Int = 1
-        override fun toString(): String = "_"
     }
 
     class DotDot<T> : PatternKind<T>() {
         override fun equals(other: Any?): Boolean = other is DotDot<*>
         override fun hashCode(): Int = 2
-        override fun toString(): String = ".."
     }
 
-    data class Choose<T>(val ty: T) : PatternKind<T>() {
-        override fun toString(): String = "$ty"
+    data class Choose<T>(val ty: T) : PatternKind<T>()
+
+    data class CharLiteral<T>(val c: Atom) : PatternKind<T>()
+
+    data class StringKind<T>(val s: String) : PatternKind<T>()
+
+    fun fmt(): String = when (this) {
+        is PathKind -> "$path"
+        is Enum -> "$path(${Sep(", ", pats)})"
+        is Struct -> when {
+            !dotdot -> "$path { ${Sep(", ", fields)} }"
+            fields.isEmpty() -> "$path { .. }"
+            else -> "$path { ${Sep(", ", fields)}, .. }"
+        }
+        is Tuple -> "(${Sep(", ", pats)})"
+        is TupleStruct -> "$path(${Sep(", ", pats)})"
+        is Underscore -> "_"
+        is DotDot -> ".."
+        is Usize -> "$value"
+        is Choose -> "$ty"
+        is CharLiteral -> "'$c'"
+        is StringKind -> "\"$s\""
     }
 
-    data class CharLiteral<T>(val c: Atom) : PatternKind<T>() {
-        override fun toString(): String = "'$c'"
-    }
-
-    data class StringKind<T>(val s: String) : PatternKind<T>() {
-        override fun toString(): String = "\"$s\""
-    }
+    override fun toString(): String = fmt()
 
     fun <U> map(mapFn: (T) -> U): PatternKind<U> {
         return when (this) {
