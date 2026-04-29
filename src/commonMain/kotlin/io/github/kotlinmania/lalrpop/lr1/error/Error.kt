@@ -19,10 +19,8 @@ import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Conflict
 import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
-import io.github.kotlinmania.lalrpop.lr1.core.Conflict<TokenSet>
-import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<TokenSet>
+import io.github.kotlinmania.lalrpop.lr1.core.State
+import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.example.Example
 import io.github.kotlinmania.lalrpop.lr1.example.ExampleStyles
