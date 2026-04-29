@@ -62,6 +62,8 @@ fun <K : Comparable<K>, C : Collection<Item>, Item> fromIter(
     return mm
 }
 
+internal typealias IntoIter<K, C> = Iterator<Pair<K, C>>
+
 interface Collection<Item> {
     /**
      * Push `item` into the collection and return `true` if
