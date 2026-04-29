@@ -16,7 +16,7 @@ import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros
 import io.github.kotlinmania.lalrpop.normalize.precedence.expandPrecedence
 import io.github.kotlinmania.lalrpop.normalize.prevalidate.validate as prevalidateValidate
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
-import io.github.kotlinmania.lalrpop.normalize.tokenCheck.validate as tokenCheckValidate
+import io.github.kotlinmania.lalrpop.normalize.tokencheck.validate as tokenCheckValidate
 import io.github.kotlinmania.lalrpop.normalize.tyinfer.inferTypes
 import io.github.kotlinmania.lalrpop.lr1.Token
 

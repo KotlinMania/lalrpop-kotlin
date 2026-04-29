@@ -5,7 +5,7 @@
 //! some macro arguments never make it into an actual production and
 //! are only used in `if` conditions; we import string literals for
 //! those, but they do not have to have a defined conversion.
-package io.github.kotlinmania.lalrpop.normalize.tokenCheck
+package io.github.kotlinmania.lalrpop.normalize.tokencheck
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.collections.Map

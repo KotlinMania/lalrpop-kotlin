@@ -1,5 +1,5 @@
-// port-lint: source normalize/tokenCheck/test.rs
-package io.github.kotlinmania.lalrpop.normalize.tokenCheck
+// port-lint: source normalize/token_check/test.rs
+package io.github.kotlinmania.lalrpop.normalize.tokencheck
 
 /*
  * Copyright 2015-2025 The LALRPOP Project Developers.

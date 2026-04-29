@@ -18,7 +18,7 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros
-import io.github.kotlinmania.lalrpop.normalize.tokenCheck.validate as tokenCheckValidate
+import io.github.kotlinmania.lalrpop.normalize.tokencheck.validate as tokenCheckValidate
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
 import io.github.kotlinmania.lalrpop.parser.parseTypeRef
 import kotlin.test.Test
