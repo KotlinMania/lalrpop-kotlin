@@ -53,10 +53,6 @@ fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<State<Tok
     // Now compress them. This vector stores, for each state, the
     // LALR(1) state to which we will remap it.
     val remap: MutableList<StateIndex> = MutableList(lrStates.size) { StateIndex(0) }
-    // Upstream: `BTreeMap<Vec<Item<Nil>>, StateIndex>` (BTreeMap with
-    // auto-derived `Ord` on `Vec<T>`). We wrap the kernel in a
-    // [ComparableList] so the Kotlin BTreeMap orders by the same
-    // lexicographic compare Rust derives.
     val lalr1Map: Map<ComparableList<Item<Nil>>, StateIndex> = map()
     val lalr1States: MutableList<Lalr1State> = mutableListOf()
 
