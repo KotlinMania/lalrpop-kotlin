@@ -32,6 +32,12 @@ struct ReexportConfig {
     std::string config_path;
     bool loaded = false;
     bool had_parse_error = false;
+    // Opt-in policy: when true, ast_distance rejects --compare-functions
+    // and other comparison commands when stdout is piped, redirected, or
+    // otherwise filtered. Default false (no rejection); set true in
+    // .ast_distance_config.json to re-enforce on a branch where you want
+    // the discipline.
+    bool strict_redirects = false;
 
     bool matches(const std::string& relative_path) const {
         if (!loaded || patterns.empty()) return false;
@@ -100,6 +106,25 @@ inline std::string extract_json_string(const std::string& content, const std::st
     return value;
 }
 
+// Returns the bool literal value for `key` if present (`true` / `false`),
+// or `fallback` if the key is absent or its value is not a bare bool literal.
+inline bool extract_json_bool(const std::string& content, const std::string& key, bool fallback) {
+    const std::string pattern = "\"" + key + "\"";
+    size_t pos = content.find(pattern);
+    if (pos == std::string::npos) return fallback;
+    pos = content.find(':', pos + pattern.size());
+    if (pos == std::string::npos) return fallback;
+    ++pos;
+    while (pos < content.size() &&
+           (content[pos] == ' ' || content[pos] == '\t' ||
+            content[pos] == '\n' || content[pos] == '\r')) {
+        ++pos;
+    }
+    if (content.compare(pos, 4, "true") == 0) return true;
+    if (content.compare(pos, 5, "false") == 0) return false;
+    return fallback;
+}
+
 inline std::string extract_json_object_body(const std::string& content, const std::string& key) {
     const std::string pattern = "\"" + key + "\"";
     size_t pos = content.find(pattern);
@@ -148,6 +173,7 @@ inline bool load_reexport_config(const std::string& path, ReexportConfig& cfg) {
     cfg.loaded = false;
     cfg.had_parse_error = false;
     cfg.patterns.clear();
+    cfg.strict_redirects = false;
 
     std::ifstream file(path);
     if (!file.is_open()) return false;
@@ -164,6 +190,7 @@ inline bool load_reexport_config(const std::string& path, ReexportConfig& cfg) {
     cfg.source.lang = extract_json_string(source_body, "lang");
     cfg.target.path = extract_json_string(target_body, "path");
     cfg.target.lang = extract_json_string(target_body, "lang");
+    cfg.strict_redirects = extract_json_bool(content, "strict_redirects", false);
 
     const std::string key = "\"reexport_modules\"";
     size_t pos = content.find(key);
@@ -245,6 +272,9 @@ inline bool write_ast_distance_config_stub(const std::string& path,
     out << "    \"todos\": true,\n";
     out << "    \"lint\": true\n";
     out << "  },\n";
+    // Opt-in policy: when true, ast_distance rejects piped/redirected
+    // comparison output. Default false.
+    out << "  \"strict_redirects\": false,\n";
     out << "  \"reexport_modules\": [\n";
     out << "    \"mod.rs\",\n";
     out << "    \"lib.rs\"\n";
