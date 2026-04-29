@@ -7,7 +7,7 @@ const val LOCATION: String = "Location"
 /** Recognized associated type for custom errors */
 const val ERROR: String = "Error"
 
-/** The lifetime parameter injected when we do not have an external token enum */
+/** The `'input` type parameter injected when we do not have an external token enum */
 const val INPUT_LIFETIME: String = "'input"
 
 /** The parameter injected when we do not have an external token enum */
