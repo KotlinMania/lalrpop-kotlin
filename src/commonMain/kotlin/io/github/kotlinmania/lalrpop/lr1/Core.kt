@@ -1,6 +1,6 @@
 // port-lint: source lr1/core/mod.rs
 //! Core LR(1) types.
-package io.github.kotlinmania.lalrpop.lr1.core
+package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.Prefix
 import io.github.kotlinmania.lalrpop.collections.Map
@@ -204,6 +204,8 @@ private fun <T> Iterable<T>.dedup(): List<T> {
     return out
 }
 
+typealias Lr0State = State<Nil>
+typealias Lr1State = State<TokenSet>
 
 sealed class Action : Comparable<Action> {
     data class Shift(val terminal: TerminalString, val state: StateIndex) : Action()
