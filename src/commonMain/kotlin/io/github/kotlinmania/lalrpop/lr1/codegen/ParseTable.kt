@@ -747,7 +747,7 @@ private fun CodeGenerator<TableDriven>.writeTokenToSymbolFn() {
         val patternNames: MutableList<String> = mutableListOf()
         var first = true
         val patterns: List<String> = indices.map { (_, pattern) ->
-            val p = pattern as io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<TypeRepr>
+            val p = pattern as io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRepr>
             var nameIndex = 0
             val mapped = p.map {
                 val name = "${this.prefix}tok$nameIndex"

@@ -9,7 +9,7 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.grammar.freeVariables
-import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
+import io.github.kotlinmania.lalrpop.grammar.Pattern
 import io.github.kotlinmania.lalrpop.message.message.Content
 // Kotlin callers import them directly from their defining package
 // (grammar.parseTree).

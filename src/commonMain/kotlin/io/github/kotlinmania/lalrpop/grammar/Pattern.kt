@@ -2,7 +2,7 @@
 // The definition of patterns is shared between the parse-tree and the
 // repr, but customized by a type T that represents the different type
 // representations.
-package io.github.kotlinmania.lalrpop.grammar.pattern
+package io.github.kotlinmania.lalrpop.grammar
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep

@@ -42,9 +42,9 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeRef
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause
-import io.github.kotlinmania.lalrpop.grammar.pattern.FieldPattern
-import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
-import io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind
+import io.github.kotlinmania.lalrpop.grammar.FieldPattern
+import io.github.kotlinmania.lalrpop.grammar.Pattern
+import io.github.kotlinmania.lalrpop.grammar.PatternKind
 import io.github.kotlinmania.lalrpop.runtime.ErrorRecovery
 import io.github.kotlinmania.lalrpop.runtime.ParseError
 import io.github.kotlinmania.lalrpop.runtime.ParseResult

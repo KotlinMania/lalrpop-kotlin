@@ -5,7 +5,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeRef
 import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause
-import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
+import io.github.kotlinmania.lalrpop.grammar.Pattern
 import io.github.kotlinmania.lalrpop.runtime.ParseError
 import io.github.kotlinmania.lalrpop.runtime.ParseResult
 import io.github.kotlinmania.lalrpop.tok.Tok
@@ -21,7 +21,7 @@ import io.github.kotlinmania.lalrpop.tok.Error as TokError
 // variant, reducing readability.
 sealed class Top {
     data class Grammar(val grammar: io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar) : Top()
-    data class Pattern(val pattern: io.github.kotlinmania.lalrpop.grammar.pattern.Pattern<TypeRef>) : Top()
+    data class Pattern(val pattern: io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRef>) : Top()
     data class MatchMapping(val matchMapping: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping) : Top()
     data class TypeRefTop(val typeRef: TypeRef) : Top()
     data class GrammarWhereClauses(val whereClauses: List<WhereClause<TypeRef>>) : Top()

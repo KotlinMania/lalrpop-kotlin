@@ -26,8 +26,8 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeRef
 import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause as PtWhereClause
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar as PtGrammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.asNonterminal
-import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
-import io.github.kotlinmania.lalrpop.grammar.pattern.PatternKind
+import io.github.kotlinmania.lalrpop.grammar.Pattern
+import io.github.kotlinmania.lalrpop.grammar.PatternKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.readAlgorithm
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFn
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFnDefn

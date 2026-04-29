@@ -15,7 +15,7 @@ import io.github.kotlinmania.lalrpop.message.builder.InlineBuilder
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
-import io.github.kotlinmania.lalrpop.grammar.pattern.Pattern
+import io.github.kotlinmania.lalrpop.grammar.Pattern
 import io.github.kotlinmania.lalrpop.grammar.INPUT_LIFETIME
 import io.github.kotlinmania.lalrpop.grammar.LALR
 import io.github.kotlinmania.lalrpop.grammar.TABLE_DRIVEN
