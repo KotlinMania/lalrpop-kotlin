@@ -6,4 +6,6 @@ import io.github.kotlinmania.btree.BTreeSet
 /** As [Map], but for sets. */
 typealias Set<K> = BTreeSet<K>
 
-fun <K : Comparable<K>> set(): Set<K> = BTreeSet.default()
+fun <K : Comparable<K>> set(): Set<K> {
+    return BTreeSet.default<K>()
+}
