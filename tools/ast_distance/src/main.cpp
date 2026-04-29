@@ -570,6 +570,12 @@ static int reject_redirected_comparison_output_if_needed(const std::string& mode
     if (!comparison_mode_requires_direct_terminal(mode, argc)) {
         return 0;
     }
+    // Opt-in policy. The default is to allow piping/redirection. To
+    // re-enforce the discipline on a branch, set `"strict_redirects": true`
+    // in .ast_distance_config.json.
+    if (!g_reexport_config.loaded || !g_reexport_config.strict_redirects) {
+        return 0;
+    }
 
     std::vector<std::string> reasons;
     std::string parent = parent_process_command();
