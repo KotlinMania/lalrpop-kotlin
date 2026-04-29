@@ -1,7 +1,7 @@
 // port-lint: source lr1/trace/shift/mod.rs
 package io.github.kotlinmania.lalrpop.lr1.trace.shift
 
-import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
+import io.github.kotlinmania.lalrpop.collections.ComparablePair
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex

@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.Kernel as KKernelInterface
 import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
 import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol

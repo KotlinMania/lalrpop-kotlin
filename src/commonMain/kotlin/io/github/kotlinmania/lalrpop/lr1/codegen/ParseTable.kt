@@ -3,7 +3,7 @@
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Sep
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter

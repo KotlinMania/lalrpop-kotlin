@@ -3,7 +3,7 @@
 package io.github.kotlinmania.lalrpop.lr1.first
 
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol

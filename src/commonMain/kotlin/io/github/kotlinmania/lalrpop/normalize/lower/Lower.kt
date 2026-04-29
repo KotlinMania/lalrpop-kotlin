@@ -6,7 +6,7 @@ package io.github.kotlinmania.lalrpop.normalize.lower
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ArgPattern
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol

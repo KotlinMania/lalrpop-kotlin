@@ -6,7 +6,7 @@ import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString

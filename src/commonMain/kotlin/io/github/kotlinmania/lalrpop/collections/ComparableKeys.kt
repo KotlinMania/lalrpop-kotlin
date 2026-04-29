@@ -4,7 +4,7 @@
 //
 // This file has no upstream Rust counterpart, so it carries no
 // `port-lint: source` header.
-package io.github.kotlinmania.lalrpop.collections.map
+package io.github.kotlinmania.lalrpop.collections
 
 /**
  * Hand-rolled stand-in for the upstream auto-derived `Ord` on

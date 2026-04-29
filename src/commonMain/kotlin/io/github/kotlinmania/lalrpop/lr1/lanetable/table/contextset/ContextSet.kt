@@ -36,7 +36,7 @@ package io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset
 
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.Set
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>

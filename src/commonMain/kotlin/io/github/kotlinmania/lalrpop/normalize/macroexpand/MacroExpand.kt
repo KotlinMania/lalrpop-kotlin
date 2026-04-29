@@ -33,7 +33,7 @@ import io.github.kotlinmania.lalrpop.normalize.normutil.analyzeExpr
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 
 fun expandMacros(input: Grammar, recursionLimit: Int): Grammar {
     val inputResolved = resolve(input)

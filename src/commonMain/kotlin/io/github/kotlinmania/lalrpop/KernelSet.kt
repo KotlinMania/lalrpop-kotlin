@@ -2,7 +2,7 @@
 package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 
 class KernelSet<K : Kernel<K, Index>, Index> {
     private var counter: Int = 0

@@ -7,7 +7,7 @@ package io.github.kotlinmania.lalrpop.grammar.repr
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.freeVariables
 import io.github.kotlinmania.lalrpop.grammar.Pattern
 import io.github.kotlinmania.lalrpop.message.message.Content

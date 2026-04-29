@@ -5,7 +5,7 @@ package io.github.kotlinmania.lalrpop.normalize.resolve
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.map.map
+import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
