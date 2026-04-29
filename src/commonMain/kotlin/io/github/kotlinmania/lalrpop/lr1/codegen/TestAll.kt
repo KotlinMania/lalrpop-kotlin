@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
+import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
