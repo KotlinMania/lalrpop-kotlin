@@ -4,7 +4,7 @@
 //! edges.
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
-import io.github.kotlinmania.lalrpop.lexer.re.Hir
+import io.github.kotlinmania.lalrpop.lexer.Hir
 import io.github.kotlinmania.lalrpop.regexsyntax.ClassBytesRange
 import io.github.kotlinmania.lalrpop.regexsyntax.ClassUnicodeRange
 import io.github.kotlinmania.lalrpop.regexsyntax.HirKind

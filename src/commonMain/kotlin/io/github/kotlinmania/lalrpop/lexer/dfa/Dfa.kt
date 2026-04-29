@@ -14,7 +14,7 @@ import io.github.kotlinmania.lalrpop.lexer.nfa.NfaStateIndex
 import io.github.kotlinmania.lalrpop.lexer.nfa.Other as NfaOther
 import io.github.kotlinmania.lalrpop.lexer.nfa.START as NFA_START
 import io.github.kotlinmania.lalrpop.lexer.nfa.Test
-import io.github.kotlinmania.lalrpop.lexer.re.Hir
+import io.github.kotlinmania.lalrpop.lexer.Hir
 
 data class Dfa(val states: List<State>)
 

@@ -1,6 +1,6 @@
 // port-lint: source lexer/re/mod.rs
 // A parser and representation of regular expressions.
-package io.github.kotlinmania.lalrpop.lexer.re
+package io.github.kotlinmania.lalrpop.lexer
 
 import io.github.kotlinmania.lalrpop.regexsyntax.Hir
 import io.github.kotlinmania.lalrpop.regexsyntax.ParserBuilder

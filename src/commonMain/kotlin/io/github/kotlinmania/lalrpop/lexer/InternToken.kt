@@ -12,8 +12,8 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.InternToken
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalLiteral
-import io.github.kotlinmania.lalrpop.lexer.re.parseLiteral
-import io.github.kotlinmania.lalrpop.lexer.re.parseRegex
+import io.github.kotlinmania.lalrpop.lexer.parseLiteral
+import io.github.kotlinmania.lalrpop.lexer.parseRegex
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 

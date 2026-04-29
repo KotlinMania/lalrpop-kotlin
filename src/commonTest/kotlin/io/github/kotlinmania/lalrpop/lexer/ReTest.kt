@@ -1,5 +1,5 @@
 // port-lint: source lexer/re/test.rs
-package io.github.kotlinmania.lalrpop.lexer.re
+package io.github.kotlinmania.lalrpop.lexer
 
 import kotlin.test.Test
 import kotlin.test.assertTrue

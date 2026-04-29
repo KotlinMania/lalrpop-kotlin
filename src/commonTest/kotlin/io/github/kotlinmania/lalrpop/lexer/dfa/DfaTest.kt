@@ -1,7 +1,7 @@
 // port-lint: source lexer/dfa/test.rs
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
-import io.github.kotlinmania.lalrpop.lexer.re.parseRegex
+import io.github.kotlinmania.lalrpop.lexer.parseRegex
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
