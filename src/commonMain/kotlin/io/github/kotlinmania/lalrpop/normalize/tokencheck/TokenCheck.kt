@@ -101,18 +101,18 @@ private sealed class TokenMode {
 
     /**
      * Otherwise, we are synthesizing the tokenizer. In that case,
-     * `matchBlock` summarizes the data from the `match { ... }`
-     * section, if any. If there was no `match` section, or the
-     * section contains a wildcard, the user can also import additional
+     * matchBlock summarizes the data from the matchblock-section in
+     * the grammar, if any. If there was no matchblock, or the section
+     * contains a wildcard, the user can also import additional
      * terminals in the grammar.
      */
     data class Internal(val matchBlock: MatchBlock) : TokenMode()
 }
 
-/** Data summarizing the `match { }` block, along with any literals we scraped up. */
+/** Data summarizing the matchblock, along with any literals we scraped up. */
 private class MatchBlock(
     /**
-     * This map stores the `match { }` entries. If `matchCatchAll`
+     * This map stores the matchblock entries. If matchCatchAll
      * is true, then we will grow this set with "identity mappings"
      * for new literals that we find.
      */
@@ -127,10 +127,10 @@ private class MatchBlock(
     val matchUserNames: Set<TerminalString> = set(),
 
     /**
-     * For each terminal literal that we have to match, the span
+     * For each terminal literal that we have to find, the span
      * where it appeared in user source.  This can either be in the
-     * `match { }` section or else in the grammar somewhere (if added
-     * due to a catch-all, or there is no match section).
+     * matchblock section or else in the grammar somewhere (if added
+     * due to a catch-all, or there is no matchblock section).
      */
     val spans: Map<TerminalLiteral, Span> = map(),
 
@@ -139,8 +139,8 @@ private class MatchBlock(
 ) {
     companion object {
         /**
-         * Creates a `MatchBlock` by reading the data out of the `match {
-         * ... }` block that the user provided (if any).
+         * Creates a [MatchBlock] by reading the data out of the
+         * matchblock-section that the user provided (if any).
          */
         fun new(optMatchToken: MatchToken?): MatchBlock {
             val matchBlock = MatchBlock()
@@ -172,7 +172,7 @@ private class MatchBlock(
                     }
                 }
             } else {
-                // no match block is equivalent to `match { _ }`
+                // an absent grammar matchblock is treated as a wildcard catch-all
                 matchBlock.catchAll = Precedence(0)
             }
             return matchBlock
@@ -205,7 +205,7 @@ private class MatchBlock(
     }
 
     fun addLiteralFromGrammar(sym: TerminalLiteral, span: Span) {
-        // Already saw this literal, maybe in a match entry, maybe in the grammar.
+        // Already saw this literal, maybe in an entry of the grammar's match-table, maybe in the grammar.
         if (matchUserNames.contains(TerminalString.Literal(sym))) {
             return
         }
@@ -302,7 +302,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
     val matchEntries = matchBlock.matchEntries
     val spans = matchBlock.spans
 
-    // Sort match entries by order of increasing precedence.
+    // Sort the matchEntries by order of increasing precedence.
     matchEntries.sort()
 
     // Build up two vectors, one of parsed regular expressions and
@@ -361,7 +361,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
         GrammarItem.InternToken(InternToken(matchEntries = matchEntries, dfa = dfa))
     )
 
-    // we need to inject a `'input` lifetime and `input: &'input str` parameter as well:
+    // we need to inject an "input" parameter for the input string slice as well:
 
     val inputLifetime = Lifetime.input()
     for (parameter in grammar.typeParameters) {
