@@ -148,31 +148,9 @@ abstract class AstDistanceParityTask : org.gradle.api.DefaultTask() {
         val report = reportFile.get().asFile
         report.parentFile.mkdirs()
 
-        // The Kotlin port is split across commonMain (production code) and
-        // commonTest (test code). Symbol parity must check BOTH against the
-        // upstream Rust tree to honour Sydney's "no fakery" gate, since the
-        // tool only scans the path it's given. We materialise a temporary
-        // staging directory whose contents are a flat union of both source
-        // sets and run --symbol-parity / --deep against that.
-        //
-        // The staging directory lives outside `build/` because ast_distance's
-        // `should_skip_path` filter drops anything under a Gradle build-output
-        // tree (build/reports/, build/classes/, etc.) — placing the staging
-        // there would zero out the file count and the gate would falsely
-        // report 0/N instead of seeing the union.
-        val staging = File(rust.parentFile.parentFile.parentFile, "parity-staging")
-        if (staging.exists()) staging.deleteRecursively()
-        staging.mkdirs()
         val mainRoot = kotlinPortRoot.get().asFile
         val testRoot = kotlinTestRoot.get().asFile
-        if (mainRoot.exists()) {
-            mainRoot.copyRecursively(File(staging, "commonMain"), overwrite = true)
-        }
-        if (testRoot.exists()) {
-            testRoot.copyRecursively(File(staging, "commonTest"), overwrite = true)
-        }
 
-        // --deep
         val deepBuf = ByteArrayOutputStream()
         execOps.exec {
             workingDir = bin.parentFile.parentFile.parentFile
@@ -181,7 +159,7 @@ abstract class AstDistanceParityTask : org.gradle.api.DefaultTask() {
                 "--deep",
                 rust.absolutePath,
                 "rust",
-                staging.absolutePath,
+                mainRoot.absolutePath,
                 "kotlin",
             )
             standardOutput = deepBuf
@@ -189,9 +167,8 @@ abstract class AstDistanceParityTask : org.gradle.api.DefaultTask() {
             isIgnoreExitValue = true
         }
         val deepReport = deepBuf.toString()
-        report.writeText("========== --deep (commonMain ∪ commonTest) ==========\n\n$deepReport")
+        report.writeText("========== --deep (commonMain) ==========\n\n$deepReport")
 
-        // --symbol-parity --missing-only
         val parityBuf = ByteArrayOutputStream()
         execOps.exec {
             workingDir = bin.parentFile.parentFile.parentFile
@@ -199,7 +176,9 @@ abstract class AstDistanceParityTask : org.gradle.api.DefaultTask() {
                 bin.absolutePath,
                 "--symbol-parity",
                 rust.absolutePath,
-                staging.absolutePath,
+                mainRoot.absolutePath,
+                "--kotlin-test-root",
+                testRoot.absolutePath,
                 "--missing-only",
             )
             standardOutput = parityBuf
@@ -207,7 +186,7 @@ abstract class AstDistanceParityTask : org.gradle.api.DefaultTask() {
             isIgnoreExitValue = true
         }
         val parityReport = parityBuf.toString()
-        report.appendText("\n\n========== --symbol-parity --missing-only (commonMain ∪ commonTest) ==========\n\n$parityReport")
+        report.appendText("\n\n========== --symbol-parity --missing-only (commonMain + commonTest) ==========\n\n$parityReport")
 
         val ratioRegex = Regex("""Production definitions:\s+(\d+)/(\d+)""")
         val match = ratioRegex.find(parityReport)
