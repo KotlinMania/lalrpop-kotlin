@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * Constructs a Dfa which picks the longest matching regular

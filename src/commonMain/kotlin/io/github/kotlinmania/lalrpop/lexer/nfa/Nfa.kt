@@ -1,4 +1,3 @@
-// port-lint: ignore
 // transliterated from upstream module root
 /**
  * The Nfa we construct for each regex. Since the states are not
