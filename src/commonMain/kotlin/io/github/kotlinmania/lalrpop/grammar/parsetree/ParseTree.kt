@@ -102,25 +102,23 @@ typealias MatchSymbol = TerminalLiteral
 
 
 sealed class MatchMapping : Comparable<MatchMapping> {
-    data class Terminal(val terminal: TerminalString) : MatchMapping() {
-        override fun toString(): String = terminal.toString()
-    }
-    data object Skip : MatchMapping() {
-        override fun toString(): String = "{ }"
-    }
+    data class Terminal(val terminal: TerminalString) : MatchMapping()
+    data object Skip : MatchMapping()
 
     override fun compareTo(other: MatchMapping): Int = toString().compareTo(other.toString())
 
     // Debug implementation
-    fun debugString(): String = when (this) {
+    fun debugFmt(): String = when (this) {
         is Terminal -> "${terminal}"
         Skip -> "{ }"
     }
 
-    override fun toString(): String = when (this) {
-        is Terminal -> terminal.toString()
+    fun fmt(): String = when (this) {
+        is Terminal -> "$terminal"
         Skip -> "{ }"
     }
+
+    override fun toString(): String = fmt()
 }
 
 /**
@@ -231,8 +229,10 @@ data class Path(
         return ids.size.compareTo(other.ids.size)
     }
 
-    override fun toString(): String =
+    fun fmt(): String =
         (if (absolute) "::" else "") + Sep("::", ids).toString()
+
+    override fun toString(): String = fmt()
 
     fun asId(): Atom? =
         if (!absolute && ids.size == 1) ids[0] else null
@@ -251,58 +251,50 @@ data class Path(
 
 sealed class TypeRef {
     // (T1, T2)
-    data class Tuple(val types: MutableList<TypeRef>) : TypeRef() {
-        override fun toString(): String = "(${Sep(", ", types)})"
-    }
+    data class Tuple(val types: MutableList<TypeRef>) : TypeRef()
 
     // [T]
-    data class Slice(val ty: TypeRef) : TypeRef() {
-        override fun toString(): String = "[${ty}]"
-    }
+    data class Slice(val ty: TypeRef) : TypeRef()
 
     // Foo<...>, Foo::Bar, etc
-    data class Nominal(val path: Path, val types: MutableList<TypeRef>) : TypeRef() {
-        override fun toString(): String =
-            if (types.isEmpty()) "$path" else "$path<${Sep(", ", types)}>"
-    }
+    data class Nominal(val path: Path, val types: MutableList<TypeRef>) : TypeRef()
 
-    data class Ref(val lifetime: Lifetime?, val mutable: Boolean, val referent: TypeRef) : TypeRef() {
-        override fun toString(): String = when {
-            lifetime == null && !mutable -> "&$referent"
-            lifetime != null && !mutable -> "&$lifetime $referent"
-            lifetime == null && mutable -> "&mut $referent"
-            else -> "&$lifetime mut $referent"
-        }
-    }
+    data class Ref(val lifetime: Lifetime?, val mutable: Boolean, val referent: TypeRef) : TypeRef()
 
     // Trait object
-    data class TraitObject(val path: Path, val types: MutableList<TypeRef>) : TypeRef() {
-        override fun toString(): String =
-            if (types.isEmpty()) "dyn $path" else "dyn $path<${Sep(", ", types)}>"
-    }
+    data class TraitObject(val path: Path, val types: MutableList<TypeRef>) : TypeRef()
 
     // Only should appear within nominal types, but what do we care
-    data class LifetimeRef(val lifetime: Lifetime) : TypeRef() {
-        override fun toString(): String = "$lifetime"
-    }
+    data class LifetimeRef(val lifetime: Lifetime) : TypeRef()
 
     // Foo or Bar ==> treated specially since macros may care
-    data class Id(val atom: Atom) : TypeRef() {
-        override fun toString(): String = "$atom"
-    }
+    data class Id(val atom: Atom) : TypeRef()
 
     // <N> ==> type of a nonterminal, emitted by macro expansion
-    data class OfSymbol(val kind: SymbolKind) : TypeRef() {
-        override fun toString(): String = "`$kind`"
-    }
+    data class OfSymbol(val kind: SymbolKind) : TypeRef()
 
     data class Fn(
         val forall: MutableList<TypeParameter>,
         val path: Path,
         val parameters: MutableList<TypeRef>,
         val ret: TypeRef?,
-    ) : TypeRef() {
-        override fun toString(): String = buildString {
+    ) : TypeRef()
+
+    fun fmt(): String = when (this) {
+        is Tuple -> "(${Sep(", ", types)})"
+        is Slice -> "[${ty}]"
+        is Nominal -> if (types.isEmpty()) "$path" else "$path<${Sep(", ", types)}>"
+        is TraitObject -> if (types.isEmpty()) "dyn $path" else "dyn $path<${Sep(", ", types)}>"
+        is LifetimeRef -> "$lifetime"
+        is Id -> "$atom"
+        is OfSymbol -> "`$kind`"
+        is Ref -> when {
+            lifetime == null && !mutable -> "&$referent"
+            lifetime != null && !mutable -> "&$lifetime $referent"
+            lifetime == null && mutable -> "&mut $referent"
+            else -> "&$lifetime mut $referent"
+        }
+        is Fn -> buildString {
             append("dyn ")
             if (forall.isNotEmpty()) {
                 append("for<${Sep(", ", forall)}> ")
@@ -311,6 +303,8 @@ sealed class TypeRef {
             if (ret != null) append(" -> $ret")
         }
     }
+
+    override fun toString(): String = fmt()
 
     // Converts a TypeRef to a TypeRepr, assuming no inference is
     // required etc. This is safe for all types a user can directly
@@ -361,7 +355,7 @@ sealed class WhereClause<T> : Comparable<WhereClause<T>> {
 
     override fun compareTo(other: WhereClause<T>): Int = toString().compareTo(other.toString())
 
-    override fun toString(): String = when (this) {
+    fun fmt(): String = when (this) {
         is LifetimeClause<T> -> buildString {
             append("$lifetime:")
             for ((i, b) in bounds.withIndex()) {
@@ -385,9 +379,9 @@ sealed class WhereClause<T> : Comparable<WhereClause<T>> {
             }
         }
     }
-}
 
-fun <T> WhereClause<T>.display(): String = toString()
+    override fun toString(): String = fmt()
+}
 
 sealed class TypeBound<T> : Comparable<TypeBound<T>> {
     // A bound parameter in a type constraint.
@@ -424,7 +418,7 @@ sealed class TypeBound<T> : Comparable<TypeBound<T>> {
         )
     }
 
-    override fun toString(): String = when (this) {
+    fun fmt(): String = when (this) {
         is LifetimeBound<T> -> "$lifetime"
         is Fn<T> -> buildString {
             if (forall.isNotEmpty()) {
@@ -457,14 +451,14 @@ sealed class TypeBound<T> : Comparable<TypeBound<T>> {
             append("<")
             for ((i, p) in parameters.withIndex()) {
                 if (i != 0) append(", ")
-                append(p.display())
+                append(p.fmt())
             }
             append(">")
         }
     }
-}
 
-fun <T> TypeBound<T>.display(): String = toString()
+    override fun toString(): String = fmt()
+}
 
 sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
     // Bound parameter
@@ -482,56 +476,59 @@ sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
         is Associated -> Associated(id, f(ty))
     }
 
-    fun display(): String = when (this) {
+    fun fmt(): String = when (this) {
         is LifetimeParam -> "$lifetime"
         is TypeParameterParam -> "$ty"
         is Associated -> "$id = $ty"
     }
 
-    override fun toString(): String = display()
+    override fun toString(): String = fmt()
 }
 
 sealed class TypeParameter : Comparable<TypeParameter> {
-    abstract override fun toString(): String
+    data class LifetimeTp(val lifetime: Lifetime) : TypeParameter()
 
-    data class LifetimeTp(val lifetime: Lifetime) : TypeParameter() {
-        override fun toString(): String = "$lifetime"
-    }
-
-    data class Id(val atom: Atom) : TypeParameter() {
-        override fun toString(): String = "$atom"
-    }
+    data class Id(val atom: Atom) : TypeParameter()
 
     override fun compareTo(other: TypeParameter): Int = toString().compareTo(other.toString())
+
+    fun fmt(): String = when (this) {
+        is LifetimeTp -> "$lifetime"
+        is Id -> "$atom"
+    }
+
+    override fun toString(): String = fmt()
 }
 
 data class Parameter(
     var name: Atom,
     var ty: TypeRef,
 ) {
-    override fun toString(): String = "$name: $ty"
+    fun fmt(): String = "$name: $ty"
+
+    override fun toString(): String = fmt()
 }
 
 sealed class Visibility {
-    abstract override fun toString(): String
+    data class Pub(val path: Path?) : Visibility()
 
-    data class Pub(val path: Path?) : Visibility() {
-        override fun toString(): String = if (path != null) "pub($path) " else "pub "
-    }
+    data class PubIn(val path: Path) : Visibility()
 
-    data class PubIn(val path: Path) : Visibility() {
-        override fun toString(): String = "pub(in $path) "
-    }
-
-    data object Priv : Visibility() {
-        override fun toString(): String = ""
-    }
+    data object Priv : Visibility()
 
     fun isPub(): Boolean = when (this) {
         is Pub -> true
         is PubIn -> true
         Priv -> false
     }
+
+    fun fmt(): String = when (this) {
+        is Pub -> if (path != null) "pub($path) " else "pub "
+        is PubIn -> "pub(in $path) "
+        Priv -> ""
+    }
+
+    override fun toString(): String = fmt()
 }
 
 data class NonterminalData(
@@ -616,14 +613,16 @@ data class Symbol(
         fun new(span: Span, kind: SymbolKind): Symbol = Symbol(span, kind)
     }
 
-    fun canonicalForm(): String = toString()
+    fun canonicalForm(): String = "$this"
 
     fun asTuple(): Pair<Tuple, Symbol>? = when (val k = kind) {
         is SymbolKind.TupleKind -> k.tuple to k.sym
         else -> null
     }
 
-    override fun toString(): String = kind.toString()
+    fun fmt(): String = "$kind"
+
+    override fun toString(): String = fmt()
 }
 
 sealed class SymbolKind {
@@ -662,7 +661,7 @@ sealed class SymbolKind {
 
     data object Error : SymbolKind()
 
-    override fun toString(): String = when (this) {
+    fun fmt(): String = when (this) {
         is Expr -> "$expr"
         is Terminal -> "$terminal"
         is Nonterminal -> "$nt"
@@ -676,6 +675,8 @@ sealed class SymbolKind {
         Lookbehind -> "@R"
         Error -> "error"
     }
+
+    override fun toString(): String = fmt()
 }
 
 data class Name(
@@ -687,8 +688,10 @@ data class Name(
         fun immut(name: Atom): Name = new(false, name)
     }
 
-    override fun toString(): String =
-        if (mutable) "mut $name" else name.toString()
+    fun fmt(): String =
+        if (mutable) "mut $name" else "$name"
+
+    override fun toString(): String = fmt()
 }
 
 data class Tuple(
@@ -699,36 +702,33 @@ data class Tuple(
         fun new(tuples: MutableList<ArgPattern>): Tuple = Tuple(tuples)
     }
 
-    override fun toString(): String = "(${Sep(", ", tuples)})"
+    fun fmt(): String = "(${Sep(", ", tuples)})"
+
+    override fun toString(): String = fmt()
 }
 
 sealed class ArgPattern {
-    abstract override fun toString(): String
+    data class NamePat(val name: io.github.kotlinmania.lalrpop.grammar.parsetree.Name) : ArgPattern()
 
-    data class NamePat(val name: io.github.kotlinmania.lalrpop.grammar.parsetree.Name) : ArgPattern() {
-        override fun toString(): String = name.toString()
-    }
-
-    data class TuplePat(val tuple: Tuple) : ArgPattern() {
-        override fun toString(): String = tuple.toString()
-    }
+    data class TuplePat(val tuple: Tuple) : ArgPattern()
 
     fun name(): String = when (this) {
         is NamePat -> name.name.toString()
         is TuplePat -> tuple.toString()
     }
+
+    fun fmt(): String = when (this) {
+        is NamePat -> "$name"
+        is TuplePat -> "$tuple"
+    }
+
+    override fun toString(): String = fmt()
 }
 
 sealed class TerminalString : Comparable<TerminalString> {
-    data class Literal(val literal: TerminalLiteral) : TerminalString() {
-        override fun toString(): String = literal.toString()
-    }
-    data class Bare(val atom: Atom) : TerminalString() {
-        override fun toString(): String = atom.toString()
-    }
-    data object Error : TerminalString() {
-        override fun toString(): String = "error"
-    }
+    data class Literal(val literal: TerminalLiteral) : TerminalString()
+    data class Bare(val atom: Atom) : TerminalString()
+    data object Error : TerminalString()
 
     override fun compareTo(other: TerminalString): Int = toString().compareTo(other.toString())
 
@@ -743,11 +743,13 @@ sealed class TerminalString : Comparable<TerminalString> {
         Error -> "error".length
     }
 
-    override fun toString(): String = when (this) {
-        is Literal -> literal.toString()
-        is Bare -> atom.toString()
+    fun fmt(): String = when (this) {
+        is Literal -> "$literal"
+        is Bare -> "$atom"
         Error -> "error"
     }
+
+    override fun toString(): String = fmt()
 
     companion object {
         fun quoted(i: Atom): TerminalString = Literal(TerminalLiteral.Quoted(i))
@@ -764,20 +766,15 @@ fun TerminalString.toContent(): Content {
 }
 
 sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
-    data class Quoted(val atom: Atom) : TerminalLiteral() {
-        override fun toString(): String = "\"${atom.asRef()}\""
-    }
-    data class Hir(val atom: Atom) : TerminalLiteral() {
-        // NOTE: determine proper number of # characters
-        override fun toString(): String = "r#\"${atom.asRef()}\"#"
-    }
+    data class Quoted(val atom: Atom) : TerminalLiteral()
+    data class Hir(val atom: Atom) : TerminalLiteral()
 
     override fun compareTo(other: TerminalLiteral): Int = toString().compareTo(other.toString())
 
     /**
-     * The *base precedence* is the precedence within the token-mapping declaration
+     * The *base precedence* is the precedence within a `match { }`
      * block level. It indicates that quoted things like `"foo"` get
-     * precedence over regex comparisons.
+     * precedence over regex matches.
      */
     fun basePrecedence(): Int = when (this) {
         is Quoted -> 1
@@ -789,10 +786,12 @@ sealed class TerminalLiteral : MatchSymbol, Comparable<TerminalLiteral> {
         is Hir -> atom.len() + "####r".length
     }
 
-    override fun toString(): String = when (this) {
-        is Quoted -> "\"${atom.asRef()}\"" // the Debug implementation adds the `"` and escaping
-        is Hir -> "r#\"${atom.asRef()}\"#" // NOTE: determine proper number of # characters
+    fun fmt(): String = when (this) {
+        is Quoted -> "\"${atom.asRef()}\"" // the Debug impl adds the `"` and escaping
+        is Hir -> "r#\"${atom.asRef()}\"#" // FIXME -- need to determine proper number of #
     }
+
+    override fun toString(): String = fmt()
 }
 
 data class NonterminalString(val atom: Atom) : Comparable<NonterminalString> {
@@ -800,7 +799,9 @@ data class NonterminalString(val atom: Atom) : Comparable<NonterminalString> {
 
     override fun compareTo(other: NonterminalString): Int = atom.compareTo(other.atom)
 
-    override fun toString(): String = atom.toString()
+    fun fmt(): String = "$atom"
+
+    override fun toString(): String = fmt()
 }
 
 fun NonterminalString.toContent(): Content {
@@ -824,43 +825,53 @@ data class Lifetime(val atom: Atom) : Comparable<Lifetime> {
 
     override fun compareTo(other: Lifetime): Int = atom.compareTo(other.atom)
 
-    override fun toString(): String = atom.toString()
+    fun fmt(): String = "$atom"
+
+    override fun toString(): String = fmt()
 }
 
 enum class RepeatOp {
     Star, Plus, Question;
 
-    override fun toString(): String = when (this) {
+    fun fmt(): String = when (this) {
         Plus -> "+"
         Star -> "*"
         Question -> "?"
     }
+
+    override fun toString(): String = fmt()
 }
 
 data class RepeatSymbol(
     var op: RepeatOp,
     var symbol: Symbol,
 ) {
-    fun canonicalForm(): String = toString()
+    fun canonicalForm(): String = "$this"
 
-    override fun toString(): String = "$symbol$op"
+    fun fmt(): String = "$symbol$op"
+
+    override fun toString(): String = fmt()
 }
 
 data class ExprSymbol(
     var symbols: MutableList<Symbol>,
 ) {
-    fun canonicalForm(): String = toString()
+    fun canonicalForm(): String = "$this"
 
-    override fun toString(): String = "(${Sep(" ", symbols)})"
+    fun fmt(): String = "(${Sep(" ", symbols)})"
+
+    override fun toString(): String = fmt()
 }
 
 data class MacroSymbol(
     var name: NonterminalString,
     var args: MutableList<Symbol>,
 ) {
-    fun canonicalForm(): String = toString()
+    fun canonicalForm(): String = "$this"
 
-    override fun toString(): String = "$name<${Sep(", ", args)}>"
+    fun fmt(): String = "$name<${Sep(", ", args)}>"
+
+    override fun toString(): String = fmt()
 }
 
 fun Grammar.externToken(): ExternToken? =
