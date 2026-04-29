@@ -13,6 +13,7 @@ package io.github.kotlinmania.lalrpop
  * at your option.
  */
 
+import io.github.kotlinmania.lalrpop.build.apiBuildReadFileToString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 
 class FileText(
@@ -21,6 +22,11 @@ class FileText(
     private val newlines: List<Int>,
 ) {
     companion object {
+        fun fromPath(path: String): Result<FileText> = runCatching {
+            val inputStr = apiBuildReadFileToString(path)
+            new(path, inputStr)
+        }
+
         fun new(path: String, inputStr: String): FileText {
             val newlineIndices: List<Int> = buildList {
                 add(0)
