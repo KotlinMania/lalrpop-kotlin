@@ -197,6 +197,8 @@ class Builder<End>(
     fun end(): End = this.character.end(this.items)
 }
 
+internal typealias End<C> = C
+
 interface Character<End> {
     fun end(items: MutableList<Content>): End
 }
