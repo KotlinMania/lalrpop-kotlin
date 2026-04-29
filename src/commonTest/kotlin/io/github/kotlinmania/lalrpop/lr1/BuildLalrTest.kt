@@ -30,7 +30,7 @@ private fun tokens(vararg xs: String): List<TerminalString> =
 
 class BuildLalrTest {
     @Test
-    fun figure9_23() {
+    fun figure923() {
         Tls.test().use {
             val grammar = normalizedGrammar(
                 """
