@@ -9,7 +9,7 @@ import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Span
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Grammar as PtGrammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar as RGrammar
-import io.github.kotlinmania.lalrpop.normalize.condComp.removeDisabledDecls
+import io.github.kotlinmania.lalrpop.normalize.condcomp.removeDisabledDecls
 import io.github.kotlinmania.lalrpop.normalize.inline.inline
 import io.github.kotlinmania.lalrpop.normalize.lower.lower
 import io.github.kotlinmania.lalrpop.normalize.macroExpand.expandMacros

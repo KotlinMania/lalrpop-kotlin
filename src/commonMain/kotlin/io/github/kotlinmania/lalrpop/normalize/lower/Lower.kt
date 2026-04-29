@@ -50,7 +50,7 @@ import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
 import io.github.kotlinmania.lalrpop.normalize.normUtil.Presence
 import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeExpr
 import io.github.kotlinmania.lalrpop.normalize.normUtil.checkBetweenBraces
-import io.github.kotlinmania.lalrpop.normalize.condComp.cfgActive
+import io.github.kotlinmania.lalrpop.normalize.condcomp.cfgActive
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.lr1.Token
 

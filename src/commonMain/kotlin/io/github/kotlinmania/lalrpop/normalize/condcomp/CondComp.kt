@@ -1,6 +1,6 @@
 // port-lint: source normalize/cond_comp/mod.rs
 //! Compute cfg directives.
-package io.github.kotlinmania.lalrpop.normalize.condComp
+package io.github.kotlinmania.lalrpop.normalize.condcomp
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Session
