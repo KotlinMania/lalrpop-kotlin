@@ -9,21 +9,15 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Parameter
 import io.github.kotlinmania.lalrpop.tls.Tls
 
 /**
- * The `rust` helper should be called only on a `RustWrite` instance.
- * Compile-time guard preserved from the upstream Rust source; in
- * Kotlin the type check is enforced by [rust]'s parameter type, so
- * the body is empty.
+ * The [rust] helper should be called only on a [RustWrite] instance.
  */
 fun assertRustWrite(w: RustWrite) {
     val _unused = w
 }
 
 /**
- * Like [`std::writeln!`], but for writing Rust code to a [`RustWrite`], which handles indentation.
- *
- * The Rust source defines this via `macroRules!`. In Kotlin we expose it as a
- * top-level function: `rust(w, "fmt %s", arg)` is equivalent to
- * `rust(w, "fmt {}", arg)` in the Rust code.
+ * Like writeln, but for writing emitted code to a [RustWrite], which
+ * handles indentation.
  */
 fun rust(w: RustWrite, fmt: String = "", vararg args: Any?) {
     assertRustWrite(w)
@@ -31,9 +25,8 @@ fun rust(w: RustWrite, fmt: String = "", vararg args: Any?) {
 }
 
 /**
- * Tiny `printf`-style formatter used by the `rust` helper. Supports
- * the `%s` and `%d` conversions and brace-style `{0}` / `{}` indexing
- * used by the original Rust macro.
+ * Tiny printf-style formatter used by the [rust] helper. Supports
+ * the %s and %d conversions and brace-style {0} or {} indexing.
  */
 internal fun format(fmt: String, vararg args: Any?): String {
     val out = StringBuilder()
@@ -41,10 +34,10 @@ internal fun format(fmt: String, vararg args: Any?): String {
     var positional = 0
     while (i < fmt.length) {
         val ch = fmt[i]
-        // Mirror `format!`'s `{{` / `}}` brace escapes — produce a
-        // single brace. Without this, `rust(out, "{{")` (the way the
-        // codegen back-end emits a literal `{` to the output stream)
-        // wrote `{{` into the generated Rust source.
+        // Mirror printf-style {{ / }} brace escapes -- produce a
+        // single brace. Without this, rust(out, "{{") (the way the
+        // codegen back-end emits a literal { to the output stream)
+        // wrote {{ into the generated source.
         if (ch == '{' && i + 1 < fmt.length && fmt[i + 1] == '{') {
             out.append('{')
             i += 2
@@ -82,25 +75,11 @@ internal fun format(fmt: String, vararg args: Any?): String {
 
 /**
  * A wrapper around a Write instance that handles indentation for
- * Rust code. It expects Rust code to be written in a stylized way,
- * with lots of braces and newlines (example shown here with no
- * indentation). Over time maybe we can extend this to make things
- * look prettier, but seems like...meh, just run it through some
- * rustfmt tool.
- *
- * ```ignore
- * function foo(
- * arg1: Type1,
- * arg2: Type2,
- * arg3: Type3)
- * -> ReturnType
- * {
- * match foo {
- * Variant => {
- * }
- * }
- * }
- * ```
+ * the emitted Rust code. It expects the emitted code to be written
+ * in a stylized way, with lots of braces and newlines (example shown
+ * with no indentation). Over time maybe we can extend this to make
+ * things look prettier, but seems like...meh, just run it through
+ * some rustfmt tool.
  */
 class RustWrite private constructor(
     private val write: Appendable,
@@ -149,11 +128,8 @@ class RustWrite private constructor(
     }
 
     /**
-     * Mirrors `fun writeFmt(&mut self, args: fmt::Arguments<'_>) -> io::Result<()>`
-     * from the upstream Rust source. The Kotlin port consumes a
-     * pre-formatted [String] (see [format]) and forwards to
-     * [writeLine], which performs the indentation accounting that
-     * upstream `writeFmt` performs inline.
+     * Consumes a pre-formatted [String] (see [format]) and forwards to
+     * [writeLine], which performs the indentation accounting.
      */
     fun writeFmt(buf: String) {
         writeLine(buf)
@@ -263,8 +239,8 @@ class FnHeader private constructor(
             .withParameters(grammar.parameters)
 
     /**
-     * Declare a series of type parameters. Note that lifetime
-     * parameters must come first.
+     * Declare a series of type parameters. Note that the emitted
+     * code's lt parameters must come first.
      */
     fun withTypeParameters(tps: Iterable<Any>): FnHeader {
         for (t in tps) {
