@@ -1,5 +1,5 @@
 // port-lint: source lr1/lane_table/mod.rs
-package io.github.kotlinmania.lalrpop.lr1.laneTable
+package io.github.kotlinmania.lalrpop.lr1.lanetable
 
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.grammar.parseTree.NonterminalString
@@ -11,7 +11,7 @@ import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Conflict
 import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.laneTable.construct.LaneTableConstruct
+import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.LaneTableConstruct
 
 fun buildLaneTableStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> =
     LaneTableConstruct.new(grammar, start).construct()

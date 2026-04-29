@@ -9,7 +9,7 @@
 //!
 //! where each row summarizes some state that potentially contributes
 //! lookahead to the conflict.
-package io.github.kotlinmania.lalrpop.lr1.laneTable.table
+package io.github.kotlinmania.lalrpop.lr1.lanetable.table
 
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
@@ -21,8 +21,8 @@ import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookahead
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
 
 data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
     override fun compareTo(other: ConflictIndex): Int = index.compareTo(other.index)

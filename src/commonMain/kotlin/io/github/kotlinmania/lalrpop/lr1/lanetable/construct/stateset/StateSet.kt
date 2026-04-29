@@ -1,8 +1,8 @@
 // port-lint: source lr1/lane_table/construct/state_set.rs
-package io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet
+package io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset
 
 import io.github.kotlinmania.lalrpop.UnifyKey
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
 
 /**
  * The unification key for a set of states in the lane table
@@ -31,7 +31,7 @@ data class StateSet(
         fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
             try {
                 ContextSet.union(value1, value2)
-            } catch (_: io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookahead) {
+            } catch (_: io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead) {
                 null
             }
     }

@@ -32,7 +32,7 @@
 //! arise) you will not know which to take. In this case, we are all set,
 //! because item 0 occurs only with lookahead `x` and item 1 with
 //! lookahead `y`.
-package io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet
+package io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset
 
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.Set
@@ -40,7 +40,7 @@ import io.github.kotlinmania.lalrpop.collections.map.map
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.ConflictIndex
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 
 class ContextSet(
     private val values: MutableList<TokenSet>,

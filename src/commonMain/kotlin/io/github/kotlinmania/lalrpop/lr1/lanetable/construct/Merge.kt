@@ -1,5 +1,5 @@
 // port-lint: source lr1/lane_table/construct/merge.rs
-package io.github.kotlinmania.lalrpop.lr1.laneTable.construct
+package io.github.kotlinmania.lalrpop.lr1.lanetable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
 import io.github.kotlinmania.lalrpop.collections.Map
@@ -13,9 +13,9 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.TerminalString
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet.StateSet
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.LaneTable
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.StateSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
 
 /**
  * The "merge" phase of the algorithm is described in "Step 3c" of

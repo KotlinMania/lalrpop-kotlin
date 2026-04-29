@@ -1,5 +1,5 @@
-// port-lint: source lr1/laneTable/test.rs
-package io.github.kotlinmania.lalrpop.lr1.laneTable
+// port-lint: source lr1/lane_table/test.rs
+package io.github.kotlinmania.lalrpop.lr1.lanetable
 
 /*
  * Copyright 2015-2025 The LALRPOP Project Developers.
@@ -28,10 +28,10 @@ import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.interpret.interpret
 import io.github.kotlinmania.lalrpop.lr1.interpret.interpretPartial
-import io.github.kotlinmania.lalrpop.lr1.laneTable.construct.LaneTableConstruct
-import io.github.kotlinmania.lalrpop.lr1.laneTable.lane.LaneTracer
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.ConflictIndex
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.LaneTable
+import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.LaneTableConstruct
+import io.github.kotlinmania.lalrpop.lr1.lanetable.lane.LaneTracer
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
 import io.github.kotlinmania.lalrpop.lr1.stateGraph.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
 import io.github.kotlinmania.lalrpop.normalizedGrammar

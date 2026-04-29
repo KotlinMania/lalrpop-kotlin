@@ -1,6 +1,6 @@
 // port-lint: source lr1/lane_table/construct/mod.rs
 //! Generate rust parser code using the lane table algorithm
-package io.github.kotlinmania.lalrpop.lr1.laneTable.construct
+package io.github.kotlinmania.lalrpop.lr1.lanetable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
 import io.github.kotlinmania.lalrpop.collections.Map
@@ -22,14 +22,14 @@ import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
-import io.github.kotlinmania.lalrpop.lr1.laneTable.conflictingActions
-import io.github.kotlinmania.lalrpop.lr1.laneTable.construct.stateSet.StateSet
-import io.github.kotlinmania.lalrpop.lr1.laneTable.lane.LaneTracer
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.ConflictIndex
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.LaneTable
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.RowConflictException
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.ContextSet
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.contextSet.OverlappingLookahead
+import io.github.kotlinmania.lalrpop.lr1.lanetable.conflictingActions
+import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.StateSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.lane.LaneTracer
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.RowConflictException
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
 
 class LaneTableConstruct(
     private val grammar: Grammar,

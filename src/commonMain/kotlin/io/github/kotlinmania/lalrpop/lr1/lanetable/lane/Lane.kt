@@ -1,7 +1,7 @@
 // port-lint: source lr1/lane_table/lane/mod.rs
 //! Code to trace out a single lane, collecting information into the
 //! lane table as we go.
-package io.github.kotlinmania.lalrpop.lr1.laneTable.lane
+package io.github.kotlinmania.lalrpop.lr1.lanetable.lane
 
 import io.github.kotlinmania.lalrpop.collections.map.ComparablePair
 import io.github.kotlinmania.lalrpop.collections.Set
@@ -18,8 +18,8 @@ import io.github.kotlinmania.lalrpop.lr1.core.Item<Nil>
 import io.github.kotlinmania.lalrpop.lr1.core.State
 import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.ConflictIndex
-import io.github.kotlinmania.lalrpop.lr1.laneTable.table.LaneTable
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
 
 class LaneTracer<L : Lookahead<L>>(
     private val states: List<State<L>>,
