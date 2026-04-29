@@ -14,15 +14,8 @@ import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause as ReprWhereClause
 
 /**
  * Finds the set of "free variables" in something -- that is, the
- * type/lifetime parameters that appear and are not bound. For
- * example, `T: Foo<U>` would return `[T, U]`.
- *
- * The Rust source defines this via a `trait FreeVariables`. The
- * Kotlin port preserves the trait as an interface and ALSO exposes
- * the same functionality as a family of overloaded extension
- * functions (because Kotlin sealed-class members cannot retroactively
- * gain interface implementations the way the upstream free-standing `implementation`
- * blocks can on foreign types).
+ * type and lt parameters that appear and are not bound. For
+ * example, T: Foo[U] would return [T, U].
  */
 interface FreeVariables {
     fun freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter>
@@ -30,9 +23,9 @@ interface FreeVariables {
 
 /**
  * Subtle: the free-variables code sometimes encounter ambiguous
- * names.  For example, we might see `Vec<Foo>` -- in that case, we
+ * names.  For example, we might see List[Foo] -- in that case, we
  * look at the list of declared type parameters to decide whether
- * `Foo` is a type parameter or just some other type name.
+ * Foo is a type parameter or just some other type name.
  */
 private fun freeType(typeParameters: List<TypeParameter>, id: Atom): List<TypeParameter> {
     val tp = TypeParameter.Id(id)
@@ -44,8 +37,8 @@ private fun freeType(typeParameters: List<TypeParameter>, id: Atom): List<TypePa
 }
 
 /**
- * Same as above: really, the only lifetime where this is relevant is
- * `'static`, but it does not hurt to be careful.
+ * Same as above: really, the only one where this is relevant is the
+ * static one, but it doesn't hurt to be careful.
  */
 private fun freeLifetime(typeParameters: List<TypeParameter>, lt: Lifetime): List<TypeParameter> {
     val tp = TypeParameter.LifetimeTp(lt)
