@@ -1,5 +1,5 @@
 // port-lint: source lr1/build/test.rs
-package io.github.kotlinmania.lalrpop.lr1.build
+package io.github.kotlinmania.lalrpop.lr1
 
 /*
  * Copyright 2015-2025 The LALRPOP Project Developers.

@@ -10,8 +10,8 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
-import io.github.kotlinmania.lalrpop.lr1.build.buildLr0States
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
+import io.github.kotlinmania.lalrpop.lr1.buildLr0States
 import io.github.kotlinmania.lalrpop.lr1.core.Action
 import io.github.kotlinmania.lalrpop.lr1.core.Conflict
 import io.github.kotlinmania.lalrpop.lr1.core.Item
