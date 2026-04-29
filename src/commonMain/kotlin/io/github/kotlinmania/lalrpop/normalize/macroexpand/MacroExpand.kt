@@ -28,8 +28,8 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.Tuple
 import io.github.kotlinmania.lalrpop.grammar.parseTree.TypeRef
 import io.github.kotlinmania.lalrpop.grammar.parseTree.isMacroDef
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Visibility
-import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
-import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeExpr
+import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
+import io.github.kotlinmania.lalrpop.normalize.normutil.analyzeExpr
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.collections.Map

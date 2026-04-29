@@ -46,10 +46,10 @@ import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.Types
 import io.github.kotlinmania.lalrpop.grammar.repr.UserActionFnDefn
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause as RWhereClause
-import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
-import io.github.kotlinmania.lalrpop.normalize.normUtil.Presence
-import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeExpr
-import io.github.kotlinmania.lalrpop.normalize.normUtil.checkBetweenBraces
+import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
+import io.github.kotlinmania.lalrpop.normalize.normutil.Presence
+import io.github.kotlinmania.lalrpop.normalize.normutil.analyzeExpr
+import io.github.kotlinmania.lalrpop.normalize.normutil.checkBetweenBraces
 import io.github.kotlinmania.lalrpop.normalize.condcomp.cfgActive
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.lr1.Token

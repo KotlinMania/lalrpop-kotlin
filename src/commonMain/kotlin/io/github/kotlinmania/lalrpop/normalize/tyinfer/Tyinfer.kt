@@ -27,10 +27,10 @@ import io.github.kotlinmania.lalrpop.grammar.parseTree.internToken
 import io.github.kotlinmania.lalrpop.grammar.repr.NominalTypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.Types
-import io.github.kotlinmania.lalrpop.normalize.normUtil.AlternativeAction
+import io.github.kotlinmania.lalrpop.normalize.normutil.AlternativeAction
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
-import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
-import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeAction
+import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
+import io.github.kotlinmania.lalrpop.normalize.normutil.analyzeAction
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.lr1.Token
 

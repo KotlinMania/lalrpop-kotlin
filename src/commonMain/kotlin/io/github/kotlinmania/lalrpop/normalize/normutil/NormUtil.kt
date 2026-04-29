@@ -1,5 +1,5 @@
 // port-lint: source normalize/norm_util.rs
-package io.github.kotlinmania.lalrpop.normalize.normUtil
+package io.github.kotlinmania.lalrpop.normalize.normutil
 
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parseTree.Alternative

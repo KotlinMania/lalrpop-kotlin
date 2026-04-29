@@ -2,7 +2,7 @@
 //! A tokenizer for use in LALRPOP itself.
 package io.github.kotlinmania.lalrpop.tok
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
-import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
+import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
 
 data class Error(
     val location: Int,

@@ -29,9 +29,9 @@ import io.github.kotlinmania.lalrpop.grammar.consts.TEST_ALL
 import io.github.kotlinmania.lalrpop.grammar.parseTree.readAlgorithm
 import io.github.kotlinmania.lalrpop.grammar.repr.Algorithm
 import io.github.kotlinmania.lalrpop.grammar.repr.LrCodeGeneration
-import io.github.kotlinmania.lalrpop.normalize.normUtil.Symbols
-import io.github.kotlinmania.lalrpop.normalize.normUtil.analyzeExpr
-import io.github.kotlinmania.lalrpop.normalize.normUtil.checkBetweenBraces
+import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
+import io.github.kotlinmania.lalrpop.normalize.normutil.analyzeExpr
+import io.github.kotlinmania.lalrpop.normalize.normutil.checkBetweenBraces
 import io.github.kotlinmania.lalrpop.normalize.precedence.ASSOC_ATTR
 import io.github.kotlinmania.lalrpop.normalize.precedence.Assoc
 import io.github.kotlinmania.lalrpop.normalize.precedence.LVL_ARG

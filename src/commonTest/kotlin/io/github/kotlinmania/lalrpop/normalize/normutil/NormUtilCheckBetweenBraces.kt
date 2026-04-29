@@ -1,5 +1,5 @@
-// port-lint: source normalize/normUtil.rs
-package io.github.kotlinmania.lalrpop.normalize.normUtil
+// port-lint: source normalize/norm_util.rs
+package io.github.kotlinmania.lalrpop.normalize.normutil
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
