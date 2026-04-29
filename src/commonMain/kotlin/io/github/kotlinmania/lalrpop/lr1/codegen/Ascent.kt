@@ -6,8 +6,8 @@ package io.github.kotlinmania.lalrpop.lr1.codegen
 
 import io.github.kotlinmania.lalrpop.Escape
 import io.github.kotlinmania.lalrpop.Sep
-import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
-import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
+import io.github.kotlinmania.lalrpop.collections.Multimap
+import io.github.kotlinmania.lalrpop.collections.VecCollection
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility

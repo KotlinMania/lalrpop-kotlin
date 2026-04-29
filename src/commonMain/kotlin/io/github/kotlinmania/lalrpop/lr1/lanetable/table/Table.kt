@@ -12,9 +12,9 @@
 package io.github.kotlinmania.lalrpop.lr1.lanetable.table
 
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
+import io.github.kotlinmania.lalrpop.collections.Multimap
 import io.github.kotlinmania.lalrpop.collections.Set
-import io.github.kotlinmania.lalrpop.collections.multimap.SetCollection
+import io.github.kotlinmania.lalrpop.collections.SetCollection
 import io.github.kotlinmania.lalrpop.collections.ComparablePair
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set

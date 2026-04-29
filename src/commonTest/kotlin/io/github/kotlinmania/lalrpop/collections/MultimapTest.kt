@@ -1,5 +1,5 @@
 // port-lint: source collections/multimap.rs
-package io.github.kotlinmania.lalrpop.collections.multimap
+package io.github.kotlinmania.lalrpop.collections
 
 import kotlin.test.Test
 import kotlin.test.assertFalse

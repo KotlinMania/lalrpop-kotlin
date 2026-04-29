@@ -5,8 +5,8 @@ package io.github.kotlinmania.lalrpop.lr1.build
 import io.github.kotlinmania.lalrpop.KernelSet as KKernelSet
 import io.github.kotlinmania.lalrpop.Kernel as KKernelInterface
 import io.github.kotlinmania.lalrpop.Level
-import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
-import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
+import io.github.kotlinmania.lalrpop.collections.Multimap
+import io.github.kotlinmania.lalrpop.collections.VecCollection
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
@@ -349,7 +349,7 @@ private fun <L> conflictsOf(state: State<L>): MutableList<Conflict<L>>
 // (so closure can recover the merged lookahead at the end).
 internal class LookaheadCollection<L>(
     var value: L? = null,
-) : io.github.kotlinmania.lalrpop.collections.multimap.Collection<L>
+) : io.github.kotlinmania.lalrpop.collections.Collection<L>
     where L : Lookahead<L> {
     override fun push(item: L): Boolean {
         if (value == null) {

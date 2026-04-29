@@ -4,8 +4,8 @@ package io.github.kotlinmania.lalrpop.normalize.prevalidate
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
-import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
-import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
+import io.github.kotlinmania.lalrpop.collections.Multimap
+import io.github.kotlinmania.lalrpop.collections.VecCollection
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative

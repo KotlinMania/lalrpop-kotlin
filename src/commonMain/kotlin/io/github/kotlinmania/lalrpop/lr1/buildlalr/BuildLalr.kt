@@ -3,8 +3,8 @@
 package io.github.kotlinmania.lalrpop.lr1.buildlalr
 
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
-import io.github.kotlinmania.lalrpop.collections.multimap.SetCollection
+import io.github.kotlinmania.lalrpop.collections.Multimap
+import io.github.kotlinmania.lalrpop.collections.SetCollection
 import io.github.kotlinmania.lalrpop.collections.ComparableList
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
@@ -180,7 +180,7 @@ private fun <T> Iterable<T>.dedup(): List<T> {
 // merge per-Item<Nil> lookaheads across lalr1 compression.
 private class UnionTokenSetCollection(
     var value: TokenSet? = null,
-) : io.github.kotlinmania.lalrpop.collections.multimap.Collection<TokenSet> {
+) : io.github.kotlinmania.lalrpop.collections.Collection<TokenSet> {
     override fun push(item: TokenSet): Boolean {
         val current = value
         return if (current == null) {

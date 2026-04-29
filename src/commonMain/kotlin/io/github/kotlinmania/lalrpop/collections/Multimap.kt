@@ -1,5 +1,5 @@
 // port-lint: source collections/multimap.rs
-package io.github.kotlinmania.lalrpop.collections.multimap
+package io.github.kotlinmania.lalrpop.collections
 
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map

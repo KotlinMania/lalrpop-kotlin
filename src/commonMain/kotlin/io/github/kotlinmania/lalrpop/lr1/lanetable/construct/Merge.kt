@@ -3,9 +3,9 @@ package io.github.kotlinmania.lalrpop.lr1.lanetable.construct
 
 import io.github.kotlinmania.lalrpop.InPlaceUnificationTable
 import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.multimap.Multimap
+import io.github.kotlinmania.lalrpop.collections.Multimap
 import io.github.kotlinmania.lalrpop.collections.Set
-import io.github.kotlinmania.lalrpop.collections.multimap.VecCollection
+import io.github.kotlinmania.lalrpop.collections.VecCollection
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
