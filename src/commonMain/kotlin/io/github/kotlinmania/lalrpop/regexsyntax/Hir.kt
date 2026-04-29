@@ -259,9 +259,5 @@ enum class LookKind {
     WordEndHalfUnicode,
 }
 
-/**
- * Parsing error raised by [ParserBuilder.parse]. Mirrors
- * `regexSyntax::Error`. LALRPOP wraps this in a `Box<Error>` aliased as
- * `RegexSyntaxError` — see `lexer/re/mod.rs`.
- */
+/** Parsing error raised by [ParserBuilder.parse]. */
 class RegexSyntaxError(message: String, val position: Int = -1) : RuntimeException(message)
