@@ -40,14 +40,6 @@ data class FieldPattern<T>(
 }
 
 sealed class PatternKind<T> {
-    /**
-     * Mirrors `implementation<T: Display> Display for PatternKind<T>`.
-     * Each subclass overrides toString() explicitly: a `data class`
-     * auto-generates its own toString that shadows any override placed
-     * on the sealed parent. Without these overrides the codegen
-     * back-end was emitting `TupleStruct(path=Token, pats=[Usize(...)])`
-     * strings into the generated Rust source instead of `Token(0, ...)`.
-     */
     abstract override fun toString(): String
 
     data class Enum<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
@@ -107,17 +99,30 @@ sealed class PatternKind<T> {
         override fun toString(): String = "\"$s\""
     }
 
-    fun <U> map(mapFn: (T) -> U): PatternKind<U> = when (this) {
-        is PathKind -> PathKind(path)
-        is Enum -> Enum(path, pats.map { it.map(mapFn) }.toMutableList())
-        is Struct -> Struct(path, fields.map { it.map(mapFn) }.toMutableList(), dotdot)
-        is Tuple -> Tuple(pats.map { it.map(mapFn) }.toMutableList())
-        is TupleStruct -> TupleStruct(path, pats.map { it.map(mapFn) }.toMutableList())
-        is Underscore -> Underscore()
-        is DotDot -> DotDot()
-        is Usize -> Usize(value)
-        is Choose -> Choose(mapFn(ty))
-        is CharLiteral -> CharLiteral(c)
-        is StringKind -> StringKind(s)
+    fun <U> map(mapFn: (T) -> U): PatternKind<U> {
+        return when (this) {
+            is PathKind -> PathKind(path)
+            is Enum -> Enum(
+                path,
+                pats.map { pat -> pat.map(mapFn) }.toMutableList(),
+            )
+            is Struct -> Struct(
+                path,
+                fields.map { pat -> pat.map(mapFn) }.toMutableList(),
+                dotdot,
+            )
+            is Tuple -> {
+                Tuple(pats.map { p -> p.map(mapFn) }.toMutableList())
+            }
+            is TupleStruct -> {
+                TupleStruct(path, pats.map { p -> p.map(mapFn) }.toMutableList())
+            }
+            is Underscore -> PatternKind.Underscore()
+            is DotDot -> PatternKind.DotDot()
+            is Usize -> PatternKind.Usize(value)
+            is Choose -> PatternKind.Choose(mapFn(ty))
+            is CharLiteral -> PatternKind.CharLiteral(c)
+            is StringKind -> PatternKind.StringKind(s)
+        }
     }
 }
