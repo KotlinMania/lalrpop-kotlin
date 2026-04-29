@@ -51,7 +51,7 @@ private fun resolveInPlace(grammar: Grammar) {
         //         r"(?)begin" => "BEGIN",
         //     } else {
         //         r"[a-zA-Z_][a-zA-Z0-9_]*" => ID,
-        // This would result in `vec![ID]`.
+        // This would result in `listOf(ID)`.
         val matchIdentifiers = grammar
             .items
             .asSequence()

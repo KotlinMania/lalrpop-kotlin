@@ -98,9 +98,7 @@ sealed class MatchItem {
     }
 }
 
-// Rust: `pub type MatchSymbol = TerminalLiteral;`
-// No `typealias`: use a marker interface so call sites can still pass `TerminalLiteral`.
-sealed interface MatchSymbol
+typealias MatchSymbol = TerminalLiteral
 
 
 sealed class MatchMapping : Comparable<MatchMapping> {

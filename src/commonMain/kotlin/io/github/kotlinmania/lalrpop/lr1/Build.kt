@@ -37,8 +37,6 @@ private fun buildLr1StatesLegacy(
 
 
 fun useLaneTable(): Boolean {
-    // Rust: when env::var("LALRPOP_LANE_TABLE") { Ok(ref s) => s != "disabled", _ => true }
-    // commonMain has no process-environment API; default to true which matches the Rust fallback.
     return true
 }
 
