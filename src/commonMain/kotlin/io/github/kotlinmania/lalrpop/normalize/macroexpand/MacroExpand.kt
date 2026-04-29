@@ -1,5 +1,5 @@
 // port-lint: source normalize/macro_expand/mod.rs
-package io.github.kotlinmania.lalrpop.normalize.macroExpand
+package io.github.kotlinmania.lalrpop.normalize.macroexpand
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.grammar.parseTree.ActionKind

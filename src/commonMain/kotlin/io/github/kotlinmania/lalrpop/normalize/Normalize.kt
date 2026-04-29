@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar as RGrammar
 import io.github.kotlinmania.lalrpop.normalize.condcomp.removeDisabledDecls
 import io.github.kotlinmania.lalrpop.normalize.inline.inline
 import io.github.kotlinmania.lalrpop.normalize.lower.lower
-import io.github.kotlinmania.lalrpop.normalize.macroExpand.expandMacros
+import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros
 import io.github.kotlinmania.lalrpop.normalize.precedence.expandPrecedence
 import io.github.kotlinmania.lalrpop.normalize.prevalidate.validate as prevalidateValidate
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
