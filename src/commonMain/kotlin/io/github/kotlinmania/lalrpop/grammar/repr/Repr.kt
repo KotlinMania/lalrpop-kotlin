@@ -191,10 +191,6 @@ data class Production(
 }
 
 sealed class Symbol : Comparable<Symbol> {
-    // Per-subclass toString — see TypeRepr / Visibility for the full
-    // explanation of why a parent-level override gets silently shadowed
-    // by Kotlin `data class`-generated toString. Mirrors the upstream
-    // symbol formatting contract.
     data class Nonterminal(val nt: NonterminalString) : Symbol() {
         override fun toString(): String = fmt()
     }
@@ -316,14 +312,6 @@ sealed class InlinedSymbol {
 }
 
 sealed class TypeRepr : Comparable<TypeRepr> {
-    /**
-     * Mirrors upstream formatting for type representations (the "pretty" form
-     * and the debug form share the same string surface upstream).
-     *
-     * Each subclass overrides `toString()` explicitly to delegate to fmt()
-     * because Kotlin `data class` auto-generates its own `toString()` and
-     * will silently shadow any override placed on the sealed parent.
-     */
     abstract override fun toString(): String
 
     data class Tuple(val types: MutableList<TypeRepr>) : TypeRepr() {
