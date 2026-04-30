@@ -1,12 +1,15 @@
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
     kotlin("multiplatform") version "2.3.20"
     kotlin("plugin.serialization") version "2.3.20"
     id("com.android.kotlin.multiplatform.library") version "8.6.0"
     id("com.vanniktech.maven.publish") version "0.30.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
+    id("dev.detekt") version "2.0.0-alpha.3"
 }
 
 group = "io.github.kotlinmania"
@@ -26,6 +29,10 @@ if (androidSdkDir != null && file(androidSdkDir).exists()) {
 
 kotlin {
     applyDefaultHierarchyTemplate()
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 
     sourceSets.all {
         languageSettings.optIn("kotlin.time.ExperimentalTime")
@@ -76,6 +83,14 @@ kotlin {
         nodejs()
     }
 
+    swiftExport {
+        moduleName = "LALRPOP"
+        flattenPackage = "io.github.kotlinmania.lalrpop"
+        configure {
+            freeCompilerArgs.add("-Xexpect-actual-classes")
+        }
+    }
+
     androidLibrary {
         namespace = "io.github.kotlinmania.lalrpop"
         compileSdk = 34
@@ -106,9 +121,55 @@ kotlin {
 // crate root. Native test executables otherwise launch from
 // `build/bin/<target>/debugTest/`, so set their working directory back to
 // `rootDir` to match the Rust harness.
-tasks.withType(org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest::class.java)
+tasks
+    .withType(org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest::class.java)
     .configureEach {
         workingDir = rootDir.absolutePath
+    }
+
+ktlint {
+    version.set("1.8.0")
+    enableExperimentalRules.set(true)
+    outputToConsole.set(true)
+    ignoreFailures.set(false)
+    reporters {
+        reporter(ReporterType.PLAIN)
+        reporter(ReporterType.CHECKSTYLE)
+        reporter(ReporterType.HTML)
+        reporter(ReporterType.SARIF)
+    }
+    filter {
+        exclude("**/build/**")
+    }
+}
+
+detekt {
+    toolVersion = "2.0.0-alpha.3"
+    buildUponDefaultConfig = true
+    allRules = true
+    parallel = true
+    ignoreFailures = false
+    failOnSeverity = dev.detekt.gradle.extensions.FailOnSeverity.Warning
+    source.setFrom(
+        "src/commonMain/kotlin",
+        "src/commonTest/kotlin",
+        "src/nativeMain/kotlin",
+        "src/jsMain/kotlin",
+        "src/wasmJsMain/kotlin",
+        "src/androidMain/kotlin",
+    )
+    basePath.set(projectDir)
+}
+
+tasks
+    .withType<dev.detekt.gradle.Detekt>()
+    .configureEach {
+        jvmTarget.set("21")
+        reports {
+            html.required.set(true)
+            markdown.required.set(true)
+            sarif.required.set(true)
+        }
     }
 
 mavenPublishing {

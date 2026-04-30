@@ -31,6 +31,8 @@ data class StateSet(
 // index that maps to a [ContextSet]), and do the merging ourselves.
 // But this is easier for now, and cloning a [ContextSet] is not THAT
 // expensive, right? :)
+typealias Error = Pair<ContextSet, ContextSet>
+
 fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
     try {
         ContextSet.union(value1, value2)

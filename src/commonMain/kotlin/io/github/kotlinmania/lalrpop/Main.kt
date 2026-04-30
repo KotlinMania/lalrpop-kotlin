@@ -44,6 +44,8 @@ internal enum class LevelFlag {
     Debug;
 
     companion object {
+        typealias Err = String
+
         fun fromStr(s: String): Result<LevelFlag> = when (s) {
             "quiet" -> Result.success(Quiet)
             "info" -> Result.success(Info)

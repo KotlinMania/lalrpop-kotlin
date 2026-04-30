@@ -57,7 +57,7 @@ fun Span.toContent(): Content {
         .end()
 }
 
-fun from(val_: Span): Content = val_.toContent()
+fun from(value: Span): Content = value.toContent()
 
 sealed class GrammarItem {
     data class MatchToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchToken) : GrammarItem()
@@ -853,7 +853,7 @@ fun TerminalString.toContent(): Content {
         .end()
 }
 
-fun from(val_: TerminalString): Content = val_.toContent()
+fun from(value: TerminalString): Content = value.toContent()
 
 sealed class TerminalLiteral : Comparable<TerminalLiteral> {
     data class Quoted(val atom: Atom) : TerminalLiteral() {
@@ -865,6 +865,8 @@ sealed class TerminalLiteral : Comparable<TerminalLiteral> {
     }
 
     override fun compareTo(other: TerminalLiteral): Int = toString().compareTo(other.toString())
+
+    fun asLiteral(): TerminalLiteral = this
 
     /**
      * The *base precedence* is the precedence within a `match { }`
@@ -907,7 +909,7 @@ fun NonterminalString.toContent(): Content {
         .end()
 }
 
-fun from(val_: NonterminalString): Content = val_.toContent()
+fun from(value: NonterminalString): Content = value.toContent()
 
 data class Lifetime(val atom: Atom) : Comparable<Lifetime> {
     companion object {

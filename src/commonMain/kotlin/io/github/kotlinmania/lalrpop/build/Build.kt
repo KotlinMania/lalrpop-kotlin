@@ -457,7 +457,8 @@ internal fun reportMessage(message: Message): Result<Unit> {
  * [FakeTerminal] otherwise.
  */
 internal fun reportContent(content: Content): Result<Unit> {
-    // Upstream renders diagnostics at a fixed 80-column width here.
+    // Upstream asks: can we query the size of the terminal somehow?
+    // For now, it renders diagnostics at a fixed 80-column width.
     val canvas = content.emitToCanvas(80)
 
     val tryColors = when (Tls.session().colorConfig) {

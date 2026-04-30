@@ -7,9 +7,10 @@ import io.github.kotlinmania.lalrpop.Session
 // sense (the API entry points are intended for `build.rs` scripts that
 // scan a Cargo workspace). Surface this as `UnsupportedOperationException`
 // so callers get a clear failure rather than a silent no-op.
-
 internal actual fun apiCurrentDir(): String =
-    throw UnsupportedOperationException("filesystem access is not available on the JS target")
+    throw UnsupportedOperationException(
+        "filesystem access is not available on the JS target",
+    )
 
 internal actual fun apiEnvVar(name: String): String? = null
 
@@ -19,10 +20,12 @@ internal actual fun apiEPrintln(message: String) {
     console.error(message)
 }
 
-internal actual fun apiBuildProcessDir(session: Session, path: String) {
-    throw UnsupportedOperationException("filesystem access is not available on the JS target")
-}
+internal actual fun apiBuildProcessDir(
+    session: Session,
+    path: String,
+): Unit = throw UnsupportedOperationException("filesystem access is not available on the JS target")
 
-internal actual fun apiBuildProcessFile(session: Session, path: String) {
-    throw UnsupportedOperationException("filesystem access is not available on the JS target")
-}
+internal actual fun apiBuildProcessFile(
+    session: Session,
+    path: String,
+): Unit = throw UnsupportedOperationException("filesystem access is not available on the JS target")

@@ -7,7 +7,13 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 
-typealias InterpretError<L> = Pair<State<L>, Token>
+data class InterpretError<L : Lookahead<L>>(
+    val state: State<L>,
+    val token: Token,
+)
+
+class InterpretErrorException(val error: InterpretError<*>) :
+    RuntimeException("Interpret error at state ${error.state.index}: unexpected token ${error.token}")
 
 /** Feed in the given tokens and then EOF, returning the final parse tree that is reduced. */
 fun <L : LookaheadInterpret<L>> interpret(
@@ -79,7 +85,7 @@ private class Machine<L : LookaheadInterpret<L>>(
                 val more = reduce(production)
                 check(more)
             } else {
-                return Result.failure(InterpretErrorException(Pair(state, Token.Terminal(terminal))))
+                return Result.failure(InterpretErrorException(InterpretError(state, Token.Terminal(terminal))))
             }
         }
 
@@ -97,7 +103,7 @@ private class Machine<L : LookaheadInterpret<L>>(
             val state = topState()
             val production = reductionFor(state, Token.Eof)
             if (production == null) {
-                return Result.failure(InterpretErrorException(Pair(state, Token.Eof)))
+                return Result.failure(InterpretErrorException(InterpretError(state, Token.Eof)))
             }
             if (!reduce(production)) {
                 check(dataStack.size == 1)
@@ -138,31 +144,6 @@ private class Machine<L : LookaheadInterpret<L>>(
         }
     }
 }
-
-private object DebugForParseTree {
-    fun fmt(tree: ParseTree, fmt: StringBuilder) {
-        DisplayForParseTree.fmt(tree, fmt)
-    }
-}
-
-private object DisplayForParseTree {
-    fun fmt(tree: ParseTree, fmt: StringBuilder) {
-        when (tree) {
-            is ParseTree.Nonterminal -> {
-                val id = tree.nt
-                val trees = tree.trees
-                fmt.append("[").append(id).append(": ").append(Sep(", ", trees)).append("]")
-            }
-            is ParseTree.Terminal -> {
-                val id = tree.t
-                fmt.append(id)
-            }
-        }
-    }
-}
-
-class InterpretErrorException(val error: Pair<State<*>, Token>) :
-    RuntimeException()
 
 interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {
     fun reduction(state: State<Self>, token: Token): Production?

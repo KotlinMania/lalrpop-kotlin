@@ -9,11 +9,10 @@ package io.github.kotlinmania.lalrpop.runtime
  * directly by users.
  */
 
-private const val DEBUG_ENABLED: Boolean = false
+private val DEBUG_ENABLED: Boolean = false
 
 private inline fun debug(msg: () -> String) {
     // Mirrors the Rust `debug!` macro gated on `DEBUG_ENABLED`.
-    @Suppress("ConstantConditionIf")
     if (DEBUG_ENABLED) {
         println(msg())
     }
@@ -328,7 +327,7 @@ class Parser<
         var optLookahead = initialLookahead
         var optTokenIndex = initialTokenIndex
 
-        debug { "\\+ error_recovery(opt_lookahead=$optLookahead, opt_token_index=$optTokenIndex)" }
+        debug { "\\+ errorRecovery(optLookahead=$optLookahead, optTokenIndex=$optTokenIndex)" }
 
         if (!definition.usesErrorRecovery()) {
             debug { "\\ error -- no error recovery!" }
@@ -368,7 +367,7 @@ class Parser<
         val top: Int
         findState@ while (true) {
             // Go backwards through the states...
-            debug { "\\\\+ error_recovery: find_state loop, ${states.size} states = $states" }
+            debug { "\\\\+ errorRecovery: findState loop, ${states.size} states = $states" }
 
             var foundTop: Int? = null
             for (candidate in (statesLen - 1) downTo 0) {
@@ -548,7 +547,7 @@ class Parser<
         optTokenIndex: TokenIndex?,
     ): Boolean {
         debug {
-            "\\\\\\+ accepts(error_state=$errorState, states=$states, opt_token_index=$optTokenIndex)"
+            "\\\\\\+ accepts(errorState=$errorState, states=$states, optTokenIndex=$optTokenIndex)"
         }
 
         val scratch: MutableList<StateIndex> = states.toMutableList()

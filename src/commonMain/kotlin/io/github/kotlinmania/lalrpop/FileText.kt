@@ -95,33 +95,21 @@ class FileText(
             out.appendLine("  $text")
 
             if (endCol - startCol <= 1) {
-                out.appendLine("  ${Repeat(' ', startCol)}^")
+                out.appendLine("  " + " ".repeat(startCol) + "^")
             } else {
                 val width = endCol - startCol
-                out.appendLine("  ${Repeat(' ', startCol)}~${Repeat('~', saturatingSub(width, 2))}~")
+                out.appendLine("  " + " ".repeat(startCol) + "~" + "~".repeat((width - 2).coerceAtLeast(0)) + "~")
             }
         } else {
             // span is across many lines, find the maximal width of any of those
             val lineStrs: List<String> = (startLine..endLine).map { i -> lineText(i) }
             val maxLen = lineStrs.maxOf { it.length }
-            out.appendLine("  ${Repeat(' ', startCol)}${Repeat('~', maxLen - startCol)}~+")
+            out.appendLine("  " + " ".repeat(startCol) + "~".repeat((maxLen - startCol).coerceAtLeast(0)) + "~+")
             for (line in lineStrs.subList(0, lineStrs.size - 1)) {
                 out.appendLine("| ${line.padEnd(maxLen)} |")
             }
             out.appendLine("| ${lineStrs[lineStrs.size - 1]}")
-            out.appendLine("+~${Repeat('~', endCol)}")
+            out.appendLine("+~" + "~".repeat(endCol))
         }
-    }
-}
-
-private fun saturatingSub(a: Int, b: Int): Int = if (a >= b) a - b else 0
-
-private class Repeat(private val ch: Char, private val count: Int) {
-    override fun toString(): String {
-        val sb = StringBuilder()
-        for (i in 0 until count) {
-            sb.append(ch)
-        }
-        return sb.toString()
     }
 }

@@ -1,7 +1,9 @@
 // port-lint: source grammar/pattern.rs
-// The definition of patterns is shared between the parse-tree and the
-// repr, but customized by a type T that represents the different type
-// representations.
+/**
+ * The definition of patterns is shared between the parse-tree and the
+ * repr, but customized by a type T that represents the different type
+ * representations.
+ */
 package io.github.kotlinmania.lalrpop.grammar
 
 import io.github.kotlinmania.lalrpop.Atom
