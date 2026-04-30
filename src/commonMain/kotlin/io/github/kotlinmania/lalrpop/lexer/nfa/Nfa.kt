@@ -568,8 +568,6 @@ enum class StateKind : Comparable<StateKind> {
     Neither,
 }
 
-@Deprecated("Use `NfaStateIndex` instead", ReplaceWith("NfaStateIndex"))
-
 data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
     override fun compareTo(other: NfaStateIndex): Int = value.compareTo(other.value)
 
@@ -694,8 +692,6 @@ class EdgeIterator<L>(
  * Raised (via [NfaConstructionException]) when LALRPOP encounters a
  * regex feature it does not support.
  */
-@Deprecated("Use `NfaConstructionError` instead", ReplaceWith("NfaConstructionError"))
-
 enum class NfaConstructionError {
     NamedCaptures,
     NonGreedy,
