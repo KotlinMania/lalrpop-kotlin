@@ -20,6 +20,9 @@ import io.github.kotlinmania.lalrpop.regexsyntax.Hir
 
 data class Dfa(val states: List<State>)
 
+@Deprecated("use `Dfa` instead", ReplaceWith("Dfa"))
+typealias DFA = Dfa
+
 data class Precedence(val value: Int) : Comparable<Precedence> {
     override fun compareTo(other: Precedence): Int = value.compareTo(other.value)
 }
@@ -33,6 +36,9 @@ sealed class DfaConstructionError {
     /** Either of the two regexs listed could match, and they have equal priority. */
     data class Ambiguity(val match0: NfaIndex, val match1: NfaIndex) : DfaConstructionError()
 }
+
+@Deprecated("use `DfaConstructionError` instead", ReplaceWith("DfaConstructionError"))
+typealias DFAConstructionError = DfaConstructionError
 
 class DfaConstructionException(val error: DfaConstructionError) : RuntimeException(error.toString())
 
@@ -233,6 +239,7 @@ data class NfaIndex(val value: Int) : Comparable<NfaIndex> {
 }
 
 @Deprecated("use `NfaIndex` instead", ReplaceWith("NfaIndex"))
+typealias NFAIndex = NfaIndex
 
 data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
     override fun compareTo(other: DfaStateIndex): Int = value.compareTo(other.value)
@@ -241,6 +248,7 @@ data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
 }
 
 @Deprecated("use `DfaStateIndex` instead", ReplaceWith("DfaStateIndex"))
+typealias DFAStateIndex = DfaStateIndex
 
 internal typealias DfaKernelSet = KernelSet<DfaItemSet, DfaStateIndex>
 
