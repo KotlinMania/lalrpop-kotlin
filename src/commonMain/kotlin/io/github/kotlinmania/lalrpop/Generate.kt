@@ -8,12 +8,12 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 
 sealed class ParseTree {
-    data class Nonterminal(val nt: NonterminalString, val trees: MutableList<ParseTree>) : ParseTree()
-    data class Terminal(val t: TerminalString) : ParseTree()
+    data class Nonterminal(val nt: NonterminalString, val trees: MutableList<ParseTree>) : ParseTree() {
+        override fun toString(): String = "[${nt}: ${Sep(", ", trees)}]"
+    }
 
-    override fun toString(): String = when (this) {
-        is Nonterminal -> "[${nt}: ${Sep(", ", trees)}]"
-        is Terminal -> "$t"
+    data class Terminal(val t: TerminalString) : ParseTree() {
+        override fun toString(): String = "$t"
     }
 
     fun terminals(): MutableList<TerminalString> {
