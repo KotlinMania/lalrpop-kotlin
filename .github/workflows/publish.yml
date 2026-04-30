@@ -29,14 +29,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Prepare ast_distance parity inputs
-        run: |
-          rm -rf tmp/lalrpop-rs
-          git clone --depth 1 --branch 0.23.1 https://github.com/lalrpop/lalrpop.git tmp/lalrpop-rs
-          cmake -S tools/ast_distance -B tools/ast_distance/build
-          cmake --build tools/ast_distance/build --parallel
-          cp tools/ast_distance/build/ast_distance tools/ast_distance/ast_distance
-
       - name: Build (dry run)
         if: ${{ github.event_name == 'workflow_dispatch' && !inputs.publish }}
         run: ./gradlew compileKotlinMacosArm64 --no-configuration-cache
