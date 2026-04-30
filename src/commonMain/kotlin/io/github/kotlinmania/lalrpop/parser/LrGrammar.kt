@@ -3331,8 +3331,7 @@ internal class StateMachine(
 // Maps a token to its column in the ACTION/EOF_ACTION tables.
 // Returns null when the token is not a recognised terminal (LALRPOP
 // `___token_to_integer` returns `None` for the same case).
-internal
-fun tokenToInteger(
+internal fun tokenToInteger(
     token: Tok,
 ): Int?
 {
@@ -7833,8 +7832,7 @@ internal fun popVariant1(
     )
 }
 
-internal
-fun action0
+internal fun action0
 (
     text: String,
     sym0: Triple<Int, Top, Int>,
@@ -7843,8 +7841,7 @@ fun action0
     return sym0.second
 }
 
-internal
-fun action1
+internal fun action1
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -7854,8 +7851,7 @@ fun action1
     return Top.Grammar(sym1.second)
 }
 
-internal
-fun action2
+internal fun action2
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -7865,8 +7861,7 @@ fun action2
     return Top.Pattern(sym1.second)
 }
 
-internal
-fun action3
+internal fun action3
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -7876,8 +7871,7 @@ fun action3
     return Top.MatchMapping(sym1.second)
 }
 
-internal
-fun action4
+internal fun action4
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -7887,8 +7881,7 @@ fun action4
     return Top.TypeRefTop(sym1.second)
 }
 
-internal
-fun action5
+internal fun action5
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -7927,8 +7920,7 @@ internal fun action6(
     }
 }
 
-internal
-fun action7
+internal fun action7
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -7939,8 +7931,7 @@ fun action7
     return sym1.second
 }
 
-internal
-fun action8
+internal fun action8
 (
     text: String,
     l: Triple<Int, Lifetime, Int>,
@@ -7949,8 +7940,7 @@ fun action8
     return TypeParameter.LifetimeTp(l.second)
 }
 
-internal
-fun action9
+internal fun action9
 (
     text: String,
     l: Triple<Int, Atom, Int>,
@@ -7959,8 +7949,7 @@ fun action9
     return TypeParameter.Id(l.second)
 }
 
-internal
-fun action10
+internal fun action10
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -7995,8 +7984,7 @@ internal fun action12(
         bounds = bounds.second.toMutableList())
 }
 
-internal
-fun action13
+internal fun action13
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8008,8 +7996,7 @@ fun action13
     return sym2.second
 }
 
-internal
-fun action14
+internal fun action14
 (
     text: String,
     sym0: Triple<Int, Unit, Int>,
@@ -8018,8 +8005,7 @@ fun action14
     return emptyList()
 }
 
-internal
-fun action15
+internal fun action15
 (
     text: String,
     sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
@@ -8028,8 +8014,7 @@ fun action15
     return sym0.second
 }
 
-internal
-fun action16
+internal fun action16
 (
     text: String,
     l: Triple<Int, Lifetime, Int>,
@@ -8065,8 +8050,7 @@ internal fun action18(
         parameters = (params.second ?: emptyList()).toMutableList())
 }
 
-internal
-fun action19
+internal fun action19
 (
     text: String,
     l: Triple<Int, Lifetime, Int>,
@@ -8075,8 +8059,7 @@ fun action19
     return TypeBoundParameter.LifetimeParam(l.second)
 }
 
-internal
-fun action20
+internal fun action20
 (
     text: String,
     ty: Triple<Int, TypeRef, Int>,
@@ -8085,8 +8068,7 @@ fun action20
     return TypeBoundParameter.TypeParameterParam(ty.second)
 }
 
-internal
-fun action21
+internal fun action21
 (
     text: String,
     id: Triple<Int, Atom, Int>,
@@ -8097,8 +8079,7 @@ fun action21
     return TypeBoundParameter.Associated(id.second, ty.second)
 }
 
-internal
-fun action22
+internal fun action22
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8114,8 +8095,7 @@ fun action22
 // `Alternative`, `ActionKind`, `Condition`, `ConditionOp`. The
 // alternative-list helpers (___action41/42) match the the grammar in
 // `Alternative ";"` and `"{" Alternative+ "}" ";"?` productions.
-internal
-fun action23
+internal fun action23
 (
     text: String,
     id: Triple<Int, Atom, Int>,
@@ -8126,8 +8106,7 @@ fun action23
     return Parameter(name = id.second, ty = ty.second)
 }
 
-internal
-fun action24
+internal fun action24
 (
     text: String,
     sym0: Triple<Int, GrammarItem, Int>,
@@ -8136,8 +8115,7 @@ fun action24
     return sym0.second
 }
 
-internal
-fun action25
+internal fun action25
 (
     text: String,
     sym0: Triple<Int, GrammarItem, Int>,
@@ -8146,8 +8124,7 @@ fun action25
     return sym0.second
 }
 
-internal
-fun action26
+internal fun action26
 (
     text: String,
     sym0: Triple<Int, GrammarItem, Int>,
@@ -8156,8 +8133,7 @@ fun action26
     return sym0.second
 }
 
-internal
-fun action27
+internal fun action27
 (
     text: String,
     sym0: Triple<Int, GrammarItem, Int>,
@@ -8166,8 +8142,7 @@ fun action27
     return sym0.second
 }
 
-internal
-fun action28
+internal fun action28
 (
     text: String,
     u: Triple<Int, String, Int>,
@@ -8177,8 +8152,7 @@ fun action28
     return GrammarItem.Use(strip(u.second))
 }
 
-internal
-fun action29
+internal fun action29
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8190,8 +8164,7 @@ fun action29
     return Visibility.Pub(p.second)
 }
 
-internal
-fun action30
+internal fun action30
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8204,8 +8177,7 @@ fun action30
     return Visibility.PubIn(p.second)
 }
 
-internal
-fun action31
+internal fun action31
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8214,8 +8186,7 @@ fun action31
     return Visibility.Pub(null)
 }
 
-internal
-fun action32
+internal fun action32
 (
     text: String,
     sym0: Triple<Int, Unit, Int>,
@@ -8249,8 +8220,7 @@ internal fun action33(
     }
 }
 
-internal
-fun action34
+internal fun action34
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8277,8 +8247,7 @@ internal fun action35(
     }
 }
 
-internal
-fun action36
+internal fun action36
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8289,8 +8258,7 @@ fun action36
     return AttributeArg.Paren(sym1.second.toMutableList())
 }
 
-internal
-fun action37
+internal fun action37
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8300,8 +8268,7 @@ fun action37
     return AttributeArg.Equal(value.second)
 }
 
-internal
-fun action38
+internal fun action38
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -8313,8 +8280,7 @@ fun action38
     return sym0.second to sym2.second
 }
 
-internal
-fun action39
+internal fun action39
 (
     text: String,
     n: Triple<Int, NonterminalString, Int>,
@@ -8323,8 +8289,7 @@ fun action39
     return n.second to emptyList()
 }
 
-internal
-fun action40
+internal fun action40
 (
     text: String,
     sym0: Triple<Int, String, Int>,
@@ -8333,8 +8298,7 @@ fun action40
     return NonterminalString(Atom.from(sym0.second)) to emptyList()
 }
 
-internal
-fun action41
+internal fun action41
 (
     text: String,
     a: Triple<Int, Alternative, Int>,
@@ -8344,8 +8308,7 @@ fun action41
     return listOf(a.second)
 }
 
-internal
-fun action42
+internal fun action42
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8357,8 +8320,7 @@ fun action42
     return sym1.second
 }
 
-internal
-fun action43
+internal fun action43
 (
     text: String,
     attr: Triple<Int, List<Attribute>, Int>,
@@ -8380,8 +8342,7 @@ fun action43
     }
 }
 
-internal
-fun action44
+internal fun action44
 (
     text: String,
     lo: Triple<Int, Int, Int>,
@@ -8401,8 +8362,7 @@ fun action44
     }
 }
 
-internal
-fun action45
+internal fun action45
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8411,8 +8371,7 @@ fun action45
     return ActionKind.Lookahead
 }
 
-internal
-fun action46
+internal fun action46
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8421,8 +8380,7 @@ fun action46
     return ActionKind.Lookbehind
 }
 
-internal
-fun action47
+internal fun action47
 (
     text: String,
     c: Triple<Int, String, Int>,
@@ -8431,8 +8389,7 @@ fun action47
     return ActionKind.User(strip(c.second))
 }
 
-internal
-fun action48
+internal fun action48
 (
     text: String,
     c: Triple<Int, String, Int>,
@@ -8457,8 +8414,7 @@ internal fun action49(
     }
 }
 
-internal
-fun action50
+internal fun action50
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8467,8 +8423,7 @@ fun action50
     return ConditionOp.Equals
 }
 
-internal
-fun action51
+internal fun action51
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8477,8 +8432,7 @@ fun action51
     return ConditionOp.NotEquals
 }
 
-internal
-fun action52
+internal fun action52
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8487,8 +8441,7 @@ fun action52
     return ConditionOp.Match
 }
 
-internal
-fun action53
+internal fun action53
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8497,8 +8450,7 @@ fun action53
     return ConditionOp.NotMatch
 }
 
-internal
-fun action54
+internal fun action54
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -8555,8 +8507,7 @@ internal fun action57(
     )
 }
 
-internal
-fun action58
+internal fun action58
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -8565,8 +8516,7 @@ fun action58
     return sym0.second
 }
 
-internal
-fun action59
+internal fun action59
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -8588,8 +8538,7 @@ internal fun action60(
     )
 }
 
-internal
-fun action61
+internal fun action61
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8598,8 +8547,7 @@ fun action61
     return RepeatOp.Plus
 }
 
-internal
-fun action62
+internal fun action62
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8608,8 +8556,7 @@ fun action62
     return RepeatOp.Star
 }
 
-internal
-fun action63
+internal fun action63
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8643,8 +8590,7 @@ internal fun action65(
     )
 }
 
-internal
-fun action66
+internal fun action66
 (
     text: String,
     sym0: Triple<Int, TerminalString, Int>,
@@ -8653,8 +8599,7 @@ fun action66
     return SymbolKind.Terminal(sym0.second)
 }
 
-internal
-fun action67
+internal fun action67
 (
     text: String,
     sym0: Triple<Int, String, Int>,
@@ -8673,8 +8618,7 @@ internal fun action68(
     )
 }
 
-internal
-fun action69
+internal fun action69
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8685,8 +8629,7 @@ fun action69
     return SymbolKind.Expr(sym1.second)
 }
 
-internal
-fun action70
+internal fun action70
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8695,8 +8638,7 @@ fun action70
     return SymbolKind.Lookahead
 }
 
-internal
-fun action71
+internal fun action71
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8705,8 +8647,7 @@ fun action71
     return SymbolKind.Lookbehind
 }
 
-internal
-fun action72
+internal fun action72
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8743,8 +8684,7 @@ internal fun action74(
     )
 }
 
-internal
-fun action75
+internal fun action75
 (
     text: String,
     t: Triple<Int, Tuple, Int>,
@@ -8753,8 +8693,7 @@ fun action75
     return ArgPattern.TuplePat(t.second)
 }
 
-internal
-fun action76
+internal fun action76
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8765,8 +8704,7 @@ fun action76
     return TypeRef.Tuple(sym1.second.toMutableList())
 }
 
-internal
-fun action77
+internal fun action77
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8777,8 +8715,7 @@ fun action77
     return TypeRef.Slice(sym1.second)
 }
 
-internal
-fun action78
+internal fun action78
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8806,8 +8743,7 @@ internal fun action79(
     )
 }
 
-internal
-fun action80
+internal fun action80
 (
     text: String,
     path: Triple<Int, Path, Int>,
@@ -8832,8 +8768,7 @@ internal fun action81(
     }
 }
 
-internal
-fun action82
+internal fun action82
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8846,8 +8781,7 @@ fun action82
     return TypeRef.TraitObject(path = path.second, types = types.second.toMutableList())
 }
 
-internal
-fun action83
+internal fun action83
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -8873,8 +8807,7 @@ internal fun action84(
     )
 }
 
-internal
-fun action85
+internal fun action85
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -8883,8 +8816,7 @@ fun action85
     return sym0.second
 }
 
-internal
-fun action86
+internal fun action86
 (
     text: String,
     sym0: Triple<Int, Lifetime, Int>,
@@ -8952,8 +8884,7 @@ internal fun action89(
     }
 }
 
-internal
-fun action90
+internal fun action90
 (
     text: String,
     t: Triple<Int, MatchToken, Int>,
@@ -8962,8 +8893,7 @@ fun action90
     return GrammarItem.MatchToken(t.second)
 }
 
-internal
-fun action91
+internal fun action91
 (
     text: String,
     t: Triple<Int, MatchToken, Int>,
@@ -8991,8 +8921,7 @@ internal fun action92(
     )
 }
 
-internal
-fun action93
+internal fun action93
 (
     text: String,
     items: Triple<Int, List<MatchItem>, Int>,
@@ -9042,8 +8971,7 @@ internal fun action96(
     }
 }
 
-internal
-fun action97
+internal fun action97
 (
     text: String,
     sym0: Triple<Int, TerminalLiteral, Int>,
@@ -9052,8 +8980,7 @@ fun action97
     return sym0.second
 }
 
-internal
-fun action98
+internal fun action98
 (
     text: String,
     sym0: Triple<Int, TerminalString, Int>,
@@ -9062,8 +8989,7 @@ fun action98
     return MatchMapping.Terminal(sym0.second)
 }
 
-internal
-fun action99
+internal fun action99
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9073,8 +8999,7 @@ fun action99
     return MatchMapping.Skip
 }
 
-internal
-fun action100
+internal fun action100
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9189,8 +9114,7 @@ internal fun action106(
         dotdot = true)
 }
 
-internal
-fun action107
+internal fun action107
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9199,8 +9123,7 @@ fun action107
     return PatternKind.Underscore()
 }
 
-internal
-fun action108
+internal fun action108
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9209,8 +9132,7 @@ fun action108
     return PatternKind.DotDot()
 }
 
-internal
-fun action109
+internal fun action109
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9221,8 +9143,7 @@ fun action109
     return PatternKind.Choose(sym1.second)
 }
 
-internal
-fun action110
+internal fun action110
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9243,8 +9164,7 @@ internal fun action111(
     )
 }
 
-internal
-fun action112
+internal fun action112
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -9253,8 +9173,7 @@ fun action112
     return PatternKind.PathKind(sym0.second)
 }
 
-internal
-fun action113
+internal fun action113
 (
     text: String,
     s: Triple<Int, String, Int>,
@@ -9301,8 +9220,7 @@ internal fun action116(
     )
 }
 
-internal
-fun action117
+internal fun action117
 (
     text: String,
     i: Triple<Int, String, Int>,
@@ -9311,8 +9229,7 @@ fun action117
     return Atom.from(i.second)
 }
 
-internal
-fun action118
+internal fun action118
 (
     text: String,
     i: Triple<Int, String, Int>,
@@ -9321,8 +9238,7 @@ fun action118
     return Atom.from(i.second)
 }
 
-internal
-fun action119
+internal fun action119
 (
     text: String,
     i: Triple<Int, String, Int>,
@@ -9341,8 +9257,7 @@ internal fun action120(
     )
 }
 
-internal
-fun action121
+internal fun action121
 (
     text: String,
     sym0: Triple<Int, TerminalString, Int>,
@@ -9361,8 +9276,7 @@ internal fun action122(
     )
 }
 
-internal
-fun action123
+internal fun action123
 (
     text: String,
     sym0: Triple<Int, TerminalLiteral, Int>,
@@ -9371,8 +9285,7 @@ fun action123
     return TerminalString.Literal(sym0.second)
 }
 
-internal
-fun action124
+internal fun action124
 (
     text: String,
     s: Triple<Int, Atom, Int>,
@@ -9381,8 +9294,7 @@ fun action124
     return TerminalLiteral.Quoted(s.second)
 }
 
-internal
-fun action125
+internal fun action125
 (
     text: String,
     s: Triple<Int, Atom, Int>,
@@ -9421,8 +9333,7 @@ internal fun action127(
     return Result.success(escaped)
 }
 
-internal
-fun action128
+internal fun action128
 (
     text: String,
     s: Triple<Int, String, Int>,
@@ -9431,8 +9342,7 @@ fun action128
     return Atom.from(s.second)
 }
 
-internal
-fun action129
+internal fun action129
 (
     text: String,
     s: Triple<Int, String, Int>,
@@ -9441,8 +9351,7 @@ fun action129
     return s.second
 }
 
-internal
-fun action130
+internal fun action130
 (
     text: String,
     sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
@@ -9451,8 +9360,7 @@ fun action130
     return sym0.second
 }
 
-internal
-fun action131
+internal fun action131
 (
     text: String,
     lookbehind: Int,
@@ -9462,8 +9370,7 @@ fun action131
     return null
 }
 
-internal
-fun action132
+internal fun action132
 (
     text: String,
     lookbehind: Int,
@@ -9473,8 +9380,7 @@ fun action132
     return emptyList()
 }
 
-internal
-fun action133
+internal fun action133
 (
     text: String,
     v: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
@@ -9483,8 +9389,7 @@ fun action133
     return v.second
 }
 
-internal
-fun action134
+internal fun action134
 (
     text: String,
     sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
@@ -9527,8 +9432,7 @@ internal fun action137(
     return v
 }
 
-internal
-fun action138
+internal fun action138
 (
     text: String,
     lookbehind: Int,
@@ -9538,8 +9442,7 @@ fun action138
     return emptyList()
 }
 
-internal
-fun action139
+internal fun action139
 (
     text: String,
     v: Triple<Int, List<AssociatedType>, Int>,
@@ -9548,8 +9451,7 @@ fun action139
     return v.second
 }
 
-internal
-fun action140
+internal fun action140
 (
     text: String,
     lookbehind: Int,
@@ -9559,8 +9461,7 @@ fun action140
     return emptyList()
 }
 
-internal
-fun action141
+internal fun action141
 (
     text: String,
     v: Triple<Int, List<Atom>, Int>,
@@ -9569,8 +9470,7 @@ fun action141
     return v.second
 }
 
-internal
-fun action142
+internal fun action142
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -9580,8 +9480,7 @@ fun action142
     return sym0.second
 }
 
-internal
-fun action143
+internal fun action143
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9590,8 +9489,7 @@ fun action143
     return sym0.second
 }
 
-internal
-fun action144
+internal fun action144
 (
     text: String,
     lookbehind: Int,
@@ -9612,8 +9510,7 @@ internal fun action145(
     return v
 }
 
-internal
-fun action146
+internal fun action146
 (
     text: String,
     sym0: Triple<Int, Lifetime, Int>,
@@ -9622,8 +9519,7 @@ fun action146
     return sym0.second
 }
 
-internal
-fun action147
+internal fun action147
 (
     text: String,
     lookbehind: Int,
@@ -9633,8 +9529,7 @@ fun action147
     return null
 }
 
-internal
-fun action148
+internal fun action148
 (
     text: String,
     sym0: Triple<Int, ArgPattern, Int>,
@@ -9643,8 +9538,7 @@ fun action148
     return sym0.second
 }
 
-internal
-fun action149
+internal fun action149
 (
     text: String,
     lookbehind: Int,
@@ -9654,8 +9548,7 @@ fun action149
     return null
 }
 
-internal
-fun action150
+internal fun action150
 (
     text: String,
     sym0: Triple<Int, ArgPattern, Int>,
@@ -9675,8 +9568,7 @@ internal fun action151(
     return out
 }
 
-internal
-fun action152
+internal fun action152
 (
     text: String,
     sym0: Triple<Int, ArgPattern, Int>,
@@ -9697,8 +9589,7 @@ internal fun action153(
     return v
 }
 
-internal
-fun action154
+internal fun action154
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9707,8 +9598,7 @@ fun action154
     return sym0.second
 }
 
-internal
-fun action155
+internal fun action155
 (
     text: String,
     lookbehind: Int,
@@ -9718,8 +9608,7 @@ fun action155
     return null
 }
 
-internal
-fun action156
+internal fun action156
 (
     text: String,
     lookbehind: Int,
@@ -9729,8 +9618,7 @@ fun action156
     return emptyList()
 }
 
-internal
-fun action157
+internal fun action157
 (
     text: String,
     v: Triple<Int, List<PtSymbol>, Int>,
@@ -9739,8 +9627,7 @@ fun action157
     return v.second
 }
 
-internal
-fun action158
+internal fun action158
 (
     text: String,
     sym0: Triple<Int, ActionKind, Int>,
@@ -9749,8 +9636,7 @@ fun action158
     return sym0.second
 }
 
-internal
-fun action159
+internal fun action159
 (
     text: String,
     lookbehind: Int,
@@ -9760,8 +9646,7 @@ fun action159
     return null
 }
 
-internal
-fun action160
+internal fun action160
 (
     text: String,
     sym0: Triple<Int, Condition, Int>,
@@ -9770,8 +9655,7 @@ fun action160
     return sym0.second
 }
 
-internal
-fun action161
+internal fun action161
 (
     text: String,
     lookbehind: Int,
@@ -9781,8 +9665,7 @@ fun action161
     return null
 }
 
-internal
-fun action162
+internal fun action162
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9792,8 +9675,7 @@ fun action162
     return sym1.second
 }
 
-internal
-fun action163
+internal fun action163
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -9813,8 +9695,7 @@ internal fun action164(
     return out
 }
 
-internal
-fun action165
+internal fun action165
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9823,8 +9704,7 @@ fun action165
     return sym0.second
 }
 
-internal
-fun action166
+internal fun action166
 (
     text: String,
     lookbehind: Int,
@@ -9867,8 +9747,7 @@ internal fun action169(
     return v
 }
 
-internal
-fun action170
+internal fun action170
 (
     text: String,
     sym0: Triple<Int, AttributeArg, Int>,
@@ -9877,8 +9756,7 @@ fun action170
     return sym0.second
 }
 
-internal
-fun action171
+internal fun action171
 (
     text: String,
     lookbehind: Int,
@@ -9888,8 +9766,7 @@ fun action171
     return null
 }
 
-internal
-fun action172
+internal fun action172
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -9898,8 +9775,7 @@ fun action172
     return sym0.second
 }
 
-internal
-fun action173
+internal fun action173
 (
     text: String,
     lookbehind: Int,
@@ -9909,8 +9785,7 @@ fun action173
     return null
 }
 
-internal
-fun action174
+internal fun action174
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9931,8 +9806,7 @@ internal fun action175(
     return v
 }
 
-internal
-fun action176
+internal fun action176
 (
     text: String,
     sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
@@ -9941,8 +9815,7 @@ fun action176
     return sym0.second
 }
 
-internal
-fun action177
+internal fun action177
 (
     text: String,
     lookbehind: Int,
@@ -9952,8 +9825,7 @@ fun action177
     return null
 }
 
-internal
-fun action178
+internal fun action178
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -9975,8 +9847,7 @@ internal fun action179(
     return v
 }
 
-internal
-fun action180
+internal fun action180
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -9985,8 +9856,7 @@ fun action180
     return sym0.second
 }
 
-internal
-fun action181
+internal fun action181
 (
     text: String,
     lookbehind: Int,
@@ -9996,8 +9866,7 @@ fun action181
     return null
 }
 
-internal
-fun action182
+internal fun action182
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -10032,8 +9901,7 @@ internal fun action184(
     }
 }
 
-internal
-fun action185
+internal fun action185
 (
     text: String,
     lookbehind: Int,
@@ -10078,8 +9946,7 @@ internal fun action188(
     return v
 }
 
-internal
-fun action189
+internal fun action189
 (
     text: String,
     lookbehind: Int,
@@ -10089,8 +9956,7 @@ fun action189
     return emptyList()
 }
 
-internal
-fun action190
+internal fun action190
 (
     text: String,
     v: Triple<Int, List<GrammarItem>, Int>,
@@ -10099,8 +9965,7 @@ fun action190
     return v.second
 }
 
-internal
-fun action191
+internal fun action191
 (
     text: String,
     sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
@@ -10109,8 +9974,7 @@ fun action191
     return sym0.second
 }
 
-internal
-fun action192
+internal fun action192
 (
     text: String,
     lookbehind: Int,
@@ -10120,8 +9984,7 @@ fun action192
     return null
 }
 
-internal
-fun action193
+internal fun action193
 (
     text: String,
     sym0: Triple<Int, List<Parameter>, Int>,
@@ -10130,8 +9993,7 @@ fun action193
     return sym0.second
 }
 
-internal
-fun action194
+internal fun action194
 (
     text: String,
     lookbehind: Int,
@@ -10141,8 +10003,7 @@ fun action194
     return null
 }
 
-internal
-fun action195
+internal fun action195
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -10151,8 +10012,7 @@ fun action195
     return sym0.second
 }
 
-internal
-fun action196
+internal fun action196
 (
     text: String,
     lookbehind: Int,
@@ -10162,8 +10022,7 @@ fun action196
     return null
 }
 
-internal
-fun action197
+internal fun action197
 (
     text: String,
     lookbehind: Int,
@@ -10173,8 +10032,7 @@ fun action197
     return lookbehind
 }
 
-internal
-fun action198
+internal fun action198
 (
     text: String,
     lookbehind: Int,
@@ -10184,8 +10042,7 @@ fun action198
     return lookahead
 }
 
-internal
-fun action199
+internal fun action199
 (
     text: String,
     lookbehind: Int,
@@ -10195,8 +10052,7 @@ fun action199
     return emptyList()
 }
 
-internal
-fun action200
+internal fun action200
 (
     text: String,
     v: Triple<Int, List<Attribute>, Int>,
@@ -10205,8 +10061,7 @@ fun action200
     return v.second
 }
 
-internal
-fun action201
+internal fun action201
 (
     text: String,
     lookbehind: Int,
@@ -10216,8 +10071,7 @@ fun action201
     return emptyList()
 }
 
-internal
-fun action202
+internal fun action202
 (
     text: String,
     v: Triple<Int, List<GrammarItem>, Int>,
@@ -10226,8 +10080,7 @@ fun action202
     return v.second
 }
 
-internal
-fun action203
+internal fun action203
 (
     text: String,
     lookbehind: Int,
@@ -10237,8 +10090,7 @@ fun action203
     return emptyList()
 }
 
-internal
-fun action204
+internal fun action204
 (
     text: String,
     v: Triple<Int, List<String>, Int>,
@@ -10247,8 +10099,7 @@ fun action204
     return v.second
 }
 
-internal
-fun action205
+internal fun action205
 (
     text: String,
     sym0: Triple<Int, String, Int>,
@@ -10268,8 +10119,7 @@ internal fun action206(
     return out
 }
 
-internal
-fun action207
+internal fun action207
 (
     text: String,
     sym0: Triple<Int, GrammarItem, Int>,
@@ -10289,8 +10139,7 @@ internal fun action208(
     return out
 }
 
-internal
-fun action209
+internal fun action209
 (
     text: String,
     sym0: Triple<Int, Attribute, Int>,
@@ -10310,8 +10159,7 @@ internal fun action210(
     return out
 }
 
-internal
-fun action211
+internal fun action211
 (
     text: String,
     sym0: Triple<Int, GrammarItem, Int>,
@@ -10335,8 +10183,7 @@ internal fun action212(
     return out
 }
 
-internal
-fun action213
+internal fun action213
 (
     text: String,
     sym0: Triple<Int, TypeParameter, Int>,
@@ -10345,8 +10192,7 @@ fun action213
     return sym0.second
 }
 
-internal
-fun action214
+internal fun action214
 (
     text: String,
     lookbehind: Int,
@@ -10356,8 +10202,7 @@ fun action214
     return null
 }
 
-internal
-fun action215
+internal fun action215
 (
     text: String,
     lookbehind: Int,
@@ -10367,8 +10212,7 @@ fun action215
     return emptyList()
 }
 
-internal
-fun action216
+internal fun action216
 (
     text: String,
     v: Triple<Int, List<TypeParameter>, Int>,
@@ -10377,8 +10221,7 @@ fun action216
     return v.second
 }
 
-internal
-fun action217
+internal fun action217
 (
     text: String,
     sym0: Triple<Int, TypeParameter, Int>,
@@ -10388,8 +10231,7 @@ fun action217
     return sym0.second
 }
 
-internal
-fun action218
+internal fun action218
 (
     text: String,
     sym0: Triple<Int, WhereClause<TypeRef>, Int>,
@@ -10398,8 +10240,7 @@ fun action218
     return sym0.second
 }
 
-internal
-fun action219
+internal fun action219
 (
     text: String,
     lookbehind: Int,
@@ -10409,8 +10250,7 @@ fun action219
     return null
 }
 
-internal
-fun action220
+internal fun action220
 (
     text: String,
     lookbehind: Int,
@@ -10420,8 +10260,7 @@ fun action220
     return emptyList()
 }
 
-internal
-fun action221
+internal fun action221
 (
     text: String,
     v: Triple<Int, List<WhereClause<TypeRef>>, Int>,
@@ -10430,8 +10269,7 @@ fun action221
     return v.second
 }
 
-internal
-fun action222
+internal fun action222
 (
     text: String,
     sym0: Triple<Int, WhereClause<TypeRef>, Int>,
@@ -10441,8 +10279,7 @@ fun action222
     return sym0.second
 }
 
-internal
-fun action223
+internal fun action223
 (
     text: String,
     lookbehind: Int,
@@ -10452,8 +10289,7 @@ fun action223
     return emptyList()
 }
 
-internal
-fun action224
+internal fun action224
 (
     text: String,
     v: Triple<Int, List<Lifetime>, Int>,
@@ -10462,8 +10298,7 @@ fun action224
     return v.second
 }
 
-internal
-fun action225
+internal fun action225
 (
     text: String,
     sym0: Triple<Int, Lifetime, Int>,
@@ -10473,8 +10308,7 @@ fun action225
     return sym0.second
 }
 
-internal
-fun action226
+internal fun action226
 (
     text: String,
     sym0: Triple<Int, TypeBound<TypeRef>, Int>,
@@ -10483,8 +10317,7 @@ fun action226
     return sym0.second
 }
 
-internal
-fun action227
+internal fun action227
 (
     text: String,
     lookbehind: Int,
@@ -10494,8 +10327,7 @@ fun action227
     return null
 }
 
-internal
-fun action228
+internal fun action228
 (
     text: String,
     lookbehind: Int,
@@ -10505,8 +10337,7 @@ fun action228
     return emptyList()
 }
 
-internal
-fun action229
+internal fun action229
 (
     text: String,
     v: Triple<Int, List<TypeBound<TypeRef>>, Int>,
@@ -10515,8 +10346,7 @@ fun action229
     return v.second
 }
 
-internal
-fun action230
+internal fun action230
 (
     text: String,
     sym0: Triple<Int, TypeBound<TypeRef>, Int>,
@@ -10526,8 +10356,7 @@ fun action230
     return sym0.second
 }
 
-internal
-fun action231
+internal fun action231
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -10536,8 +10365,7 @@ fun action231
     return sym0.second
 }
 
-internal
-fun action232
+internal fun action232
 (
     text: String,
     lookbehind: Int,
@@ -10547,8 +10375,7 @@ fun action232
     return null
 }
 
-internal
-fun action233
+internal fun action233
 (
     text: String,
     lookbehind: Int,
@@ -10558,8 +10385,7 @@ fun action233
     return emptyList()
 }
 
-internal
-fun action234
+internal fun action234
 (
     text: String,
     v: Triple<Int, List<TypeRef>, Int>,
@@ -10568,8 +10394,7 @@ fun action234
     return v.second
 }
 
-internal
-fun action235
+internal fun action235
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -10579,8 +10404,7 @@ fun action235
     return sym0.second
 }
 
-internal
-fun action236
+internal fun action236
 (
     text: String,
     sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
@@ -10589,8 +10413,7 @@ fun action236
     return sym0.second
 }
 
-internal
-fun action237
+internal fun action237
 (
     text: String,
     lookbehind: Int,
@@ -10600,8 +10423,7 @@ fun action237
     return null
 }
 
-internal
-fun action238
+internal fun action238
 (
     text: String,
     lookbehind: Int,
@@ -10611,8 +10433,7 @@ fun action238
     return emptyList()
 }
 
-internal
-fun action239
+internal fun action239
 (
     text: String,
     v: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
@@ -10621,8 +10442,7 @@ fun action239
     return v.second
 }
 
-internal
-fun action240
+internal fun action240
 (
     text: String,
     sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
@@ -10632,8 +10452,7 @@ fun action240
     return sym0.second
 }
 
-internal
-fun action241
+internal fun action241
 (
     text: String,
     sym0: Triple<Int, Parameter, Int>,
@@ -10642,8 +10461,7 @@ fun action241
     return sym0.second
 }
 
-internal
-fun action242
+internal fun action242
 (
     text: String,
     lookbehind: Int,
@@ -10653,8 +10471,7 @@ fun action242
     return null
 }
 
-internal
-fun action243
+internal fun action243
 (
     text: String,
     lookbehind: Int,
@@ -10664,8 +10481,7 @@ fun action243
     return emptyList()
 }
 
-internal
-fun action244
+internal fun action244
 (
     text: String,
     v: Triple<Int, List<Parameter>, Int>,
@@ -10674,8 +10490,7 @@ fun action244
     return v.second
 }
 
-internal
-fun action245
+internal fun action245
 (
     text: String,
     sym0: Triple<Int, Parameter, Int>,
@@ -10685,8 +10500,7 @@ fun action245
     return sym0.second
 }
 
-internal
-fun action246
+internal fun action246
 (
     text: String,
     sym0: Triple<Int, Attribute, Int>,
@@ -10695,8 +10509,7 @@ fun action246
     return sym0.second
 }
 
-internal
-fun action247
+internal fun action247
 (
     text: String,
     lookbehind: Int,
@@ -10706,8 +10519,7 @@ fun action247
     return null
 }
 
-internal
-fun action248
+internal fun action248
 (
     text: String,
     lookbehind: Int,
@@ -10717,8 +10529,7 @@ fun action248
     return emptyList()
 }
 
-internal
-fun action249
+internal fun action249
 (
     text: String,
     v: Triple<Int, List<Attribute>, Int>,
@@ -10727,8 +10538,7 @@ fun action249
     return v.second
 }
 
-internal
-fun action250
+internal fun action250
 (
     text: String,
     sym0: Triple<Int, Attribute, Int>,
@@ -10738,8 +10548,7 @@ fun action250
     return sym0.second
 }
 
-internal
-fun action251
+internal fun action251
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -10748,8 +10557,7 @@ fun action251
     return sym0.second
 }
 
-internal
-fun action252
+internal fun action252
 (
     text: String,
     lookbehind: Int,
@@ -10759,8 +10567,7 @@ fun action252
     return null
 }
 
-internal
-fun action253
+internal fun action253
 (
     text: String,
     lookbehind: Int,
@@ -10770,8 +10577,7 @@ fun action253
     return emptyList()
 }
 
-internal
-fun action254
+internal fun action254
 (
     text: String,
     v: Triple<Int, List<NonterminalString>, Int>,
@@ -10780,8 +10586,7 @@ fun action254
     return v.second
 }
 
-internal
-fun action255
+internal fun action255
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -10791,8 +10596,7 @@ fun action255
     return sym0.second
 }
 
-internal
-fun action256
+internal fun action256
 (
     text: String,
     sym0: Triple<Int, Alternative, Int>,
@@ -10801,8 +10605,7 @@ fun action256
     return sym0.second
 }
 
-internal
-fun action257
+internal fun action257
 (
     text: String,
     lookbehind: Int,
@@ -10812,8 +10615,7 @@ fun action257
     return null
 }
 
-internal
-fun action258
+internal fun action258
 (
     text: String,
     lookbehind: Int,
@@ -10823,8 +10625,7 @@ fun action258
     return emptyList()
 }
 
-internal
-fun action259
+internal fun action259
 (
     text: String,
     v: Triple<Int, List<Alternative>, Int>,
@@ -10833,8 +10634,7 @@ fun action259
     return v.second
 }
 
-internal
-fun action260
+internal fun action260
 (
     text: String,
     sym0: Triple<Int, Alternative, Int>,
@@ -10844,8 +10644,7 @@ fun action260
     return sym0.second
 }
 
-internal
-fun action261
+internal fun action261
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -10854,8 +10653,7 @@ fun action261
     return sym0.second
 }
 
-internal
-fun action262
+internal fun action262
 (
     text: String,
     lookbehind: Int,
@@ -10865,8 +10663,7 @@ fun action262
     return null
 }
 
-internal
-fun action263
+internal fun action263
 (
     text: String,
     lookbehind: Int,
@@ -10876,8 +10673,7 @@ fun action263
     return emptyList()
 }
 
-internal
-fun action264
+internal fun action264
 (
     text: String,
     v: Triple<Int, List<PtSymbol>, Int>,
@@ -10886,8 +10682,7 @@ fun action264
     return v.second
 }
 
-internal
-fun action265
+internal fun action265
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -10897,8 +10692,7 @@ fun action265
     return sym0.second
 }
 
-internal
-fun action266
+internal fun action266
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -10907,8 +10701,7 @@ fun action266
     return sym0.second
 }
 
-internal
-fun action267
+internal fun action267
 (
     text: String,
     lookbehind: Int,
@@ -10918,8 +10711,7 @@ fun action267
     return null
 }
 
-internal
-fun action268
+internal fun action268
 (
     text: String,
     lookbehind: Int,
@@ -10929,8 +10721,7 @@ fun action268
     return emptyList()
 }
 
-internal
-fun action269
+internal fun action269
 (
     text: String,
     v: Triple<Int, List<TypeRef>, Int>,
@@ -10939,8 +10730,7 @@ fun action269
     return v.second
 }
 
-internal
-fun action270
+internal fun action270
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -10950,8 +10740,7 @@ fun action270
     return sym0.second
 }
 
-internal
-fun action271
+internal fun action271
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -10971,8 +10760,7 @@ internal fun action272(
     return out
 }
 
-internal
-fun action273
+internal fun action273
 (
     text: String,
     sym0: Triple<Int, AssociatedType, Int>,
@@ -10992,8 +10780,7 @@ internal fun action274(
     return out
 }
 
-internal
-fun action275
+internal fun action275
 (
     text: String,
     sym0: Triple<Int, MatchItem, Int>,
@@ -11002,8 +10789,7 @@ fun action275
     return sym0.second
 }
 
-internal
-fun action276
+internal fun action276
 (
     text: String,
     lookbehind: Int,
@@ -11013,8 +10799,7 @@ fun action276
     return null
 }
 
-internal
-fun action277
+internal fun action277
 (
     text: String,
     lookbehind: Int,
@@ -11024,8 +10809,7 @@ fun action277
     return emptyList()
 }
 
-internal
-fun action278
+internal fun action278
 (
     text: String,
     v: Triple<Int, List<MatchItem>, Int>,
@@ -11034,8 +10818,7 @@ fun action278
     return v.second
 }
 
-internal
-fun action279
+internal fun action279
 (
     text: String,
     sym0: Triple<Int, MatchItem, Int>,
@@ -11045,8 +10828,7 @@ fun action279
     return sym0.second
 }
 
-internal
-fun action280
+internal fun action280
 (
     text: String,
     sym0: Triple<Int, Conversion, Int>,
@@ -11055,8 +10837,7 @@ fun action280
     return sym0.second
 }
 
-internal
-fun action281
+internal fun action281
 (
     text: String,
     lookbehind: Int,
@@ -11066,8 +10847,7 @@ fun action281
     return null
 }
 
-internal
-fun action282
+internal fun action282
 (
     text: String,
     lookbehind: Int,
@@ -11077,8 +10857,7 @@ fun action282
     return emptyList()
 }
 
-internal
-fun action283
+internal fun action283
 (
     text: String,
     v: Triple<Int, List<Conversion>, Int>,
@@ -11087,8 +10866,7 @@ fun action283
     return v.second
 }
 
-internal
-fun action284
+internal fun action284
 (
     text: String,
     sym0: Triple<Int, Conversion, Int>,
@@ -11098,8 +10876,7 @@ fun action284
     return sym0.second
 }
 
-internal
-fun action285
+internal fun action285
 (
     text: String,
     sym0: Triple<Int, Pattern<TypeRef>, Int>,
@@ -11108,8 +10885,7 @@ fun action285
     return sym0.second
 }
 
-internal
-fun action286
+internal fun action286
 (
     text: String,
     lookbehind: Int,
@@ -11119,8 +10895,7 @@ fun action286
     return null
 }
 
-internal
-fun action287
+internal fun action287
 (
     text: String,
     lookbehind: Int,
@@ -11130,8 +10905,7 @@ fun action287
     return emptyList()
 }
 
-internal
-fun action288
+internal fun action288
 (
     text: String,
     v: Triple<Int, List<Pattern<TypeRef>>, Int>,
@@ -11140,8 +10914,7 @@ fun action288
     return v.second
 }
 
-internal
-fun action289
+internal fun action289
 (
     text: String,
     sym0: Triple<Int, Pattern<TypeRef>, Int>,
@@ -11151,8 +10924,7 @@ fun action289
     return sym0.second
 }
 
-internal
-fun action290
+internal fun action290
 (
     text: String,
     sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
@@ -11172,8 +10944,7 @@ internal fun action291(
     return out
 }
 
-internal
-fun action292
+internal fun action292
 (
     text: String,
     sym0: Triple<Int, Pattern<TypeRef>, Int>,
@@ -11193,8 +10964,7 @@ internal fun action293(
     return out
 }
 
-internal
-fun action294
+internal fun action294
 (
     text: String,
     sym0: Triple<Int, Conversion, Int>,
@@ -11214,8 +10984,7 @@ internal fun action295(
     return out
 }
 
-internal
-fun action296
+internal fun action296
 (
     text: String,
     sym0: Triple<Int, MatchItem, Int>,
@@ -11235,8 +11004,7 @@ internal fun action297(
     return out
 }
 
-internal
-fun action298
+internal fun action298
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -11256,8 +11024,7 @@ internal fun action299(
     return out
 }
 
-internal
-fun action300
+internal fun action300
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -11277,8 +11044,7 @@ internal fun action301(
     return out
 }
 
-internal
-fun action302
+internal fun action302
 (
     text: String,
     sym0: Triple<Int, Alternative, Int>,
@@ -11298,8 +11064,7 @@ internal fun action303(
     return out
 }
 
-internal
-fun action304
+internal fun action304
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -11319,8 +11084,7 @@ internal fun action305(
     return out
 }
 
-internal
-fun action306
+internal fun action306
 (
     text: String,
     sym0: Triple<Int, Attribute, Int>,
@@ -11340,8 +11104,7 @@ internal fun action307(
     return out
 }
 
-internal
-fun action308
+internal fun action308
 (
     text: String,
     sym0: Triple<Int, Parameter, Int>,
@@ -11361,8 +11124,7 @@ internal fun action309(
     return out
 }
 
-internal
-fun action310
+internal fun action310
 (
     text: String,
     sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
@@ -11382,8 +11144,7 @@ internal fun action311(
     return out
 }
 
-internal
-fun action312
+internal fun action312
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -11403,8 +11164,7 @@ internal fun action313(
     return out
 }
 
-internal
-fun action314
+internal fun action314
 (
     text: String,
     sym0: Triple<Int, TypeBound<TypeRef>, Int>,
@@ -11424,8 +11184,7 @@ internal fun action315(
     return out
 }
 
-internal
-fun action316
+internal fun action316
 (
     text: String,
     sym0: Triple<Int, Lifetime, Int>,
@@ -11445,8 +11204,7 @@ internal fun action317(
     return out
 }
 
-internal
-fun action318
+internal fun action318
 (
     text: String,
     sym0: Triple<Int, WhereClause<TypeRef>, Int>,
@@ -11466,8 +11224,7 @@ internal fun action319(
     return out
 }
 
-internal
-fun action320
+internal fun action320
 (
     text: String,
     sym0: Triple<Int, TypeParameter, Int>,
@@ -11487,8 +11244,7 @@ internal fun action321(
     return out
 }
 
-internal
-fun action322
+internal fun action322
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11511,8 +11267,7 @@ fun action322
     )
 }
 
-internal
-fun action323
+internal fun action323
 (
     text: String,
     sym0: Triple<Int, List<Atom>, Int>,
@@ -11535,8 +11290,7 @@ fun action323
     )
 }
 
-internal
-fun action324
+internal fun action324
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11561,8 +11315,7 @@ fun action324
     )
 }
 
-internal
-fun action325
+internal fun action325
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11587,8 +11340,7 @@ fun action325
     )
 }
 
-internal
-fun action326
+internal fun action326
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
@@ -11623,8 +11375,7 @@ fun action326
     )
 }
 
-internal
-fun action327
+internal fun action327
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
@@ -11659,8 +11410,7 @@ fun action327
     )
 }
 
-internal
-fun action328
+internal fun action328
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11681,8 +11431,7 @@ fun action328
     )
 }
 
-internal
-fun action329
+internal fun action329
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -11703,8 +11452,7 @@ fun action329
     )
 }
 
-internal
-fun action330
+internal fun action330
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11729,8 +11477,7 @@ fun action330
     )
 }
 
-internal
-fun action331
+internal fun action331
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11755,8 +11502,7 @@ fun action331
     )
 }
 
-internal
-fun action332
+internal fun action332
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11777,8 +11523,7 @@ fun action332
     )
 }
 
-internal
-fun action333
+internal fun action333
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -11809,8 +11554,7 @@ fun action333
     )
 }
 
-internal
-fun action334
+internal fun action334
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -11839,8 +11583,7 @@ fun action334
     )
 }
 
-internal
-fun action335
+internal fun action335
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11873,8 +11616,7 @@ fun action335
     )
 }
 
-internal
-fun action336
+internal fun action336
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11905,8 +11647,7 @@ fun action336
     )
 }
 
-internal
-fun action337
+internal fun action337
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -11927,8 +11668,7 @@ fun action337
     )
 }
 
-internal
-fun action338
+internal fun action338
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -11963,8 +11703,7 @@ fun action338
     )
 }
 
-internal
-fun action339
+internal fun action339
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -11997,8 +11736,7 @@ fun action339
     )
 }
 
-internal
-fun action340
+internal fun action340
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -12021,8 +11759,7 @@ fun action340
     )
 }
 
-internal
-fun action341
+internal fun action341
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -12049,8 +11786,7 @@ fun action341
     )
 }
 
-internal
-fun action342
+internal fun action342
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -12073,8 +11809,7 @@ fun action342
     )
 }
 
-internal
-fun action343
+internal fun action343
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -12095,8 +11830,7 @@ fun action343
     )
 }
 
-internal
-fun action344
+internal fun action344
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -12127,8 +11861,7 @@ fun action344
     )
 }
 
-internal
-fun action345
+internal fun action345
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -12157,8 +11890,7 @@ fun action345
     )
 }
 
-internal
-fun action346
+internal fun action346
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
@@ -12185,8 +11917,7 @@ fun action346
     )
 }
 
-internal
-fun action347
+internal fun action347
 (
     text: String,
     sym0: Triple<Int, Int, Int>,
@@ -12261,8 +11992,7 @@ internal fun action349(
     )
 }
 
-internal
-fun action350
+internal fun action350
 (
     text: String,
     sym0: Triple<Int, Alternative, Int>,
@@ -12283,8 +12013,7 @@ fun action350
     )
 }
 
-internal
-fun action351
+internal fun action351
 (
     text: String,
     sym0: Triple<Int, List<Alternative>, Int>,
@@ -12307,8 +12036,7 @@ fun action351
     )
 }
 
-internal
-fun action352
+internal fun action352
 (
     text: String,
     sym0: Triple<Int, Alternative?, Int>,
@@ -12329,8 +12057,7 @@ fun action352
     )
 }
 
-internal
-fun action353
+internal fun action353
 (
     text: String,
     sym0: Triple<Int, List<Alternative>, Int>,
@@ -12351,8 +12078,7 @@ fun action353
     )
 }
 
-internal
-fun action354
+internal fun action354
 (
     text: String,
     sym0: Triple<Int, Attribute, Int>,
@@ -12373,8 +12099,7 @@ fun action354
     )
 }
 
-internal
-fun action355
+internal fun action355
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -12397,8 +12122,7 @@ fun action355
     )
 }
 
-internal
-fun action356
+internal fun action356
 (
     text: String,
     sym0: Triple<Int, Attribute?, Int>,
@@ -12419,8 +12143,7 @@ fun action356
     )
 }
 
-internal
-fun action357
+internal fun action357
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -12441,8 +12164,7 @@ fun action357
     )
 }
 
-internal
-fun action358
+internal fun action358
 (
     text: String,
     sym0: Triple<Int, Conversion, Int>,
@@ -12463,8 +12185,7 @@ fun action358
     )
 }
 
-internal
-fun action359
+internal fun action359
 (
     text: String,
     sym0: Triple<Int, List<Conversion>, Int>,
@@ -12487,8 +12208,7 @@ fun action359
     )
 }
 
-internal
-fun action360
+internal fun action360
 (
     text: String,
     sym0: Triple<Int, Conversion?, Int>,
@@ -12509,8 +12229,7 @@ fun action360
     )
 }
 
-internal
-fun action361
+internal fun action361
 (
     text: String,
     sym0: Triple<Int, List<Conversion>, Int>,
@@ -12531,8 +12250,7 @@ fun action361
     )
 }
 
-internal
-fun action362
+internal fun action362
 (
     text: String,
     sym0: Triple<Int, FieldPattern<TypeRef>, Int>,
@@ -12553,8 +12271,7 @@ fun action362
     )
 }
 
-internal
-fun action363
+internal fun action363
 (
     text: String,
     sym0: Triple<Int, List<FieldPattern<TypeRef>>, Int>,
@@ -12577,8 +12294,7 @@ fun action363
     )
 }
 
-internal
-fun action364
+internal fun action364
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -12605,8 +12321,7 @@ fun action364
     )
 }
 
-internal
-fun action365
+internal fun action365
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -12633,8 +12348,7 @@ fun action365
     )
 }
 
-internal
-fun action366
+internal fun action366
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -12661,8 +12375,7 @@ fun action366
     )
 }
 
-internal
-fun action367
+internal fun action367
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -12689,8 +12402,7 @@ fun action367
     )
 }
 
-internal
-fun action368
+internal fun action368
 (
     text: String,
     sym0: Triple<Int, Parameter, Int>,
@@ -12711,8 +12423,7 @@ fun action368
     )
 }
 
-internal
-fun action369
+internal fun action369
 (
     text: String,
     sym0: Triple<Int, List<Parameter>, Int>,
@@ -12735,8 +12446,7 @@ fun action369
     )
 }
 
-internal
-fun action370
+internal fun action370
 (
     text: String,
     sym0: Triple<Int, Parameter?, Int>,
@@ -12757,8 +12467,7 @@ fun action370
     )
 }
 
-internal
-fun action371
+internal fun action371
 (
     text: String,
     sym0: Triple<Int, List<Parameter>, Int>,
@@ -12779,8 +12488,7 @@ fun action371
     )
 }
 
-internal
-fun action372
+internal fun action372
 (
     text: String,
     sym0: Triple<Int, WhereClause<TypeRef>, Int>,
@@ -12801,8 +12509,7 @@ fun action372
     )
 }
 
-internal
-fun action373
+internal fun action373
 (
     text: String,
     sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
@@ -12825,8 +12532,7 @@ fun action373
     )
 }
 
-internal
-fun action374
+internal fun action374
 (
     text: String,
     sym0: Triple<Int, WhereClause<TypeRef>?, Int>,
@@ -12847,8 +12553,7 @@ fun action374
     )
 }
 
-internal
-fun action375
+internal fun action375
 (
     text: String,
     sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
@@ -12869,8 +12574,7 @@ fun action375
     )
 }
 
-internal
-fun action376
+internal fun action376
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -12891,8 +12595,7 @@ fun action376
     )
 }
 
-internal
-fun action377
+internal fun action377
 (
     text: String,
     sym0: Triple<Int, List<Atom>, Int>,
@@ -12915,8 +12618,7 @@ fun action377
     )
 }
 
-internal
-fun action378
+internal fun action378
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -12939,8 +12641,7 @@ fun action378
     )
 }
 
-internal
-fun action379
+internal fun action379
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -12963,8 +12664,7 @@ fun action379
     )
 }
 
-internal
-fun action380
+internal fun action380
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -12985,8 +12685,7 @@ fun action380
     )
 }
 
-internal
-fun action381
+internal fun action381
 (
     text: String,
     sym0: Triple<Int, List<Atom>, Int>,
@@ -13007,8 +12706,7 @@ fun action381
     )
 }
 
-internal
-fun action382
+internal fun action382
 (
     text: String,
     sym0: Triple<Int, Lifetime, Int>,
@@ -13029,8 +12727,7 @@ fun action382
     )
 }
 
-internal
-fun action383
+internal fun action383
 (
     text: String,
     sym0: Triple<Int, List<Lifetime>, Int>,
@@ -13053,8 +12750,7 @@ fun action383
     )
 }
 
-internal
-fun action384
+internal fun action384
 (
     text: String,
     sym0: Triple<Int, Lifetime?, Int>,
@@ -13075,8 +12771,7 @@ fun action384
     )
 }
 
-internal
-fun action385
+internal fun action385
 (
     text: String,
     sym0: Triple<Int, List<Lifetime>, Int>,
@@ -13097,8 +12792,7 @@ fun action385
     )
 }
 
-internal
-fun action386
+internal fun action386
 (
     text: String,
     sym0: Triple<Int, MatchItem, Int>,
@@ -13119,8 +12813,7 @@ fun action386
     )
 }
 
-internal
-fun action387
+internal fun action387
 (
     text: String,
     sym0: Triple<Int, List<MatchItem>, Int>,
@@ -13143,8 +12836,7 @@ fun action387
     )
 }
 
-internal
-fun action388
+internal fun action388
 (
     text: String,
     sym0: Triple<Int, MatchItem?, Int>,
@@ -13165,8 +12857,7 @@ fun action388
     )
 }
 
-internal
-fun action389
+internal fun action389
 (
     text: String,
     sym0: Triple<Int, List<MatchItem>, Int>,
@@ -13187,8 +12878,7 @@ fun action389
     )
 }
 
-internal
-fun action390
+internal fun action390
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -13209,8 +12899,7 @@ fun action390
     )
 }
 
-internal
-fun action391
+internal fun action391
 (
     text: String,
     sym0: Triple<Int, List<NonterminalString>, Int>,
@@ -13233,8 +12922,7 @@ fun action391
     )
 }
 
-internal
-fun action392
+internal fun action392
 (
     text: String,
     sym0: Triple<Int, NonterminalString?, Int>,
@@ -13255,8 +12943,7 @@ fun action392
     )
 }
 
-internal
-fun action393
+internal fun action393
 (
     text: String,
     sym0: Triple<Int, List<NonterminalString>, Int>,
@@ -13277,8 +12964,7 @@ fun action393
     )
 }
 
-internal
-fun action394
+internal fun action394
 (
     text: String,
     sym0: Triple<Int, Pattern<TypeRef>, Int>,
@@ -13299,8 +12985,7 @@ fun action394
     )
 }
 
-internal
-fun action395
+internal fun action395
 (
     text: String,
     sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
@@ -13323,8 +13008,7 @@ fun action395
     )
 }
 
-internal
-fun action396
+internal fun action396
 (
     text: String,
     sym0: Triple<Int, Pattern<TypeRef>?, Int>,
@@ -13345,8 +13029,7 @@ fun action396
     )
 }
 
-internal
-fun action397
+internal fun action397
 (
     text: String,
     sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
@@ -13367,8 +13050,7 @@ fun action397
     )
 }
 
-internal
-fun action398
+internal fun action398
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -13389,8 +13071,7 @@ fun action398
     )
 }
 
-internal
-fun action399
+internal fun action399
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -13413,8 +13094,7 @@ fun action399
     )
 }
 
-internal
-fun action400
+internal fun action400
 (
     text: String,
     sym0: Triple<Int, PtSymbol?, Int>,
@@ -13435,8 +13115,7 @@ fun action400
     )
 }
 
-internal
-fun action401
+internal fun action401
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -13457,8 +13136,7 @@ fun action401
     )
 }
 
-internal
-fun action402
+internal fun action402
 (
     text: String,
     sym0: Triple<Int, ArgPattern, Int>,
@@ -13479,8 +13157,7 @@ fun action402
     )
 }
 
-internal
-fun action403
+internal fun action403
 (
     text: String,
     sym0: Triple<Int, List<ArgPattern>, Int>,
@@ -13503,8 +13180,7 @@ fun action403
     )
 }
 
-internal
-fun action404
+internal fun action404
 (
     text: String,
     sym0: Triple<Int, TypeBound<TypeRef>, Int>,
@@ -13525,8 +13201,7 @@ fun action404
     )
 }
 
-internal
-fun action405
+internal fun action405
 (
     text: String,
     sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
@@ -13549,8 +13224,7 @@ fun action405
     )
 }
 
-internal
-fun action406
+internal fun action406
 (
     text: String,
     sym0: Triple<Int, TypeBound<TypeRef>?, Int>,
@@ -13571,8 +13245,7 @@ fun action406
     )
 }
 
-internal
-fun action407
+internal fun action407
 (
     text: String,
     sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
@@ -13593,8 +13266,7 @@ fun action407
     )
 }
 
-internal
-fun action408
+internal fun action408
 (
     text: String,
     sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
@@ -13615,8 +13287,7 @@ fun action408
     )
 }
 
-internal
-fun action409
+internal fun action409
 (
     text: String,
     sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
@@ -13639,8 +13310,7 @@ fun action409
     )
 }
 
-internal
-fun action410
+internal fun action410
 (
     text: String,
     sym0: Triple<Int, TypeBoundParameter<TypeRef>?, Int>,
@@ -13661,8 +13331,7 @@ fun action410
     )
 }
 
-internal
-fun action411
+internal fun action411
 (
     text: String,
     sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
@@ -13683,8 +13352,7 @@ fun action411
     )
 }
 
-internal
-fun action412
+internal fun action412
 (
     text: String,
     sym0: Triple<Int, TypeParameter, Int>,
@@ -13705,8 +13373,7 @@ fun action412
     )
 }
 
-internal
-fun action413
+internal fun action413
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -13729,8 +13396,7 @@ fun action413
     )
 }
 
-internal
-fun action414
+internal fun action414
 (
     text: String,
     sym0: Triple<Int, TypeParameter?, Int>,
@@ -13751,8 +13417,7 @@ fun action414
     )
 }
 
-internal
-fun action415
+internal fun action415
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -13773,8 +13438,7 @@ fun action415
     )
 }
 
-internal
-fun action416
+internal fun action416
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -13795,8 +13459,7 @@ fun action416
     )
 }
 
-internal
-fun action417
+internal fun action417
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -13819,8 +13482,7 @@ fun action417
     )
 }
 
-internal
-fun action418
+internal fun action418
 (
     text: String,
     sym0: Triple<Int, TypeRef?, Int>,
@@ -13841,8 +13503,7 @@ fun action418
     )
 }
 
-internal
-fun action419
+internal fun action419
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -13863,8 +13524,7 @@ fun action419
     )
 }
 
-internal
-fun action420
+internal fun action420
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -13885,8 +13545,7 @@ fun action420
     )
 }
 
-internal
-fun action421
+internal fun action421
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -13909,8 +13568,7 @@ fun action421
     )
 }
 
-internal
-fun action422
+internal fun action422
 (
     text: String,
     sym0: Triple<Int, TypeRef?, Int>,
@@ -13931,8 +13589,7 @@ fun action422
     )
 }
 
-internal
-fun action423
+internal fun action423
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -13953,8 +13610,7 @@ fun action423
     )
 }
 
-internal
-fun action424
+internal fun action424
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -13985,8 +13641,7 @@ fun action424
     )
 }
 
-internal
-fun action425
+internal fun action425
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -14013,8 +13668,7 @@ fun action425
     )
 }
 
-internal
-fun action426
+internal fun action426
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14041,8 +13695,7 @@ fun action426
     )
 }
 
-internal
-fun action427
+internal fun action427
 (
     text: String,
     sym0: Triple<Int, ActionKind, Int>,
@@ -14065,8 +13718,7 @@ fun action427
     )
 }
 
-internal
-fun action428
+internal fun action428
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14097,8 +13749,7 @@ fun action428
     )
 }
 
-internal
-fun action429
+internal fun action429
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -14123,8 +13774,7 @@ fun action429
     )
 }
 
-internal
-fun action430
+internal fun action430
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -14154,8 +13804,7 @@ fun action430
 // `___action431` is defined below alongside the other fallible forwarders —
 // see the `Result`-returning section at the end of the file.
 
-internal
-fun action432
+internal fun action432
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14186,8 +13835,7 @@ fun action432
     )
 }
 
-internal
-fun action433
+internal fun action433
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14220,8 +13868,7 @@ fun action433
     )
 }
 
-internal
-fun action434
+internal fun action434
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14250,8 +13897,7 @@ fun action434
     )
 }
 
-internal
-fun action435
+internal fun action435
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -14278,8 +13924,7 @@ fun action435
     )
 }
 
-internal
-fun action436
+internal fun action436
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -14318,8 +13963,7 @@ fun action436
     )
 }
 
-internal
-fun action437
+internal fun action437
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14342,8 +13986,7 @@ fun action437
     )
 }
 
-internal
-fun action438
+internal fun action438
 (
     text: String,
     sym0: Triple<Int, TerminalLiteral, Int>,
@@ -14368,8 +14011,7 @@ fun action438
 
 // `___action439` is defined below alongside the other fallible forwarders.
 
-internal
-fun action440
+internal fun action440
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14398,8 +14040,7 @@ fun action440
     )
 }
 
-internal
-fun action441
+internal fun action441
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -14434,8 +14075,7 @@ fun action441
     )
 }
 
-internal
-fun action442
+internal fun action442
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -14466,8 +14106,7 @@ fun action442
     )
 }
 
-internal
-fun action443
+internal fun action443
 (
     text: String,
     sym0: Triple<Int, PatternKind<TypeRef>, Int>,
@@ -14493,8 +14132,7 @@ fun action443
 // `___action444` and `___action445` are defined below alongside the other
 // fallible forwarders.
 
-internal
-fun action446
+internal fun action446
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14536,8 +14174,7 @@ fun action446
     )
 }
 
-internal
-fun action447
+internal fun action447
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14577,8 +14214,7 @@ fun action447
     )
 }
 
-internal
-fun action448
+internal fun action448
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14605,8 +14241,7 @@ fun action448
     )
 }
 
-internal
-fun action449
+internal fun action449
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14637,8 +14272,7 @@ fun action449
     )
 }
 
-internal
-fun action450
+internal fun action450
 (
     text: String,
     sym0: Triple<Int, SymbolKind, Int>,
@@ -14661,8 +14295,7 @@ fun action450
     )
 }
 
-internal
-fun action451
+internal fun action451
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14691,8 +14324,7 @@ fun action451
     )
 }
 
-internal
-fun action452
+internal fun action452
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -14721,8 +14353,7 @@ fun action452
     )
 }
 
-internal
-fun action453
+internal fun action453
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -14747,8 +14378,7 @@ fun action453
     )
 }
 
-internal
-fun action454
+internal fun action454
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14773,8 +14403,7 @@ fun action454
     )
 }
 
-internal
-fun action455
+internal fun action455
 (
     text: String,
     sym0: Triple<Int, ActionKind, Int>,
@@ -14795,8 +14424,7 @@ fun action455
     )
 }
 
-internal
-fun action456
+internal fun action456
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14825,8 +14453,7 @@ fun action456
     )
 }
 
-internal
-fun action457
+internal fun action457
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -14849,8 +14476,7 @@ fun action457
     )
 }
 
-internal
-fun action458
+internal fun action458
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -14877,8 +14503,7 @@ fun action458
 
 // `___action459` is defined below alongside the other fallible forwarders.
 
-internal
-fun action460
+internal fun action460
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14907,8 +14532,7 @@ fun action460
     )
 }
 
-internal
-fun action461
+internal fun action461
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14939,8 +14563,7 @@ fun action461
     )
 }
 
-internal
-fun action462
+internal fun action462
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -14967,8 +14590,7 @@ fun action462
     )
 }
 
-internal
-fun action463
+internal fun action463
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -14993,8 +14615,7 @@ fun action463
     )
 }
 
-internal
-fun action464
+internal fun action464
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -15031,8 +14652,7 @@ fun action464
     )
 }
 
-internal
-fun action465
+internal fun action465
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15053,8 +14673,7 @@ fun action465
     )
 }
 
-internal
-fun action466
+internal fun action466
 (
     text: String,
     sym0: Triple<Int, TerminalLiteral, Int>,
@@ -15077,8 +14696,7 @@ fun action466
 
 // `___action467` is defined below alongside the other fallible forwarders.
 
-internal
-fun action468
+internal fun action468
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15105,8 +14723,7 @@ fun action468
     )
 }
 
-internal
-fun action469
+internal fun action469
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15139,8 +14756,7 @@ fun action469
     )
 }
 
-internal
-fun action470
+internal fun action470
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15169,8 +14785,7 @@ fun action470
     )
 }
 
-internal
-fun action471
+internal fun action471
 (
     text: String,
     sym0: Triple<Int, PatternKind<TypeRef>, Int>,
@@ -15191,8 +14806,7 @@ fun action471
     )
 }
 
-internal
-fun action472
+internal fun action472
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15223,8 +14837,7 @@ fun action472
     )
 }
 
-internal
-fun action473
+internal fun action473
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15253,8 +14866,7 @@ fun action473
     )
 }
 
-internal
-fun action474
+internal fun action474
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15279,8 +14891,7 @@ fun action474
     )
 }
 
-internal
-fun action475
+internal fun action475
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15309,8 +14920,7 @@ fun action475
     )
 }
 
-internal
-fun action476
+internal fun action476
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -15333,8 +14943,7 @@ fun action476
     )
 }
 
-internal
-fun action477
+internal fun action477
 (
     text: String,
     sym0: Triple<Int, SymbolKind, Int>,
@@ -15355,8 +14964,7 @@ fun action477
     )
 }
 
-internal
-fun action478
+internal fun action478
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15383,8 +14991,7 @@ fun action478
     )
 }
 
-internal
-fun action479
+internal fun action479
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15411,8 +15018,7 @@ fun action479
     )
 }
 
-internal
-fun action480
+internal fun action480
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15439,8 +15045,7 @@ fun action480
     )
 }
 
-internal
-fun action481
+internal fun action481
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15463,8 +15068,7 @@ fun action481
     )
 }
 
-internal
-fun action482
+internal fun action482
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15487,8 +15091,7 @@ fun action482
     )
 }
 
-internal
-fun action483
+internal fun action483
 (
     text: String,
     sym0: Triple<Int, Alternative, Int>,
@@ -15507,8 +15110,7 @@ fun action483
     )
 }
 
-internal
-fun action484
+internal fun action484
 (
     text: String,
     lookbehind: Int,
@@ -15529,8 +15131,7 @@ fun action484
     )
 }
 
-internal
-fun action485
+internal fun action485
 (
     text: String,
     sym0: Triple<Int, List<Alternative>, Int>,
@@ -15551,8 +15152,7 @@ fun action485
     )
 }
 
-internal
-fun action486
+internal fun action486
 (
     text: String,
     sym0: Triple<Int, List<Alternative>, Int>,
@@ -15573,8 +15173,7 @@ fun action486
     )
 }
 
-internal
-fun action487
+internal fun action487
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15610,8 +15209,7 @@ fun action487
     )
 }
 
-internal
-fun action488
+internal fun action488
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15647,8 +15245,7 @@ fun action488
     )
 }
 
-internal
-fun action489
+internal fun action489
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15684,8 +15281,7 @@ fun action489
     )
 }
 
-internal
-fun action490
+internal fun action490
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15721,8 +15317,7 @@ fun action490
     )
 }
 
-internal
-fun action491
+internal fun action491
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15747,8 +15342,7 @@ fun action491
     )
 }
 
-internal
-fun action492
+internal fun action492
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -15773,8 +15367,7 @@ fun action492
     )
 }
 
-internal
-fun action493
+internal fun action493
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -15801,8 +15394,7 @@ fun action493
     )
 }
 
-internal
-fun action494
+internal fun action494
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15829,8 +15421,7 @@ fun action494
     )
 }
 
-internal
-fun action495
+internal fun action495
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -15855,8 +15446,7 @@ fun action495
     )
 }
 
-internal
-fun action496
+internal fun action496
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15881,8 +15471,7 @@ fun action496
     )
 }
 
-internal
-fun action497
+internal fun action497
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -15905,8 +15494,7 @@ fun action497
     )
 }
 
-internal
-fun action498
+internal fun action498
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15929,8 +15517,7 @@ fun action498
     )
 }
 
-internal
-fun action499
+internal fun action499
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -15951,8 +15538,7 @@ fun action499
     )
 }
 
-internal
-fun action500
+internal fun action500
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -15976,8 +15562,7 @@ fun action500
 // `___action501` and `___action502` are defined below alongside the other
 // fallible forwarders.
 
-internal
-fun action503
+internal fun action503
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -16012,8 +15597,7 @@ fun action503
     )
 }
 
-internal
-fun action504
+internal fun action504
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -16048,8 +15632,7 @@ fun action504
     )
 }
 
-internal
-fun action505
+internal fun action505
 (
     text: String,
     sym0: Triple<Int, Visibility, Int>,
@@ -16080,8 +15663,7 @@ fun action505
     )
 }
 
-internal
-fun action506
+internal fun action506
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -16112,8 +15694,7 @@ fun action506
     )
 }
 
-internal
-fun action507
+internal fun action507
 (
     text: String,
     sym0: Triple<Int, Visibility, Int>,
@@ -16140,8 +15721,7 @@ fun action507
     )
 }
 
-internal
-fun action508
+internal fun action508
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -16168,8 +15748,7 @@ fun action508
     )
 }
 
-internal
-fun action509
+internal fun action509
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -16190,8 +15769,7 @@ fun action509
     )
 }
 
-internal
-fun action510
+internal fun action510
 (
     text: String,
     sym0: Triple<Int, Atom, Int>,
@@ -16212,8 +15790,7 @@ fun action510
     )
 }
 
-internal
-fun action511
+internal fun action511
 (
     text: String,
     sym0: Triple<Int, Attribute, Int>,
@@ -16232,8 +15809,7 @@ fun action511
     )
 }
 
-internal
-fun action512
+internal fun action512
 (
     text: String,
     lookbehind: Int,
@@ -16254,8 +15830,7 @@ fun action512
     )
 }
 
-internal
-fun action513
+internal fun action513
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -16276,8 +15851,7 @@ fun action513
     )
 }
 
-internal
-fun action514
+internal fun action514
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -16298,8 +15872,7 @@ fun action514
     )
 }
 
-internal
-fun action515
+internal fun action515
 (
     text: String,
     sym0: Triple<Int, Conversion, Int>,
@@ -16318,8 +15891,7 @@ fun action515
     )
 }
 
-internal
-fun action516
+internal fun action516
 (
     text: String,
     lookbehind: Int,
@@ -16340,8 +15912,7 @@ fun action516
     )
 }
 
-internal
-fun action517
+internal fun action517
 (
     text: String,
     sym0: Triple<Int, List<Conversion>, Int>,
@@ -16362,8 +15933,7 @@ fun action517
     )
 }
 
-internal
-fun action518
+internal fun action518
 (
     text: String,
     sym0: Triple<Int, List<Conversion>, Int>,
@@ -16384,8 +15954,7 @@ fun action518
     )
 }
 
-internal
-fun action519
+internal fun action519
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16410,8 +15979,7 @@ fun action519
     )
 }
 
-internal
-fun action520
+internal fun action520
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16436,8 +16004,7 @@ fun action520
     )
 }
 
-internal
-fun action521
+internal fun action521
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16464,8 +16031,7 @@ fun action521
     )
 }
 
-internal
-fun action522
+internal fun action522
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16492,8 +16058,7 @@ fun action522
     )
 }
 
-internal
-fun action523
+internal fun action523
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16524,8 +16089,7 @@ fun action523
     )
 }
 
-internal
-fun action524
+internal fun action524
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -16550,8 +16114,7 @@ fun action524
     )
 }
 
-internal
-fun action525
+internal fun action525
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16588,8 +16151,7 @@ fun action525
     )
 }
 
-internal
-fun action526
+internal fun action526
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16620,8 +16182,7 @@ fun action526
     )
 }
 
-internal
-fun action527
+internal fun action527
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16654,8 +16215,7 @@ fun action527
     )
 }
 
-internal
-fun action528
+internal fun action528
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16682,8 +16242,7 @@ fun action528
     )
 }
 
-internal
-fun action529
+internal fun action529
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16716,8 +16275,7 @@ fun action529
     )
 }
 
-internal
-fun action530
+internal fun action530
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16744,8 +16302,7 @@ fun action530
     )
 }
 
-internal
-fun action531
+internal fun action531
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16772,8 +16329,7 @@ fun action531
     )
 }
 
-internal
-fun action532
+internal fun action532
 (
     text: String,
     sym0: Triple<Int, Path, Int>,
@@ -16794,8 +16350,7 @@ fun action532
     )
 }
 
-internal
-fun action533
+internal fun action533
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16834,8 +16389,7 @@ fun action533
     )
 }
 
-internal
-fun action534
+internal fun action534
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16868,8 +16422,7 @@ fun action534
     )
 }
 
-internal
-fun action535
+internal fun action535
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16904,8 +16457,7 @@ fun action535
     )
 }
 
-internal
-fun action536
+internal fun action536
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -16934,8 +16486,7 @@ fun action536
     )
 }
 
-internal
-fun action537
+internal fun action537
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -16968,8 +16519,7 @@ fun action537
     )
 }
 
-internal
-fun action538
+internal fun action538
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17002,8 +16552,7 @@ fun action538
     )
 }
 
-internal
-fun action539
+internal fun action539
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17038,8 +16587,7 @@ fun action539
     )
 }
 
-internal
-fun action540
+internal fun action540
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17074,8 +16622,7 @@ fun action540
     )
 }
 
-internal
-fun action541
+internal fun action541
 (
     text: String,
     sym0: Triple<Int, Parameter, Int>,
@@ -17094,8 +16641,7 @@ fun action541
     )
 }
 
-internal
-fun action542
+internal fun action542
 (
     text: String,
     lookbehind: Int,
@@ -17116,8 +16662,7 @@ fun action542
     )
 }
 
-internal
-fun action543
+internal fun action543
 (
     text: String,
     sym0: Triple<Int, List<Parameter>, Int>,
@@ -17138,8 +16683,7 @@ fun action543
     )
 }
 
-internal
-fun action544
+internal fun action544
 (
     text: String,
     sym0: Triple<Int, List<Parameter>, Int>,
@@ -17160,8 +16704,7 @@ fun action544
     )
 }
 
-internal
-fun action545
+internal fun action545
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17192,8 +16735,7 @@ fun action545
     )
 }
 
-internal
-fun action546
+internal fun action546
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17224,8 +16766,7 @@ fun action546
     )
 }
 
-internal
-fun action547
+internal fun action547
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17258,8 +16799,7 @@ fun action547
     )
 }
 
-internal
-fun action548
+internal fun action548
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17292,8 +16832,7 @@ fun action548
     )
 }
 
-internal
-fun action549
+internal fun action549
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17326,8 +16865,7 @@ fun action549
     )
 }
 
-internal
-fun action550
+internal fun action550
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17360,8 +16898,7 @@ fun action550
     )
 }
 
-internal
-fun action551
+internal fun action551
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17396,8 +16933,7 @@ fun action551
     )
 }
 
-internal
-fun action552
+internal fun action552
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17432,8 +16968,7 @@ fun action552
     )
 }
 
-internal
-fun action553
+internal fun action553
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17464,8 +16999,7 @@ fun action553
     )
 }
 
-internal
-fun action554
+internal fun action554
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17496,8 +17030,7 @@ fun action554
     )
 }
 
-internal
-fun action555
+internal fun action555
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17526,8 +17059,7 @@ fun action555
     )
 }
 
-internal
-fun action556
+internal fun action556
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17556,8 +17088,7 @@ fun action556
     )
 }
 
-internal
-fun action557
+internal fun action557
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17590,8 +17121,7 @@ fun action557
     )
 }
 
-internal
-fun action558
+internal fun action558
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17624,8 +17154,7 @@ fun action558
     )
 }
 
-internal
-fun action559
+internal fun action559
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17656,8 +17185,7 @@ fun action559
     )
 }
 
-internal
-fun action560
+internal fun action560
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17688,8 +17216,7 @@ fun action560
     )
 }
 
-internal
-fun action561
+internal fun action561
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17722,8 +17249,7 @@ fun action561
     )
 }
 
-internal
-fun action562
+internal fun action562
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17756,8 +17282,7 @@ fun action562
     )
 }
 
-internal
-fun action563
+internal fun action563
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17788,8 +17313,7 @@ fun action563
     )
 }
 
-internal
-fun action564
+internal fun action564
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17820,8 +17344,7 @@ fun action564
     )
 }
 
-internal
-fun action565
+internal fun action565
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17856,8 +17379,7 @@ fun action565
     )
 }
 
-internal
-fun action566
+internal fun action566
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17892,8 +17414,7 @@ fun action566
     )
 }
 
-internal
-fun action567
+internal fun action567
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17926,8 +17447,7 @@ fun action567
     )
 }
 
-internal
-fun action568
+internal fun action568
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -17960,8 +17480,7 @@ fun action568
     )
 }
 
-internal
-fun action569
+internal fun action569
 (
     text: String,
     sym0: Triple<Int, WhereClause<TypeRef>, Int>,
@@ -17980,8 +17499,7 @@ fun action569
     )
 }
 
-internal
-fun action570
+internal fun action570
 (
     text: String,
     lookbehind: Int,
@@ -18002,8 +17520,7 @@ fun action570
     )
 }
 
-internal
-fun action571
+internal fun action571
 (
     text: String,
     sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
@@ -18024,8 +17541,7 @@ fun action571
     )
 }
 
-internal
-fun action572
+internal fun action572
 (
     text: String,
     sym0: Triple<Int, List<WhereClause<TypeRef>>, Int>,
@@ -18046,8 +17562,7 @@ fun action572
     )
 }
 
-internal
-fun action573
+internal fun action573
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18078,8 +17593,7 @@ fun action573
     )
 }
 
-internal
-fun action574
+internal fun action574
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18110,8 +17624,7 @@ fun action574
     )
 }
 
-internal
-fun action575
+internal fun action575
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18140,8 +17653,7 @@ fun action575
     )
 }
 
-internal
-fun action576
+internal fun action576
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18170,8 +17682,7 @@ fun action576
     )
 }
 
-internal
-fun action577
+internal fun action577
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18200,8 +17711,7 @@ fun action577
     )
 }
 
-internal
-fun action578
+internal fun action578
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18230,8 +17740,7 @@ fun action578
     )
 }
 
-internal
-fun action579
+internal fun action579
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18258,8 +17767,7 @@ fun action579
     )
 }
 
-internal
-fun action580
+internal fun action580
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18286,8 +17794,7 @@ fun action580
     )
 }
 
-internal
-fun action581
+internal fun action581
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18320,8 +17827,7 @@ fun action581
     )
 }
 
-internal
-fun action582
+internal fun action582
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18354,8 +17860,7 @@ fun action582
     )
 }
 
-internal
-fun action583
+internal fun action583
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18386,8 +17891,7 @@ fun action583
     )
 }
 
-internal
-fun action584
+internal fun action584
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18418,8 +17922,7 @@ fun action584
     )
 }
 
-internal
-fun action585
+internal fun action585
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18450,8 +17953,7 @@ fun action585
     )
 }
 
-internal
-fun action586
+internal fun action586
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18482,8 +17984,7 @@ fun action586
     )
 }
 
-internal
-fun action587
+internal fun action587
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18512,8 +18013,7 @@ fun action587
     )
 }
 
-internal
-fun action588
+internal fun action588
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18542,8 +18042,7 @@ fun action588
     )
 }
 
-internal
-fun action589
+internal fun action589
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18576,8 +18075,7 @@ fun action589
     )
 }
 
-internal
-fun action590
+internal fun action590
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18610,8 +18108,7 @@ fun action590
     )
 }
 
-internal
-fun action591
+internal fun action591
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18642,8 +18139,7 @@ fun action591
     )
 }
 
-internal
-fun action592
+internal fun action592
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18674,8 +18170,7 @@ fun action592
     )
 }
 
-internal
-fun action593
+internal fun action593
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18706,8 +18201,7 @@ fun action593
     )
 }
 
-internal
-fun action594
+internal fun action594
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18738,8 +18232,7 @@ fun action594
     )
 }
 
-internal
-fun action595
+internal fun action595
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18768,8 +18261,7 @@ fun action595
     )
 }
 
-internal
-fun action596
+internal fun action596
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18798,8 +18290,7 @@ fun action596
     )
 }
 
-internal
-fun action597
+internal fun action597
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18834,8 +18325,7 @@ fun action597
     )
 }
 
-internal
-fun action598
+internal fun action598
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18870,8 +18360,7 @@ fun action598
     )
 }
 
-internal
-fun action599
+internal fun action599
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18904,8 +18393,7 @@ fun action599
     )
 }
 
-internal
-fun action600
+internal fun action600
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18938,8 +18426,7 @@ fun action600
     )
 }
 
-internal
-fun action601
+internal fun action601
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -18972,8 +18459,7 @@ fun action601
     )
 }
 
-internal
-fun action602
+internal fun action602
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19006,8 +18492,7 @@ fun action602
     )
 }
 
-internal
-fun action603
+internal fun action603
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19038,8 +18523,7 @@ fun action603
     )
 }
 
-internal
-fun action604
+internal fun action604
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19070,8 +18554,7 @@ fun action604
     )
 }
 
-internal
-fun action605
+internal fun action605
 (
     text: String,
     sym0: Triple<Int, Lifetime, Int>,
@@ -19090,8 +18573,7 @@ fun action605
     )
 }
 
-internal
-fun action606
+internal fun action606
 (
     text: String,
     lookbehind: Int,
@@ -19112,8 +18594,7 @@ fun action606
     )
 }
 
-internal
-fun action607
+internal fun action607
 (
     text: String,
     sym0: Triple<Int, List<Lifetime>, Int>,
@@ -19134,8 +18615,7 @@ fun action607
     )
 }
 
-internal
-fun action608
+internal fun action608
 (
     text: String,
     sym0: Triple<Int, List<Lifetime>, Int>,
@@ -19156,8 +18636,7 @@ fun action608
     )
 }
 
-internal
-fun action609
+internal fun action609
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -19182,8 +18661,7 @@ fun action609
     )
 }
 
-internal
-fun action610
+internal fun action610
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -19208,8 +18686,7 @@ fun action610
     )
 }
 
-internal
-fun action611
+internal fun action611
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -19232,8 +18709,7 @@ fun action611
     )
 }
 
-internal
-fun action612
+internal fun action612
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -19256,8 +18732,7 @@ fun action612
     )
 }
 
-internal
-fun action613
+internal fun action613
 (
     text: String,
     sym0: Triple<Int, MatchItem, Int>,
@@ -19276,8 +18751,7 @@ fun action613
     )
 }
 
-internal
-fun action614
+internal fun action614
 (
     text: String,
     lookbehind: Int,
@@ -19298,8 +18772,7 @@ fun action614
     )
 }
 
-internal
-fun action615
+internal fun action615
 (
     text: String,
     sym0: Triple<Int, List<MatchItem>, Int>,
@@ -19320,8 +18793,7 @@ fun action615
     )
 }
 
-internal
-fun action616
+internal fun action616
 (
     text: String,
     sym0: Triple<Int, List<MatchItem>, Int>,
@@ -19342,8 +18814,7 @@ fun action616
     )
 }
 
-internal
-fun action617
+internal fun action617
 (
     text: String,
     sym0: Triple<Int, NonterminalString, Int>,
@@ -19362,8 +18833,7 @@ fun action617
     )
 }
 
-internal
-fun action618
+internal fun action618
 (
     text: String,
     lookbehind: Int,
@@ -19384,8 +18854,7 @@ fun action618
     )
 }
 
-internal
-fun action619
+internal fun action619
 (
     text: String,
     sym0: Triple<Int, List<NonterminalString>, Int>,
@@ -19406,8 +18875,7 @@ fun action619
     )
 }
 
-internal
-fun action620
+internal fun action620
 (
     text: String,
     sym0: Triple<Int, List<NonterminalString>, Int>,
@@ -19428,8 +18896,7 @@ fun action620
     )
 }
 
-internal
-fun action621
+internal fun action621
 (
     text: String,
     sym0: Triple<Int, Pattern<TypeRef>, Int>,
@@ -19448,8 +18915,7 @@ fun action621
     )
 }
 
-internal
-fun action622
+internal fun action622
 (
     text: String,
     lookbehind: Int,
@@ -19470,8 +18936,7 @@ fun action622
     )
 }
 
-internal
-fun action623
+internal fun action623
 (
     text: String,
     sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
@@ -19492,8 +18957,7 @@ fun action623
     )
 }
 
-internal
-fun action624
+internal fun action624
 (
     text: String,
     sym0: Triple<Int, List<Pattern<TypeRef>>, Int>,
@@ -19514,8 +18978,7 @@ fun action624
     )
 }
 
-internal
-fun action625
+internal fun action625
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19546,8 +19009,7 @@ fun action625
     )
 }
 
-internal
-fun action626
+internal fun action626
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19578,8 +19040,7 @@ fun action626
     )
 }
 
-internal
-fun action627
+internal fun action627
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19608,8 +19069,7 @@ fun action627
     )
 }
 
-internal
-fun action628
+internal fun action628
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19638,8 +19098,7 @@ fun action628
     )
 }
 
-internal
-fun action629
+internal fun action629
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19668,8 +19127,7 @@ fun action629
     )
 }
 
-internal
-fun action630
+internal fun action630
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19698,8 +19156,7 @@ fun action630
     )
 }
 
-internal
-fun action631
+internal fun action631
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19726,8 +19183,7 @@ fun action631
     )
 }
 
-internal
-fun action632
+internal fun action632
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19754,8 +19210,7 @@ fun action632
     )
 }
 
-internal
-fun action633
+internal fun action633
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19784,8 +19239,7 @@ fun action633
     )
 }
 
-internal
-fun action634
+internal fun action634
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19814,8 +19268,7 @@ fun action634
     )
 }
 
-internal
-fun action635
+internal fun action635
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19842,8 +19295,7 @@ fun action635
     )
 }
 
-internal
-fun action636
+internal fun action636
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19870,8 +19322,7 @@ fun action636
     )
 }
 
-internal
-fun action637
+internal fun action637
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19898,8 +19349,7 @@ fun action637
     )
 }
 
-internal
-fun action638
+internal fun action638
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19926,8 +19376,7 @@ fun action638
     )
 }
 
-internal
-fun action639
+internal fun action639
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -19952,8 +19401,7 @@ fun action639
     )
 }
 
-internal
-fun action640
+internal fun action640
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -19978,8 +19426,7 @@ fun action640
     )
 }
 
-internal
-fun action641
+internal fun action641
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20012,8 +19459,7 @@ fun action641
     )
 }
 
-internal
-fun action642
+internal fun action642
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20046,8 +19492,7 @@ fun action642
     )
 }
 
-internal
-fun action643
+internal fun action643
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20078,8 +19523,7 @@ fun action643
     )
 }
 
-internal
-fun action644
+internal fun action644
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20110,8 +19554,7 @@ fun action644
     )
 }
 
-internal
-fun action645
+internal fun action645
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20142,8 +19585,7 @@ fun action645
     )
 }
 
-internal
-fun action646
+internal fun action646
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20174,8 +19616,7 @@ fun action646
     )
 }
 
-internal
-fun action647
+internal fun action647
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20204,8 +19645,7 @@ fun action647
     )
 }
 
-internal
-fun action648
+internal fun action648
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20234,8 +19674,7 @@ fun action648
     )
 }
 
-internal
-fun action649
+internal fun action649
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20266,8 +19705,7 @@ fun action649
     )
 }
 
-internal
-fun action650
+internal fun action650
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20298,8 +19736,7 @@ fun action650
     )
 }
 
-internal
-fun action651
+internal fun action651
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20328,8 +19765,7 @@ fun action651
     )
 }
 
-internal
-fun action652
+internal fun action652
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20358,8 +19794,7 @@ fun action652
     )
 }
 
-internal
-fun action653
+internal fun action653
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20388,8 +19823,7 @@ fun action653
     )
 }
 
-internal
-fun action654
+internal fun action654
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20418,8 +19852,7 @@ fun action654
     )
 }
 
-internal
-fun action655
+internal fun action655
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20446,8 +19879,7 @@ fun action655
     )
 }
 
-internal
-fun action656
+internal fun action656
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20474,8 +19906,7 @@ fun action656
     )
 }
 
-internal
-fun action657
+internal fun action657
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20508,8 +19939,7 @@ fun action657
     )
 }
 
-internal
-fun action658
+internal fun action658
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20542,8 +19972,7 @@ fun action658
     )
 }
 
-internal
-fun action659
+internal fun action659
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20574,8 +20003,7 @@ fun action659
     )
 }
 
-internal
-fun action660
+internal fun action660
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20606,8 +20034,7 @@ fun action660
     )
 }
 
-internal
-fun action661
+internal fun action661
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20638,8 +20065,7 @@ fun action661
     )
 }
 
-internal
-fun action662
+internal fun action662
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20670,8 +20096,7 @@ fun action662
     )
 }
 
-internal
-fun action663
+internal fun action663
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20700,8 +20125,7 @@ fun action663
     )
 }
 
-internal
-fun action664
+internal fun action664
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20730,8 +20154,7 @@ fun action664
     )
 }
 
-internal
-fun action665
+internal fun action665
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20762,8 +20185,7 @@ fun action665
     )
 }
 
-internal
-fun action666
+internal fun action666
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20794,8 +20216,7 @@ fun action666
     )
 }
 
-internal
-fun action667
+internal fun action667
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20824,8 +20245,7 @@ fun action667
     )
 }
 
-internal
-fun action668
+internal fun action668
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20854,8 +20274,7 @@ fun action668
     )
 }
 
-internal
-fun action669
+internal fun action669
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20884,8 +20303,7 @@ fun action669
     )
 }
 
-internal
-fun action670
+internal fun action670
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20914,8 +20332,7 @@ fun action670
     )
 }
 
-internal
-fun action671
+internal fun action671
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -20942,8 +20359,7 @@ fun action671
     )
 }
 
-internal
-fun action672
+internal fun action672
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -20970,8 +20386,7 @@ fun action672
     )
 }
 
-internal
-fun action673
+internal fun action673
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21006,8 +20421,7 @@ fun action673
     )
 }
 
-internal
-fun action674
+internal fun action674
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21042,8 +20456,7 @@ fun action674
     )
 }
 
-internal
-fun action675
+internal fun action675
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21076,8 +20489,7 @@ fun action675
     )
 }
 
-internal
-fun action676
+internal fun action676
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21110,8 +20522,7 @@ fun action676
     )
 }
 
-internal
-fun action677
+internal fun action677
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21144,8 +20555,7 @@ fun action677
     )
 }
 
-internal
-fun action678
+internal fun action678
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21178,8 +20588,7 @@ fun action678
     )
 }
 
-internal
-fun action679
+internal fun action679
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21210,8 +20619,7 @@ fun action679
     )
 }
 
-internal
-fun action680
+internal fun action680
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21242,8 +20650,7 @@ fun action680
     )
 }
 
-internal
-fun action681
+internal fun action681
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21276,8 +20683,7 @@ fun action681
     )
 }
 
-internal
-fun action682
+internal fun action682
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21310,8 +20716,7 @@ fun action682
     )
 }
 
-internal
-fun action683
+internal fun action683
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21342,8 +20747,7 @@ fun action683
     )
 }
 
-internal
-fun action684
+internal fun action684
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21374,8 +20778,7 @@ fun action684
     )
 }
 
-internal
-fun action685
+internal fun action685
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21406,8 +20809,7 @@ fun action685
     )
 }
 
-internal
-fun action686
+internal fun action686
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21438,8 +20840,7 @@ fun action686
     )
 }
 
-internal
-fun action687
+internal fun action687
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -21468,8 +20869,7 @@ fun action687
     )
 }
 
-internal
-fun action688
+internal fun action688
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -21498,8 +20898,7 @@ fun action688
     )
 }
 
-internal
-fun action689
+internal fun action689
 (
     text: String,
     lookbehind: Int,
@@ -21520,8 +20919,7 @@ fun action689
     )
 }
 
-internal
-fun action690
+internal fun action690
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -21540,8 +20938,7 @@ fun action690
     )
 }
 
-internal
-fun action691
+internal fun action691
 (
     text: String,
     sym0: Triple<Int, PtSymbol, Int>,
@@ -21560,8 +20957,7 @@ fun action691
     )
 }
 
-internal
-fun action692
+internal fun action692
 (
     text: String,
     lookbehind: Int,
@@ -21582,8 +20978,7 @@ fun action692
     )
 }
 
-internal
-fun action693
+internal fun action693
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -21604,8 +20999,7 @@ fun action693
     )
 }
 
-internal
-fun action694
+internal fun action694
 (
     text: String,
     sym0: Triple<Int, List<PtSymbol>, Int>,
@@ -21626,8 +21020,7 @@ fun action694
     )
 }
 
-internal
-fun action695
+internal fun action695
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -21652,8 +21045,7 @@ fun action695
     )
 }
 
-internal
-fun action696
+internal fun action696
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -21678,8 +21070,7 @@ fun action696
     )
 }
 
-internal
-fun action697
+internal fun action697
 (
     text: String,
     sym0: Triple<Int, TypeBound<TypeRef>, Int>,
@@ -21698,8 +21089,7 @@ fun action697
     )
 }
 
-internal
-fun action698
+internal fun action698
 (
     text: String,
     lookbehind: Int,
@@ -21720,8 +21110,7 @@ fun action698
     )
 }
 
-internal
-fun action699
+internal fun action699
 (
     text: String,
     sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
@@ -21742,8 +21131,7 @@ fun action699
     )
 }
 
-internal
-fun action700
+internal fun action700
 (
     text: String,
     sym0: Triple<Int, List<TypeBound<TypeRef>>, Int>,
@@ -21764,8 +21152,7 @@ fun action700
     )
 }
 
-internal
-fun action701
+internal fun action701
 (
     text: String,
     sym0: Triple<Int, TypeBoundParameter<TypeRef>, Int>,
@@ -21784,8 +21171,7 @@ fun action701
     )
 }
 
-internal
-fun action702
+internal fun action702
 (
     text: String,
     lookbehind: Int,
@@ -21806,8 +21192,7 @@ fun action702
     )
 }
 
-internal
-fun action703
+internal fun action703
 (
     text: String,
     sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
@@ -21828,8 +21213,7 @@ fun action703
     )
 }
 
-internal
-fun action704
+internal fun action704
 (
     text: String,
     sym0: Triple<Int, List<TypeBoundParameter<TypeRef>>, Int>,
@@ -21850,8 +21234,7 @@ fun action704
     )
 }
 
-internal
-fun action705
+internal fun action705
 (
     text: String,
     sym0: Triple<Int, TypeParameter, Int>,
@@ -21870,8 +21253,7 @@ fun action705
     )
 }
 
-internal
-fun action706
+internal fun action706
 (
     text: String,
     lookbehind: Int,
@@ -21892,8 +21274,7 @@ fun action706
     )
 }
 
-internal
-fun action707
+internal fun action707
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -21914,8 +21295,7 @@ fun action707
     )
 }
 
-internal
-fun action708
+internal fun action708
 (
     text: String,
     sym0: Triple<Int, List<TypeParameter>, Int>,
@@ -21936,8 +21316,7 @@ fun action708
     )
 }
 
-internal
-fun action709
+internal fun action709
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -21956,8 +21335,7 @@ fun action709
     )
 }
 
-internal
-fun action710
+internal fun action710
 (
     text: String,
     lookbehind: Int,
@@ -21978,8 +21356,7 @@ fun action710
     )
 }
 
-internal
-fun action711
+internal fun action711
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -22000,8 +21377,7 @@ fun action711
     )
 }
 
-internal
-fun action712
+internal fun action712
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -22022,8 +21398,7 @@ fun action712
     )
 }
 
-internal
-fun action713
+internal fun action713
 (
     text: String,
     sym0: Triple<Int, TypeRef, Int>,
@@ -22042,8 +21417,7 @@ fun action713
     )
 }
 
-internal
-fun action714
+internal fun action714
 (
     text: String,
     lookbehind: Int,
@@ -22064,8 +21438,7 @@ fun action714
     )
 }
 
-internal
-fun action715
+internal fun action715
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -22086,8 +21459,7 @@ fun action715
     )
 }
 
-internal
-fun action716
+internal fun action716
 (
     text: String,
     sym0: Triple<Int, List<TypeRef>, Int>,
@@ -22108,8 +21480,7 @@ fun action716
     )
 }
 
-internal
-fun action717
+internal fun action717
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22138,8 +21509,7 @@ fun action717
     )
 }
 
-internal
-fun action718
+internal fun action718
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22168,8 +21538,7 @@ fun action718
     )
 }
 
-internal
-fun action719
+internal fun action719
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22200,8 +21569,7 @@ fun action719
     )
 }
 
-internal
-fun action720
+internal fun action720
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22232,8 +21600,7 @@ fun action720
     )
 }
 
-internal
-fun action721
+internal fun action721
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22260,8 +21627,7 @@ fun action721
     )
 }
 
-internal
-fun action722
+internal fun action722
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22288,8 +21654,7 @@ fun action722
     )
 }
 
-internal
-fun action723
+internal fun action723
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22318,8 +21683,7 @@ fun action723
     )
 }
 
-internal
-fun action724
+internal fun action724
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22348,8 +21712,7 @@ fun action724
     )
 }
 
-internal
-fun action725
+internal fun action725
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22376,8 +21739,7 @@ fun action725
     )
 }
 
-internal
-fun action726
+internal fun action726
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22404,8 +21766,7 @@ fun action726
     )
 }
 
-internal
-fun action727
+internal fun action727
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22434,8 +21795,7 @@ fun action727
     )
 }
 
-internal
-fun action728
+internal fun action728
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22464,8 +21824,7 @@ fun action728
     )
 }
 
-internal
-fun action729
+internal fun action729
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22490,8 +21849,7 @@ fun action729
     )
 }
 
-internal
-fun action730
+internal fun action730
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22516,8 +21874,7 @@ fun action730
     )
 }
 
-internal
-fun action731
+internal fun action731
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22544,8 +21901,7 @@ fun action731
     )
 }
 
-internal
-fun action732
+internal fun action732
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22576,8 +21932,7 @@ fun action732
 // {no-attrs, with-attrs} × {empty leading items, identity leading items}
 // product for the no-ExtraToken Grammar rules (targets action633..action656).
 
-internal
-fun action733
+internal fun action733
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22604,8 +21959,7 @@ fun action733
     )
 }
 
-internal
-fun action734
+internal fun action734
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22632,8 +21986,7 @@ fun action734
     )
 }
 
-internal
-fun action735
+internal fun action735
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22662,8 +22015,7 @@ fun action735
     )
 }
 
-internal
-fun action736
+internal fun action736
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22692,8 +22044,7 @@ fun action736
     )
 }
 
-internal
-fun action737
+internal fun action737
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22718,8 +22069,7 @@ fun action737
     )
 }
 
-internal
-fun action738
+internal fun action738
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22744,8 +22094,7 @@ fun action738
     )
 }
 
-internal
-fun action739
+internal fun action739
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22772,8 +22121,7 @@ fun action739
     )
 }
 
-internal
-fun action740
+internal fun action740
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22800,8 +22148,7 @@ fun action740
     )
 }
 
-internal
-fun action741
+internal fun action741
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22826,8 +22173,7 @@ fun action741
     )
 }
 
-internal
-fun action742
+internal fun action742
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22852,8 +22198,7 @@ fun action742
     )
 }
 
-internal
-fun action743
+internal fun action743
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22880,8 +22225,7 @@ fun action743
     )
 }
 
-internal
-fun action744
+internal fun action744
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22908,8 +22252,7 @@ fun action744
     )
 }
 
-internal
-fun action745
+internal fun action745
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -22932,8 +22275,7 @@ fun action745
     )
 }
 
-internal
-fun action746
+internal fun action746
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -22956,8 +22298,7 @@ fun action746
     )
 }
 
-internal
-fun action747
+internal fun action747
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -22982,8 +22323,7 @@ fun action747
     )
 }
 
-internal
-fun action748
+internal fun action748
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23008,8 +22348,7 @@ fun action748
     )
 }
 
-internal
-fun action749
+internal fun action749
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23040,8 +22379,7 @@ fun action749
     )
 }
 
-internal
-fun action750
+internal fun action750
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23072,8 +22410,7 @@ fun action750
     )
 }
 
-internal
-fun action751
+internal fun action751
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23106,8 +22443,7 @@ fun action751
     )
 }
 
-internal
-fun action752
+internal fun action752
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23140,8 +22476,7 @@ fun action752
     )
 }
 
-internal
-fun action753
+internal fun action753
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23170,8 +22505,7 @@ fun action753
     )
 }
 
-internal
-fun action754
+internal fun action754
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23200,8 +22534,7 @@ fun action754
     )
 }
 
-internal
-fun action755
+internal fun action755
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23232,8 +22565,7 @@ fun action755
     )
 }
 
-internal
-fun action756
+internal fun action756
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23264,8 +22596,7 @@ fun action756
     )
 }
 
-internal
-fun action757
+internal fun action757
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23294,8 +22625,7 @@ fun action757
     )
 }
 
-internal
-fun action758
+internal fun action758
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23324,8 +22654,7 @@ fun action758
     )
 }
 
-internal
-fun action759
+internal fun action759
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23356,8 +22685,7 @@ fun action759
     )
 }
 
-internal
-fun action760
+internal fun action760
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23388,8 +22716,7 @@ fun action760
     )
 }
 
-internal
-fun action761
+internal fun action761
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23416,8 +22743,7 @@ fun action761
     )
 }
 
-internal
-fun action762
+internal fun action762
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23444,8 +22770,7 @@ fun action762
     )
 }
 
-internal
-fun action763
+internal fun action763
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23474,8 +22799,7 @@ fun action763
     )
 }
 
-internal
-fun action764
+internal fun action764
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23504,8 +22828,7 @@ fun action764
     )
 }
 
-internal
-fun action765
+internal fun action765
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23534,8 +22857,7 @@ fun action765
     )
 }
 
-internal
-fun action766
+internal fun action766
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23564,8 +22886,7 @@ fun action766
     )
 }
 
-internal
-fun action767
+internal fun action767
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23596,8 +22917,7 @@ fun action767
     )
 }
 
-internal
-fun action768
+internal fun action768
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23628,8 +22948,7 @@ fun action768
     )
 }
 
-internal
-fun action769
+internal fun action769
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23656,8 +22975,7 @@ fun action769
     )
 }
 
-internal
-fun action770
+internal fun action770
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23684,8 +23002,7 @@ fun action770
     )
 }
 
-internal
-fun action771
+internal fun action771
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23714,8 +23031,7 @@ fun action771
     )
 }
 
-internal
-fun action772
+internal fun action772
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23744,8 +23060,7 @@ fun action772
     )
 }
 
-internal
-fun action773
+internal fun action773
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23772,8 +23087,7 @@ fun action773
     )
 }
 
-internal
-fun action774
+internal fun action774
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23800,8 +23114,7 @@ fun action774
     )
 }
 
-internal
-fun action775
+internal fun action775
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23830,8 +23143,7 @@ fun action775
     )
 }
 
-internal
-fun action776
+internal fun action776
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23860,8 +23172,7 @@ fun action776
     )
 }
 
-internal
-fun action777
+internal fun action777
 (
     text: String,
     sym0: Triple<Int, Tok, Int>,
@@ -23886,8 +23197,7 @@ fun action777
     )
 }
 
-internal
-fun action778
+internal fun action778
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -23912,8 +23222,7 @@ fun action778
     )
 }
 
-internal
-fun action779
+internal fun action779
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23940,8 +23249,7 @@ fun action779
     )
 }
 
-internal
-fun action780
+internal fun action780
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -23968,8 +23276,7 @@ fun action780
     )
 }
 
-internal
-fun action781
+internal fun action781
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24000,8 +23307,7 @@ fun action781
     )
 }
 
-internal
-fun action782
+internal fun action782
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24032,8 +23338,7 @@ fun action782
     )
 }
 
-internal
-fun action783
+internal fun action783
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24066,8 +23371,7 @@ fun action783
     )
 }
 
-internal
-fun action784
+internal fun action784
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24100,8 +23404,7 @@ fun action784
     )
 }
 
-internal
-fun action785
+internal fun action785
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24130,8 +23433,7 @@ fun action785
     )
 }
 
-internal
-fun action786
+internal fun action786
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24160,8 +23462,7 @@ fun action786
     )
 }
 
-internal
-fun action787
+internal fun action787
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24192,8 +23493,7 @@ fun action787
     )
 }
 
-internal
-fun action788
+internal fun action788
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24224,8 +23524,7 @@ fun action788
     )
 }
 
-internal
-fun action789
+internal fun action789
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24254,8 +23553,7 @@ fun action789
     )
 }
 
-internal
-fun action790
+internal fun action790
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24284,8 +23582,7 @@ fun action790
     )
 }
 
-internal
-fun action791
+internal fun action791
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24316,8 +23613,7 @@ fun action791
     )
 }
 
-internal
-fun action792
+internal fun action792
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24348,8 +23644,7 @@ fun action792
     )
 }
 
-internal
-fun action793
+internal fun action793
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24376,8 +23671,7 @@ fun action793
     )
 }
 
-internal
-fun action794
+internal fun action794
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24404,8 +23698,7 @@ fun action794
     )
 }
 
-internal
-fun action795
+internal fun action795
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24434,8 +23727,7 @@ fun action795
     )
 }
 
-internal
-fun action796
+internal fun action796
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24464,8 +23756,7 @@ fun action796
     )
 }
 
-internal
-fun action797
+internal fun action797
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24494,8 +23785,7 @@ fun action797
     )
 }
 
-internal
-fun action798
+internal fun action798
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24524,8 +23814,7 @@ fun action798
     )
 }
 
-internal
-fun action799
+internal fun action799
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24556,8 +23845,7 @@ fun action799
     )
 }
 
-internal
-fun action800
+internal fun action800
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24588,8 +23876,7 @@ fun action800
     )
 }
 
-internal
-fun action801
+internal fun action801
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24616,8 +23903,7 @@ fun action801
     )
 }
 
-internal
-fun action802
+internal fun action802
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24644,8 +23930,7 @@ fun action802
     )
 }
 
-internal
-fun action803
+internal fun action803
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24674,8 +23959,7 @@ fun action803
     )
 }
 
-internal
-fun action804
+internal fun action804
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24704,8 +23988,7 @@ fun action804
     )
 }
 
-internal
-fun action805
+internal fun action805
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24732,8 +24015,7 @@ fun action805
     )
 }
 
-internal
-fun action806
+internal fun action806
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24760,8 +24042,7 @@ fun action806
     )
 }
 
-internal
-fun action807
+internal fun action807
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24790,8 +24071,7 @@ fun action807
     )
 }
 
-internal
-fun action808
+internal fun action808
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24820,8 +24100,7 @@ fun action808
     )
 }
 
-internal
-fun action809
+internal fun action809
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24846,8 +24125,7 @@ fun action809
     )
 }
 
-internal
-fun action810
+internal fun action810
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24872,8 +24150,7 @@ fun action810
     )
 }
 
-internal
-fun action811
+internal fun action811
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24900,8 +24177,7 @@ fun action811
     )
 }
 
-internal
-fun action812
+internal fun action812
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -24928,8 +24204,7 @@ fun action812
     )
 }
 
-internal
-fun action813
+internal fun action813
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -24962,8 +24237,7 @@ fun action813
     )
 }
 
-internal
-fun action814
+internal fun action814
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -24996,8 +24270,7 @@ fun action814
     )
 }
 
-internal
-fun action815
+internal fun action815
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25032,8 +24305,7 @@ fun action815
     )
 }
 
-internal
-fun action816
+internal fun action816
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25068,8 +24340,7 @@ fun action816
     )
 }
 
-internal
-fun action817
+internal fun action817
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -25100,8 +24371,7 @@ fun action817
     )
 }
 
-internal
-fun action818
+internal fun action818
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -25132,8 +24402,7 @@ fun action818
     )
 }
 
-internal
-fun action819
+internal fun action819
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25166,8 +24435,7 @@ fun action819
     )
 }
 
-internal
-fun action820
+internal fun action820
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25200,8 +24468,7 @@ fun action820
     )
 }
 
-internal
-fun action821
+internal fun action821
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -25232,8 +24499,7 @@ fun action821
     )
 }
 
-internal
-fun action822
+internal fun action822
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -25264,8 +24530,7 @@ fun action822
     )
 }
 
-internal
-fun action823
+internal fun action823
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25298,8 +24563,7 @@ fun action823
     )
 }
 
-internal
-fun action824
+internal fun action824
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25332,8 +24596,7 @@ fun action824
     )
 }
 
-internal
-fun action825
+internal fun action825
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -25362,8 +24625,7 @@ fun action825
     )
 }
 
-internal
-fun action826
+internal fun action826
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -25392,8 +24654,7 @@ fun action826
     )
 }
 
-internal
-fun action827
+internal fun action827
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25424,8 +24685,7 @@ fun action827
     )
 }
 
-internal
-fun action828
+internal fun action828
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25456,8 +24716,7 @@ fun action828
     )
 }
 
-internal
-fun action829
+internal fun action829
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -25488,8 +24747,7 @@ fun action829
     )
 }
 
-internal
-fun action830
+internal fun action830
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -25520,8 +24778,7 @@ fun action830
     )
 }
 
-internal
-fun action831
+internal fun action831
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25554,8 +24811,7 @@ fun action831
     )
 }
 
-internal
-fun action832
+internal fun action832
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25588,8 +24844,7 @@ fun action832
     )
 }
 
-internal
-fun action833
+internal fun action833
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -25618,8 +24873,7 @@ fun action833
     )
 }
 
-internal
-fun action834
+internal fun action834
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -25648,8 +24902,7 @@ fun action834
     )
 }
 
-internal
-fun action835
+internal fun action835
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25680,8 +24933,7 @@ fun action835
     )
 }
 
-internal
-fun action836
+internal fun action836
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25712,8 +24964,7 @@ fun action836
     )
 }
 
-internal
-fun action837
+internal fun action837
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -25742,8 +24993,7 @@ fun action837
     )
 }
 
-internal
-fun action838
+internal fun action838
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -25772,8 +25022,7 @@ fun action838
     )
 }
 
-internal
-fun action839
+internal fun action839
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25804,8 +25053,7 @@ fun action839
     )
 }
 
-internal
-fun action840
+internal fun action840
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25836,8 +25084,7 @@ fun action840
     )
 }
 
-internal
-fun action841
+internal fun action841
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -25864,8 +25111,7 @@ fun action841
     )
 }
 
-internal
-fun action842
+internal fun action842
 (
     text: String,
     sym0: Triple<Int, List<GrammarItem>, Int>,
@@ -25892,8 +25138,7 @@ fun action842
     )
 }
 
-internal
-fun action843
+internal fun action843
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25922,8 +25167,7 @@ fun action843
     )
 }
 
-internal
-fun action844
+internal fun action844
 (
     text: String,
     sym0: Triple<Int, List<String>, Int>,
@@ -25980,8 +25224,7 @@ internal fun Result<Triple<Int, Tok, Int>>.toTriple(): Result<Triple<Int, Tok, I
     onSuccess = { Result.success(it) },
     onFailure = { err -> Result.failure((err as? TokException)?.err?.let { LrParseErrorException(ParseError.User(error = it)) } ?: err) })
 
-internal
-fun reduce0(
+internal fun reduce0(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -25998,8 +25241,7 @@ fun reduce0(
     return Pair(1, 0)
 }
 
-internal
-fun reduce1(
+internal fun reduce1(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26015,8 +25257,7 @@ fun reduce1(
     return Pair(0, 0)
 }
 
-internal
-fun reduce2(
+internal fun reduce2(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26033,8 +25274,7 @@ fun reduce2(
     return Pair(1, 1)
 }
 
-internal
-fun reduce3(
+internal fun reduce3(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26050,8 +25290,7 @@ fun reduce3(
     return Pair(0, 1)
 }
 
-internal
-fun reduce4(
+internal fun reduce4(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26068,8 +25307,7 @@ fun reduce4(
     return Pair(1, 2)
 }
 
-internal
-fun reduce5(
+internal fun reduce5(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26125,8 +25363,7 @@ internal fun reduce7(
     return Pair(2, 4)
 }
 
-internal
-fun reduce8(
+internal fun reduce8(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26182,8 +25419,7 @@ internal fun reduce10(
     return Pair(2, 6)
 }
 
-internal
-fun reduce11(
+internal fun reduce11(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26241,8 +25477,7 @@ internal fun reduce13(
     return Pair(3, 8)
 }
 
-internal
-fun reduce14(
+internal fun reduce14(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26298,8 +25533,7 @@ internal fun reduce16(
     return Pair(2, 10)
 }
 
-internal
-fun reduce17(
+internal fun reduce17(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26315,8 +25549,7 @@ fun reduce17(
     return Pair(0, 10)
 }
 
-internal
-fun reduce18(
+internal fun reduce18(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26352,8 +25585,7 @@ internal fun reduce19(
     return Pair(2, 12)
 }
 
-internal
-fun reduce20(
+internal fun reduce20(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26369,8 +25601,7 @@ fun reduce20(
     return Pair(0, 13)
 }
 
-internal
-fun reduce21(
+internal fun reduce21(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26448,8 +25679,7 @@ internal fun reduce24(
     return Pair(2, 15)
 }
 
-internal
-fun reduce25(
+internal fun reduce25(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26465,8 +25695,7 @@ fun reduce25(
     return Pair(0, 16)
 }
 
-internal
-fun reduce26(
+internal fun reduce26(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26544,8 +25773,7 @@ internal fun reduce29(
     return Pair(2, 18)
 }
 
-internal
-fun reduce30(
+internal fun reduce30(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26561,8 +25789,7 @@ fun reduce30(
     return Pair(0, 19)
 }
 
-internal
-fun reduce31(
+internal fun reduce31(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26640,8 +25867,7 @@ internal fun reduce34(
     return Pair(2, 21)
 }
 
-internal
-fun reduce35(
+internal fun reduce35(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26657,8 +25883,7 @@ fun reduce35(
     return Pair(0, 22)
 }
 
-internal
-fun reduce36(
+internal fun reduce36(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26736,8 +25961,7 @@ internal fun reduce39(
     return Pair(2, 24)
 }
 
-internal
-fun reduce40(
+internal fun reduce40(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26753,8 +25977,7 @@ fun reduce40(
     return Pair(0, 25)
 }
 
-internal
-fun reduce41(
+internal fun reduce41(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26832,8 +26055,7 @@ internal fun reduce44(
     return Pair(2, 27)
 }
 
-internal
-fun reduce45(
+internal fun reduce45(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26849,8 +26071,7 @@ fun reduce45(
     return Pair(0, 28)
 }
 
-internal
-fun reduce46(
+internal fun reduce46(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26928,8 +26149,7 @@ internal fun reduce49(
     return Pair(2, 30)
 }
 
-internal
-fun reduce50(
+internal fun reduce50(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -26945,8 +26165,7 @@ fun reduce50(
     return Pair(0, 31)
 }
 
-internal
-fun reduce51(
+internal fun reduce51(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27023,8 +26242,7 @@ internal fun reduce54(
     return Pair(2, 33)
 }
 
-internal
-fun reduce55(
+internal fun reduce55(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27039,8 +26257,7 @@ fun reduce55(
     return Pair(0, 34)
 }
 
-internal
-fun reduce56(
+internal fun reduce56(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27115,8 +26332,7 @@ internal fun reduce59(
     return Pair(2, 36)
 }
 
-internal
-fun reduce60(
+internal fun reduce60(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27132,8 +26348,7 @@ fun reduce60(
     return Pair(0, 37)
 }
 
-internal
-fun reduce61(
+internal fun reduce61(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27211,8 +26426,7 @@ internal fun reduce64(
     return Pair(2, 39)
 }
 
-internal
-fun reduce65(
+internal fun reduce65(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27228,8 +26442,7 @@ fun reduce65(
     return Pair(0, 40)
 }
 
-internal
-fun reduce66(
+internal fun reduce66(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27307,8 +26520,7 @@ internal fun reduce69(
     return Pair(2, 42)
 }
 
-internal
-fun reduce70(
+internal fun reduce70(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27324,8 +26536,7 @@ fun reduce70(
     return Pair(0, 43)
 }
 
-internal
-fun reduce71(
+internal fun reduce71(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27403,8 +26614,7 @@ internal fun reduce74(
     return Pair(2, 45)
 }
 
-internal
-fun reduce75(
+internal fun reduce75(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27420,8 +26630,7 @@ fun reduce75(
     return Pair(0, 46)
 }
 
-internal
-fun reduce76(
+internal fun reduce76(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27560,8 +26769,7 @@ internal fun reduce82(
     return Pair(2, 50)
 }
 
-internal
-fun reduce83(
+internal fun reduce83(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27577,8 +26785,7 @@ fun reduce83(
     return Pair(0, 51)
 }
 
-internal
-fun reduce84(
+internal fun reduce84(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27656,8 +26863,7 @@ internal fun reduce87(
     return Pair(2, 53)
 }
 
-internal
-fun reduce88(
+internal fun reduce88(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27673,8 +26879,7 @@ fun reduce88(
     return Pair(0, 54)
 }
 
-internal
-fun reduce89(
+internal fun reduce89(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27752,8 +26957,7 @@ internal fun reduce92(
     return Pair(2, 56)
 }
 
-internal
-fun reduce93(
+internal fun reduce93(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27769,8 +26973,7 @@ fun reduce93(
     return Pair(0, 57)
 }
 
-internal
-fun reduce94(
+internal fun reduce94(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27848,8 +27051,7 @@ internal fun reduce97(
     return Pair(2, 59)
 }
 
-internal
-fun reduce98(
+internal fun reduce98(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27865,8 +27067,7 @@ fun reduce98(
     return Pair(0, 60)
 }
 
-internal
-fun reduce99(
+internal fun reduce99(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27944,8 +27145,7 @@ internal fun reduce102(
     return Pair(2, 62)
 }
 
-internal
-fun reduce103(
+internal fun reduce103(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -27961,8 +27161,7 @@ fun reduce103(
     return Pair(0, 63)
 }
 
-internal
-fun reduce104(
+internal fun reduce104(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28020,8 +27219,7 @@ internal fun reduce106(
     return Pair(3, 64)
 }
 
-internal
-fun reduce107(
+internal fun reduce107(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28037,8 +27235,7 @@ fun reduce107(
     return Pair(0, 65)
 }
 
-internal
-fun reduce108(
+internal fun reduce108(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28054,8 +27251,7 @@ fun reduce108(
     return Pair(0, 66)
 }
 
-internal
-fun reduce109(
+internal fun reduce109(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28072,8 +27268,7 @@ fun reduce109(
     return Pair(1, 67)
 }
 
-internal
-fun reduce110(
+internal fun reduce110(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28090,8 +27285,7 @@ fun reduce110(
     return Pair(1, 67)
 }
 
-internal
-fun reduce111(
+internal fun reduce111(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28108,8 +27302,7 @@ fun reduce111(
     return Pair(1, 67)
 }
 
-internal
-fun reduce112(
+internal fun reduce112(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28126,8 +27319,7 @@ fun reduce112(
     return Pair(1, 67)
 }
 
-internal
-fun reduce113(
+internal fun reduce113(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28144,8 +27336,7 @@ fun reduce113(
     return Pair(1, 68)
 }
 
-internal
-fun reduce114(
+internal fun reduce114(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28290,8 +27481,7 @@ internal fun reduce120(
     return Pair(3, 69)
 }
 
-internal
-fun reduce121(
+internal fun reduce121(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28349,8 +27539,7 @@ internal fun reduce123(
     return Pair(3, 69)
 }
 
-internal
-fun reduce124(
+internal fun reduce124(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28367,8 +27556,7 @@ fun reduce124(
     return Pair(1, 69)
 }
 
-internal
-fun reduce125(
+internal fun reduce125(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28385,8 +27573,7 @@ fun reduce125(
     return Pair(1, 70)
 }
 
-internal
-fun reduce126(
+internal fun reduce126(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28488,8 +27675,7 @@ internal fun reduce130(
     return Pair(5, 72)
 }
 
-internal
-fun reduce131(
+internal fun reduce131(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28505,8 +27691,7 @@ fun reduce131(
     return Pair(0, 73)
 }
 
-internal
-fun reduce132(
+internal fun reduce132(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28523,8 +27708,7 @@ fun reduce132(
     return Pair(1, 73)
 }
 
-internal
-fun reduce133(
+internal fun reduce133(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28583,8 +27767,7 @@ internal fun reduce135(
     return Pair(4, 75)
 }
 
-internal
-fun reduce136(
+internal fun reduce136(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28600,8 +27783,7 @@ fun reduce136(
     return Pair(0, 76)
 }
 
-internal
-fun reduce137(
+internal fun reduce137(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28618,8 +27800,7 @@ fun reduce137(
     return Pair(1, 76)
 }
 
-internal
-fun reduce138(
+internal fun reduce138(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28697,8 +27878,7 @@ internal fun reduce141(
     return Pair(2, 78)
 }
 
-internal
-fun reduce142(
+internal fun reduce142(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28715,8 +27895,7 @@ fun reduce142(
     return Pair(1, 79)
 }
 
-internal
-fun reduce143(
+internal fun reduce143(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28752,8 +27931,7 @@ internal fun reduce144(
     return Pair(2, 80)
 }
 
-internal
-fun reduce145(
+internal fun reduce145(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28770,8 +27948,7 @@ fun reduce145(
     return Pair(1, 80)
 }
 
-internal
-fun reduce146(
+internal fun reduce146(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28788,8 +27965,7 @@ fun reduce146(
     return Pair(1, 81)
 }
 
-internal
-fun reduce147(
+internal fun reduce147(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28805,8 +27981,7 @@ fun reduce147(
     return Pair(0, 81)
 }
 
-internal
-fun reduce148(
+internal fun reduce148(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28823,8 +27998,7 @@ fun reduce148(
     return Pair(1, 82)
 }
 
-internal
-fun reduce149(
+internal fun reduce149(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28860,8 +28034,7 @@ internal fun reduce150(
     return Pair(2, 82)
 }
 
-internal
-fun reduce151(
+internal fun reduce151(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28878,8 +28051,7 @@ fun reduce151(
     return Pair(1, 82)
 }
 
-internal
-fun reduce152(
+internal fun reduce152(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28896,8 +28068,7 @@ fun reduce152(
     return Pair(1, 83)
 }
 
-internal
-fun reduce153(
+internal fun reduce153(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28933,8 +28104,7 @@ internal fun reduce154(
     return Pair(2, 83)
 }
 
-internal
-fun reduce155(
+internal fun reduce155(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28951,8 +28121,7 @@ fun reduce155(
     return Pair(1, 83)
 }
 
-internal
-fun reduce156(
+internal fun reduce156(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -28969,8 +28138,7 @@ fun reduce156(
     return Pair(1, 84)
 }
 
-internal
-fun reduce157(
+internal fun reduce157(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29006,8 +28174,7 @@ internal fun reduce158(
     return Pair(2, 84)
 }
 
-internal
-fun reduce159(
+internal fun reduce159(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29024,8 +28191,7 @@ fun reduce159(
     return Pair(1, 84)
 }
 
-internal
-fun reduce160(
+internal fun reduce160(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29042,8 +28208,7 @@ fun reduce160(
     return Pair(1, 85)
 }
 
-internal
-fun reduce161(
+internal fun reduce161(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29079,8 +28244,7 @@ internal fun reduce162(
     return Pair(2, 85)
 }
 
-internal
-fun reduce163(
+internal fun reduce163(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29097,8 +28261,7 @@ fun reduce163(
     return Pair(1, 85)
 }
 
-internal
-fun reduce164(
+internal fun reduce164(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29115,8 +28278,7 @@ fun reduce164(
     return Pair(1, 86)
 }
 
-internal
-fun reduce165(
+internal fun reduce165(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29152,8 +28314,7 @@ internal fun reduce166(
     return Pair(2, 86)
 }
 
-internal
-fun reduce167(
+internal fun reduce167(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29170,8 +28331,7 @@ fun reduce167(
     return Pair(1, 86)
 }
 
-internal
-fun reduce168(
+internal fun reduce168(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29188,8 +28348,7 @@ fun reduce168(
     return Pair(1, 87)
 }
 
-internal
-fun reduce169(
+internal fun reduce169(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29225,8 +28384,7 @@ internal fun reduce170(
     return Pair(2, 87)
 }
 
-internal
-fun reduce171(
+internal fun reduce171(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29243,8 +28401,7 @@ fun reduce171(
     return Pair(1, 87)
 }
 
-internal
-fun reduce172(
+internal fun reduce172(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29261,8 +28418,7 @@ fun reduce172(
     return Pair(1, 88)
 }
 
-internal
-fun reduce173(
+internal fun reduce173(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29298,8 +28454,7 @@ internal fun reduce174(
     return Pair(2, 88)
 }
 
-internal
-fun reduce175(
+internal fun reduce175(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29316,8 +28471,7 @@ fun reduce175(
     return Pair(1, 88)
 }
 
-internal
-fun reduce176(
+internal fun reduce176(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29334,8 +28488,7 @@ fun reduce176(
     return Pair(1, 89)
 }
 
-internal
-fun reduce177(
+internal fun reduce177(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29371,8 +28524,7 @@ internal fun reduce178(
     return Pair(2, 89)
 }
 
-internal
-fun reduce179(
+internal fun reduce179(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29389,8 +28541,7 @@ fun reduce179(
     return Pair(1, 89)
 }
 
-internal
-fun reduce180(
+internal fun reduce180(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29407,8 +28558,7 @@ fun reduce180(
     return Pair(1, 90)
 }
 
-internal
-fun reduce181(
+internal fun reduce181(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29444,8 +28594,7 @@ internal fun reduce182(
     return Pair(2, 90)
 }
 
-internal
-fun reduce183(
+internal fun reduce183(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29462,8 +28611,7 @@ fun reduce183(
     return Pair(1, 90)
 }
 
-internal
-fun reduce184(
+internal fun reduce184(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29480,8 +28628,7 @@ fun reduce184(
     return Pair(1, 91)
 }
 
-internal
-fun reduce185(
+internal fun reduce185(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29517,8 +28664,7 @@ internal fun reduce186(
     return Pair(2, 91)
 }
 
-internal
-fun reduce187(
+internal fun reduce187(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29535,8 +28681,7 @@ fun reduce187(
     return Pair(1, 91)
 }
 
-internal
-fun reduce188(
+internal fun reduce188(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29553,8 +28698,7 @@ fun reduce188(
     return Pair(1, 92)
 }
 
-internal
-fun reduce189(
+internal fun reduce189(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29590,8 +28734,7 @@ internal fun reduce190(
     return Pair(2, 92)
 }
 
-internal
-fun reduce191(
+internal fun reduce191(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29608,8 +28751,7 @@ fun reduce191(
     return Pair(1, 92)
 }
 
-internal
-fun reduce192(
+internal fun reduce192(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29626,8 +28768,7 @@ fun reduce192(
     return Pair(1, 93)
 }
 
-internal
-fun reduce193(
+internal fun reduce193(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29663,8 +28804,7 @@ internal fun reduce194(
     return Pair(2, 93)
 }
 
-internal
-fun reduce195(
+internal fun reduce195(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29681,8 +28821,7 @@ fun reduce195(
     return Pair(1, 93)
 }
 
-internal
-fun reduce196(
+internal fun reduce196(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29699,8 +28838,7 @@ fun reduce196(
     return Pair(1, 94)
 }
 
-internal
-fun reduce197(
+internal fun reduce197(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29736,8 +28874,7 @@ internal fun reduce198(
     return Pair(2, 94)
 }
 
-internal
-fun reduce199(
+internal fun reduce199(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29775,8 +28912,7 @@ internal fun reduce200(
     return Pair(3, 95)
 }
 
-internal
-fun reduce201(
+internal fun reduce201(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29793,8 +28929,7 @@ fun reduce201(
     return Pair(1, 96)
 }
 
-internal
-fun reduce202(
+internal fun reduce202(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29811,8 +28946,7 @@ fun reduce202(
     return Pair(1, 96)
 }
 
-internal
-fun reduce203(
+internal fun reduce203(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29829,8 +28963,7 @@ fun reduce203(
     return Pair(1, 96)
 }
 
-internal
-fun reduce204(
+internal fun reduce204(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29847,8 +28980,7 @@ fun reduce204(
     return Pair(1, 96)
 }
 
-internal
-fun reduce207(
+internal fun reduce207(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29865,8 +28997,7 @@ fun reduce207(
     return Pair(1, 98)
 }
 
-internal
-fun reduce208(
+internal fun reduce208(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29905,8 +29036,7 @@ internal fun reduce209(
     return Pair(5, 99)
 }
 
-internal
-fun reduce210(
+internal fun reduce210(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29923,8 +29053,7 @@ fun reduce210(
     return Pair(1, 100)
 }
 
-internal
-fun reduce211(
+internal fun reduce211(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -29940,8 +29069,7 @@ fun reduce211(
     return Pair(0, 101)
 }
 
-internal
-fun reduce212(
+internal fun reduce212(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -30114,8 +29242,7 @@ internal fun reduce219(
     return Pair(3, 103)
 }
 
-internal
-fun reduce220(
+internal fun reduce220(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -30132,8 +29259,7 @@ fun reduce220(
     return Pair(1, 104)
 }
 
-internal
-fun reduce221(
+internal fun reduce221(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -30171,8 +29297,7 @@ internal fun reduce222(
     return Pair(4, 105)
 }
 
-internal
-fun reduce223(
+internal fun reduce223(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33196,8 +32321,7 @@ internal fun reduce351(
     return Pair(6, 106)
 }
 
-internal
-fun reduce352(
+internal fun reduce352(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33214,8 +32338,7 @@ fun reduce352(
     return Pair(1, 107)
 }
 
-internal
-fun reduce353(
+internal fun reduce353(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33232,8 +32355,7 @@ fun reduce353(
     return Pair(1, 107)
 }
 
-internal
-fun reduce354(
+internal fun reduce354(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33250,8 +32372,7 @@ fun reduce354(
     return Pair(1, 107)
 }
 
-internal
-fun reduce355(
+internal fun reduce355(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33268,8 +32389,7 @@ fun reduce355(
     return Pair(1, 107)
 }
 
-internal
-fun reduce356(
+internal fun reduce356(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33285,8 +32405,7 @@ fun reduce356(
     return Pair(0, 108)
 }
 
-internal
-fun reduce357(
+internal fun reduce357(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33303,8 +32422,7 @@ fun reduce357(
     return Pair(1, 108)
 }
 
-internal
-fun reduce358(
+internal fun reduce358(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33362,8 +32480,7 @@ internal fun reduce360(
     return Pair(3, 110)
 }
 
-internal
-fun reduce361(
+internal fun reduce361(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33380,8 +32497,7 @@ fun reduce361(
     return Pair(1, 111)
 }
 
-internal
-fun reduce362(
+internal fun reduce362(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33418,8 +32534,7 @@ internal fun reduce363(
     return Pair(3, 112)
 }
 
-internal
-fun reduce364(
+internal fun reduce364(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33436,8 +32551,7 @@ fun reduce364(
     return Pair(1, 113)
 }
 
-internal
-fun reduce365(
+internal fun reduce365(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33474,8 +32588,7 @@ internal fun reduce366(
     return Pair(3, 114)
 }
 
-internal
-fun reduce367(
+internal fun reduce367(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33492,8 +32605,7 @@ fun reduce367(
     return Pair(1, 115)
 }
 
-internal
-fun reduce368(
+internal fun reduce368(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33575,8 +32687,7 @@ internal fun reduce371(
     return Pair(3, 116)
 }
 
-internal
-fun reduce372(
+internal fun reduce372(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33593,8 +32704,7 @@ fun reduce372(
     return Pair(1, 117)
 }
 
-internal
-fun reduce373(
+internal fun reduce373(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33630,8 +32740,7 @@ internal fun reduce374(
     return Pair(2, 118)
 }
 
-internal
-fun reduce375(
+internal fun reduce375(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33648,8 +32757,7 @@ fun reduce375(
     return Pair(1, 119)
 }
 
-internal
-fun reduce376(
+internal fun reduce376(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33665,8 +32773,7 @@ fun reduce376(
     return Pair(0, 119)
 }
 
-internal
-fun reduce377(
+internal fun reduce377(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33683,8 +32790,7 @@ fun reduce377(
     return Pair(1, 120)
 }
 
-internal
-fun reduce378(
+internal fun reduce378(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33701,8 +32807,7 @@ fun reduce378(
     return Pair(1, 120)
 }
 
-internal
-fun reduce379(
+internal fun reduce379(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33718,8 +32823,7 @@ fun reduce379(
     return Pair(1, 121)
 }
 
-internal
-fun reduce380(
+internal fun reduce380(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33735,8 +32839,7 @@ fun reduce380(
     return Pair(1, 122)
 }
 
-internal
-fun reduce381(
+internal fun reduce381(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33751,8 +32854,7 @@ fun reduce381(
     return Pair(0, 122)
 }
 
-internal
-fun reduce382(
+internal fun reduce382(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33769,8 +32871,7 @@ fun reduce382(
     return Pair(1, 123)
 }
 
-internal
-fun reduce383(
+internal fun reduce383(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33787,8 +32888,7 @@ fun reduce383(
     return Pair(1, 124)
 }
 
-internal
-fun reduce384(
+internal fun reduce384(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33805,8 +32905,7 @@ fun reduce384(
     return Pair(1, 125)
 }
 
-internal
-fun reduce385(
+internal fun reduce385(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33823,8 +32922,7 @@ fun reduce385(
     return Pair(1, 125)
 }
 
-internal
-fun reduce387(
+internal fun reduce387(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33841,8 +32939,7 @@ fun reduce387(
     return Pair(1, 126)
 }
 
-internal
-fun reduce388(
+internal fun reduce388(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33858,8 +32955,7 @@ fun reduce388(
     return Pair(0, 126)
 }
 
-internal
-fun reduce389(
+internal fun reduce389(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33896,8 +32992,7 @@ internal fun reduce390(
     return Pair(2, 127)
 }
 
-internal
-fun reduce391(
+internal fun reduce391(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -33914,8 +33009,7 @@ fun reduce391(
     return Pair(1, 128)
 }
 
-internal
-fun reduce392(
+internal fun reduce392(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34093,8 +33187,7 @@ internal fun reduce399(
     return Pair(4, 132)
 }
 
-internal
-fun reduce400(
+internal fun reduce400(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34111,8 +33204,7 @@ fun reduce400(
     return Pair(1, 132)
 }
 
-internal
-fun reduce401(
+internal fun reduce401(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34129,8 +33221,7 @@ fun reduce401(
     return Pair(1, 132)
 }
 
-internal
-fun reduce402(
+internal fun reduce402(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34147,8 +33238,7 @@ fun reduce402(
     return Pair(1, 133)
 }
 
-internal
-fun reduce403(
+internal fun reduce403(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34165,8 +33255,7 @@ fun reduce403(
     return Pair(1, 134)
 }
 
-internal
-fun reduce404(
+internal fun reduce404(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34223,8 +33312,7 @@ internal fun reduce406(
     return Pair(3, 135)
 }
 
-internal
-fun reduce407(
+internal fun reduce407(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34261,8 +33349,7 @@ internal fun reduce408(
     return Pair(2, 135)
 }
 
-internal
-fun reduce409(
+internal fun reduce409(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34279,8 +33366,7 @@ fun reduce409(
     return Pair(1, 136)
 }
 
-internal
-fun reduce410(
+internal fun reduce410(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34297,8 +33383,7 @@ fun reduce410(
     return Pair(1, 137)
 }
 
-internal
-fun reduce411(
+internal fun reduce411(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34469,8 +33554,7 @@ internal fun reduce418(
     return Pair(5, 138)
 }
 
-internal
-fun reduce419(
+internal fun reduce419(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34487,8 +33571,7 @@ fun reduce419(
     return Pair(1, 138)
 }
 
-internal
-fun reduce420(
+internal fun reduce420(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34547,8 +33630,7 @@ internal fun reduce422(
     return Pair(3, 138)
 }
 
-internal
-fun reduce423(
+internal fun reduce423(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34565,8 +33647,7 @@ fun reduce423(
     return Pair(1, 138)
 }
 
-internal
-fun reduce424(
+internal fun reduce424(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34583,8 +33664,7 @@ fun reduce424(
     return Pair(1, 138)
 }
 
-internal
-fun reduce425(
+internal fun reduce425(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34601,8 +33681,7 @@ fun reduce425(
     return Pair(1, 138)
 }
 
-internal
-fun reduce426(
+internal fun reduce426(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34618,8 +33697,7 @@ fun reduce426(
     return Pair(1, 139)
 }
 
-internal
-fun reduce427(
+internal fun reduce427(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34653,8 +33731,7 @@ internal fun reduce428(
     return Pair(2, 139)
 }
 
-internal
-fun reduce429(
+internal fun reduce429(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34670,8 +33747,7 @@ fun reduce429(
     return Pair(1, 139)
 }
 
-internal
-fun reduce430(
+internal fun reduce430(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34688,8 +33764,7 @@ fun reduce430(
     return Pair(1, 140)
 }
 
-internal
-fun reduce431(
+internal fun reduce431(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34725,8 +33800,7 @@ internal fun reduce432(
     return Pair(2, 140)
 }
 
-internal
-fun reduce433(
+internal fun reduce433(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34743,8 +33817,7 @@ fun reduce433(
     return Pair(1, 140)
 }
 
-internal
-fun reduce434(
+internal fun reduce434(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34761,8 +33834,7 @@ fun reduce434(
     return Pair(1, 141)
 }
 
-internal
-fun reduce435(
+internal fun reduce435(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34779,8 +33851,7 @@ fun reduce435(
     return Pair(1, 141)
 }
 
-internal
-fun reduce436(
+internal fun reduce436(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34797,8 +33868,7 @@ fun reduce436(
     return Pair(1, 142)
 }
 
-internal
-fun reduce437(
+internal fun reduce437(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34815,8 +33885,7 @@ fun reduce437(
     return Pair(1, 143)
 }
 
-internal
-fun reduce438(
+internal fun reduce438(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34833,8 +33902,7 @@ fun reduce438(
     return Pair(1, 144)
 }
 
-internal
-fun reduce439(
+internal fun reduce439(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34851,8 +33919,7 @@ fun reduce439(
     return Pair(1, 144)
 }
 
-internal
-fun reduce440(
+internal fun reduce440(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34869,8 +33936,7 @@ fun reduce440(
     return Pair(1, 144)
 }
 
-internal
-fun reduce441(
+internal fun reduce441(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34887,8 +33953,7 @@ fun reduce441(
     return Pair(1, 145)
 }
 
-internal
-fun reduce442(
+internal fun reduce442(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34904,8 +33969,7 @@ fun reduce442(
     return Pair(0, 146)
 }
 
-internal
-fun reduce443(
+internal fun reduce443(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -34922,8 +33986,7 @@ fun reduce443(
     return Pair(1, 146)
 }
 
-internal
-fun reduce444(
+internal fun reduce444(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35051,8 +34114,7 @@ internal fun reduce451(
     return Pair(5, 150)
 }
 
-internal
-fun reduce452(
+internal fun reduce452(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35069,8 +34131,7 @@ fun reduce452(
     return Pair(1, 150)
 }
 
-internal
-fun reduce453(
+internal fun reduce453(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35086,8 +34147,7 @@ fun reduce453(
     return Pair(0, 151)
 }
 
-internal
-fun reduce454(
+internal fun reduce454(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35104,8 +34164,7 @@ fun reduce454(
     return Pair(1, 151)
 }
 
-internal
-fun reduce455(
+internal fun reduce455(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35142,8 +34201,7 @@ internal fun reduce456(
     return Pair(2, 152)
 }
 
-internal
-fun reduce457(
+internal fun reduce457(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35180,8 +34238,7 @@ internal fun reduce458(
     return Pair(2, 153)
 }
 
-internal
-fun reduce459(
+internal fun reduce459(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35198,8 +34255,7 @@ fun reduce459(
     return Pair(1, 154)
 }
 
-internal
-fun reduce460(
+internal fun reduce460(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35216,8 +34272,7 @@ fun reduce460(
     return Pair(1, 155)
 }
 
-internal
-fun reduce461(
+internal fun reduce461(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35255,8 +34310,7 @@ internal fun reduce462(
     return Pair(4, 156)
 }
 
-internal
-fun reduce463(
+internal fun reduce463(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35273,8 +34327,7 @@ fun reduce463(
     return Pair(1, 156)
 }
 
-internal
-fun reduce464(
+internal fun reduce464(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35291,8 +34344,7 @@ fun reduce464(
     return Pair(1, 156)
 }
 
-internal
-fun reduce465(
+internal fun reduce465(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35330,8 +34382,7 @@ internal fun reduce466(
     return Pair(3, 156)
 }
 
-internal
-fun reduce467(
+internal fun reduce467(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35348,8 +34399,7 @@ fun reduce467(
     return Pair(1, 156)
 }
 
-internal
-fun reduce468(
+internal fun reduce468(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35366,8 +34416,7 @@ fun reduce468(
     return Pair(1, 156)
 }
 
-internal
-fun reduce469(
+internal fun reduce469(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35384,8 +34433,7 @@ fun reduce469(
     return Pair(1, 156)
 }
 
-internal
-fun reduce470(
+internal fun reduce470(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35402,8 +34450,7 @@ fun reduce470(
     return Pair(1, 157)
 }
 
-internal
-fun reduce471(
+internal fun reduce471(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35540,8 +34587,7 @@ internal fun reduce477(
     return Pair(2, 159)
 }
 
-internal
-fun reduce478(
+internal fun reduce478(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35558,8 +34604,7 @@ fun reduce478(
     return Pair(1, 159)
 }
 
-internal
-fun reduce479(
+internal fun reduce479(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35576,8 +34621,7 @@ fun reduce479(
     return Pair(1, 159)
 }
 
-internal
-fun reduce480(
+internal fun reduce480(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35594,8 +34638,7 @@ fun reduce480(
     return Pair(1, 160)
 }
 
-internal
-fun reduce481(
+internal fun reduce481(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35654,8 +34697,7 @@ internal fun reduce483(
     return Pair(3, 161)
 }
 
-internal
-fun reduce484(
+internal fun reduce484(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35842,8 +34884,7 @@ internal fun reduce491(
     return Pair(5, 162)
 }
 
-internal
-fun reduce492(
+internal fun reduce492(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35860,8 +34901,7 @@ fun reduce492(
     return Pair(1, 162)
 }
 
-internal
-fun reduce493(
+internal fun reduce493(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35878,8 +34918,7 @@ fun reduce493(
     return Pair(1, 163)
 }
 
-internal
-fun reduce494(
+internal fun reduce494(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35895,8 +34934,7 @@ fun reduce494(
     return Pair(0, 163)
 }
 
-internal
-fun reduce495(
+internal fun reduce495(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35912,8 +34950,7 @@ fun reduce495(
     return Pair(1, 164)
 }
 
-internal
-fun reduce496(
+internal fun reduce496(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35951,8 +34988,7 @@ internal fun reduce497(
     return Pair(3, 164)
 }
 
-internal
-fun reduce498(
+internal fun reduce498(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35969,8 +35005,7 @@ fun reduce498(
     return Pair(1, 165)
 }
 
-internal
-fun reduce499(
+internal fun reduce499(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -35986,8 +35021,7 @@ fun reduce499(
     return Pair(0, 165)
 }
 
-internal
-fun reduce500(
+internal fun reduce500(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36004,8 +35038,7 @@ fun reduce500(
     return Pair(1, 166)
 }
 
-internal
-fun reduce501(
+internal fun reduce501(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36021,8 +35054,7 @@ fun reduce501(
     return Pair(1, 167)
 }
 
-internal
-fun reduce502(
+internal fun reduce502(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36039,8 +35071,7 @@ fun reduce502(
     return Pair(1, 167)
 }
 
-internal
-fun reduce503(
+internal fun reduce503(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36057,8 +35088,7 @@ fun reduce503(
     return Pair(1, 168)
 }
 
-internal
-fun reduce504(
+internal fun reduce504(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36241,8 +35271,7 @@ internal fun reduce512(
     return Pair(4, 169)
 }
 
-internal
-fun reduce513(
+internal fun reduce513(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36400,8 +35429,7 @@ internal fun reduce519(
     return Pair(5, 169)
 }
 
-internal
-fun reduce520(
+internal fun reduce520(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36418,8 +35446,7 @@ fun reduce520(
     return Pair(1, 170)
 }
 
-internal
-fun reduce521(
+internal fun reduce521(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36435,8 +35462,7 @@ fun reduce521(
     return Pair(0, 170)
 }
 
-internal
-fun reduce522(
+internal fun reduce522(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36453,8 +35479,7 @@ fun reduce522(
     return Pair(1, 171)
 }
 
-internal
-fun reduce523(
+internal fun reduce523(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36470,8 +35495,7 @@ fun reduce523(
     return Pair(1, 171)
 }
 
-internal
-fun reduce524(
+internal fun reduce524(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36488,8 +35512,7 @@ fun reduce524(
     return Pair(1, 172)
 }
 
-internal
-fun reduce525(
+internal fun reduce525(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36525,8 +35548,7 @@ internal fun reduce526(
     return Pair(2, 173)
 }
 
-internal
-fun reduce527(
+internal fun reduce527(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36542,8 +35564,7 @@ fun reduce527(
     return Pair(0, 174)
 }
 
-internal
-fun reduce528(
+internal fun reduce528(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36560,8 +35581,7 @@ fun reduce528(
     return Pair(1, 174)
 }
 
-internal
-fun reduce529(
+internal fun reduce529(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36643,8 +35663,7 @@ internal fun reduce532(
     return Pair(5, 176)
 }
 
-internal
-fun reduce533(
+internal fun reduce533(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36661,8 +35680,7 @@ fun reduce533(
     return Pair(1, 176)
 }
 
-internal
-fun reduce534(
+internal fun reduce534(
     text: String,
     lookaheadStart: Int?,
     symbols: MutableList<
@@ -36684,8 +35702,7 @@ fun reduce534(
 // (`action96`, `action102`, `action126`, `action127`). Any failure from
 // the base action is propagated through `Result` unchanged.
 
-internal
-fun action431
+internal fun action431
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -36721,8 +35738,7 @@ fun action431
     )
 }
 
-internal
-fun action439
+internal fun action439
 (
     text: String,
     sym0: Triple<Int, TerminalLiteral, Int>,
@@ -36756,8 +35772,7 @@ fun action439
     )
 }
 
-internal
-fun action444
+internal fun action444
 (
     text: String,
     sym0: Triple<Int, String, Int>,
@@ -36778,8 +35793,7 @@ fun action444
     )
 }
 
-internal
-fun action445
+internal fun action445
 (
     text: String,
     sym0: Triple<Int, String, Int>,
@@ -36800,8 +35814,7 @@ fun action445
     )
 }
 
-internal
-fun action459
+internal fun action459
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
@@ -36826,8 +35839,7 @@ fun action459
     )
 }
 
-internal
-fun action467
+internal fun action467
 (
     text: String,
     sym0: Triple<Int, TerminalLiteral, Int>,
@@ -36850,8 +35862,7 @@ fun action467
     )
 }
 
-internal
-fun action501
+internal fun action501
 (
     text: String,
     sym0: Triple<Int, TerminalString, Int>,
@@ -36874,8 +35885,7 @@ fun action501
     )
 }
 
-internal
-fun action502
+internal fun action502
 (
     text: String,
     sym0: Triple<Int, List<Attribute>, Int>,
