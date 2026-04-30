@@ -36,9 +36,6 @@ class Graph<N, E>(
     private val outgoing: MutableList<MutableList<EdgeRef<E>>> = ArrayList(nodesCapacity)
     private val incoming: MutableList<MutableList<EdgeRef<E>>> = ArrayList(nodesCapacity)
 
-    @Suppress("UNUSED_PARAMETER")
-    constructor() : this(0, 0)
-
     fun addNode(weight: N): NodeIndex {
         val idx = NodeIndex.new(nodes.size)
         nodes.add(weight)
