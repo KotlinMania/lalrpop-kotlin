@@ -240,6 +240,8 @@ fun Symbol.toContent(): Content = when (this) {
     is Symbol.Terminal -> term.toContent()
 }
 
+fun from(value: Symbol): Content = value.toContent()
+
 data class ActionFnDefn(
     var fallible: Boolean,
     var retType: TypeRepr,

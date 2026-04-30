@@ -163,7 +163,6 @@ grammar;
             // ok
         }
 
-        // expandMacros(grammar2, 3).isOk()
         expandMacros(parseGrammar(grammar2Source).getOrThrow(), 3)
     }
 }

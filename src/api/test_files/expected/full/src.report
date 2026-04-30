@@ -1,0 +1,47 @@
+Lalrpop Report File
+========================================
+
+Summary
+----------------------------------------
+
+Constructed 3 states
+
+State Table
+----------------------------------------
+
+State 0 {
+
+    Src   -> . "a"
+        lookahead "a" Eof
+
+    __Src -> . Src
+        lookahead "a" Eof
+
+    "a" shift and goto 2
+
+    Src goto 1
+}
+
+State 1 {
+
+    __Src -> Src .
+        lookahead "a" Eof
+
+
+    reduction __Src -> Src
+        lookahead Eof
+
+
+}
+
+State 2 {
+
+    Src -> "a" .
+        lookahead "a" Eof
+
+
+    reduction Src -> "a"
+        lookahead Eof
+
+
+}

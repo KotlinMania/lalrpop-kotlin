@@ -211,7 +211,8 @@ fun processFileInto(
             // generation fails at some point, we do not leave a partial
             // file behind.
             val grammar = parseAndNormalizeGrammar(session, fileText)
-            val buffer = emitRecursiveAscent(session, grammar)
+            val reportBuffer = if (session.emitReport) StringBuilder() else null
+            val buffer = emitRecursiveAscent(session, grammar, reportBuffer)
             // writeln(outputFile, "{LALRPOP_VERSION_HEADER}")
             // writeln(outputFile, "{}", hashFile(lalrpopFile)?)
             // outputFile.writeAll(&buffer)
@@ -222,6 +223,10 @@ fun processFileInto(
             out.append('\n')
             out.append(buffer)
             apiBuildWriteFileBytes(rsFile, out.toString())
+            if (reportBuffer != null) {
+                pathParent(reportFile)?.let { apiBuildCreateDirAll(it) }
+                apiBuildWriteFileBytes(reportFile, reportBuffer.toString())
+            }
         } finally {
             tls.close()
         }
@@ -452,7 +457,8 @@ internal fun reportMessage(message: Message): Result<Unit> {
  * [FakeTerminal] otherwise.
  */
 internal fun reportContent(content: Content): Result<Unit> {
-    // FIXME -- can we query the size of the terminal somehow?
+    // Upstream asks: can we query the size of the terminal somehow?
+    // For now, it renders diagnostics at a fixed 80-column width.
     val canvas = content.emitToCanvas(80)
 
     val tryColors = when (Tls.session().colorConfig) {

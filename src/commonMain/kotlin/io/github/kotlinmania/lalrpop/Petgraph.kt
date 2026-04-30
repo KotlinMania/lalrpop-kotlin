@@ -36,9 +36,6 @@ class Graph<N, E>(
     private val outgoing: MutableList<MutableList<EdgeRef<E>>> = ArrayList(nodesCapacity)
     private val incoming: MutableList<MutableList<EdgeRef<E>>> = ArrayList(nodesCapacity)
 
-    @Suppress("UNUSED_PARAMETER")
-    constructor() : this(0, 0)
-
     fun addNode(weight: N): NodeIndex {
         val idx = NodeIndex.new(nodes.size)
         nodes.add(weight)
@@ -69,8 +66,8 @@ class Graph<N, E>(
 
     fun edgesDirected(node: NodeIndex, direction: EdgeDirection): Iterable<EdgeRef<E>> =
         when (direction) {
-            EdgeDirection.Outgoing -> outgoing[node.index()]
-            EdgeDirection.Incoming -> incoming[node.index()]
+            EdgeDirection.Outgoing -> outgoing[node.index()].asReversed()
+            EdgeDirection.Incoming -> incoming[node.index()].asReversed()
         }
 
     companion object {

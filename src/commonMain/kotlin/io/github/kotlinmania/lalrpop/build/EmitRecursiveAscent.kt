@@ -19,6 +19,7 @@ import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.codegen.Ascent
 import io.github.kotlinmania.lalrpop.lr1.codegen.ParseTable
 import io.github.kotlinmania.lalrpop.lr1.codegen.TestAll
+import io.github.kotlinmania.lalrpop.lr1.generateReport
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
@@ -36,6 +37,7 @@ import io.github.kotlinmania.lalrpop.rust.rust
 fun emitRecursiveAscent(
     session: Session,
     grammar: Grammar,
+    reportOut: StringBuilder? = null,
 ): String {
     val buffer = StringBuilder()
     val rust = RustWrite.new(buffer)
@@ -100,9 +102,11 @@ fun emitRecursiveAscent(
             // inside the LR(1) builder, so there is no Err arm to handle here.
             val states = buildStates(grammar, startNt)
 
-            // Upstream optionally writes a report file; the Kotlin port has
-            // no filesystem at this layer, so the `emitReport` branch is
-            // left to callers that want the report.
+            if (session.emitReport) {
+                val report = reportOut ?: error("report output requested without a report sink")
+                report.clear()
+                generateReport(report, states)
+            }
 
             when (grammar.algorithm.codegen) {
                 LrCodeGeneration.RecursiveAscent -> Ascent.compile(
@@ -279,6 +283,7 @@ fun emitToTripleTrait(
             grammar.prefix,
         )
         rust(rust, "}") // match
-        rust(rust, "}") // function         rust(rust, "}") // implementation
+        rust(rust, "}") // function
+        rust(rust, "}") // implementation
     }
 }

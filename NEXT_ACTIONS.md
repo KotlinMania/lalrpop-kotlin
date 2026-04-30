@@ -4,22 +4,22 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Files Present:** 64/106 (60.4%)
-- **Function parity:** 2063/2073 matched (target 2312) — 99.5%
-- **Class/type parity:** 137/147 matched (target 381) — 93.2%
-- **Combined symbol parity:** 2200/2220 matched (target 2693) — 99.1%
-- **Cheat-zeroed Files:** 2
-- **Critical Issues:** 6 files with <0.60 function similarity
+- **Files Present:** 65/106 (61.3%)
+- **Function parity:** 2062/2479 matched (target 2351) — 83.2%
+- **Class/type parity:** 141/259 matched (target 384) — 54.4%
+- **Combined symbol parity:** 2203/2738 matched (target 2735) — 80.5%
+- **Cheat-zeroed Files:** 4
+- **Critical Issues:** 10 files with <0.60 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
 
 ### 1. lr1.tls
-- **Similarity:** 0.67 (needs 18% improvement)
+- **Similarity:** 0.69 (needs 16% improvement)
 - **Dependencies:** 16
 - **Priority Score:** 16000403.0
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
-- **Types:** 1/1 matched
+- **Types:** 1/1 matched (target 2)
 - **Missing types:** _none_
 - **Action:** Review and complete missing sections
 
@@ -36,12 +36,12 @@ Every matched file is listed below with function and type symbol parity.
 ### 1. lr1.tls
 
 - **Target:** `lr1.Tls`
-- **Similarity:** 0.67
+- **Similarity:** 0.69
 - **Dependents:** 16
 - **Priority Score:** 16000403.0
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
-- **Types:** 1/1 matched
+- **Types:** 1/1 matched (target 2)
 - **Missing types:** _none_
 
 ### 2. session
@@ -59,10 +59,10 @@ Every matched file is listed below with function and type symbol parity.
 ### 3. collections.set
 
 - **Target:** `collections.Set`
-- **Similarity:** 0.71
+- **Similarity:** 0.57
 - **Dependents:** 6
-- **Priority Score:** 6000203.0
-- **Functions:** 1/1 matched (target 8)
+- **Priority Score:** 6000204.5
+- **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
@@ -81,15 +81,27 @@ Every matched file is listed below with function and type symbol parity.
 ### 5. lr1.interpret
 
 - **Target:** `lr1.Interpret`
-- **Similarity:** 0.82
+- **Similarity:** 0.52
 - **Dependents:** 4
-- **Priority Score:** 4001201.8
-- **Functions:** 9/9 matched (target 12)
-- **Missing functions:** _none_
-- **Types:** 3/3 matched (target 6)
+- **Priority Score:** 4021204.8
+- **Functions:** 7/9 matched (target 8)
+- **Missing functions:** `fmt`, `reduction`
+- **Types:** 3/3 matched (target 4)
 - **Missing types:** _none_
 
-### 6. lr1.lookahead
+### 6. file_text
+
+- **Target:** `lalrpop.FileText`
+- **Similarity:** 0.73
+- **Dependents:** 2
+- **Priority Score:** 2031202.8
+- **Functions:** 8/10 matched (target 9)
+- **Missing functions:** `test`, `fmt`
+- **Types:** 1/2 matched (target 1)
+- **Missing types:** `Repeat`
+- **Tests:** 0/1 matched
+
+### 7. lr1.lookahead
 
 - **Target:** `lr1.Lookahead`
 - **Similarity:** 0.81
@@ -100,39 +112,27 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 5/7 matched (target 8)
 - **Missing types:** `Item`, `IntoIter`
 
-### 7. file_text
+### 8. test_util
 
-- **Target:** `lalrpop.FileText`
-- **Similarity:** 0.73
+- **Target:** `lalrpop.TestUtil [ZERO]`
+- **Similarity:** 0.00
 - **Dependents:** 2
-- **Priority Score:** 2021202.8
-- **Functions:** 8/10 matched (target 11)
-- **Missing functions:** `test`, `fmt`
-- **Types:** 2/2 matched
-- **Missing types:** _none_
-- **Tests:** 0/1 matched
-
-### 8. construct.state_set
-
-- **Target:** `stateset.StateSet`
-- **Similarity:** 0.60
-- **Dependents:** 2
-- **Priority Score:** 2010704.0
-- **Functions:** 4/4 matched
-- **Missing functions:** _none_
-- **Types:** 2/3 matched (target 2)
-- **Missing types:** `Error`
-
-### 9. test_util
-
-- **Target:** `lalrpop.TestUtil`
-- **Similarity:** 0.63
-- **Dependents:** 2
-- **Priority Score:** 2010703.6
-- **Functions:** 5/6 matched (target 7)
+- **Priority Score:** 2010710.0
+- **Functions:** 5/6 matched (target 9)
 - **Missing functions:** `fmt`
 - **Types:** 1/1 matched (target 6)
 - **Missing types:** _none_
+
+### 9. construct.state_set
+
+- **Target:** `stateset.StateSet`
+- **Similarity:** 0.63
+- **Dependents:** 2
+- **Priority Score:** 2010703.8
+- **Functions:** 4/4 matched
+- **Missing functions:** _none_
+- **Types:** 2/3 matched (target 2)
+- **Missing types:** `Value`
 
 ### 10. grammar.pattern
 
@@ -140,34 +140,23 @@ Every matched file is listed below with function and type symbol parity.
 - **Similarity:** 0.59
 - **Dependents:** 2
 - **Priority Score:** 2000604.1
-- **Functions:** 3/3 matched (target 14)
+- **Functions:** 3/3 matched (target 23)
 - **Missing functions:** _none_
 - **Types:** 3/3 matched (target 14)
 - **Missing types:** _none_
 
 ### 11. message.message
 
-- **Target:** `message.MessageContent`
+- **Target:** `message.Message`
 - **Similarity:** 0.79
 - **Dependents:** 2
 - **Priority Score:** 2000602.1
-- **Functions:** 5/5 matched (target 9)
+- **Functions:** 5/5 matched (target 6)
 - **Missing functions:** _none_
-- **Types:** 1/1 matched (target 2)
+- **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 12. grammar.repr
-
-- **Target:** `repr.Repr`
-- **Similarity:** 0.66
-- **Dependents:** 1
-- **Priority Score:** 1015303.4
-- **Functions:** 33/34 matched (target 67)
-- **Missing functions:** `from`
-- **Types:** 19/19 matched (target 38)
-- **Missing types:** _none_
-
-### 13. collections.multimap
+### 12. collections.multimap
 
 - **Target:** `collections.Multimap`
 - **Similarity:** 0.59
@@ -179,15 +168,26 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `Item`
 - **Tests:** 1/1 matched
 
-### 14. grammar.parse_tree
+### 13. grammar.parse_tree
 
 - **Target:** `parsetree.ParseTree`
-- **Similarity:** 0.57
+- **Similarity:** 0.56
 - **Dependents:** 1
-- **Priority Score:** 1008204.3
-- **Functions:** 40/40 matched (target 112)
+- **Priority Score:** 1008204.4
+- **Functions:** 40/40 matched (target 155)
 - **Missing functions:** _none_
 - **Types:** 42/42 matched (target 88)
+- **Missing types:** _none_
+
+### 14. grammar.repr
+
+- **Target:** `repr.Repr`
+- **Similarity:** 0.67
+- **Dependents:** 1
+- **Priority Score:** 1005303.3
+- **Functions:** 34/34 matched (target 70)
+- **Missing functions:** _none_
+- **Types:** 19/19 matched (target 38)
 - **Missing types:** _none_
 
 ### 15. construct.merge
@@ -203,15 +203,18 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 16. api.test
 
-- **Target:** `api.ApiTest`
+- **Target:** `api.ApiTest [PROVENANCE-FALLBACK]`
 - **Similarity:** 0.78
 - **Dependents:** 1
 - **Priority Score:** 1001202.2
-- **Functions:** 10/10 matched (target 18)
+- **Functions:** 10/10 matched (target 21)
 - **Missing functions:** _none_
 - **Types:** 2/2 matched (target 6)
 - **Missing types:** _none_
 - **Tests:** 5/5 matched
+- **Provenance warning:** port-lint provenance header matched only by basename: `lr1/build_lalr/test.rs` vs expected `api/test.rs`
+- **Proposed provenance header:** `// port-lint: source api/test.rs` (current: `// port-lint: source lr1/build_lalr/test.rs`)
+- **Lint issues:** 1
 
 ### 17. message.horiz
 
@@ -282,10 +285,10 @@ Every matched file is listed below with function and type symbol parity.
 ### 23. collections.map
 
 - **Target:** `collections.Map`
-- **Similarity:** 0.70
+- **Similarity:** 0.56
 - **Dependents:** 1
-- **Priority Score:** 1000202.9
-- **Functions:** 1/1 matched (target 8)
+- **Priority Score:** 1000204.4
+- **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
@@ -295,35 +298,35 @@ Every matched file is listed below with function and type symbol parity.
 - **Target:** `parser.LrGrammar`
 - **Similarity:** 0.70
 - **Dependents:** 0
-- **Priority Score:** 201103.0
+- **Priority Score:** 151103.0
 - **Functions:** 1498/1498 matched (target 1506)
 - **Missing functions:** _none_
-- **Types:** 8/13 matched (target 111)
-- **Missing types:** `Error`, `Token`, `Success`, `StateIndex`, `Action`
+- **Types:** 13/13 matched (target 116)
+- **Missing types:** _none_
 - **Lint issues:** 874
 
-### 25. main
-
-- **Target:** `lalrpop.Main`
-- **Similarity:** 0.74
-- **Dependents:** 0
-- **Priority Score:** 31602.6
-- **Functions:** 11/13 matched (target 20)
-- **Missing functions:** `os_vec`, `parse_args_slice`
-- **Types:** 2/3 matched (target 4)
-- **Missing types:** `Err`
-- **Tests:** 8/10 matched
-
-### 26. message.builder
+### 25. message.builder
 
 - **Target:** `builder.Builder`
 - **Similarity:** 0.85
 - **Dependents:** 0
-- **Priority Score:** 13101.5
+- **Priority Score:** 23101.5
 - **Functions:** 20/21 matched (target 31)
 - **Missing functions:** `from`
-- **Types:** 10/10 matched
+- **Types:** 9/10 matched (target 9)
+- **Missing types:** `End`
+
+### 26. main
+
+- **Target:** `lalrpop.Main`
+- **Similarity:** 0.74
+- **Dependents:** 0
+- **Priority Score:** 21602.6
+- **Functions:** 11/13 matched (target 20)
+- **Missing functions:** `os_vec`, `parse_args_slice`
+- **Types:** 3/3 matched (target 5)
 - **Missing types:** _none_
+- **Tests:** 8/10 matched
 
 ### 27. codegen.parse_table
 
@@ -520,7 +523,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Similarity:** 0.91
 - **Dependents:** 0
 - **Priority Score:** 700.9
-- **Functions:** 5/5 matched (target 6)
+- **Functions:** 5/5 matched (target 7)
 - **Missing functions:** _none_
 - **Types:** 2/2 matched (target 5)
 - **Missing types:** _none_
@@ -758,9 +761,23 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 0/0 matched
 - **Missing types:** _none_
 
-### 64. context_set.test
+### 64. lib
 
-- **Target:** `lr1.BuildTest [ZERO]`
+- **Target:** `runtime.LibTest [STUB] [PROVENANCE-FALLBACK]`
+- **Similarity:** 0.00
+- **Dependents:** 0
+- **Priority Score:** 10.0
+- **Functions:** 0/0 matched (target 1)
+- **Missing functions:** _none_
+- **Types:** 0/0 matched (target 1)
+- **Missing types:** _none_
+- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `lalrpop-util/src/lib.rs` vs expected `lib.rs`
+- **Proposed provenance header:** `// port-lint: source lib.rs` (current: `// port-lint: source lalrpop-util/src/lib.rs`)
+- **Lint issues:** 1
+
+### 65. context_set.test
+
+- **Target:** `lr1.BuildTest [ZERO] [PROVENANCE-FALLBACK]`
 - **Similarity:** 0.00
 - **Dependents:** 0
 - **Priority Score:** 10.0
@@ -768,6 +785,9 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 2)
 - **Missing types:** _none_
+- **Provenance warning:** port-lint provenance header matched only by basename: `lr1/build/test.rs` vs expected `lr1/lane_table/table/context_set/test.rs`
+- **Proposed provenance header:** `// port-lint: source lr1/lane_table/table/context_set/test.rs` (current: `// port-lint: source lr1/build/test.rs`)
+- **Lint issues:** 1
 
 ## Success Criteria
 
@@ -788,57 +808,3 @@ cd tools/ast_distance
 # Get next high-priority task
 ./ast_distance --assign tasks.json <agent-id>
 ```
-## Reexport / Wiring Modules
-
-These files match `reexport_modules` patterns in `.ast_distance_config.json`. They are filtered out of
-normal priority and missing-file ladders because they are wiring
-modules, not direct logic ports. Consult them for call-site routing;
-do not treat them as the next implementation target by default.
-
-### Missing
-
-| Source | Expected target | Deps | Source path | Expected path |
-|--------|-----------------|------|-------------|---------------|
-| `api.mod` | `api.Mod` | 0 | `api/mod.rs` | `api/Mod.kt` |
-| `collections.mod` | `collections.Mod` | 0 | `collections/mod.rs` | `collections/Mod.kt` |
-| `free_variables.mod` | `grammar.freevariables.Mod` | 0 | `grammar/free_variables/mod.rs` | `grammar/freevariables/Mod.kt` |
-| `grammar.mod` | `grammar.Mod` | 0 | `grammar/mod.rs` | `grammar/Mod.kt` |
-| `dfa.mod` | `lexer.dfa.Mod` | 0 | `lexer/dfa/mod.rs` | `lexer/dfa/Mod.kt` |
-| `intern_token.mod` | `lexer.interntoken.Mod` | 0 | `lexer/intern_token/mod.rs` | `lexer/interntoken/Mod.kt` |
-| `lexer.mod` | `lexer.Mod` | 0 | `lexer/mod.rs` | `lexer/Mod.kt` |
-| `nfa.mod` | `lexer.nfa.Mod` | 0 | `lexer/nfa/mod.rs` | `lexer/nfa/Mod.kt` |
-| `re.mod` | `lexer.re.Mod` | 0 | `lexer/re/mod.rs` | `lexer/re/Mod.kt` |
-| `lib` | `Lib` | 0 | `lib.rs` | `Lib.kt` |
-| `codegen.mod` | `lr1.codegen.Mod` | 0 | `lr1/codegen/mod.rs` | `lr1/codegen/Mod.kt` |
-| `core.mod` | `lr1.core.Mod` | 0 | `lr1/core/mod.rs` | `lr1/core/Mod.kt` |
-| `error.mod` | `lr1.error.Mod` | 0 | `lr1/error/mod.rs` | `lr1/error/Mod.kt` |
-| `example.mod` | `lr1.example.Mod` | 0 | `lr1/example/mod.rs` | `lr1/example/Mod.kt` |
-| `first.mod` | `lr1.first.Mod` | 0 | `lr1/first/mod.rs` | `lr1/first/Mod.kt` |
-| `construct.mod` | `lr1.lanetable.construct.Mod` | 0 | `lr1/lane_table/construct/mod.rs` | `lr1/lanetable/construct/Mod.kt` |
-| `lane.mod` | `lr1.lanetable.lane.Mod` | 0 | `lr1/lane_table/lane/mod.rs` | `lr1/lanetable/lane/Mod.kt` |
-| `lane_table.mod` | `lr1.lanetable.Mod` | 0 | `lr1/lane_table/mod.rs` | `lr1/lanetable/Mod.kt` |
-| `context_set.mod` | `lr1.lanetable.table.contextset.Mod` | 0 | `lr1/lane_table/table/context_set/mod.rs` | `lr1/lanetable/table/contextset/Mod.kt` |
-| `table.mod` | `lr1.lanetable.table.Mod` | 0 | `lr1/lane_table/table/mod.rs` | `lr1/lanetable/table/Mod.kt` |
-| `lr1.mod` | `lr1.Mod` | 0 | `lr1/mod.rs` | `lr1/Mod.kt` |
-| `report.mod` | `lr1.report.Mod` | 0 | `lr1/report/mod.rs` | `lr1/report/Mod.kt` |
-| `trace.mod` | `lr1.trace.Mod` | 0 | `lr1/trace/mod.rs` | `lr1/trace/Mod.kt` |
-| `reduce.mod` | `lr1.trace.reduce.Mod` | 0 | `lr1/trace/reduce/mod.rs` | `lr1/trace/reduce/Mod.kt` |
-| `shift.mod` | `lr1.trace.shift.Mod` | 0 | `lr1/trace/shift/mod.rs` | `lr1/trace/shift/Mod.kt` |
-| `trace_graph.mod` | `lr1.trace.tracegraph.Mod` | 0 | `lr1/trace/trace_graph/mod.rs` | `lr1/trace/tracegraph/Mod.kt` |
-| `message.mod` | `message.Mod` | 0 | `message/mod.rs` | `message/Mod.kt` |
-| `cond_comp.mod` | `normalize.condcomp.Mod` | 0 | `normalize/cond_comp/mod.rs` | `normalize/condcomp/Mod.kt` |
-| `graph.mod` | `normalize.inline.graph.Mod` | 0 | `normalize/inline/graph/mod.rs` | `normalize/inline/graph/Mod.kt` |
-| `inline.mod` | `normalize.inline.Mod` | 0 | `normalize/inline/mod.rs` | `normalize/inline/Mod.kt` |
-| `lower.mod` | `normalize.lower.Mod` | 0 | `normalize/lower/mod.rs` | `normalize/lower/Mod.kt` |
-| `macro_expand.mod` | `normalize.macroexpand.Mod` | 0 | `normalize/macro_expand/mod.rs` | `normalize/macroexpand/Mod.kt` |
-| `normalize.mod` | `normalize.Mod` | 0 | `normalize/mod.rs` | `normalize/Mod.kt` |
-| `precedence.mod` | `normalize.precedence.Mod` | 0 | `normalize/precedence/mod.rs` | `normalize/precedence/Mod.kt` |
-| `prevalidate.mod` | `normalize.prevalidate.Mod` | 0 | `normalize/prevalidate/mod.rs` | `normalize/prevalidate/Mod.kt` |
-| `resolve.mod` | `normalize.resolve.Mod` | 0 | `normalize/resolve/mod.rs` | `normalize/resolve/Mod.kt` |
-| `token_check.mod` | `normalize.tokencheck.Mod` | 0 | `normalize/token_check/mod.rs` | `normalize/tokencheck/Mod.kt` |
-| `tyinfer.mod` | `normalize.tyinfer.Mod` | 0 | `normalize/tyinfer/mod.rs` | `normalize/tyinfer/Mod.kt` |
-| `parser.mod` | `parser.Mod` | 0 | `parser/mod.rs` | `parser/Mod.kt` |
-| `rust.mod` | `rust.Mod` | 0 | `rust/mod.rs` | `rust/Mod.kt` |
-| `tls.mod` | `tls.Mod` | 0 | `tls/mod.rs` | `tls/Mod.kt` |
-| `tok.mod` | `tok.Mod` | 0 | `tok/mod.rs` | `tok/Mod.kt` |
-

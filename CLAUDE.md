@@ -24,15 +24,13 @@ seems to conflict with one of these, the goals win.
    the same inputs and asserting the same outputs. No skips, no "TODO:
    port later." Integration grammars under `tmp/lalrpop-rs/lalrpop-test/`
    are likewise mirrored.
-3. **Tooling is a tool, not a warden.** ast_distance is the working
-   coverage and cheat-detection tool. Earlier revisions of this doc
-   forbade piping/redirecting its output; that restriction is lifted.
-   The blocker survives as opt-in policy via the `"strict_redirects"`
-   field in `.ast_distance_config.json` (default `false`). Do **not**
-   chase ast_distance similarity scores — a faithful Kotlin port using
-   stdlib idioms can score low because identifier overlap is the
-   dominant signal. Coverage (zero missing symbols, zero stubs) is the
-   gate; per-file similarity is diagnostic only.
+3. **Tooling is a tool, not a warden.** Static analyzers in
+   `tools/port_lint/` (deterministic Kotlin-port lint) and
+   `tools/sig_diff/` (paired-file signature dump and family rollup)
+   exist to flag specific drift patterns and to spot-check coverage
+   on a single file pair. They do not produce verdicts. The runtime
+   gate is `./gradlew test`; per-file structural metrics are
+   diagnostic only and are not chased.
 4. **Anything goes that is faithful to Rust.** A faithful translation
    is one that produces the same observable behavior on the same
    input. Within that constraint, use Kotlin idioms, Kotlin stdlib,
@@ -52,11 +50,7 @@ seems to conflict with one of these, the goals win.
 
 The build gate is **`./gradlew test`** — the ported Rust tests must
 pass on the same inputs the Rust tests use. The Kotlin compiler is a
-precondition, not the gate. The earlier `astDistanceParity` Gradle gate
-that short-circuited every build target on coverage / stub thresholds
-has been removed; that style of gate ranks symbol counts above test
-correctness and pushes the port toward rust-ifying Kotlin to chase
-numbers.
+precondition, not the gate.
 
 For each module you touch:
 
@@ -69,40 +63,15 @@ For each module you touch:
    tables, etc.) move under `src/commonTest/resources/`.
 3. Run `./gradlew test` (or the platform-specific test task). Tests
    must pass on the same input the Rust test uses.
-4. Spot-check coverage by running `ast_distance --symbol-parity` on
-   the file pair (see commands below). Use the result diagnostically:
-   missing-symbol counts are real coverage gaps; per-file similarity
-   numbers are noisy and should not be chased.
-
-ast_distance is the working tool for narrower questions:
-
-```bash
-# Coverage map: which Rust symbols are missing from the Kotlin tree
-./tools/ast_distance/ast_distance --symbol-parity \
-  tmp/lalrpop-rs/lalrpop/src \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop \
-  --kotlin-test-root src/commonTest/kotlin/io/github/kotlinmania/lalrpop \
-  --missing-only
-
-# Function-by-function comparison for a single file pair
-./tools/ast_distance/ast_distance --compare-functions \
-  tmp/lalrpop-rs/lalrpop/src/lr1/build.rs rust \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop/lr1/Build.kt kotlin
-
-# Whole-tree report (regenerates port_status_report.md, NEXT_ACTIONS.md, etc.)
-./tools/ast_distance/ast_distance --deep \
-  tmp/lalrpop-rs/lalrpop/src rust \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop kotlin
-```
-
-Pipe and redirect freely. The redirect-guard is now off by default. If
-you want to re-enforce it on a branch, set `"strict_redirects": true`
-in `.ast_distance_config.json`.
-
-A low ast_distance score on a faithful port whose tests pass and whose
-coverage is 100% is a tooling signal, not a verdict — usually it means
-the score model doesn't like Kotlin's stdlib idioms. A high score on a
-port whose tests fail is worthless.
+4. Optionally run `tools/port_lint/port_lint.py src` to flag
+   deterministic drift patterns (collapsed emit-comments,
+   self-recursive overrides, sealed-toString shadowing, suppressed
+   warnings, JVM imports, snake-case identifiers). Findings tagged
+   HIGH should block the change; MEDIUM/LOW are for review.
+5. Optionally run `tools/sig_diff/sig_diff.py <rust> <kotlin>` for a
+   paired-file function-signature dump and family rollup, useful for
+   parser-generator-style files (e.g. the LrGrammar pair). Treat any
+   output as diagnostic, never a verdict.
 
 ## Targets — Kotlin Multiplatform, no JVM
 
@@ -384,10 +353,7 @@ overwhelming, slow down; do not parallelize.
 - **Do not write to `/tmp` or to project-local `tmp/` for staging.**
   `tmp/` is reserved for read-only upstream Rust oracles
   (`tmp/lalrpop-rs/`). Anything else either lives in `src/` as a
-  committed file or doesn't exist. ast_distance regenerates
-  `port_status_report.md`, `NEXT_ACTIONS.md`, etc. at the project
-  root — those are derived artifacts, not staging files; don't edit
-  them by hand.
+  committed file or doesn't exist.
 - **Blast Radius Rule.**
   - **No repo-wide scripting.** No `find … -exec`, no global `sed` /
     `perl`, no blanket regex replacements across many files.
@@ -570,8 +536,6 @@ connector. Include:
 
 - Files touched.
 - Tests added and passing.
-- ast_distance coverage delta (production / supplementary / tests /
-  stubs) if relevant.
 - Blockers that need a human decision.
 
 ## Commit Messages

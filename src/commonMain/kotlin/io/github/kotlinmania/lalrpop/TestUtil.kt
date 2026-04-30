@@ -31,6 +31,7 @@ private class ExpectedDebug(private val s: String) {
  */
 private fun rustDebugFormat(value: Any?): String = when (value) {
     null -> "null"
+    is List<*> -> rustPrettyDebug(value)
     is TypeParameter.LifetimeTp -> "Lifetime(\n    ${value.lifetime}\n)"
     is TypeParameter.Id -> "Id(\n    Atom('${value.atom}' type=inline)\n)"
     else -> value.toString()

@@ -14,12 +14,23 @@ package io.github.kotlinmania.lalrpop.api
  */
 
 private fun unsupported(): Nothing =
-    throw UnsupportedOperationException("filesystem access is not available on the JS target")
+    throw UnsupportedOperationException(
+        "filesystem access is not available on the JS target",
+    )
 
 internal actual fun apiTempDir(): String = unsupported()
+
 internal actual fun apiSetCurrentDir(path: String): Unit = unsupported()
-internal actual fun apiSetEnvVar(name: String, value: String): Unit = unsupported()
+
+internal actual fun apiSetEnvVar(
+    name: String,
+    value: String,
+): Unit = unsupported()
+
 internal actual fun apiPathExists(path: String): Boolean = unsupported()
+
 internal actual fun apiCreateDir(path: String): Unit = unsupported()
+
 internal actual fun apiRemoveDirAll(path: String): Unit = unsupported()
+
 internal actual fun apiRemoveFile(path: String): Unit = unsupported()

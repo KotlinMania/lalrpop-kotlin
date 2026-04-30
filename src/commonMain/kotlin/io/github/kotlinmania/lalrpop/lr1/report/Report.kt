@@ -127,15 +127,11 @@ private class ReportGenerator<W : Appendable>(
 
         val maxWidth = getWidthForGotos(state)
 
-        if (!(state.shifts.size > 0)) {
-            out.appendLine()
-            writeShifts(state.shifts, maxWidth)
-        }
+        out.appendLine()
+        writeShifts(state.shifts, maxWidth)
 
-        if (!(state.gotos.size > 0)) {
-            out.appendLine()
-            writeGotos(state.gotos, maxWidth)
-        }
+        out.appendLine()
+        writeGotos(state.gotos, maxWidth)
 
         if (conflictsOpt != null) {
             for (conflict in conflictsOpt) {
@@ -213,7 +209,7 @@ private class ReportGenerator<W : Appendable>(
             out.append(INDENT_STRING)
             // stringize it first to allow handle :width by Display for string
             val s = entry.key.toString()
-            out.appendLine("${s.padEnd(maxWidth)} shift and goto ${entry.value}")
+            out.appendLine("${s.padEnd(maxWidth)} shift and goto ${entry.value.display()}")
         }
     }
 
@@ -259,7 +255,7 @@ private class ReportGenerator<W : Appendable>(
             out.append(INDENT_STRING)
             // stringize it first to allow handle :width by Display for string
             val s = entry.key.toString()
-            out.appendLine("${s.padEnd(maxWidth)} goto ${entry.value}")
+            out.appendLine("${s.padEnd(maxWidth)} goto ${entry.value.display()}")
         }
     }
 
@@ -291,8 +287,8 @@ private object NilLookaheadPrinter : LookaheadPrinter {
 
 private class TokenSetLookaheadPrinter(val ts: TokenSet) : LookaheadPrinter {
     override fun print(out: Appendable) {
-        for (i in ts.bitSet) {
-            out.append(" $i")
+        for (token in ts) {
+            out.append(" $token")
         }
     }
 

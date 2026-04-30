@@ -59,11 +59,10 @@ private fun checkInternToken(grammar: String, expectedTokens: List<Pair<String, 
 }
 
 /**
- * Mirror the upstream `format("{:?}", actualUserName)` for an
- * `Option<(&MatchMapping, &str)>`. The `MatchMapping::Terminal` `Debug`
- * implementation prints the underlying terminal literal (already quoted for
- * `"foo"` or `r#"foo"#`); the `&str` half is rendered with surrounding
- * double quotes the way the upstream `{:?}` does for strings.
+ * Mirror the upstream debug formatting for an optional terminal mapping
+ * paired with the matched text. Terminal mappings print the underlying
+ * terminal literal (already quoted for `"foo"` or `r#"foo"#`), and the text
+ * half is rendered with surrounding double quotes.
  */
 private fun formatRustDebug(actual: Pair<MatchMapping, String>?): String {
     if (actual == null) return "None"
@@ -147,7 +146,6 @@ class TokenCheckTest {
 
     /** Basic test for match mappings. */
     // This test requires regex unicode case support
-    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun matchMappings() {
         checkInternToken(
@@ -165,7 +163,6 @@ class TokenCheckTest {
      * be ambiguous with the begin regex.
      */
     // This test requires regex unicode case support
-    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun matchPrecedence() {
         checkInternToken(
@@ -200,11 +197,9 @@ class TokenCheckTest {
 
     /** Test that, with a catch-all, the previous two examples work. */
     // This test requires regex unicode case support
-    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun matchCatchAll() {
         val grammar = """grammar; match { r"(?i)begin" => "BEGIN", _ } X = { "foo", r"foo" };"""
-        // assert(validateGrammar(grammar).isOk())
         validateGrammar(grammar)
     }
 
@@ -241,7 +236,6 @@ class TokenCheckTest {
     }
 
     // This test requires regex unicode case support
-    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun complexMatch() {
         val grammar = """
@@ -255,7 +249,6 @@ class TokenCheckTest {
             "ABC" BEGIN => String::from("Success")
         };
 """
-        // assert(validateGrammar(grammar).isOk())
         validateGrammar(grammar)
     }
 
@@ -264,7 +257,6 @@ class TokenCheckTest {
      * of a match declaration.
      */
     // This test requires regex unicode case support
-    // (cfgAttr(not(feature = "unicode"), ignore))
     @Test
     fun ambiguityWithinMatch() {
         checkErr(

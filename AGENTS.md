@@ -30,12 +30,11 @@ seems to conflict with one of these, the goals win.
    inputs and asserts the same outputs as the Rust test. No skips, no
    "TODO: port later." Integration grammars under
    `tmp/lalrpop-rs/lalrpop-test/` are likewise mirrored.
-3. **Tooling is a tool, not a warden.** ast_distance is the working
-   coverage and cheat-detection tool; do not chase its similarity
-   scores. A faithful Kotlin port using stdlib idioms can score low
-   because identifier overlap is the dominant signal. Coverage (zero
-   missing symbols, zero stubs) is the gate; per-file similarity is
-   diagnostic only.
+3. **Tooling is a tool, not a warden.** Static analyzers under
+   `tools/port_lint/` and `tools/sig_diff/` exist to flag specific
+   drift patterns and to spot-check coverage on a single file pair.
+   They do not produce verdicts. The runtime gate is `./gradlew test`;
+   per-file structural metrics are diagnostic only and are not chased.
 4. **Anything goes that is faithful to Rust.** A faithful translation
    is one that produces the same observable behavior on the same
    input. Within that constraint, use Kotlin idioms, Kotlin stdlib,
@@ -52,10 +51,7 @@ seems to conflict with one of these, the goals win.
 
 The build gate is `./gradlew test` — the ported tests must pass on
 the same inputs the Rust tests use. The Kotlin compiler is a
-precondition, not the gate. The old `astDistanceParity` Gradle gate
-that short-circuited builds on coverage thresholds has been removed;
-ranking symbol counts above test correctness pushes ports toward
-rust-ifying Kotlin to chase numbers.
+precondition, not the gate.
 
 ## Naming
 
@@ -337,10 +333,8 @@ Do not delete comments to silence rules. Translate them.
 No Rust-named methods (`len()`, `iter()`, `insert()`) on Kotlin stdlib
 types — use `size`, `iterator()`, `add()`. No wrapper class around
 `BTreeMap` to host Rust naming. No porter-invented typealiases. A
-faithful Kotlin port using stdlib idioms can score low on
-ast_distance because identifier overlap is the dominant signal — that
-is acceptable. Coverage and passing tests are the gate; per-file
-similarity is diagnostic only.
+faithful Kotlin port using stdlib idioms is the goal; passing tests
+are the gate.
 
 ### Do not delegate edits to sub-agents
 
@@ -540,39 +534,26 @@ connector. Include:
 
 - Files touched.
 - Tests added and passing.
-- ast_distance coverage delta (production / supplementary / tests /
-  stubs) if relevant.
 - Blockers that need a human decision.
 
-## ast_distance — sidecar tool, not the gate
+## Static-analysis sidecars
 
-ast_distance is the working tool for coverage and cheat detection. It
-is **not** the gate. Do not chase similarity scores; a faithful Kotlin
-port using stdlib idioms can score low because identifier overlap is
-the dominant signal.
+Two read-only tools live under `tools/`. Neither is a gate; both are
+diagnostic.
 
-```bash
-# Coverage map
-./tools/ast_distance/ast_distance --symbol-parity \
-  tmp/lalrpop-rs/lalrpop/src \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop \
-  --kotlin-test-root src/commonTest/kotlin/io/github/kotlinmania/lalrpop \
-  --missing-only
+- **`tools/port_lint/port_lint.py`** — deterministic Kotlin-port lint.
+  Each rule was added in response to a real observed bug (collapsed
+  emit-comments, self-recursive overrides, sealed-toString shadowing,
+  `@Suppress`, JVM imports, snake-case identifiers). HIGH findings
+  block; MEDIUM/LOW are for review. Run with
+  `python tools/port_lint/port_lint.py src`.
 
-# Function-by-function comparison
-./tools/ast_distance/ast_distance --compare-functions \
-  tmp/lalrpop-rs/lalrpop/src/lr1/build.rs rust \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop/lr1/Build.kt kotlin
-
-# Full report
-./tools/ast_distance/ast_distance --deep \
-  tmp/lalrpop-rs/lalrpop/src rust \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop kotlin
-```
-
-Pipe and redirect freely. The redirect-guard is opt-in via
-`"strict_redirects": true` in `.ast_distance_config.json` (default
-`false`).
+- **`tools/sig_diff/sig_diff.py`** — paired-file function-signature
+  dump and family rollup. Useful for parser-generator-style files
+  (e.g. the LrGrammar pair, ~1500 functions). Reports per-name counts,
+  family rollup (action / reduce / popVariant / etc.), and Rust-only
+  vs Kotlin-only name lists. Snake↔camel aware. Treat output as
+  diagnostic; the runtime gate is the test suite.
 
 ## Code Style
 

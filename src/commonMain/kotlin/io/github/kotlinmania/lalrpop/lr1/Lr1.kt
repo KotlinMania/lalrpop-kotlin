@@ -19,7 +19,7 @@ fun buildStates(grammar: Grammar, start: NonterminalString): MutableList<State<T
 }
 
 fun generateReport(
-    out: StringBuilder,
+    out: Appendable,
     lr1result: MutableList<State<TokenSet>>,
 ) {
     generateReportImpl(out, lr1result)
@@ -44,15 +44,17 @@ private fun rewriteStateIndices(grammar: Grammar, states: MutableList<State<Toke
     val stateRewrite = MutableList(states.size) { 0 }
     for ((newIndex, state) in states.withIndex()) {
         stateRewrite[state.index.value] = newIndex
-        state.index.value = newIndex
+        state.index = StateIndex(newIndex)
     }
 
     for (state in states) {
-        for (goto in state.gotos.values) {
-            goto.value = stateRewrite[goto.value]
+        for (nonterminal in state.gotos.keys.toList()) {
+            val goto = state.gotos.getValue(nonterminal)
+            state.gotos[nonterminal] = StateIndex(stateRewrite[goto.value])
         }
-        for (shift in state.shifts.values) {
-            shift.value = stateRewrite[shift.value]
+        for (terminal in state.shifts.keys.toList()) {
+            val shift = state.shifts.getValue(terminal)
+            state.shifts[terminal] = StateIndex(stateRewrite[shift.value])
         }
     }
 }

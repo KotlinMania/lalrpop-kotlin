@@ -8,11 +8,6 @@ import io.github.kotlinmania.lalrpop.tok.Error as TokError
 import io.github.kotlinmania.lalrpop.tok.applyStringEscapes
 import kotlin.Short
 import io.github.kotlinmania.lalrpop.parser.Top
-import io.github.kotlinmania.lalrpop.tok.Error as Error      // tok::Error -> Error
-import io.github.kotlinmania.lalrpop.tok.Tok as Token         // Tok -> Token
-import io.github.kotlinmania.lalrpop.parser.Top as Success    // Top -> Success
-import kotlin.Short as StateIndex                              // i16 -> StateIndex
-import kotlin.Short as Action                                  // i16 -> Action
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ArgPattern
@@ -64,6 +59,12 @@ import io.github.kotlinmania.lalrpop.runtime.ShortAction
 import io.github.kotlinmania.lalrpop.runtime.SimulatedReduce
 import io.github.kotlinmania.lalrpop.runtime.TokResult
 import io.github.kotlinmania.lalrpop.strip
+
+internal typealias Error = TokError
+internal typealias Token = Tok
+internal typealias Success = Top
+internal typealias StateIndex = Short
+internal typealias Action = Short
 
 internal sealed class Symbol {
     data class Variant0(val v: Tok) : Symbol()

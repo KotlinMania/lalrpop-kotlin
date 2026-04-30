@@ -240,10 +240,11 @@ class Configuration internal constructor(
     // dirPath here is specifically a dir, so processFile() should call this with None
     internal fun verifyNoInDirConflict(dirPath: String?) {
         if (session.inDir != null && session.inDir != dirPath) {
-            apiEPrintln("Error: \"process_*()\" contradicts previously set in_dir")
-            throw IllegalArgumentException(
-                "\"process_*()\" functions contradict previously set in_dir.  The in_dir is set by either `set_in_dir()` or `use_cargo_dir_conventions()`.  Either use `process()` instead, or omit `set_in_dir()`.  (Note: in previous versions of lalrpop, this combination could affect the parser output dir.  If you were relying on this behavior to output the parser in your source directory, you may want to use `set_out_dir()` to retain that behavior.",
+            apiEPrintln("Error: \"processXxx()\" contradicts previously set inDir")
+            error(
+                "\"processXxx()\" functions contradict previously set inDir.  The inDir is set by either `setInDir()` or `useCargoDirConventions()`.  Either use `process()` instead, or omit `setInDir()`.  (Note: in previous versions of lalrpop, this combination could affect the parser output dir.  If you were relying on this behavior to output the parser in your source directory, you may want to use `setOutDir()` to retain that behavior.",
             )
+
         }
     }
 

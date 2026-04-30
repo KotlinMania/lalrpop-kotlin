@@ -156,7 +156,10 @@ internal class RegexParser(
             }
         }
         val inner = parseAlternation()
-        if (!peek(')')) throw RegexSyntaxError("expected ')' at position $pos", pos)
+        if (!peek(')')) {
+            val message = if (pos >= input.length) "unclosed group" else "expected ')' at position $pos"
+            throw RegexSyntaxError(message, pos)
+        }
         advance()
         return Hir(HirKind.Capture(RegexCapture(name = name, sub = inner)))
     }
@@ -245,6 +248,11 @@ internal class RegexParser(
         val negate = peek('^').also { if (it) advance() }
         val ranges = mutableListOf<ClassUnicodeRange>()
         while (pos < input.length && !peek(']')) {
+            val posix = parsePosixClass()
+            if (posix != null) {
+                ranges.addAll(posix)
+                continue
+            }
             val startHir = parseClassItem()
             val start = classItemStart(startHir)
             if (start == null) {
@@ -267,6 +275,35 @@ internal class RegexParser(
         val merged = mergeRanges(ranges)
         val final = if (negate) invertRanges(merged) else merged
         return Hir(HirKind.Class(RegexClass.Unicode(final)))
+    }
+
+    private fun parsePosixClass(): List<ClassUnicodeRange>? {
+        if (!(peek('[') && pos + 1 < input.length && input[pos + 1] == ':')) return null
+        val start = pos
+        pos += 2
+        val negate = peek('^').also { if (it) advance() }
+        val nameStart = pos
+        while (pos < input.length && input[pos] != ':') pos += 1
+        val name = input.substring(nameStart, pos)
+        if (!(peek(':') && pos + 1 < input.length && input[pos + 1] == ']')) {
+            pos = start
+            return null
+        }
+        pos += 2
+        val ranges = when (name) {
+            "word" -> wordRanges()
+            "alnum" -> listOf(ClassUnicodeRange('0', '9'), ClassUnicodeRange('A', 'Z'), ClassUnicodeRange('a', 'z'))
+            "alpha" -> listOf(ClassUnicodeRange('A', 'Z'), ClassUnicodeRange('a', 'z'))
+            "digit" -> listOf(ClassUnicodeRange('0', '9'))
+            "lower" -> listOf(ClassUnicodeRange('a', 'z'))
+            "upper" -> listOf(ClassUnicodeRange('A', 'Z'))
+            "space" -> spaceRanges()
+            "blank" -> listOf(ClassUnicodeRange('\t', '\t'), ClassUnicodeRange(' ', ' '))
+            "xdigit" -> listOf(ClassUnicodeRange('0', '9'), ClassUnicodeRange('A', 'F'), ClassUnicodeRange('a', 'f'))
+            "ascii" -> listOf(ClassUnicodeRange('\u0000', '\u007F'))
+            else -> throw RegexSyntaxError("unknown POSIX class '$name'", start)
+        }
+        return if (negate) invertRanges(ranges) else ranges
     }
 
     /**
@@ -366,12 +403,7 @@ internal class RegexParser(
     }
 
     private fun wordClass(negate: Boolean): Hir {
-        val base = listOf(
-            ClassUnicodeRange('0', '9'),
-            ClassUnicodeRange('A', 'Z'),
-            ClassUnicodeRange('_', '_'),
-            ClassUnicodeRange('a', 'z'),
-        )
+        val base = wordRanges()
         val ranges = if (negate) invertRanges(base) else base
         return Hir(HirKind.Class(RegexClass.Unicode(ranges)))
     }
@@ -382,22 +414,31 @@ internal class RegexParser(
         // emitted Rust source for `r"\s*"` is `[\t-\r ]*` (ASCII only)
         // while upstream emits the full Unicode whitespace ranges.
         // Sourced from `regexSyntax/src/unicodeTables/perlSpace.rs`.
-        val base = listOf(
-            ClassUnicodeRange('\t', '\r'),                          // 0x09–0x0D: TAB LF VT FF CR
-            ClassUnicodeRange(' ', ' '),                            // 0x20: SPACE
-            ClassUnicodeRange('', ''),                  // NEL
-            ClassUnicodeRange(' ', ' '),                  // NBSP
-            ClassUnicodeRange(' ', ' '),                  // OGHAM SPACE MARK
-            ClassUnicodeRange(' ', ' '),                  // EN/EM/THIN/HAIR/etc. SPACE
-            ClassUnicodeRange(' ', ' '),                  // LINE SEPARATOR
-            ClassUnicodeRange(' ', ' '),                  // PARAGRAPH SEPARATOR
-            ClassUnicodeRange(' ', ' '),                  // NARROW NBSP
-            ClassUnicodeRange(' ', ' '),                  // MEDIUM MATHEMATICAL SPACE
-            ClassUnicodeRange('　', '　'),                  // IDEOGRAPHIC SPACE
-        )
+        val base = spaceRanges()
         val ranges = if (negate) invertRanges(base) else base
         return Hir(HirKind.Class(RegexClass.Unicode(ranges)))
     }
+
+    private fun wordRanges(): List<ClassUnicodeRange> = listOf(
+        ClassUnicodeRange('0', '9'),
+        ClassUnicodeRange('A', 'Z'),
+        ClassUnicodeRange('_', '_'),
+        ClassUnicodeRange('a', 'z'),
+    )
+
+    private fun spaceRanges(): List<ClassUnicodeRange> = listOf(
+        ClassUnicodeRange('\t', '\r'),                          // 0x09-0x0D: TAB LF VT FF CR
+        ClassUnicodeRange(' ', ' '),                            // 0x20: SPACE
+        ClassUnicodeRange('', ''),                  // NEL
+        ClassUnicodeRange(' ', ' '),                  // NBSP
+        ClassUnicodeRange(' ', ' '),                  // OGHAM SPACE MARK
+        ClassUnicodeRange(' ', ' '),                  // EN/EM/THIN/HAIR/etc. SPACE
+        ClassUnicodeRange(' ', ' '),                  // LINE SEPARATOR
+        ClassUnicodeRange(' ', ' '),                  // PARAGRAPH SEPARATOR
+        ClassUnicodeRange(' ', ' '),                  // NARROW NBSP
+        ClassUnicodeRange(' ', ' '),                  // MEDIUM MATHEMATICAL SPACE
+        ClassUnicodeRange('　', '　'),                  // IDEOGRAPHIC SPACE
+    )
 
     private fun anyCharClass(): Hir =
         // `.` matches anything except newline
