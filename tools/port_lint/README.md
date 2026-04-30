@@ -35,22 +35,20 @@ Exit code is non-zero if any **HIGH** finding fires (CI-friendly).
 | `rust-source-citation` | LOW | KDoc / comments with porter phrasing (`Mirrors upstream`, `Renamed from`, `lrgrammar.rs:NNN`, `the Kotlin port`, `Direct port of upstream`). Translate Rust docs word-for-word; do not add Rust-vs-Kotlin commentary. |
 | `snake-case-identifier` | MEDIUM | Underscore in a `fun`/`val`/`var` name. Allowed only in the four `SCREAMING_SNAKE_CASE` contexts (consts, immutable top-level/object vals, enum entries). |
 
-## Why this and not ast_distance
+## What this catches
 
-`ast_distance` uses cosine similarity over identifier and AST-shape
-vectors. A faithful Kotlin port using stdlib idioms can score low because
-identifier overlap is the dominant signal — and `ast_distance` cannot see
-the kinds of bugs `port_lint` catches:
+Each rule was added in response to a real observed bug, not as a
+heuristic. The rule table above lists the bug each one was written
+for. Three concrete examples:
 
-| Bug | ast_distance | port_lint |
-|---|---|---|
-| `rust(out, "}") // ... rust(out, "}") // ...` collapse | identifier set unchanged → 0 signal | `collapsed-emit-comment` HIGH |
-| `override fun X() { return X() }` recursion | call graph not visible to it | `self-recursive-method` HIGH |
-| Data-class subclass shadowing parent's `toString` | tree shape unchanged → 0 signal | `sealed-tostring-shadow` MEDIUM |
+| Bug | Rule |
+|---|---|
+| `rust(out, "}") // fn   rust(out, "}") // mod` collapsed onto one line, dropping the second emit | `collapsed-emit-comment` HIGH |
+| `override fun X() { return X() }` infinite recursion | `self-recursive-method` HIGH |
+| Data-class subclass shadowing a sealed parent's `toString = fmt()` | `sealed-tostring-shadow` MEDIUM |
 
-`port_lint` complements `ast_distance`. The two tools answer different
-questions: `ast_distance` measures coverage and surfaces missing symbols;
-`port_lint` flags specific drift patterns observed to cause real bugs.
+The runtime gate is `./gradlew test`. `port_lint` is a fast static
+sidecar that flags specific drift patterns observed to cause real bugs.
 
 ## Adding a rule
 
