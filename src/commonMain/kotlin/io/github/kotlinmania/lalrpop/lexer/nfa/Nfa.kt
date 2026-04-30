@@ -6,7 +6,7 @@
  */
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
-import io.github.kotlinmania.lalrpop.lexer.Hir
+import io.github.kotlinmania.lalrpop.regexsyntax.Hir
 import io.github.kotlinmania.lalrpop.regexsyntax.ClassBytesRange
 import io.github.kotlinmania.lalrpop.regexsyntax.ClassUnicodeRange
 import io.github.kotlinmania.lalrpop.regexsyntax.HirKind
@@ -21,9 +21,6 @@ import io.github.kotlinmania.lalrpop.regexsyntax.RegexClass
 val ACCEPT: NfaStateIndex = NfaStateIndex(0)
 val REJECT: NfaStateIndex = NfaStateIndex(1)
 val START: NfaStateIndex = NfaStateIndex(2)
-
-@Deprecated("Use `Nfa` instead", ReplaceWith("Nfa"))
-typealias NFA = Nfa
 
 class Nfa private constructor(
     internal val states: MutableList<NfaState>,
@@ -572,7 +569,6 @@ enum class StateKind : Comparable<StateKind> {
 }
 
 @Deprecated("Use `NfaStateIndex` instead", ReplaceWith("NfaStateIndex"))
-typealias NFAStateIndex = NfaStateIndex
 
 data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
     override fun compareTo(other: NfaStateIndex): Int = value.compareTo(other.value)
@@ -699,7 +695,6 @@ class EdgeIterator<L>(
  * regex feature it does not support.
  */
 @Deprecated("Use `NfaConstructionError` instead", ReplaceWith("NfaConstructionError"))
-typealias NFAConstructionError = NfaConstructionError
 
 enum class NfaConstructionError {
     NamedCaptures,
