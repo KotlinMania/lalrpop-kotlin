@@ -1,4 +1,5 @@
-// port-lint: source message/message.rs
+// port-lint: ignore
+// re-homed Content trait from upstream message/mod.rs (mod.rs not ported per project rules)
 package io.github.kotlinmania.lalrpop.message.message
 import io.github.kotlinmania.lalrpop.message.AsciiCanvas
 import io.github.kotlinmania.lalrpop.message.AsciiView
