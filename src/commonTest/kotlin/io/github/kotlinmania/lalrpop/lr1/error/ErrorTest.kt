@@ -19,8 +19,9 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<TokenSet>
-import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.message.AsciiCanvas
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.tls.Tls
