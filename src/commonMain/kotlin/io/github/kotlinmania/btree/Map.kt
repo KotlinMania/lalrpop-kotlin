@@ -602,6 +602,12 @@ class BTreeMap<K : Comparable<K>, V> : MutableMap<K, V> {
     // ---- bulkBuildFromSortedIter -------------------------------------------
 
     companion object {
+        /** Makes a new, empty `BTreeMap`. Does not allocate anything on its own. */
+        fun <K : Comparable<K>, V> new(): BTreeMap<K, V> = BTreeMap()
+
+        /** Creates an empty `BTreeMap`. */
+        fun <K : Comparable<K>, V> default(): BTreeMap<K, V> = BTreeMap()
+
         /**
          * Makes a `BTreeMap` from a sorted iterator. Mirrors upstream
          * `public(crate) function bulkBuildFromSortedIter<I>`.

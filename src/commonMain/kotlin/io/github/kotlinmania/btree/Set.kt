@@ -107,6 +107,12 @@ class BTreeSet<T : Comparable<T>> : MutableSet<T> {
     companion object {
         fun <T : Comparable<T>> newIn(): BTreeSet<T> = BTreeSet()
 
+        /** Makes a new, empty `BTreeSet`. */
+        fun <T : Comparable<T>> new(): BTreeSet<T> = BTreeSet()
+
+        /** Creates an empty `BTreeSet`. */
+        fun <T : Comparable<T>> default(): BTreeSet<T> = BTreeSet()
+
         /**
          * Constructs a `BTreeSet` from an iterable of values. Mirrors
          * upstream `implementation<T: Ord> FromIterator<T> for BTreeSet<T>`.
