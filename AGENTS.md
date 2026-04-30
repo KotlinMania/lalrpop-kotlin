@@ -150,48 +150,11 @@ If a fixture exercises a code path the Kotlin port doesn't yet
 implement, port the implementation. Skipping the test is not an
 option.
 
-## Provenance Markers (REQUIRED)
-
-Every ported Kotlin file **must** start with:
-
-```kotlin
-// port-lint: source <relative-path-to-rust-file>
-package io.github.kotlinmania.lalrpop.<module>
-```
-
-Examples:
-
-```kotlin
-// port-lint: source src/lr1/build.rs
-package io.github.kotlinmania.lalrpop.lr1
-```
-
-```kotlin
-// port-lint: source src/parser/lrgrammar.rs
-package io.github.kotlinmania.lalrpop.parser
-```
-
-The path is relative to `tmp/lalrpop-rs/lalrpop/`. So a file at
-`tmp/lalrpop-rs/lalrpop/src/parser/lrgrammar.rs` uses
-`src/parser/lrgrammar.rs`.
-
-Test files use the same convention with `(tests)` appended:
-
-```kotlin
-// port-lint: source src/lr1/build.rs (tests)
-package io.github.kotlinmania.lalrpop.lr1
-```
-
-Files re-homed out of a `mod.rs` (because `mod.rs` is never translated
-as `Mod.kt`) use `// port-lint: ignore` and a short prose note like
-`// re-homed from upstream module root`.
-
 ## Copyright Header
 
-Immediately after the port-lint header:
+Every ported Kotlin file starts with:
 
 ```kotlin
-// port-lint: source <path>
 package <package-name>
 
 /*
@@ -439,11 +402,9 @@ two-phase port.
 ### Phase 1: Rust-output back-end (transliteration)
 
 Transliterate the upstream backend so the Kotlin port can produce the
-same Rust-shaped output. Keep `// port-lint: source src/rust/mod.rs`
-and the corresponding headers on the codegen files. Translate
-`write!` / `writeln!` calls to Kotlin calls that still write the
-corresponding Rust text. Do not Kotlin-ify the emitted output during
-phase 1.
+same Rust-shaped output. Translate `write!` / `writeln!` calls to
+Kotlin calls that still write the corresponding Rust text. Do not
+Kotlin-ify the emitted output during phase 1.
 
 Verification in phase 1: feed a `.lalrpop` grammar to both upstream
 LALRPOP and lalrpop-kotlin, diff the emitted Rust. Any divergence is a
