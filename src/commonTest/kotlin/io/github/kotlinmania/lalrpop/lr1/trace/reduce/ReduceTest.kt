@@ -20,13 +20,13 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.buildStates
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<TokenSet>
+import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.Token
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
-import io.github.kotlinmania.lalrpop.lr1.interpret.interpretPartial
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.interpretPartial
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.tls.Tls
@@ -72,7 +72,7 @@ class ReduceTest {
                 val firstSets = FirstSets.new(grammar)
                 val states = buildStates(grammar, nt("Start"))
                 val tracer = Tracer.new(firstSets, states)
-                val stateStack = interpretPartial(states, terms("Int"))
+                val stateStack = interpretPartial(states, terms("Int")).getOrThrow()
                 val topState = stateStack.last()
 
                 // Top state will have items like:
@@ -311,7 +311,7 @@ pub Ty: () = {
                 val states = buildStates(grammar, nt("Start"))
                 val firstSets = FirstSets.new(grammar)
                 val tracer = Tracer.new(firstSets, states)
-                val stateStack = interpretPartial(states, terms("Int"))
+                val stateStack = interpretPartial(states, terms("Int")).getOrThrow()
                 val topState = stateStack.last()
 
                 // Top state will have an item like:
