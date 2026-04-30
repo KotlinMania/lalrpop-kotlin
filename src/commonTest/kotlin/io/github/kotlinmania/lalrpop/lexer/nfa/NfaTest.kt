@@ -16,13 +16,13 @@ class NfaTest {
         val s2 = nfa.newState(StateKind.Neither)
         val s3 = nfa.newState(StateKind.Neither)
 
-        nfa.pushEdgeNoop(s2, s3)
-        nfa.pushEdgeNoop(s0, s1)
-        nfa.pushEdgeNoop(s0, s3)
-        nfa.pushEdgeNoop(s1, s2)
+        nfa.pushEdge(s2, EdgeLabel.Noop, s3)
+        nfa.pushEdge(s0, EdgeLabel.Noop, s1)
+        nfa.pushEdge(s0, EdgeLabel.Noop, s3)
+        nfa.pushEdge(s1, EdgeLabel.Noop, s2)
 
         // check that if we mixed up the indies between Noop/Other, we'd get wrong thing here
-        nfa.pushEdgeOther(s0, s2)
+        nfa.pushEdge(s0, EdgeLabel.Other, s2)
 
         val s0Edges: List<NfaStateIndex> = nfa.noopEdges(s0).map { it.to }.toList()
         val s1Edges: List<NfaStateIndex> = nfa.noopEdges(s1).map { it.to }.toList()
