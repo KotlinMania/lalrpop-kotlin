@@ -19,8 +19,8 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
-import io.github.kotlinmania.lalrpop.lr1.buildLr0States
+import io.github.kotlinmania.lalrpop.lr1.BuildOutcome
+import io.github.kotlinmania.lalrpop.lr1.buildLr0StatesOrError
 import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.Nil
@@ -145,18 +145,21 @@ Y = {
 """,
 )
 
+private fun expectLr0Failure(
+    grammar: Grammar,
+    start: NonterminalString,
+): TableConstructionError<Nil> =
+    when (val outcome = buildLr0StatesOrError(grammar, start)) {
+        is BuildOutcome.Ok -> error("expected build_lr0_states to fail")
+        is BuildOutcome.Err -> outcome.error
+    }
+
 private fun buildTable(
     grammar: Grammar,
     goal: String,
     tokens: Array<out String>,
 ): LaneTable {
-    val lr0Err: TableConstructionError<Nil> = try {
-        buildLr0States(grammar, nt(goal))
-        error("expected build_lr0_states to fail")
-    } catch (e: TableConstructionErrorException) {
-        @Suppress("UNCHECKED_CAST")
-        e.inner as TableConstructionError<Nil>
-    }
+    val lr0Err: TableConstructionError<Nil> = expectLr0Failure(grammar, nt(goal))
 
     // Push the `tokens` to find the index of the inconsistent state
     val inconsistentStateIndex = traverse(lr0Err.states, tokens)
@@ -252,13 +255,7 @@ class LaneTableTest {
             val grammar = paperExampleG0()
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
-                val lr0Err: TableConstructionError<Nil> = try {
-                    buildLr0States(grammar, nt("G"))
-                    error("expected build_lr0_states to fail")
-                } catch (e: TableConstructionErrorException) {
-                    @Suppress("UNCHECKED_CAST")
-                    e.inner as TableConstructionError<Nil>
-                }
+                val lr0Err: TableConstructionError<Nil> = expectLr0Failure(grammar, nt("G"))
                 val states = LaneTableConstruct.new(grammar, nt("G")).construct()
 
                 // we do not require more *states* than LR(0), just different lookahead
@@ -286,13 +283,7 @@ class LaneTableTest {
             val grammar = paperExampleG1()
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
-                val lr0Err: TableConstructionError<Nil> = try {
-                    buildLr0States(grammar, nt("__G"))
-                    error("expected build_lr0_states to fail")
-                } catch (e: TableConstructionErrorException) {
-                    @Suppress("UNCHECKED_CAST")
-                    e.inner as TableConstructionError<Nil>
-                }
+                val lr0Err: TableConstructionError<Nil> = expectLr0Failure(grammar, nt("__G"))
                 val states = buildStates(grammar, nt("__G"))
 
                 // we require more *states* than LR(0), not just different lookahead
@@ -320,13 +311,7 @@ class LaneTableTest {
 
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
-                val lr0Err: TableConstructionError<Nil> = try {
-                    buildLr0States(grammar, nt("__G"))
-                    error("expected build_lr0_states to fail")
-                } catch (e: TableConstructionErrorException) {
-                    @Suppress("UNCHECKED_CAST")
-                    e.inner as TableConstructionError<Nil>
-                }
+                val lr0Err: TableConstructionError<Nil> = expectLr0Failure(grammar, nt("__G"))
                 val states = buildStates(grammar, nt("__G"))
 
                 // we require more *states* than LR(0), not just different lookahead

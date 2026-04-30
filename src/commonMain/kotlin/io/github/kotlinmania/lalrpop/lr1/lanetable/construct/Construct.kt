@@ -11,7 +11,8 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
-import io.github.kotlinmania.lalrpop.lr1.buildLr0States
+import io.github.kotlinmania.lalrpop.lr1.BuildOutcome
+import io.github.kotlinmania.lalrpop.lr1.buildLr0StatesOrError
 import io.github.kotlinmania.lalrpop.lr1.Action
 import io.github.kotlinmania.lalrpop.lr1.Conflict
 import io.github.kotlinmania.lalrpop.lr1.Item
@@ -46,29 +47,29 @@ class LaneTableConstruct(
     }
 
     fun construct(): MutableList<State<TokenSet>> {
-        val lr0States: MutableList<State<Nil>> = try {
-            // In this case, the grammar is actually
-            // LR(0). This is very rare -- it means that the
-            // grammar does not need lookahead to execute. In
-            // principle, we could stop here, except that if
-            // we do so, then the lookahead values that we get
-            // are very broad.
-            //
-            // Broad lookahead values will cause "eager"
-            // reduce at runtime -- i.e., if there is some
-            // scenario where the lookahead tells you we are
-            // in error, but we would have to reduce a few
-            // states before we see it. This, in turn, can
-            // cause infinite loops around error recovery
-            // (#240).
-            //
-            // Since we want to behave as a LR(1) parser
-            // would, we will just go ahead and run the
-            // algorithm.
-            buildLr0States(grammar, startNt)
-        } catch (e: TableConstructionErrorException) {
-            (e.inner as TableConstructionError<io.github.kotlinmania.lalrpop.lr1.Nil>).states
-        }
+        // In this case, the grammar is actually
+        // LR(0). This is very rare -- it means that the
+        // grammar does not need lookahead to execute. In
+        // principle, we could stop here, except that if
+        // we do so, then the lookahead values that we get
+        // are very broad.
+        //
+        // Broad lookahead values will cause "eager"
+        // reduce at runtime -- i.e., if there is some
+        // scenario where the lookahead tells you we are
+        // in error, but we would have to reduce a few
+        // states before we see it. This, in turn, can
+        // cause infinite loops around error recovery
+        // (#240).
+        //
+        // Since we want to behave as a LR(1) parser
+        // would, we will just go ahead and run the
+        // algorithm.
+        val lr0States: MutableList<State<Nil>> =
+            when (val outcome = buildLr0StatesOrError(grammar, startNt)) {
+                is BuildOutcome.Ok -> outcome.states
+                is BuildOutcome.Err -> outcome.error.states
+            }
 
         // Convert the LR(0) states into LR(0-1) states.
         val states: MutableList<State<TokenSet>> = promoteLr0States(lr0States)
@@ -86,7 +87,10 @@ class LaneTableConstruct(
                 // somewhere. Just compute the conflicts from the final set of
                 // states.
                 val conflicts: MutableList<Conflict<TokenSet>> = states
-                    .flatMap { TokenSet.conflicts(it) }
+                    .flatMap { state ->
+                        state.reductions.firstOrNull()?.first?.conflicts(state)
+                            ?: mutableListOf()
+                    }
                     .toMutableList()
                 throw TableConstructionErrorException(
                     TableConstructionError(states = states, conflicts = conflicts),

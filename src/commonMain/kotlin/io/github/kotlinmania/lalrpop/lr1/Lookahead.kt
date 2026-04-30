@@ -10,6 +10,8 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 
 interface Lookahead<Self : Lookahead<Self>> : Collection<Self>, Comparable<Self> {
     fun fmtAsItemSuffix(): String
+
+    fun conflicts(thisState: State<Self>): MutableList<Conflict<Self>>
 }
 
 class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
@@ -32,42 +34,40 @@ class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
     override fun toString(): String = "Nil"
     override fun compareTo(other: Nil): Int = 0
 
-    companion object {
-        fun conflicts(thisState: State<Nil>): MutableList<Conflict<Nil>> {
-            val index = thisState.index
+    override fun conflicts(thisState: State<Nil>): MutableList<Conflict<Nil>> {
+        val index = thisState.index
 
-            val conflicts: MutableList<Conflict<Nil>> = mutableListOf()
+        val conflicts: MutableList<Conflict<Nil>> = mutableListOf()
 
-            for ((terminal, nextState) in thisState.shifts) {
-                for ((_, production) in thisState.reductions) {
-                    conflicts.add(
-                        Conflict(
-                            state = index,
-                            lookahead = Nil(),
-                            production = production,
-                            action = Action.Shift(terminal, nextState),
-                        )
+        for ((terminal, nextState) in thisState.shifts) {
+            for ((_, production) in thisState.reductions) {
+                conflicts.add(
+                    Conflict(
+                        state = index,
+                        lookahead = Nil(),
+                        production = production,
+                        action = Action.Shift(terminal, nextState),
                     )
-                }
+                )
             }
-
-            if (thisState.reductions.size > 1) {
-                for (i in 1 until thisState.reductions.size) {
-                    val (_, production) = thisState.reductions[i]
-                    val otherProduction = thisState.reductions[0].second
-                    conflicts.add(
-                        Conflict(
-                            state = index,
-                            lookahead = Nil(),
-                            production = production,
-                            action = Action.Reduce(otherProduction),
-                        )
-                    )
-                }
-            }
-
-            return conflicts
         }
+
+        if (thisState.reductions.size > 1) {
+            for (i in 1 until thisState.reductions.size) {
+                val (_, production) = thisState.reductions[i]
+                val otherProduction = thisState.reductions[0].second
+                conflicts.add(
+                    Conflict(
+                        state = index,
+                        lookahead = Nil(),
+                        production = production,
+                        action = Action.Reduce(otherProduction),
+                    )
+                )
+            }
+        }
+
+        return conflicts
     }
 }
 
@@ -167,51 +167,51 @@ class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInter
             set.insert(token)
             return set
         }
+    }
 
-        fun conflicts(thisState: State<TokenSet>): MutableList<Conflict<TokenSet>> {
-            val conflicts: MutableList<Conflict<TokenSet>> = mutableListOf()
+    override fun conflicts(thisState: State<TokenSet>): MutableList<Conflict<TokenSet>> {
+        val conflicts: MutableList<Conflict<TokenSet>> = mutableListOf()
 
-            for ((terminal, nextState) in thisState.shifts) {
-                val token: Token = Token.Terminal(terminal)
-                val inconsistent = thisState.reductions.mapNotNull { (reduceTokens, production) ->
-                    if (reduceTokens.contains(token)) production else null
-                }
-                val set = TokenSet.from(token)
-                for (production in inconsistent) {
-                    conflicts.add(
-                        Conflict(
-                            state = thisState.index,
-                            lookahead = set.clone(),
-                            production = production,
-                            action = Action.Shift(terminal, nextState),
-                        )
-                    )
-                }
+        for ((terminal, nextState) in thisState.shifts) {
+            val token: Token = Token.Terminal(terminal)
+            val inconsistent = thisState.reductions.mapNotNull { (reduceTokens, production) ->
+                if (reduceTokens.contains(token)) production else null
             }
-
-            val len = thisState.reductions.size
-            for (i in 0 until len) {
-                for (j in i + 1 until len) {
-                    val (iTokens, iProduction) = thisState.reductions[i]
-                    val (jTokens, jProduction) = thisState.reductions[j]
-
-                    if (iTokens.isDisjoint(jTokens)) {
-                        continue
-                    }
-
-                    conflicts.add(
-                        Conflict(
-                            state = thisState.index,
-                            lookahead = iTokens.intersection(jTokens),
-                            production = iProduction,
-                            action = Action.Reduce(jProduction),
-                        )
+            val set = TokenSet.from(token)
+            for (production in inconsistent) {
+                conflicts.add(
+                    Conflict(
+                        state = thisState.index,
+                        lookahead = set.clone(),
+                        production = production,
+                        action = Action.Shift(terminal, nextState),
                     )
-                }
+                )
             }
-
-            return conflicts
         }
+
+        val len = thisState.reductions.size
+        for (i in 0 until len) {
+            for (j in i + 1 until len) {
+                val (iTokens, iProduction) = thisState.reductions[i]
+                val (jTokens, jProduction) = thisState.reductions[j]
+
+                if (iTokens.isDisjoint(jTokens)) {
+                    continue
+                }
+
+                conflicts.add(
+                    Conflict(
+                        state = thisState.index,
+                        lookahead = iTokens.intersection(jTokens),
+                        production = iProduction,
+                        action = Action.Reduce(jProduction),
+                    )
+                )
+            }
+        }
+
+        return conflicts
     }
 
     private fun eofBit(): Int = with { terminals -> terminals.all.size }

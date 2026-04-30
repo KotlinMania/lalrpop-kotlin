@@ -140,7 +140,9 @@ fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<State<Tok
         )
     }.toMutableList()
 
-    val conflicts = lr1StatesOut.flatMap { TokenSet.conflicts(it) }.toMutableList()
+    val conflicts = lr1StatesOut.flatMap { state ->
+        state.reductions.firstOrNull()?.first?.conflicts(state) ?: mutableListOf()
+    }.toMutableList()
 
     return if (conflicts.isNotEmpty()) {
         throw TableConstructionErrorException(

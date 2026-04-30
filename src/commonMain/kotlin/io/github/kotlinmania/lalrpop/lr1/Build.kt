@@ -29,6 +29,23 @@ private fun buildLr1StatesLegacy(
     return lr1.buildStates()
 }
 
+/**
+ * Mirrors the Rust `Result<Vec<State<L>>, TableConstructionError<L>>`
+ * returned by `build_lr0_states` / `build_lr1_states`. Use this typed
+ * accessor when the caller needs to inspect the typed
+ * [TableConstructionError] payload without relying on a runtime cast
+ * out of the erased [TableConstructionErrorException.inner].
+ */
+sealed class BuildOutcome<L : Lookahead<L>> {
+    data class Ok<L : Lookahead<L>>(val states: MutableList<State<L>>) : BuildOutcome<L>()
+    data class Err<L : Lookahead<L>>(val error: TableConstructionError<L>) : BuildOutcome<L>()
+}
+
+fun buildLr0StatesOrError(
+    grammar: Grammar,
+    start: NonterminalString,
+): BuildOutcome<Nil> = Lr.new(grammar, start, Nil()).buildStatesOrError()
+
 
 fun useLaneTable(): Boolean {
     return true
@@ -76,7 +93,13 @@ class Lr<L>(
         permitEarlyStop = v
     }
 
-    fun buildStates(): MutableList<State<L>> {
+    fun buildStates(): MutableList<State<L>> =
+        when (val outcome = buildStatesOrError()) {
+            is BuildOutcome.Ok -> outcome.states
+            is BuildOutcome.Err -> throw TableConstructionErrorException(outcome.error)
+        }
+
+    fun buildStatesOrError(): BuildOutcome<L> {
         val session = Tls.session()
         val kernelSet: KKernelSet<Kernel<L>, StateIndex> = KKernelSet()
         val states: MutableList<State<L>> = mutableListOf()
@@ -147,7 +170,7 @@ class Lr<L>(
             }
 
             // check for conflicts
-            conflicts.addAll(conflictsOf(thisState))
+            conflicts.addAll(startLookahead.conflicts(thisState))
 
             // extract a new state
             states.add(thisState)
@@ -159,9 +182,9 @@ class Lr<L>(
         }
 
         return if (conflicts.isNotEmpty()) {
-            throw TableConstructionErrorException(TableConstructionError(states, conflicts))
+            BuildOutcome.Err(TableConstructionError(states, conflicts))
         } else {
-            states
+            BuildOutcome.Ok(states)
         }
     }
 
@@ -326,15 +349,6 @@ private fun <L> epsilonMoves(
     lookahead: L,
 ): MutableList<Item<L>> where L : Lookahead<L>, L : LookaheadBuild<L> =
     lookahead.epsilonMoves(lr, nt, remainder, lookahead)
-private fun <L> conflictsOf(state: State<L>): MutableList<Conflict<L>>
-    where L : Lookahead<L>, L : LookaheadBuild<L> =
-    when {
-        state.reductions.isEmpty() && state.shifts.isEmpty() -> mutableListOf()
-        state.reductions.firstOrNull()?.first is TokenSet ->
-            TokenSet.conflicts(state as State<TokenSet>) as MutableList<Conflict<L>>
-        else ->
-            Nil.conflicts(state as State<Nil>) as MutableList<Conflict<L>>
-    }
 
 // Since `Multimap` needs a `Collection` factory, provide a one-item
 // collection that keeps the last-pushed lookahead for each kernel
