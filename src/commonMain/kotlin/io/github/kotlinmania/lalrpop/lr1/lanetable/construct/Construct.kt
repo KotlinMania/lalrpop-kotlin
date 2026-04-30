@@ -23,6 +23,7 @@ import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.conflictingActions
 import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.StateSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.unifyValues as unifyContextSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.lane.LaneTracer
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
@@ -175,7 +176,7 @@ class LaneTableConstruct(
         }
         val unify = InPlaceUnificationTable<StateSet, ContextSet>(
             keyFromIndex = { idx -> StateSet.fromIndex(idx) },
-            unifyValues = { a, b -> StateSet.unifyValues(a, b) },
+            unifyValues = { a, b -> unifyContextSets(a, b) },
         )
         val stateSets: Map<StateIndex, StateSet> = map()
         for ((stateIndex, contextSet) in rows) {

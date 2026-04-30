@@ -3,16 +3,15 @@ package io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset
 
 import io.github.kotlinmania.lalrpop.UnifyKey
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
+import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
 
 /**
  * The unification key for a set of states in the lane table
  * algorithm.  Each set of states is associated with a
- * `ContextSet`. When two sets of states are merged, their conflict
+ * [ContextSet]. When two sets of states are merged, their conflict
  * sets are merged as well; this will fail if that would produce an
  * overlapping conflict set.
  */
-internal typealias Value = ContextSet
-
 data class StateSet(
     private val indexValue: Int,
 ) : UnifyKey<ContextSet> {
@@ -22,19 +21,19 @@ data class StateSet(
         fun fromIndex(u: Int): StateSet = StateSet(indexValue = u)
 
         fun tag(): String = "StateSet"
-
-        // FIXME: The `ena` interface is really designed around `UnifyValue`
-        // being cheaply cloneable; we should either refactor `ena` a bit or
-        // find some other way to associate a `ContextSet` with a state set
-        // (for example, we could have each state set be associated with an
-        // index that maps to a `ContextSet`), and do the merging ourselves.
-        // But this is easier for now, and cloning a `ContextSet` is not THAT
-        // expensive, right? :)
-        fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
-            try {
-                ContextSet.union(value1, value2)
-            } catch (_: io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead) {
-                null
-            }
     }
 }
+
+// FIXME: The `ena` interface is really designed around `UnifyValue`
+// being cheaply cloneable; we should either refactor `ena` a bit or
+// find some other way to associate a [ContextSet] with a state set
+// (for example, we could have each state set be associated with an
+// index that maps to a [ContextSet]), and do the merging ourselves.
+// But this is easier for now, and cloning a [ContextSet] is not THAT
+// expensive, right? :)
+fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
+    try {
+        ContextSet.union(value1, value2)
+    } catch (_: OverlappingLookahead) {
+        null
+    }
