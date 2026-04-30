@@ -111,11 +111,6 @@ sealed class Token : Comparable<Token> {
         Error -> 1
         is Terminal -> 2
     }
-
-    companion object {
-        @Deprecated("use `Eof` instead", ReplaceWith("Token.Eof"))
-        val EOF: Token = Eof
-    }
 }
 
 class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInterpret<TokenSet> {
