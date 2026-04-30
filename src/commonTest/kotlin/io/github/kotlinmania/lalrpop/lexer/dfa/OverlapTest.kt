@@ -1,7 +1,7 @@
 // port-lint: source lexer/dfa/overlap.rs
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
-import io.github.kotlinmania.lalrpop.collections.set.set
+import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.lexer.nfa.Test as NfaTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
