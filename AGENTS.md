@@ -13,22 +13,49 @@ to Kotlin Multiplatform. The upstream Rust sources live in
 These are Rust → Kotlin translations. If you encounter bugs, it is
 likely you didn't faithfully translate the code.
 
-## Two benchmarks for "done"
+## Project Goals (the contract)
 
-1. **All Rust tests are ported.** Every `#[test]` and every
+These five goals govern every decision in this repo. When a rule below
+seems to conflict with one of these, the goals win.
+
+1. **Full API parity.** Every public Rust item (function, struct, enum,
+   trait, impl, type alias, const) has a Kotlin counterpart. Names
+   follow the conversion tables under [Naming](#naming); semantics
+   follow upstream.
+2. **All Rust tests are ported.** Every `#[test]` and every
    `#[cfg(test)] mod tests { ... }` body in `tmp/lalrpop-rs/lalrpop/src/`
    has a corresponding Kotlin test under `src/commonTest/` (or the
    appropriate `(platform)Test` directory if the test exercises a
    platform-specific code path). The Kotlin test exercises the same
-   inputs and asserts the same outputs as the Rust test. No skips.
-2. **APIs match Rust** with regard to namespace structure,
-   parameterization, and visibility, and follow Kotlin naming.
+   inputs and asserts the same outputs as the Rust test. No skips, no
+   "TODO: port later." Integration grammars under
+   `tmp/lalrpop-rs/lalrpop-test/` are likewise mirrored.
+3. **Tooling is a tool, not a warden.** ast_distance is the working
+   coverage and cheat-detection tool; do not chase its similarity
+   scores. A faithful Kotlin port using stdlib idioms can score low
+   because identifier overlap is the dominant signal. Coverage (zero
+   missing symbols, zero stubs) is the gate; per-file similarity is
+   diagnostic only.
+4. **Anything goes that is faithful to Rust.** A faithful translation
+   is one that produces the same observable behavior on the same
+   input. Within that constraint, use Kotlin idioms, Kotlin stdlib,
+   kotlinx libraries, sealed classes, data classes, extension
+   functions, coroutines — whatever makes the Kotlin clearer. The
+   default is still "translate the Rust line-by-line"; deviate when
+   the Rust idiom has a strictly better Kotlin counterpart with no
+   behavioral change.
+5. **No hacks. Hacks are bugs.** No stubs, no `TODO()`, no `FIXME`, no
+   `@Suppress` annotations, no JVM imports, no porter-invented
+   typealiases, no operator-graded test gates, no "fix it later"
+   comments. Warnings are errors — fix the cause. If you can't, stop
+   and ask. Do not park the problem.
 
-The build gate is `./gradlew test` — the ported tests must pass. The
-old `astDistanceParity` Gradle gate that short-circuited builds on
-coverage thresholds has been removed; ranking symbol counts above
-test correctness pushes ports toward rust-ifying Kotlin to chase
-numbers.
+The build gate is `./gradlew test` — the ported tests must pass on
+the same inputs the Rust tests use. The Kotlin compiler is a
+precondition, not the gate. The old `astDistanceParity` Gradle gate
+that short-circuited builds on coverage thresholds has been removed;
+ranking symbol counts above test correctness pushes ports toward
+rust-ifying Kotlin to chase numbers.
 
 ## Naming
 
@@ -61,6 +88,47 @@ Rust → Kotlin mechanical rule for constants:
 | `const MAX_STATES: usize = 256;`          | `const val MAX_STATES: Int = 256` |
 | `static GLOBAL_TABLE: Lazy<...> = ...;`   | `val GLOBAL_TABLE: ... = ...`     |
 | `static mut COUNTER: u32 = 0;`            | (avoid mutable static; prefer a class-scoped property or `kotlinx-atomicfu`) |
+
+### Visibility
+
+| Rust            | Kotlin                       |
+|-----------------|------------------------------|
+| `pub`           | `public` (default — omit)    |
+| `pub(crate)`    | `internal`                   |
+| `pub(super)`    | `internal`                   |
+| (no modifier)   | `private`                    |
+
+### Types
+
+| Rust                  | Kotlin                                                                                |
+|-----------------------|---------------------------------------------------------------------------------------|
+| `i8 / u8`             | `Byte / UByte`                                                                        |
+| `i16 / u16`           | `Short / UShort`                                                                      |
+| `i32 / u32`           | `Int / UInt`                                                                          |
+| `i64 / u64`           | `Long / ULong`                                                                        |
+| `usize / isize`       | `Int` (or `Long` if 64-bit indices are required)                                      |
+| `f32 / f64`           | `Float / Double`                                                                      |
+| `bool`                | `Boolean`                                                                             |
+| `char`                | `Char` (24-bit Rust scalar value vs 16-bit Kotlin code unit — note when this matters) |
+| `String / &str`       | `String`                                                                              |
+| `Option<T>`           | `T?`                                                                                  |
+| `Result<T, E>`        | `Result<T>` (E carried via exception) or sealed `Either<E, T>` if the error type carries data and call sites pattern-match on it |
+| `Vec<T>`              | `MutableList<T>` (mutable) or `List<T>` (read-only)                                   |
+| `&[T]`                | `List<T>`                                                                             |
+| `HashMap<K, V>`       | `MutableMap<K, V>` / `Map<K, V>`                                                      |
+| `BTreeMap<K, V>`      | `sortedMapOf` or kotlinx-collections-immutable persistent ordered map                 |
+| `HashSet<T>`          | `MutableSet<T>` / `Set<T>`                                                            |
+| `BTreeSet<T>`         | sorted set                                                                            |
+| `Box<T>`              | plain `T` (GC owns)                                                                   |
+| `Rc<T> / Arc<T>`      | plain reference                                                                       |
+| `Cell<T> / RefCell<T>`| mutable property (single-threaded) or `kotlinx-atomicfu` ref (threaded)               |
+| `NonNull<T>`          | non-null `T`                                                                          |
+| `MaybeUninit<T>`      | nullable `T?` initialized lazily, or `lateinit var`                                   |
+| `dyn Trait`           | interface type (Kotlin interfaces are already polymorphic)                            |
+| `&'a T`               | `T` (lifetimes are erased; Kotlin GC owns)                                            |
+| `Pin<T>`              | plain `T` (Kotlin has no pinning concept)                                             |
+| `()`                  | `Unit`                                                                                |
+| `!` (never)           | `Nothing`                                                                             |
 
 ## Tests in `commonTest`
 
@@ -366,6 +434,104 @@ than ~5,000 lines of Rust**, raise on Slack first with the crate name,
 line count, and which existing kotlinmania projects depend on it.
 Mention any blockers (missing dependencies, KMP-incompatible Rust
 crates, unclear semantics). Wait for Sydney's reply before starting.
+
+## Backend Phases
+
+Upstream LALRPOP emits Rust source code (`src/rust/mod.rs` and
+`src/lr1/codegen/{ascent,parse_table}.rs` are its back-end). The final
+goal of lalrpop-kotlin is Kotlin source emission. The backend is a
+two-phase port.
+
+### Phase 1: Rust-output back-end (transliteration)
+
+Transliterate the upstream backend so the Kotlin port can produce the
+same Rust-shaped output. Keep `// port-lint: source src/rust/mod.rs`
+and the corresponding headers on the codegen files. Translate
+`write!` / `writeln!` calls to Kotlin calls that still write the
+corresponding Rust text. Do not Kotlin-ify the emitted output during
+phase 1.
+
+Verification in phase 1: feed a `.lalrpop` grammar to both upstream
+LALRPOP and lalrpop-kotlin, diff the emitted Rust. Any divergence is a
+phase-1 bug. The diff comparison can be a Kotlin test that invokes
+upstream as a subprocess and asserts byte-equality, or a manual
+side-by-side run during development. There is currently no in-tree
+harness — earlier instances added one with operator-graded status;
+that was a bug per goal 5 and was removed. If a new harness is added
+it must fail on any divergence with no porter-toggleable status.
+
+### Phase 2: Kotlin-output back-end
+
+After phase 1 produces matching Rust output, add a Kotlin-emitting
+backend under a distinct namespace (`codegen.kotlinTarget`) and make
+it the project default. Keep the phase-1 Rust-emitting backend
+(`codegen.rustTarget`) as a reference until you no longer need it. In
+phase 2 only, replace output leaves that write Rust syntax (`return
+Ok(...)`, struct literals, lifetime parameters) with Kotlin syntax
+(`return Result.success(...)`, Kotlin constructors, generic
+parameters, `when`, etc.). Document each phase-2 substitution inline
+so a future reader can audit what changed and why.
+
+The primary downstream consumer is `starlark-kotlin`'s
+`grammar.lalrpop`. Once phase 2 works, regenerating that grammar
+should produce drop-in replacements for the hand-transliterated
+`Grammar.kt` and `GrammarReducers.kt` (~12.5k lines).
+
+## File Organization
+
+```
+src/
+├── commonMain/kotlin/io/github/kotlinmania/lalrpop/
+│   ├── api/         # ← tmp/lalrpop-rs/lalrpop/src/api/
+│   ├── build/       # ← tmp/lalrpop-rs/lalrpop/src/build/
+│   ├── collections/ # ← tmp/lalrpop-rs/lalrpop/src/collections/
+│   ├── grammar/     # ← tmp/lalrpop-rs/lalrpop/src/grammar/
+│   ├── lexer/       # ← tmp/lalrpop-rs/lalrpop/src/lexer/
+│   ├── lr1/         # ← tmp/lalrpop-rs/lalrpop/src/lr1/
+│   ├── message/     # ← tmp/lalrpop-rs/lalrpop/src/message/
+│   ├── normalize/   # ← tmp/lalrpop-rs/lalrpop/src/normalize/
+│   ├── parser/      # ← tmp/lalrpop-rs/lalrpop/src/parser/
+│   ├── rust/        # ← tmp/lalrpop-rs/lalrpop/src/rust/
+│   ├── tls/         # ← tmp/lalrpop-rs/lalrpop/src/tls/
+│   ├── tok/         # ← tmp/lalrpop-rs/lalrpop/src/tok/
+│   └── ...
+└── commonTest/
+    ├── kotlin/io/github/kotlinmania/lalrpop/   # ported tests
+    └── resources/                                # ported fixtures
+```
+
+## Porting Order (suggested, leaf-first)
+
+1. `util`, `tls`, `session`, `log`, `file_text` — infrastructure leaves
+2. `collections/` — data structures used everywhere
+3. `message/` — diagnostic system
+4. `grammar/` — AST for the grammar language
+5. `tok/`, `lexer/` — tokenizer and lexer generation
+6. `parser/` — the bootstrapped LALRPOP grammar parser
+7. `normalize/` — grammar transformations (macros, etc.)
+8. `lr1/` — LR(1) state machine construction
+9. `rust/` — code emission (phase 1)
+10. `build/`, `api/` — top-level driver
+11. Phase 2 Kotlin emitter
+
+## Build Commands
+
+```bash
+# Tests across all targets (the gate)
+./gradlew test
+
+# Compile every target without running tests
+./gradlew build
+
+# Specific platform tests
+./gradlew macosArm64Test
+./gradlew linuxX64Test
+./gradlew jsNodeTest
+./gradlew wasmJsNodeTest
+```
+
+`./gradlew jvmTest` is **not** a valid command — there is no JVM
+target.
 
 ## Final report
 
