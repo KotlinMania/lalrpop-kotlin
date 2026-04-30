@@ -343,7 +343,7 @@ private fun MacroExpander.evaluateCond(
 
 private fun MacroExpander.reMatch(span: Span, lhs: Atom, regex: Atom): Boolean {
     val re = try {
-        Hir(regex.asRef())
+        Regex(regex.asRef())
     } catch (err: Exception) {
         returnErr(span, "invalid regular expression `$regex`: ${err.message}")
     }
