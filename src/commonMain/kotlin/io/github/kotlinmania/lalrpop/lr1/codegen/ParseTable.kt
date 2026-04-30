@@ -718,7 +718,7 @@ private fun CodeGenerator<TableDriven>.writeTokenToSymbolFn() {
         "#[allow(clippy::manual_range_patterns)]match ${this.prefix}token_index {",
     )
 
-    val tokenToSymbolMapping: MutableList<Pair<String, MutableList<Pair<Int, Any>>>> =
+    val tokenToSymbolMapping: MutableList<Pair<String, MutableList<Pair<Int, io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRepr>>>>> =
         mutableListOf()
 
     for ((index, terminal) in this.grammar.terminals.all.withIndex()) {
@@ -740,9 +740,8 @@ private fun CodeGenerator<TableDriven>.writeTokenToSymbolFn() {
         val patternNames: MutableList<String> = mutableListOf()
         var first = true
         val patterns: List<String> = indices.map { (_, pattern) ->
-            val p = pattern as io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRepr>
             var nameIndex = 0
-            val mapped = p.map {
+            val mapped = pattern.map {
                 val name = "${this.prefix}tok$nameIndex"
                 nameIndex += 1
                 if (first) {
