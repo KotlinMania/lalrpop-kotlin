@@ -108,10 +108,4 @@ class ContextSet(
     }
 }
 
-/**
- * Upstream Rust uses a unit struct `OverlappingLookahead` as an `Err` payload.
- *
- * Kotlin does not have a direct unit-struct equivalent; we model the error as a
- * singleton throwable that can be caught by type.
- */
 object OverlappingLookahead : Exception()
