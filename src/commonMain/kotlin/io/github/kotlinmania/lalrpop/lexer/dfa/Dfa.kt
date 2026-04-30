@@ -16,12 +16,9 @@ import io.github.kotlinmania.lalrpop.lexer.nfa.NfaStateIndex
 import io.github.kotlinmania.lalrpop.lexer.nfa.Other as NfaOther
 import io.github.kotlinmania.lalrpop.lexer.nfa.START as NFA_START
 import io.github.kotlinmania.lalrpop.lexer.nfa.Test
-import io.github.kotlinmania.lalrpop.lexer.Hir
+import io.github.kotlinmania.lalrpop.regexsyntax.Hir
 
 data class Dfa(val states: List<State>)
-
-@Deprecated("use `Dfa` instead", ReplaceWith("Dfa"))
-typealias DFA = Dfa
 
 data class Precedence(val value: Int) : Comparable<Precedence> {
     override fun compareTo(other: Precedence): Int = value.compareTo(other.value)
@@ -38,12 +35,6 @@ sealed class DfaConstructionError {
 }
 
 class DfaConstructionException(val error: DfaConstructionError) : RuntimeException(error.toString())
-
-@Deprecated(
-    "use `DfaConstructionError` instead",
-    ReplaceWith("DfaConstructionError"),
-)
-typealias DFAConstructionError = DfaConstructionError
 
 fun buildDfa(regexs: List<Hir>, precedences: List<Precedence>): Result<Dfa> = runCatching {
     check(regexs.size == precedences.size)
@@ -242,7 +233,6 @@ data class NfaIndex(val value: Int) : Comparable<NfaIndex> {
 }
 
 @Deprecated("use `NfaIndex` instead", ReplaceWith("NfaIndex"))
-typealias NFAIndex = NfaIndex
 
 data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
     override fun compareTo(other: DfaStateIndex): Int = value.compareTo(other.value)
@@ -251,7 +241,6 @@ data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
 }
 
 @Deprecated("use `DfaStateIndex` instead", ReplaceWith("DfaStateIndex"))
-typealias DFAStateIndex = DfaStateIndex
 
 internal typealias DfaKernelSet = KernelSet<DfaItemSet, DfaStateIndex>
 
