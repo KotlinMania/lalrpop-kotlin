@@ -3,11 +3,12 @@ package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
+import io.github.kotlinmania.lalrpop.message.Row
 import io.github.kotlinmania.lalrpop.normalize.NormError
 import io.github.kotlinmania.lalrpop.normalize.normalizeWithoutValidating
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
 
-private val SPAN: Regex = Regex("Span\\([0-9 ,\\n]*\\)")
+private val SPAN: Regex = Regex("Span\\((?:start=[0-9]+, end=[0-9]+|[0-9 ,\\n]*)\\)")
 
 private class ExpectedDebug(private val s: String) {
     // Ignore trailing commas in multiline Debug representation.
@@ -33,9 +34,20 @@ private fun rustPrettyDebug(value: Any): String {
         return buildString {
             append("[\n")
             for (item in value) {
-                append("    \"")
-                append(item?.toString() ?: "null")
-                append("\",\n")
+                if (item is String || item is Row) {
+                    append("    \"")
+                    append(item.toString())
+                    append("\",\n")
+                } else {
+                    val rendered = item?.toString() ?: "null"
+                    for (line in rendered.lineSequence()) {
+                        append("    ")
+                        append(line)
+                        append('\n')
+                    }
+                    setLength(length - 1)
+                    append(",\n")
+                }
             }
             append("]")
         }
