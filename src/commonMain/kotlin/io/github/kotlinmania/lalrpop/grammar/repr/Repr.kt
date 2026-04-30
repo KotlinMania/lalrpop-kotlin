@@ -98,13 +98,17 @@ sealed class WhereClause : Comparable<WhereClause> {
     data class Forall(
         val binder: MutableList<TypeParameter>,
         val clause: WhereClause,
-    ) : WhereClause()
+    ) : WhereClause() {
+        override fun toString(): String = fmt()
+    }
 
     // `T: Foo`
     data class Bound(
         val subject: TypeRepr,
         val bound: TypeBound<TypeRepr>,
-    ) : WhereClause()
+    ) : WhereClause() {
+        override fun toString(): String = fmt()
+    }
 
     override fun compareTo(other: WhereClause): Int = toString().compareTo(other.toString())
 
