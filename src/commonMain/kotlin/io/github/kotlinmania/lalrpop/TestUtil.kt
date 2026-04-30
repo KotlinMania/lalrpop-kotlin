@@ -2,6 +2,7 @@
 package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.message.Row
 import io.github.kotlinmania.lalrpop.normalize.NormError
@@ -28,6 +29,13 @@ private class ExpectedDebug(private val s: String) {
  * `{:?}` single-line Debug output, which is also what `{:#?}` emits
  * for tuple/enum variants without sub-fields.
  */
+private fun rustDebugFormat(value: Any?): String = when (value) {
+    null -> "null"
+    is TypeParameter.LifetimeTp -> "Lifetime(\n    ${value.lifetime}\n)"
+    is TypeParameter.Id -> "Id(\n    Atom('${value.atom}' type=inline)\n)"
+    else -> value.toString()
+}
+
 private fun rustPrettyDebug(value: Any): String {
     if (value is List<*>) {
         if (value.isEmpty()) return "[]"
@@ -39,7 +47,7 @@ private fun rustPrettyDebug(value: Any): String {
                     append(item.toString())
                     append("\",\n")
                 } else {
-                    val rendered = item?.toString() ?: "null"
+                    val rendered = rustDebugFormat(item)
                     for (line in rendered.lineSequence()) {
                         append("    ")
                         append(line)
