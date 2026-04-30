@@ -6678,14 +6678,8 @@ internal fun accepts(
     }
 }
 
-/**
- * Mirrors upstream `___expected_tokens_from_states(states)` (lrgrammar.rs:3188) —
- * companion to [computeExpectedTokens] that uses [accepts] to model the parse
- * state more precisely. Renamed from `expectedTokensFromStates` to avoid
- * shadowing [StateMachine.expectedTokensFromStates] when called from inside the
- * override (same pattern as [lookupAction], [lookupGoto],
- * [computeExpectedTokens], [mapTokenToSymbol]).
- */
+// Companion to `computeExpectedTokens` that uses `accepts` to model the parse
+// state more precisely.
 internal fun computeExpectedTokensFromStates(
     states: List<Short>,
 ): List<String> {
