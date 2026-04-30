@@ -44,9 +44,9 @@ internal actual fun pathStripPrefix(path: String, base: String): String? {
 
 internal actual fun apiSha3Hex(file: String): String? = nope()
 internal actual fun apiBuildReadFileToString(path: String): String = nope()
-internal actual fun apiBuildWriteFileBytes(path: String, content: String) = nope()
-internal actual fun apiBuildCreateDirAll(path: String) = nope()
-internal actual fun apiBuildRemoveFileIgnoringMissing(path: String) = nope()
+internal actual fun apiBuildWriteFileBytes(path: String, content: String): Unit = nope()
+internal actual fun apiBuildCreateDirAll(path: String): Unit = nope()
+internal actual fun apiBuildRemoveFileIgnoringMissing(path: String): Unit = nope()
 internal actual fun apiBuildReadFirstTwoLines(path: String): Pair<String, String>? = nope()
 internal actual fun apiBuildPathIsSymlink(path: String): Boolean = nope()
 internal actual fun apiBuildWalkDir(root: String): Sequence<WalkEntry> = nope()
