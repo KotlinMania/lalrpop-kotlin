@@ -703,9 +703,17 @@ enum class NfaConstructionError {
 /** Exception carrier for [NfaConstructionError] — thrown across the expr walk. */
 class NfaConstructionException(val error: NfaConstructionError) : RuntimeException(error.name)
 
-// Mirrors upstream `public type Nfa = Nfa;` (lexer/nfa/mod.rs:27),
-// `public type NfaStateIndex = NfaStateIndex;` (line 83), and
-// `public type NfaConstructionError = NfaConstructionError;` (line 123).
-// These are real `public type` aliases in upstream, so per AGENTS.md they
-// translate as Kotlin `typealias` (the only typealias case the project
-// permits — non-re-export, on a literal upstream `public type`).
+// Mirrors upstream `pub type NFA = Nfa;` (lexer/nfa/mod.rs:27),
+// `pub type NFAStateIndex = NfaStateIndex;` (line 83), and
+// `pub type NFAConstructionError = NfaConstructionError;` (line 123).
+// These are real `pub type` aliases in upstream — deprecated in favor
+// of the new PascalCase names but still part of the public API.
+
+@Deprecated("Use `Nfa` instead", ReplaceWith("Nfa"))
+typealias NFA = Nfa
+
+@Deprecated("Use `NfaStateIndex` instead", ReplaceWith("NfaStateIndex"))
+typealias NFAStateIndex = NfaStateIndex
+
+@Deprecated("Use `NfaConstructionError` instead", ReplaceWith("NfaConstructionError"))
+typealias NFAConstructionError = NfaConstructionError
