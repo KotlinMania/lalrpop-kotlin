@@ -73,7 +73,7 @@ fun emitRecursiveAscent(
         val ntVis = grammar.nonterminals[startNt]?.visibility ?: Visibility.Priv
         maxStartNtVisibility = when {
             // (Pub(None), _) | (_, Priv) => keep current
-            maxStartNtVisibility is Visibility.Pub && (maxStartNtVisibility as Visibility.Pub).path == null -> maxStartNtVisibility
+            maxStartNtVisibility is Visibility.Pub && maxStartNtVisibility.path == null -> maxStartNtVisibility
             ntVis is Visibility.Priv -> maxStartNtVisibility
             // equal — keep
             maxStartNtVisibility == ntVis -> maxStartNtVisibility
