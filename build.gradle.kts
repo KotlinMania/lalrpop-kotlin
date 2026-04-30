@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.kotlinmania"
-version = "0.1.2"
+version = "0.1.3"
 
 val androidSdkDir: String? =
     providers.environmentVariable("ANDROID_SDK_ROOT").orNull
@@ -117,10 +117,10 @@ kotlin {
 // the same inputs the Rust tests use.
 
 // ApiTest (port of api/test.rs) uses `apiSetCurrentDir("./src/api/test_files")`
-// from the project root, mirroring how upstream `cargo test` runs from the
-// crate root. Native test executables otherwise launch from
+// from the project root, matching the upstream crate-root test working
+// directory. Native test executables otherwise launch from
 // `build/bin/<target>/debugTest/`, so set their working directory back to
-// `rootDir` to match the Rust harness.
+// `rootDir` for parity with those fixture paths.
 tasks
     .withType(org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest::class.java)
     .configureEach {
