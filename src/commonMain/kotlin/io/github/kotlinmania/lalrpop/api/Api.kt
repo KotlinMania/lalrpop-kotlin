@@ -235,7 +235,7 @@ class Configuration internal constructor(
         processDir(apiCurrentDir())
     }
 
-    // The user should only import setInDir() with process(), not process_*() functions which
+    // The user should only import setInDir() with process(), not processXxx() functions which
     // specify an input.  Check for misuse of that and return an error if inDir was set.
     // dirPath here is specifically a dir, so processFile() should call this with None
     internal fun verifyNoInDirConflict(dirPath: String?) {
