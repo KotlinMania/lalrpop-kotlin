@@ -19,6 +19,7 @@ import io.github.kotlinmania.lalrpop.build.processFile
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toKString
 import platform.posix.PATH_MAX

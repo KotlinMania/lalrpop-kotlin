@@ -6,6 +6,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.pin
 import kotlinx.cinterop.pointed
