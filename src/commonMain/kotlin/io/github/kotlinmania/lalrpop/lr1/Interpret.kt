@@ -6,8 +6,6 @@ import io.github.kotlinmania.lalrpop.ParseTree
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
 
 typealias InterpretError<L> = Pair<State<L>, Token>
 
@@ -168,7 +166,7 @@ private object DisplayForParseTree {
     }
 }
 
-class InterpretErrorException<L : LookaheadInterpret<L>>(val error: Pair<State<L>, Token>) :
+class InterpretErrorException(val error: Pair<State<*>, Token>) :
     RuntimeException()
 
 interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {
