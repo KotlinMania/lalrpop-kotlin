@@ -292,7 +292,7 @@ private fun Validator.validateAlternative(alternative: Alternative) {
             if (checkBetweenBraces(action).isInCurlyBrackets()) {
                 returnErr(
                     alternative.span,
-                    "Using `<>` between curly braces (e.g., `{{<>}}`) only works when your parsed values have been given names (e.g., `<x:Foo>`, not just `<Foo>`)",
+                    "Using `<>` between curly braces (e.g., `{<>}`) only works when your parsed values have been given names (e.g., `<x:Foo>`, not just `<Foo>`)",
                 )
             }
         }
