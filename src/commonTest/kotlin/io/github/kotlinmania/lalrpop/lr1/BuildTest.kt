@@ -27,6 +27,7 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
 
@@ -47,7 +48,7 @@ private fun randomTest(grammar: Grammar, states: List<State<TokenSet>>, startSym
 
     for (i in 0 until ITERATIONS) {
         val inputTree = randomParseTree(grammar, startSymbol, rng)
-        val outputTree = interpret(states, inputTree.terminals())
+        val outputTree = interpret(states, inputTree.terminals()).getOrThrow()
 
         println("test $i")
         println("input_tree = $inputTree")
@@ -170,23 +171,23 @@ grammar;
                 assertEquals(if (useLaneTable()) 9 else 16, states.size)
 
                 // execute it on some sample inputs.
-                val tree = interpret(states, tokens("N", "-", "(", "N", "-", "N", ")"))
+                val tree = interpret(states, tokens("N", "-", "(", "N", "-", "N", ")")).getOrThrow()
                 assertEquals(
                     """[S: [E: [E: [T: "N"]], "-", [T: "(", [E: [E: [T: "N"]], "-", [T: "N"]], ")"]]]""",
                     "$tree",
                 )
 
                 // incomplete:
-                assertFails { interpret(states, tokens("N", "-", "(", "N", "-", "N")) }
+                assertTrue(interpret(states, tokens("N", "-", "(", "N", "-", "N")).isFailure)
 
                 // incomplete:
-                assertFails { interpret(states, tokens("N", "-")) }
+                assertTrue(interpret(states, tokens("N", "-")).isFailure)
 
                 // unexpected character:
-                assertFails { interpret(states, tokens("N", "-", ")", "N", "-", "N", "(")) }
+                assertTrue(interpret(states, tokens("N", "-", ")", "N", "-", "N", "(")).isFailure)
 
                 // parens first:
-                val tree2 = interpret(states, tokens("(", "N", "-", "N", ")", "-", "N"))
+                val tree2 = interpret(states, tokens("(", "N", "-", "N", ")", "-", "N")).getOrThrow()
                 println("$tree2")
                 assertEquals(
                     """[S: [E: [E: [T: "(", [E: [E: [T: "N"]], "-", [T: "N"]], ")"]], "-", [T: "N"]]]""",
