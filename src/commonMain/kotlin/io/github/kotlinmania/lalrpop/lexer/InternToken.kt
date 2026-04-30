@@ -66,8 +66,6 @@ fun compileInternToken(
     }
 
     if (!containsSkip) {
-        // Upstream branches on the `unicode` feature; the Kotlin port mirrors
-        // the default-feature path (`unicode` enabled).
         rust(out, """(r"\s+", true),""")
     }
 
