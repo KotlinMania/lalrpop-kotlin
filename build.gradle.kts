@@ -103,6 +103,16 @@ kotlin {
 // remains useful as a coverage and cheat-detection tool; run it manually with
 // the commands documented in CLAUDE.md.
 
+// ApiTest (port of api/test.rs) uses `apiSetCurrentDir("./src/api/test_files")`
+// from the project root, mirroring how upstream `cargo test` runs from the
+// crate root. Native test executables otherwise launch from
+// `build/bin/<target>/debugTest/`, so set their working directory back to
+// `rootDir` to match the Rust harness.
+tasks.withType(org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest::class.java)
+    .configureEach {
+        workingDir = rootDir.absolutePath
+    }
+
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
