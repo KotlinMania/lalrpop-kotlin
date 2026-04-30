@@ -22,18 +22,19 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.buildLr0States
 import io.github.kotlinmania.lalrpop.lr1.buildStates
-import io.github.kotlinmania.lalrpop.lr1.core.State<Nil>
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError<Nil>
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.Nil
+import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateGraph
+import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
-import io.github.kotlinmania.lalrpop.lr1.interpret.interpret
-import io.github.kotlinmania.lalrpop.lr1.interpret.interpretPartial
+import io.github.kotlinmania.lalrpop.lr1.interpret
+import io.github.kotlinmania.lalrpop.lr1.interpretPartial
 import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.LaneTableConstruct
 import io.github.kotlinmania.lalrpop.lr1.lanetable.lane.LaneTracer
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
-import io.github.kotlinmania.lalrpop.lr1.stateGraph.StateGraph
-import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
@@ -57,6 +58,7 @@ private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
 
 private fun traverse(states: List<State<Nil>>, tokens: Array<out String>): StateIndex {
     return interpretPartial(states, tokens.map { term(it) })
+        .getOrThrow()
         .last()
 }
 
