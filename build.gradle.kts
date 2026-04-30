@@ -98,10 +98,8 @@ kotlin {
     jvmToolchain(21)
 }
 
-// The ast_distance parity gate that used to live here was removed. The build
-// gate is now `./gradlew test` (the ported Rust tests must pass). ast_distance
-// remains useful as a coverage and cheat-detection tool; run it manually with
-// the commands documented in CLAUDE.md.
+// The build gate is `./gradlew test` — the ported Rust tests must pass on
+// the same inputs the Rust tests use.
 
 // ApiTest (port of api/test.rs) uses `apiSetCurrentDir("./src/api/test_files")`
 // from the project root, mirroring how upstream `cargo test` runs from the
