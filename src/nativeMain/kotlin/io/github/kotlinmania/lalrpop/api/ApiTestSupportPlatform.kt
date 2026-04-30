@@ -16,6 +16,7 @@ package io.github.kotlinmania.lalrpop.api
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
@@ -63,7 +64,7 @@ internal actual fun apiPathExists(path: String): Boolean = memScoped {
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiCreateDir(path: String) {
-    if (mkdir(path, "0755".toUInt(8)) != 0) error("mkdir($path) failed")
+    if (mkdir(path, "0755".toUInt(8).convert()) != 0) error("mkdir($path) failed")
 }
 
 @OptIn(ExperimentalForeignApi::class)

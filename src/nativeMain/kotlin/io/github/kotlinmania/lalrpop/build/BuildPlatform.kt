@@ -6,6 +6,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.pin
@@ -103,7 +104,7 @@ internal actual fun apiBuildWriteFileBytes(path: String, content: String) {
 internal actual fun apiBuildCreateDirAll(path: String) {
     if (path.isEmpty() || isDirectory(path)) return
     pathParent(path)?.let { apiBuildCreateDirAll(it) }
-    mkdir(path, "0755".toUInt(8))
+    mkdir(path, "0755".toUInt(8).convert())
 }
 
 @OptIn(ExperimentalForeignApi::class)
