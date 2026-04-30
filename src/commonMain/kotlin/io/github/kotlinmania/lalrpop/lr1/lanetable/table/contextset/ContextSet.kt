@@ -40,8 +40,8 @@ import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.core.Action
-import io.github.kotlinmania.lalrpop.lr1.core.State
+import io.github.kotlinmania.lalrpop.lr1.Action
+import io.github.kotlinmania.lalrpop.lr1.State
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 
 class ContextSet(
