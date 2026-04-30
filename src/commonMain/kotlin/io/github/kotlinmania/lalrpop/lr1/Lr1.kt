@@ -4,10 +4,6 @@ package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.buildLr1States
-import io.github.kotlinmania.lalrpop.lr1.buildLalrStates
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.report.generateReport as generateReportImpl
 
 fun buildStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
