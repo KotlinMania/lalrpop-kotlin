@@ -264,16 +264,16 @@ class LaneTableTest {
                 // we do not require more *states* than LR(0), just different lookahead
                 assertEquals(lr0Err.states.size, states.size)
 
-                val tree = interpret(states, tokens("e", "c"))
+                val tree = interpret(states, tokens("e", "c")).getOrThrow()
                 expectDebug(tree, """[G: [X: "e"], "c"]""")
 
-                val tree2 = interpret(states, tokens("e", "e", "c"))
+                val tree2 = interpret(states, tokens("e", "e", "c")).getOrThrow()
                 expectDebug(tree2, """[G: [X: "e", [X: "e"]], "c"]""")
 
-                val tree3 = interpret(states, tokens("e", "e", "d"))
+                val tree3 = interpret(states, tokens("e", "e", "d")).getOrThrow()
                 expectDebug(tree3, """[G: [Y: "e", [Y: "e"]], "d"]""")
 
-                assertFails { interpret(states, tokens("e", "e", "e")) }
+                assertTrue(interpret(states, tokens("e", "e", "e")).isFailure)
             } finally {
                 lr1Tls.drop()
             }
@@ -298,13 +298,13 @@ class LaneTableTest {
                 // we require more *states* than LR(0), not just different lookahead
                 assertEquals(1, states.size - lr0Err.states.size)
 
-                val tree = interpret(states, tokens("a", "e", "e", "d"))
+                val tree = interpret(states, tokens("a", "e", "e", "d")).getOrThrow()
                 expectDebug(tree, """[__G: [G: "a", [X: "e", [X: "e"]], "d"]]""")
 
-                val tree2 = interpret(states, tokens("b", "e", "e", "d"))
+                val tree2 = interpret(states, tokens("b", "e", "e", "d")).getOrThrow()
                 expectDebug(tree2, """[__G: [G: "b", [Y: "e", [Y: "e"]], "d"]]""")
 
-                assertFails { interpret(states, tokens("e", "e", "e")) }
+                assertTrue(interpret(states, tokens("e", "e", "e")).isFailure)
             } finally {
                 lr1Tls.drop()
             }
@@ -332,10 +332,10 @@ class LaneTableTest {
                 // we require more *states* than LR(0), not just different lookahead
                 assertEquals(1, states.size - lr0Err.states.size)
 
-                val tree = interpret(states, tokens("a", "e", "d"))
+                val tree = interpret(states, tokens("a", "e", "d")).getOrThrow()
                 expectDebug(tree, """[__G: [G: "a", [X: "e"], "d"]]""")
 
-                val tree2 = interpret(states, tokens("b", "e", "d"))
+                val tree2 = interpret(states, tokens("b", "e", "d")).getOrThrow()
                 expectDebug(tree2, """[__G: [G: "b", [Y: "e"], "d"]]""")
             } finally {
                 lr1Tls.drop()
@@ -420,7 +420,7 @@ class LaneTableTest {
             try {
                 val states = LaneTableConstruct.new(grammar, nt("G")).construct()
 
-                val tree = interpret(states, tokens("y", "s", "k", "t", "c", "b"))
+                val tree = interpret(states, tokens("y", "s", "k", "t", "c", "b")).getOrThrow()
                 expectDebug(
                     tree,
                     """[G: "y", [W: [U: "s"], [X: "k", "t"], [C: "c"]], "b"]""",
