@@ -3285,7 +3285,7 @@ internal class StateMachine(
     }
 
     override fun expectedTokensFromStates(states: List<Short>): List<String> {
-        return expectedTokensFromStates(states)
+        return computeExpectedTokensFromStates(states)
     }
 
     override fun usesErrorRecovery(): Boolean {
@@ -6678,9 +6678,15 @@ internal fun accepts(
     }
 }
 
-// Companion to `expectedTokens` that uses `accepts` to model the parse
-// state more precisely.
-internal fun expectedTokensFromStates(
+/**
+ * Mirrors upstream `___expected_tokens_from_states(states)` (lrgrammar.rs:3188) —
+ * companion to [computeExpectedTokens] that uses [accepts] to model the parse
+ * state more precisely. Renamed from `expectedTokensFromStates` to avoid
+ * shadowing [StateMachine.expectedTokensFromStates] when called from inside the
+ * override (same pattern as [lookupAction], [lookupGoto],
+ * [computeExpectedTokens], [mapTokenToSymbol]).
+ */
+internal fun computeExpectedTokensFromStates(
     states: List<Short>,
 ): List<String> {
     return TERMINAL.mapIndexedNotNull { index, terminal ->
