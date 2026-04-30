@@ -46,14 +46,9 @@ private class Machine<L : LookaheadInterpret<L>>(
         return states[index.value]
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun dispatchReduction(state: State<L>, token: Token): Production? {
-        val first = state.reductions.firstOrNull()?.first
-        return if (first is TokenSet) {
-            reduction(state as State<TokenSet>, token)
-        } else {
-            reduction(state as State<Nil>, token)
-        }
+    private fun reductionFor(state: State<L>, token: Token): Production? {
+        val lookahead = state.reductions.firstOrNull()?.first ?: return null
+        return lookahead.reduction(state, token)
     }
 
     fun executePartial(tokens: Iterator<TerminalString>): Result<Unit> {
@@ -79,7 +74,7 @@ private class Machine<L : LookaheadInterpret<L>>(
                 continue
             }
 
-            val production = dispatchReduction(state, Token.Terminal(terminal))
+            val production = reductionFor(state, Token.Terminal(terminal))
             if (production != null) {
                 val more = reduce(production)
                 check(more)
@@ -100,7 +95,7 @@ private class Machine<L : LookaheadInterpret<L>>(
         // drain now for EOF
         while (true) {
             val state = topState()
-            val production = dispatchReduction(state, Token.Eof)
+            val production = reductionFor(state, Token.Eof)
             if (production == null) {
                 return Result.failure(InterpretErrorException(Pair(state, Token.Eof)))
             }
@@ -172,16 +167,3 @@ class InterpretErrorException(val error: Pair<State<*>, Token>) :
 interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {
     fun reduction(state: State<Self>, token: Token): Production?
 }
-
-private fun reduction(state: State<Nil>, token: Token): Production? =
-    state.reductions
-        .asSequence()
-        .map { (_, production) -> production }
-        .firstOrNull()
-
-private fun reduction(state: State<TokenSet>, token: Token): Production? =
-    state.reductions
-        .asSequence()
-        .filter { (tokens, _) -> tokens.contains(token) }
-        .map { (_, production) -> production }
-        .firstOrNull()
