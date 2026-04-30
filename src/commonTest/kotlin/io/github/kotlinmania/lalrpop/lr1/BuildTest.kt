@@ -20,12 +20,6 @@ import io.github.kotlinmania.lalrpop.expectDebug
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.core.Items
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.interpret.interpret
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.randomParseTree
 import io.github.kotlinmania.lalrpop.tls.Tls
