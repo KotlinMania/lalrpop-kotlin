@@ -9,6 +9,7 @@ import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.SymbolSets

@@ -11,6 +11,7 @@ import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.TokenSet

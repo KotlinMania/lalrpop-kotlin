@@ -4,6 +4,7 @@ package io.github.kotlinmania.lalrpop.lr1.trace.reduce
 import io.github.kotlinmania.lalrpop.collections.ComparablePair
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraph

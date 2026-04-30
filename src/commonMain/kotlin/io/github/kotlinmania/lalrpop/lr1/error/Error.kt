@@ -35,6 +35,7 @@ import io.github.kotlinmania.lalrpop.message.Message
 import io.github.kotlinmania.lalrpop.message.builder.MessageBuilder
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Nil
 
 fun reportError(
     grammar: Grammar,

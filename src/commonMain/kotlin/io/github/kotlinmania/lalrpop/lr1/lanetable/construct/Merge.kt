@@ -13,6 +13,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.lr1.Action
 import io.github.kotlinmania.lalrpop.lr1.State
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.StateSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
