@@ -61,7 +61,7 @@ class Nfa private constructor(
      * Upstream dispatches via the type parameter `L`; in Kotlin we
      * dispatch on the variant of [EdgeLabel] passed by the caller.
      * Each branch reads the corresponding edge vector and the
-     * matching `first_*_edge` index off the state.
+     * matching `firstXyzEdge` index off the state (where Xyz selects the edge kind: Noop, Test, or Other).
      */
     @Suppress("UNCHECKED_CAST")
     fun <L : Any> edges(from: NfaStateIndex, label: EdgeLabel): EdgeIterator<L> {
