@@ -20,8 +20,8 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.grammar.repr.ActionFn
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.SymbolSets
+import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.SymbolSets
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
 
