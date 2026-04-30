@@ -191,7 +191,7 @@ fun main(args: Array<String>): Int {
         try {
             config.processFile(arg)
         } catch (err: Throwable) {
-            println("Error encountered processing `$arg`: ${err?.message ?: err}")
+            println("Error encountered processing `$arg`: ${err.message ?: err}")
             return 1
         }
     }
