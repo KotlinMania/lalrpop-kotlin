@@ -44,22 +44,34 @@ data class FieldPattern<T>(
 }
 
 sealed class PatternKind<T> {
-    data class Enum<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>()
+    data class Enum<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
     data class Struct<T>(
         val path: Path,
         val fields: MutableList<FieldPattern<T>>,
         /* trailing ..? */
         val dotdot: Boolean,
-    ) : PatternKind<T>()
+    ) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
-    data class PathKind<T>(val path: Path) : PatternKind<T>()
+    data class PathKind<T>(val path: Path) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
-    data class Tuple<T>(val pats: MutableList<Pattern<T>>) : PatternKind<T>()
+    data class Tuple<T>(val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
-    data class TupleStruct<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>()
+    data class TupleStruct<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
-    data class Usize<T>(val value: Int) : PatternKind<T>()
+    data class Usize<T>(val value: Int) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
     class Underscore<T> : PatternKind<T>() {
         override fun equals(other: Any?): Boolean = other is Underscore<*>
@@ -71,11 +83,17 @@ sealed class PatternKind<T> {
         override fun hashCode(): Int = 2
     }
 
-    data class Choose<T>(val ty: T) : PatternKind<T>()
+    data class Choose<T>(val ty: T) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
-    data class CharLiteral<T>(val c: Atom) : PatternKind<T>()
+    data class CharLiteral<T>(val c: Atom) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
-    data class StringKind<T>(val s: String) : PatternKind<T>()
+    data class StringKind<T>(val s: String) : PatternKind<T>() {
+        override fun toString(): String = fmt()
+    }
 
     fun fmt(): String = when (this) {
         is PathKind -> "$path"
