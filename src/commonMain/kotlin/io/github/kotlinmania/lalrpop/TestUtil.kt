@@ -15,9 +15,37 @@ private class ExpectedDebug(private val s: String) {
     override fun toString(): String = s.replace(",\n", "\n")
 }
 
+/**
+ * Mirror of Rust `format!("{:#?}", value)` for the value shapes the
+ * lalrpop-kotlin tests pass. `Vec<String>` (i.e. the `List<String>`
+ * — and `List<Row>`, whose `Row.toString()` already returns the bare
+ * line text — that the message and error tests pass through
+ * `AsciiCanvas.toStrings()`) renders as the indented, quoted,
+ * comma-separated multiline form Rust prints under `{:#?}`. Other
+ * receivers fall through to their existing `toString()` — types like
+ * the LR(1) trees already implement `toString()` that mirrors Rust's
+ * `{:?}` single-line Debug output, which is also what `{:#?}` emits
+ * for tuple/enum variants without sub-fields.
+ */
+private fun rustPrettyDebug(value: Any): String {
+    if (value is List<*>) {
+        if (value.isEmpty()) return "[]"
+        return buildString {
+            append("[\n")
+            for (item in value) {
+                append("    \"")
+                append(item?.toString() ?: "null")
+                append("\",\n")
+            }
+            append("]")
+        }
+    }
+    return value.toString()
+}
+
 fun <D : Any> expectDebug(actual: D, expected: String) {
     compare(
-        ExpectedDebug(actual.toString()),
+        ExpectedDebug(rustPrettyDebug(actual)),
         ExpectedDebug(expected),
     )
 }
