@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 private fun checkErr(expectedErr: String, grammar: String) {
-    val expectedErrRegex = Hir(expectedErr)
+    val expectedErrRegex = Regex(expectedErr)
 
     // the string will have a `>>>` and `<<<` in it, which serve to
     // indicate the span where an error is expected.
