@@ -118,7 +118,7 @@ private class ReportGenerator<W : Appendable>(
         state: State<L>,
         conflictsOpt: List<Conflict<L>>?,
     ) {
-        out.appendLine("State ${state.index} {")
+        out.appendLine("State ${state.index.display()} {")
         writeItems(state.items)
         if (state.reductions.isNotEmpty()) {
             out.appendLine()
