@@ -11,16 +11,6 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
-import io.github.kotlinmania.lalrpop.lr1.Nil
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.build.buildLr1States
-import io.github.kotlinmania.lalrpop.lr1.build.useLaneTable
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Items
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
-import io.github.kotlinmania.lalrpop.lr1.build.TableConstructionErrorException
 
 // Intermediate LALR(1) state. Identical to an LR(1) state, but that
 // the items can be pushed to. We initially create these with an empty
