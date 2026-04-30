@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.codegen.Ascent
 import io.github.kotlinmania.lalrpop.lr1.codegen.ParseTable
 import io.github.kotlinmania.lalrpop.lr1.codegen.TestAll
-import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
