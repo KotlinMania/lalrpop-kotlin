@@ -3324,7 +3324,7 @@ internal class StateMachine(
     }
 
     override fun simulateReduce(action: Short): SimulatedReduce<Int> {
-        return simulateReduce(action)
+        return io.github.kotlinmania.lalrpop.parser.simulateReduce(action)
     }
 }
 
