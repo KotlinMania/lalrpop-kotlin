@@ -77,7 +77,8 @@ fun compileInternToken(
         prefix,
     )
 
-    rust(out, "}") // function     rust(out, "}") // mod
+    rust(out, "}") // fn
+    rust(out, "}") // mod
 }
 
 /**
