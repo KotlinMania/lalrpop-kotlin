@@ -7,12 +7,6 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.LookaheadBuild
-import io.github.kotlinmania.lalrpop.lr1.Lr
-import io.github.kotlinmania.lalrpop.lr1.core.Action
-import io.github.kotlinmania.lalrpop.lr1.core.Conflict
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.State
 
 interface Lookahead<Self : Lookahead<Self>> : Collection<Self>, Comparable<Self> {
     fun fmtAsItemSuffix(): String
