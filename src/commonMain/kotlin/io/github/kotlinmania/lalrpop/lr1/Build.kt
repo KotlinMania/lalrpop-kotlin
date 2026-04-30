@@ -11,16 +11,6 @@ import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Nil
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.core.Conflict
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Items
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.buildLaneTableStates
 import io.github.kotlinmania.lalrpop.tls.Tls
