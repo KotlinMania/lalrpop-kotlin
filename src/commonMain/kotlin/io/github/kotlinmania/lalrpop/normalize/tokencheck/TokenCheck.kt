@@ -41,6 +41,7 @@ import io.github.kotlinmania.lalrpop.lexer.dfa.DfaConstructionException
 import io.github.kotlinmania.lalrpop.lexer.dfa.Precedence
 import io.github.kotlinmania.lalrpop.lexer.dfa.buildDfa
 import io.github.kotlinmania.lalrpop.lexer.nfa.NfaConstructionError
+import io.github.kotlinmania.lalrpop.lexer.Regex
 import io.github.kotlinmania.lalrpop.lexer.parseLiteral
 import io.github.kotlinmania.lalrpop.lexer.parseRegex
 import io.github.kotlinmania.lalrpop.normalize.returnErr
@@ -309,7 +310,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
 
     // Build up two vectors, one of parsed regular expressions and
     // one of precedences, that are parallel with `literals`.
-    val regexs = ArrayList<io.github.kotlinmania.lalrpop.lexer.Hir>(matchEntries.size)
+    val regexs = ArrayList<Regex>(matchEntries.size)
     val precedences = ArrayList<Precedence>(matchEntries.size)
     for (matchEntry in matchEntries) {
         precedences.add(Precedence(matchEntry.precedence))
