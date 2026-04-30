@@ -3391,7 +3391,6 @@ fun tokenToInteger(
         is Tok.StartMatchMapping -> 56
         is Tok.StartTypeRef -> 57
         is Tok.StartGrammarWhereClauses -> 58
-        else -> null
     }
 }
 
