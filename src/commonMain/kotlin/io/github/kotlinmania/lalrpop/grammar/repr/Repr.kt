@@ -25,7 +25,6 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBound
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
-import io.github.kotlinmania.lalrpop.grammar.parsetree.display
 import io.github.kotlinmania.lalrpop.grammar.parsetree.toContent
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
