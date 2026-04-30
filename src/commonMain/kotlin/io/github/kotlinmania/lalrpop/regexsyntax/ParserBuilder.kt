@@ -47,7 +47,21 @@ class Parser internal constructor(
     private val utf8: Boolean,
     private val unicode: Boolean,
 ) {
+    /**
+     * Read the [utf8] flag. Kept as part of the API surface so callers can
+     * round-trip the value they configured on [ParserBuilder]; the parser
+     * implementation does not gate behaviour on it because Kotlin strings
+     * and regex are always Unicode-aware.
+     */
+    fun utf8(): Boolean = utf8
+
+    /**
+     * Read the [unicode] flag. See [utf8] for why this does not gate
+     * behaviour in the Kotlin port.
+     */
+    fun unicode(): Boolean = unicode
+
     fun parse(s: String): Result<Hir> = runCatching {
-        RegexParser(s, utf8 = utf8, unicode = unicode).parseTopLevel()
+        RegexParser(s).parseTopLevel()
     }
 }

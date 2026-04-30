@@ -7,10 +7,13 @@
 // `^`/`$` (emitted as `HirKind.Look`, which LALRPOP Nfa builder rejects).
 package io.github.kotlinmania.lalrpop.regexsyntax
 
+// Note: Upstream `regexSyntax::Parser` carries `utf8` and `unicode` flags
+// that gate behaviour. Kotlin strings and regex are always Unicode-aware,
+// so the flags do not change anything in this port. They are accepted at
+// the [ParserBuilder] / [io.github.kotlinmania.lalrpop.regexsyntax.Parser]
+// surface for API parity but are not threaded into [RegexParser].
 internal class RegexParser(
     private val input: String,
-    @Suppress("unused") private val utf8: Boolean,
-    @Suppress("unused") private val unicode: Boolean,
 ) {
     private var pos: Int = 0
 
