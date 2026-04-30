@@ -5,9 +5,9 @@ import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.lookahead.Token
-import io.github.kotlinmania.lalrpop.lr1.lookahead.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.tls.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.Token
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import kotlin.test.Test
 import kotlin.test.assertEquals
