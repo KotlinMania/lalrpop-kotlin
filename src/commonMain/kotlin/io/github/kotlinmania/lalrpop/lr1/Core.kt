@@ -121,7 +121,7 @@ typealias Lr0Item = Item<Nil>
 
 typealias Lr1Item = Item<TokenSet>
 
-data class StateIndex(var value: Int) : Comparable<StateIndex> {
+data class StateIndex(val value: Int) : Comparable<StateIndex> {
     override fun toString(): String = "S$value"
     fun display(): String = "$value"
     override fun compareTo(other: StateIndex): Int = value.compareTo(other.value)
@@ -136,7 +136,7 @@ typealias Lr0Items = Items<Nil>
 typealias Lr1Items = Items<TokenSet>
 
 data class State<L : Lookahead<L>>(
-    val index: StateIndex,
+    var index: StateIndex,
     val items: Items<L>,
     val shifts: Map<TerminalString, StateIndex> = map(),
     val reductions: MutableList<Pair<L, Production>> = mutableListOf(),

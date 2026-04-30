@@ -13,6 +13,7 @@ package io.github.kotlinmania.lalrpop.api
  * at your option.
  */
 
+import io.github.kotlinmania.lalrpop.build.apiBuildReadFileToString
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -22,6 +23,7 @@ private val API_TEST_MUTEX: ApiTestMutex = ApiTestMutex()
 
 private const val TEST_DIR: String = "lalrpop-test"
 private const val CUSTOM_TEST_DIR: String = "lalrpop-test2"
+private const val EXPECTED_FULL_OUTPUT_DIR: String = "expected/full"
 
 private enum class GenFileLoc {
     Src,
@@ -114,7 +116,15 @@ private fun setup(): TestState {
 
 // Assumes CWD is testFiles
 private fun removeLocalGeneratedFiles() {
-    for (f in listOf("src.rs", "other.rs", "outer.rs")) {
+    val generatedFiles = listOf(
+        "src.rs",
+        "src.report",
+        "other.rs",
+        "other.report",
+        "outer.rs",
+        "outer.report",
+    )
+    for (f in generatedFiles) {
         for (loc in listOf(".", "src", "other")) {
             val filePath = apiPathJoin(loc, f)
             if (apiPathExists(filePath)) {
@@ -173,6 +183,32 @@ private fun verifyFile(filename: String, expectedLocation: GenFileLoc) {
     // to positive test
 }
 
+private fun generatedFilePath(filename: String, expectedLocation: GenFileLoc): String =
+    when (expectedLocation) {
+        GenFileLoc.Src -> apiPathJoin("src", filename)
+        GenFileLoc.Other -> apiPathJoin("other", filename)
+        GenFileLoc.Root -> filename
+        GenFileLoc.OutDir -> apiPathJoin(apiPathJoin(apiTempDir(), TEST_DIR), filename)
+        GenFileLoc.OutDirSlashOther ->
+            apiPathJoin(
+                apiPathJoin(
+                    apiPathJoin(apiTempDir(), TEST_DIR),
+                    "other",
+                ),
+                filename,
+            )
+        GenFileLoc.CustomOut -> apiPathJoin(apiPathJoin(apiTempDir(), CUSTOM_TEST_DIR), filename)
+        GenFileLoc.DoesntExist -> error("cannot read a file that should not exist")
+    }
+
+private fun verifyGeneratedOutput(filename: String, expectedLocation: GenFileLoc) {
+    assertEquals(
+        apiBuildReadFileToString(apiPathJoin(EXPECTED_FULL_OUTPUT_DIR, filename)),
+        apiBuildReadFileToString(generatedFilePath(filename, expectedLocation)),
+        "$filename generated output diverged from upstream oracle",
+    )
+}
+
 class ApiTest {
     @Test
     fun testProcessRoot() {
@@ -197,6 +233,25 @@ class ApiTest {
             verifyFile("src.rs", GenFileLoc.OutDir)
             verifyFile("other.rs", GenFileLoc.DoesntExist)
             verifyFile("outer.rs", GenFileLoc.DoesntExist)
+        } finally {
+            state.drop()
+        }
+    }
+
+    @Test
+    fun testProcessFileFullOutputMatchesUpstream() {
+        val state = setup()
+        try {
+            Configuration.new()
+                .forceBuild(true)
+                .emitComments(true)
+                .emitReport(true)
+                .processFile("src/src.lalrpop")
+
+            verifyFile("src.rs", GenFileLoc.Src)
+            verifyFile("src.report", GenFileLoc.Src)
+            verifyGeneratedOutput("src.rs", GenFileLoc.Src)
+            verifyGeneratedOutput("src.report", GenFileLoc.Src)
         } finally {
             state.drop()
         }

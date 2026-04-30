@@ -69,8 +69,8 @@ class Graph<N, E>(
 
     fun edgesDirected(node: NodeIndex, direction: EdgeDirection): Iterable<EdgeRef<E>> =
         when (direction) {
-            EdgeDirection.Outgoing -> outgoing[node.index()]
-            EdgeDirection.Incoming -> incoming[node.index()]
+            EdgeDirection.Outgoing -> outgoing[node.index()].asReversed()
+            EdgeDirection.Incoming -> incoming[node.index()].asReversed()
         }
 
     companion object {

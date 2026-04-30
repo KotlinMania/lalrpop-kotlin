@@ -89,30 +89,39 @@ class TraceGraph(
         FilteredPathEnumerator.new(firstSets, this, item.toLr0(), item.lookahead.clone())
 
     override fun toString(): String {
-        val sb = StringBuilder("[")
-        var first = true
+        val entries = mutableListOf<TraceGraphEdge>()
         for ((node, index) in this.indices) {
             for (edge in this.graph.edgesDirected(index, EdgeDirection.Outgoing)) {
                 val label = edge.weight()
-                if (!first) sb.append(", ")
-                first = false
-                sb.append(
+                entries.add(
                     TraceGraphEdge(
                         from = node,
                         to = this.graph[edge.target()],
                         label = Triple(label.prefix, label.cursor, label.suffix),
-                    ).toString()
+                    )
                 )
             }
         }
-        sb.append("]")
-        return sb.toString()
+        if (entries.isEmpty()) return "[]"
+        return buildString {
+            append("[\n")
+            for (entry in entries) {
+                append("    ")
+                append(entry)
+                append('\n')
+            }
+            append("]")
+        }
     }
 }
 
 sealed class TraceGraphNode : Comparable<TraceGraphNode> {
-    data class Nonterminal(val nonterminal: NonterminalString) : TraceGraphNode()
-    data class ItemNode(val item: Item<Nil>) : TraceGraphNode()
+    data class Nonterminal(val nonterminal: NonterminalString) : TraceGraphNode() {
+        override fun toString(): String = "Nonterminal($nonterminal)"
+    }
+    data class ItemNode(val item: Item<Nil>) : TraceGraphNode() {
+        override fun toString(): String = "Item($item)"
+    }
 
     override fun compareTo(other: TraceGraphNode): Int {
         val o1 = ordinal()
@@ -143,7 +152,11 @@ private data class TraceGraphEdge(
         io.github.kotlinmania.lalrpop.grammar.repr.Symbol?,
         List<io.github.kotlinmania.lalrpop.grammar.repr.Symbol>>,
 ) {
-    override fun toString(): String = "($from -$label-> $to)"
+    override fun toString(): String =
+        "($from -(${label.first}, ${formatOption(label.second)}, ${label.third})-> $to)"
+
+    private fun formatOption(symbol: io.github.kotlinmania.lalrpop.grammar.repr.Symbol?): String =
+        if (symbol == null) "None" else "Some($symbol)"
 }
 
 /** //////////////////////////////////////////////////////////////////////// */
