@@ -14,7 +14,6 @@ import io.github.kotlinmania.lalrpop.tls.Tls
  * The [rust] helper should be called only on a [RustWrite] instance.
  */
 fun assertRustWrite(w: RustWrite) {
-    val _unused = w
 }
 
 /**
