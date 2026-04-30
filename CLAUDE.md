@@ -117,37 +117,6 @@ publishes artifacts for **every** target listed above. Document the
 addition in the commit message with the Rust crate it replaces and why
 stdlib was insufficient.
 
-## Port-Lint Headers (REQUIRED)
-
-Every ported Kotlin file MUST start with:
-
-```kotlin
-// port-lint: source <path-relative-to-tmp/lalrpop-rs/lalrpop>
-package io.github.kotlinmania.lalrpop.<module>
-```
-
-Example:
-
-```kotlin
-// port-lint: source src/lr1/build.rs
-package io.github.kotlinmania.lalrpop.lr1
-```
-
-The header documents which Rust file the Kotlin came from. It is the
-only place provenance is recorded. Never remove, move, or alter it
-unless you are re-targeting the file to a different Rust source.
-
-Test files use the same convention:
-
-```kotlin
-// port-lint: source src/lr1/build.rs (tests)
-package io.github.kotlinmania.lalrpop.lr1
-```
-
-Files with no single Rust source (because the implementation came from
-a `mod.rs` re-home) use `// port-lint: ignore` and a short prose note
-like `// re-homed from upstream module root`.
-
 ## Naming Conventions
 
 Faithful Kotlin names — Rust naming idioms map mechanically. **No
@@ -441,11 +410,9 @@ two-phase port.
 ### Phase 1: Rust-output back-end (transliteration)
 
 Transliterate the upstream backend so the Kotlin port can produce the
-same Rust-shaped output. Keep `// port-lint: source src/rust/mod.rs`
-and the corresponding headers on the codegen files. Translate
-`write!` / `writeln!` calls to Kotlin calls that still write the
-corresponding Rust text. Do not Kotlin-ify the emitted output during
-phase 1.
+same Rust-shaped output. Translate `write!` / `writeln!` calls to
+Kotlin calls that still write the corresponding Rust text. Do not
+Kotlin-ify the emitted output during phase 1.
 
 Verification in phase 1: feed a `.lalrpop` grammar to both upstream
 LALRPOP and lalrpop-kotlin, diff the emitted Rust. Any divergence is a
