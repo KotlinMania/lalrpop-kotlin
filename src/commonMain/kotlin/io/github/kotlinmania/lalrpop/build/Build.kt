@@ -19,12 +19,13 @@ import io.github.kotlinmania.lalrpop.message.builder.InlineBuilder
 import io.github.kotlinmania.lalrpop.message.message.Content
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.normalize.normalize
-import io.github.kotlinmania.lalrpop.parser.ParseError
 import io.github.kotlinmania.lalrpop.parser.LrParseErrorException
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
 import io.github.kotlinmania.lalrpop.runtime.ParseError
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.lalrpop.tok.ErrorCode
+import io.github.kotlinmania.lalrpop.tok.Tok
+import io.github.kotlinmania.lalrpop.tok.Error as TokError
 
 /**
  * The header upstream emits at the top of every generated file.
