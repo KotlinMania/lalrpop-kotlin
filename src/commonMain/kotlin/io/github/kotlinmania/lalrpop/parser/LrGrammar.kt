@@ -3,7 +3,8 @@ package io.github.kotlinmania.lalrpop.parser
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.tok.Tok
-import io.github.kotlinmania.lalrpop.tok.TokError
+import io.github.kotlinmania.lalrpop.tok.TokError as TokException
+import io.github.kotlinmania.lalrpop.tok.Error as TokError
 import io.github.kotlinmania.lalrpop.tok.applyStringEscapes
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
@@ -25,6 +26,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchContents
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchItem
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchToken
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Name
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalData
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Parameter
@@ -36,6 +38,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol as PtSymbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalLiteral
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Tuple
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBound
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBoundParameter
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
@@ -1419,7 +1422,12 @@ internal val ACTION: ShortArray = shortArrayOf(
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-486,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-486,0,0,0,0,-486,0,0,0,0,0,0,0,0,
 )
 
-internal fun action(state: Short, integer: Int): Short {
+/**
+ * Mirrors upstream `___action(state, integer)` (lrgrammar.rs:1401) — the raw
+ * ACTION-table lookup. Renamed from `action` to avoid shadowing
+ * [StateMachine.action] when called recursively from inside the override.
+ */
+internal fun lookupAction(state: Short, integer: Int): Short {
     return ACTION[state.toInt() * 59 + integer]
 }
 
@@ -2682,8 +2690,12 @@ internal val EOF_ACTION: ShortArray = shortArrayOf(
 -486,
 )
 
-/** `___goto(state, nt)`. */
-internal fun goto(state: Short, nt: Int): Short {
+/**
+ * Mirrors upstream `___goto(state, nt)` (lrgrammar.rs:2662) — the raw GOTO
+ * lookup. Renamed from `goto` to avoid shadowing [StateMachine.goto] when
+ * called recursively from inside the override.
+ */
+internal fun lookupGoto(state: Short, nt: Int): Short {
     return (when (nt) {
 14 -> 260
 17 -> 162
@@ -3200,9 +3212,15 @@ internal val TERMINAL: Array<String> = arrayOf(
     "\"StartGrammarWhereClauses\"",
 )
 
-internal fun expectedTokens(state: Short): List<String> {
+/**
+ * Mirrors upstream `___expected_tokens(state)` (lrgrammar.rs ~3300) — returns
+ * the list of TERMINAL names whose ACTION entry for [state] is non-zero.
+ * Renamed from `expectedTokens` to avoid shadowing
+ * [StateMachine.expectedTokens] when called recursively from inside the override.
+ */
+internal fun computeExpectedTokens(state: Short): List<String> {
     return TERMINAL.mapIndexedNotNull { index, terminal ->
-        val nextState = action(state, index)
+        val nextState = lookupAction(state, index)
         if (nextState.toInt() == 0) {
             null
         } else {
@@ -3243,11 +3261,11 @@ internal class StateMachine(
     }
 
     override fun action(state: Short, tokenIndex: Int): ShortAction {
-        return ShortAction(action(state, tokenIndex))
+        return ShortAction(lookupAction(state, tokenIndex))
     }
 
     override fun errorAction(state: Short): ShortAction {
-        return ShortAction(action(state, 58))
+        return ShortAction(lookupAction(state, 58))
     }
 
     override fun eofAction(state: Short): ShortAction {
@@ -3255,15 +3273,15 @@ internal class StateMachine(
     }
 
     override fun goto(state: Short, nt: Int): Short {
-        return goto(state, nt)
+        return lookupGoto(state, nt)
     }
 
     override fun tokenToSymbol(tokenIndex: Int, token: Tok): Symbol {
-        return tokenToSymbol(tokenIndex, token)
+        return mapTokenToSymbol(tokenIndex, token)
     }
 
     override fun expectedTokens(state: Short): List<String> {
-        return expectedTokens(state)
+        return computeExpectedTokens(state)
     }
 
     override fun expectedTokensFromStates(states: List<Short>): List<String> {
@@ -3380,8 +3398,9 @@ fun tokenToInteger(
 // Wraps a recognised token into the matching `Symbol` variant.
 // Tok columns 0-12, 14, 22-30, 33-36, 38-58 are payload-less terminals
 // stored as Variant0; columns 13, 15-21, 31, 32, 37 carry a string
-// payload stored as Variant1.
-internal fun tokenToSymbol(tokenIndex: Int, token: Tok): Symbol {
+// payload stored as Variant1. Renamed from `tokenToSymbol` to avoid shadowing
+// [StateMachine.tokenToSymbol] when called from inside the override.
+internal fun mapTokenToSymbol(tokenIndex: Int, token: Tok): Symbol {
     return when (tokenIndex) {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 22, 23, 24, 25, 26, 27, 28, 29, 30,
         33, 34, 35, 36, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
@@ -6639,7 +6658,7 @@ internal fun accepts(
         var top = states[statesLen - 1]
         val act = when (optInteger) {
             null -> EOF_ACTION[top.toInt()]
-            else -> action(top, optInteger)
+            else -> lookupAction(top, optInteger)
         }
         if (act.toInt() == 0) return false
         if (act > 0) return true
@@ -6655,7 +6674,7 @@ internal fun accepts(
         statesLen -= toPop
         states.subList(statesLen, states.size).clear()
         top = states[statesLen - 1]
-        val nextState = goto(top, nt)
+        val nextState = lookupGoto(top, nt)
         states.add(nextState)
     }
 }
@@ -9373,7 +9392,7 @@ internal fun action126(
 ): Result<Atom> {
     val escaped = applyStringEscapes(s.second, lo.second + 1)
         .getOrElse { err ->
-            val tokErr = (err as TokError).err
+            val tokErr = (err as TokException).err
             return Result.failure(LrParseErrorException(
                 ParseError.User(error = tokErr),
             ))
@@ -9388,7 +9407,7 @@ internal fun action127(
 ): Result<String> {
     val escaped = applyStringEscapes(s.second, lo.second + 1)
         .getOrElse { err ->
-            val tokErr = (err as TokError).err
+            val tokErr = (err as TokException).err
             return Result.failure(LrParseErrorException(
                 ParseError.User(error = tokErr),
             ))
@@ -25953,7 +25972,7 @@ internal fun Triple<Int, Tok, Int>.toTriple(): Result<Triple<Int, Tok, Int>> {
  */
 internal fun Result<Triple<Int, Tok, Int>>.toTriple(): Result<Triple<Int, Tok, Int>> = fold(
     onSuccess = { Result.success(it) },
-    onFailure = { err -> Result.failure((err as? TokError)?.err?.let { LrParseErrorException(ParseError.User(error = it)) } ?: err) })
+    onFailure = { err -> Result.failure((err as? TokException)?.err?.let { LrParseErrorException(ParseError.User(error = it)) } ?: err) })
 
 internal
 fun reduce0(
@@ -38487,7 +38506,7 @@ internal fun reduce(
             val end = sym1.third
             val nt = action501(text, sym0, sym1).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokException).err))
                 return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, Symbol.Variant14(nt), end))
@@ -38503,7 +38522,7 @@ internal fun reduce(
             val end = sym2.third
             val nt = action502(text, sym0, sym1, sym2).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokException).err))
                 return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, Symbol.Variant14(nt), end))
@@ -38518,7 +38537,7 @@ internal fun reduce(
             val end = sym1.third
             val nt = action467(text, sym0, sym1).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokException).err))
                 return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, Symbol.Variant26(nt), end))
@@ -38531,7 +38550,7 @@ internal fun reduce(
             val end = sym0.third
             val nt = action444(text, sym0).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
-                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokError).err))
+                    ?: return ParseResult.Failure(ParseError.User(error = (it as TokException).err))
                 return ParseResult.Failure(pe)
             }
             symbols.add(Triple(start, Symbol.Variant91(nt), end))
@@ -38545,7 +38564,7 @@ internal fun reduce(
             val nt = action445(text, sym0).getOrElse {
                 val pe = (it as? LrParseErrorException)?.parseError
                     ?: return ParseResult.Failure(
-                        ParseError.User(error = (it as TokError).err),
+                        ParseError.User(error = (it as TokException).err),
                     )
                 return ParseResult.Failure(pe)
             }
@@ -38556,13 +38575,13 @@ internal fun reduce(
             // ___Top = Top => ActionFn(0);
             val sym0 = popVariant95(symbols)
             val nt = action0(text, sym0)
-            return ParseResult.Top(nt)
+            return ParseResult.Success(nt)
         }
         else -> error("invalid action code $action")
     }
     repeat(popStates) { states.removeAt(states.size - 1) }
     val state = states.last()
-    val nextState = goto(state, nonterminal)
+    val nextState = lookupGoto(state, nonterminal)
     states.add(nextState)
     return null
 }
@@ -38588,7 +38607,7 @@ class TopParser {
                 onFailure = { err ->
                     val pe = when (err) {
                         is LrParseErrorException -> err.parseError
-                        is TokError ->
+                        is TokException ->
                             ParseError.User(error = err.err)
                         else -> throw err
                     }
