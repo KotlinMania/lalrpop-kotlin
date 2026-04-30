@@ -10,9 +10,9 @@ import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
-import io.github.kotlinmania.lalrpop.lr1.core.Action
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.Action
+import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.StateSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet

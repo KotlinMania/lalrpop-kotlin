@@ -10,8 +10,8 @@ import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.SymbolSets
+import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.SymbolSets
 import io.github.kotlinmania.lalrpop.lr1.example.Example
 import io.github.kotlinmania.lalrpop.lr1.example.ExampleSymbol
 import io.github.kotlinmania.lalrpop.lr1.example.Reduction

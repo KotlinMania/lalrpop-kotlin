@@ -9,13 +9,13 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.core.Action
-import io.github.kotlinmania.lalrpop.lr1.core.Conflict
-import io.github.kotlinmania.lalrpop.lr1.core.Item
-import io.github.kotlinmania.lalrpop.lr1.core.Items
-import io.github.kotlinmania.lalrpop.lr1.core.State
-import io.github.kotlinmania.lalrpop.lr1.core.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.core.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.Action
+import io.github.kotlinmania.lalrpop.lr1.Conflict
+import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.Items
+import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
 
 /**
  * Result analogue used by the report generator: either a successful
@@ -41,7 +41,7 @@ fun <L : Lookahead<L>> generateReport(
  */
 fun generateReport(
     out: Appendable,
-    lr1result: List<io.github.kotlinmania.lalrpop.lr1.core.State<TokenSet>>,
+    lr1result: List<State<TokenSet>>,
 ) {
     generateReport(out, LrResult.Ok(lr1result))
 }
