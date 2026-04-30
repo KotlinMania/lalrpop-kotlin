@@ -102,10 +102,6 @@ sealed class MatchItem {
     }
 }
 
-// Mirrors upstream `pub type MatchSymbol = TerminalLiteral;` (upstream parsetree, line 104).
-// The forward declaration is needed because [MatchItem.Unmapped]/[MatchItem.Mapped]
-// reference [MatchSymbol] above the [TerminalLiteral] sealed class.
-
 sealed class MatchMapping : Comparable<MatchMapping> {
     data class Terminal(val terminal: TerminalString) : MatchMapping() {
         override fun toString(): String = fmt()
@@ -891,7 +887,6 @@ sealed class TerminalLiteral : Comparable<TerminalLiteral> {
     }
 }
 
-// Mirrors upstream `pub type MatchSymbol = TerminalLiteral;` (upstream parsetree, line 104).
 typealias MatchSymbol = TerminalLiteral
 
 data class NonterminalString(val atom: Atom) : Comparable<NonterminalString> {
