@@ -66,15 +66,15 @@ class KotlinSymbolEmitTest {
             val grammar = normalizedGrammar(STARLARK_GRAMMAR_LALRPOP)
 
             val out = IndentedWriter()
-            val mapper = KotlinTypeMapper()
-            val emit = KotlinSymbolEmit(grammar, "GrammarSymbol", mapper)
+            val book = KotlinTypeBook()
+            val emit = KotlinSymbolEmit(grammar, "GrammarSymbol", book)
             emit.emitInto(out)
 
             val source = out.toString()
             assertTrue(
-                KotlinWrapper.NULLABLE_OPTION in mapper.wrappersNeeded,
-                "starlark grammar uses Option<Option<AstExpr>> but the type mapper " +
-                "didn't request the NullableOption wrapper",
+                KotlinWrapper.NULLABLE_OPTION in book.wrappersNeeded,
+                "starlark grammar uses an Optional<Optional<…>> recipe but the Kotlin " +
+                "type book didn't request the NullableOption wrapper",
             )
             assertTrue(
                 source.contains("sealed class NullableOption"),
@@ -84,6 +84,38 @@ class KotlinSymbolEmitTest {
                 source.contains("NullableOption<"),
                 "no variant references NullableOption — wrapper emitted but not used",
             )
+        }
+    }
+
+    @Test
+    fun dumpStarlarkTerminalOrderAndTypes() {
+        Tls.test().use {
+            val grammar = normalizedGrammar(STARLARK_GRAMMAR_LALRPOP)
+            println("===== terminal iteration order from grammar.terminals.all =====")
+            for ((i, t) in grammar.terminals.all.withIndex()) {
+                println("  [$i] $t  →  ${grammar.types.terminalType(t)}")
+            }
+            println("===== end terminal order =====")
+        }
+    }
+
+    @Test
+    fun dumpStarlarkSymbolClassForComparison() {
+        Tls.test().use {
+            val grammar = normalizedGrammar(STARLARK_GRAMMAR_LALRPOP)
+            val out = IndentedWriter()
+            val emit = KotlinSymbolEmit(grammar, "GrammarSymbol")
+            emit.emitInto(out)
+
+            // Print the entire generated source so it can be cross-referenced against
+            // starlark-kotlin/src/commonMain/kotlin/io/github/kotlinmania/starlark/syntax/parser/GrammarSymbol.kt
+            // line by line. Produces ~80–120 lines of output; chunked across several
+            // println calls to avoid any single-line truncation in the test runner.
+            println("===== generated GrammarSymbol.kt for starlark grammar — BEGIN =====")
+            for (line in out.toString().lines()) {
+                println(line)
+            }
+            println("===== generated GrammarSymbol.kt for starlark grammar — END =====")
         }
     }
 

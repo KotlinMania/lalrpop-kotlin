@@ -3,31 +3,36 @@ package io.github.kotlinmania.lalrpop.lr1.kotlintarget
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.kotlintarget.IndentedWriter
 
 /**
- * Walks every terminal and nonterminal in a [Grammar], deduplicates by `TypeRepr`, and
- * emits a per-grammar `Symbol` sealed class via [IndentedWriter]. Each unique stack
- * element type becomes one `data class VariantN(val value: T) : Symbol()`.
+ * Walks every terminal and nonterminal in a [Grammar], deduplicates by their semantic
+ * [GrammarTypeKind], and emits a per-grammar `Symbol` sealed class via [IndentedWriter].
+ * Each unique stack-element kind becomes one `data class VariantN(val value: T) : Symbol()`.
  *
- * The deduplication key is the original Rust [TypeRepr], not the mapped Kotlin type.
- * Two Rust types that collapse to the same Kotlin type (e.g. `Option<T>` and
- * `Option<Option<T>>` both flattening to `T?`) still get distinct variants —
- * preserving the variant *wrapper* as the discriminant the parse table relies on.
- * Where the Kotlin type can't represent the full Rust shape, [KotlinTypeMapper]
- * requests a wrapper sealed class and this emitter writes it alongside.
+ * The pipeline:
+ *   1. The grammar's [Grammar.types] gives the parsed input-format type for each role.
+ *   2. [GrammarTypeKindInterpreter] interprets that into a [GrammarTypeKind] — the
+ *      semantic intent of the role (Optional, ZeroOrMore, Tuple, …).
+ *   3. The Kotlin code book ([KotlinTypeBook]) renders each kind as the idiomatic
+ *      Kotlin type expression and may request wrapper sealed classes when Kotlin's
+ *      type system can't represent a recipe natively.
  *
- * Variant ordering follows the upstream Rust LALRPOP convention also used by
- * `lr1/codegen/ParseTable.kt`: terminals first in declaration order, then nonterminals
- * in declaration order, with each new unique type assigned the next sequential
- * `VariantN` name. That ordering matters because the parse table generator (see
- * `tablesFromLr1States`) refers to variants positionally.
+ * Deduplication is keyed on [GrammarTypeKind] — the *intent* — not the rendered Kotlin
+ * type. That way two distinct grammar roles whose Kotlin renderings happen to coincide
+ * (e.g. an `Optional<T>` and an `Optional<Optional<T>>` both rendering as `T?` in
+ * less-typed pipelines) still get distinct variants. The variant wrapper is the
+ * discriminant the parse table relies on; collapsing distinct intents would lose it.
+ *
+ * Variant ordering follows the same convention as `lr1/codegen/ParseTable.kt`:
+ * terminals first in declaration order, then nonterminals in declaration order. The
+ * parse-table generator ([tablesFromLr1States]) refers to variants positionally, so
+ * any change here has to land in lockstep there.
  */
 class KotlinSymbolEmit(
     private val grammar: Grammar,
     private val symbolClassName: String,
-    private val typeMapper: KotlinTypeMapper = KotlinTypeMapper(),
+    private val typeBook: KotlinTypeBook = KotlinTypeBook(),
 ) {
 
     /**
@@ -39,59 +44,51 @@ class KotlinSymbolEmit(
     val variantNameByTerminal: MutableMap<TerminalString, String> = mutableMapOf()
     val variantNameByNonterminal: MutableMap<NonterminalString, String> = mutableMapOf()
 
-    /** The unique types in their assigned `VariantN` order, after [emitInto] runs. */
-    private val variantOrder: MutableList<Pair<TypeRepr, String>> = mutableListOf()
-    private val variantByType: MutableMap<TypeRepr, String> = mutableMapOf()
+    /** The unique grammar-type kinds in their assigned `VariantN` order, after [emitInto] runs. */
+    private val variantOrder: MutableList<Pair<String, GrammarTypeKind>> = mutableListOf()
+    private val variantByKind: MutableMap<GrammarTypeKind, String> = mutableMapOf()
+    private val sourceLabelByVariant: MutableMap<String, String> = mutableMapOf()
 
     /** Emit the sealed class declaration plus any required wrapper classes. */
     fun emitInto(out: IndentedWriter) {
         // Pass 1: walk every terminal and nonterminal, assigning a variant name to
-        // each unique TypeRepr and pre-mapping each one to its Kotlin type. The
-        // pre-mapping is what populates [typeMapper.wrappersNeeded], so it has to
-        // run before we emit the wrapper declarations — otherwise the wrapper-loop
-        // sees an empty set and we silently skip needed wrappers.
-        val mappedByVariant: MutableMap<String, MappedType> = mutableMapOf()
+        // each unique grammar type. Each grammar type is interpreted once into its
+        // semantic [GrammarTypeKind], then the Kotlin code book renders it. The
+        // rendering is what populates [typeBook.wrappersNeeded], so it has to run
+        // before pass 2 emits wrappers — otherwise the wrapper loop sees an empty
+        // set and we silently skip needed declarations.
+        val renderedByVariant: MutableMap<String, RenderedKotlinType> = mutableMapOf()
         for (terminal in grammar.terminals.all) {
-            val rustType = grammar.types.terminalType(terminal)
-            val name = ensureVariant(rustType)
+            val parsedType = grammar.types.terminalType(terminal)
+            val kind = GrammarTypeKindInterpreter.interpret(parsedType)
+            val name = ensureVariant(kind, parsedType.toString())
             variantNameByTerminal[terminal] = name
-            mappedByVariant.getOrPut(name) { typeMapper.map(rustType) }
+            renderedByVariant.getOrPut(name) { typeBook.render(kind) }
         }
         for (nonterminal in grammar.nonterminals.keys) {
-            val rustType = grammar.types.nonterminalType(nonterminal)
-            val name = ensureVariant(rustType)
+            val parsedType = grammar.types.nonterminalType(nonterminal)
+            val kind = GrammarTypeKindInterpreter.interpret(parsedType)
+            val name = ensureVariant(kind, parsedType.toString())
             variantNameByNonterminal[nonterminal] = name
-            mappedByVariant.getOrPut(name) { typeMapper.map(rustType) }
+            renderedByVariant.getOrPut(name) { typeBook.render(kind) }
         }
 
-        // Pass 2: emit any wrapper sealed classes the type mapper requested. By now
-        // every variant's Kotlin type has been resolved, so [wrappersNeeded] is final.
-        for (wrapper in typeMapper.wrappersNeeded) {
+        // Pass 2: emit any wrapper sealed classes the code book requested. By now
+        // every variant's Kotlin type has been rendered, so [wrappersNeeded] is final.
+        for (wrapper in typeBook.wrappersNeeded) {
             emitWrapper(out, wrapper)
             out.line()
         }
 
-        // Pass 3: emit the Symbol sealed class itself, one variant per unique type.
+        // Pass 3: emit the Symbol sealed class itself, one variant per unique kind.
         out.block("sealed class $symbolClassName {") {
-            for ((rustType, variantName) in variantOrder) {
-                val mapped = mappedByVariant.getValue(variantName)
-                line("/** Rust source type: `$rustType` */")
-                line("data class $variantName(val value: ${mapped.kotlinType}) : $symbolClassName()")
+            for ((variantName, _) in variantOrder) {
+                val rendered = renderedByVariant.getValue(variantName)
+                val sourceLabel = sourceLabelByVariant.getValue(variantName)
+                line("/** Source recipe: `$sourceLabel` */")
+                line("data class $variantName(val value: ${rendered.expression}) : $symbolClassName()")
             }
         }
-    }
-
-    /**
-     * If [rustType] has not been seen before, assign it the next sequential `VariantN`
-     * name, record it in the per-grammar maps, and return that name. Otherwise return
-     * the previously assigned name.
-     */
-    private fun ensureVariant(rustType: TypeRepr): String {
-        variantByType[rustType]?.let { return it }
-        val name = "Variant${variantOrder.size}"
-        variantOrder.add(rustType to name)
-        variantByType[rustType] = name
-        return name
     }
 
     private fun emitWrapper(out: IndentedWriter, wrapper: KotlinWrapper) {
@@ -103,19 +100,19 @@ class KotlinSymbolEmit(
 
     private fun emitNullableOption(out: IndentedWriter) {
         out.line("/**")
-        out.line(" * Three-state value distinguishing the cases of a nested Rust `Option<Option<T>>`.")
+        out.line(" * Three-state value distinguishing the cases of a nested Optional<Optional<T>>.")
         out.line(" *")
         out.line(" * Necessary because Kotlin's nullable types collapse: `T??` is the same as `T?`,")
-        out.line(" * which would lose the distinction between `None`, `Some(None)`, and")
-        out.line(" * `Some(Some(value))`. Some grammar productions push values that depend on this")
-        out.line(" * three-state distinction at the symbol-stack level, so the wrapper is required.")
+        out.line(" * which would lose the distinction between Absent, Empty (matched outer, inner")
+        out.line(" * absent), and Present(value). Some grammar productions push values that")
+        out.line(" * depend on this three-state distinction at the symbol-stack level.")
         out.line(" */")
         out.block("sealed class NullableOption<out T> {") {
             line("object Absent : NullableOption<Nothing>()")
             line("object Empty : NullableOption<Nothing>()")
             line("data class Present<T>(val value: T) : NullableOption<T>()")
             line()
-            line("/** Mirror of Rust's `option.unwrap_or(None)`: collapses Absent and Empty to null. */")
+            line("/** Equivalent of unwrap-or-null on the outer optional: collapses Absent and Empty to null. */")
             block("fun unwrapOrNull(): T? = when (this) {") {
                 line("Absent -> null")
                 line("Empty -> null")
@@ -135,4 +132,21 @@ class KotlinSymbolEmit(
             line("data class Err<T, E>(val error: E) : ParseEither<T, E>()")
         }
     }
+
+    /**
+     * If this [GrammarTypeKind] has not been seen before, assign it the next
+     * sequential `VariantN` name, record it in the per-grammar maps, and return that
+     * name. Otherwise return the previously assigned name. [sourceLabel] is the
+     * original grammar-language type expression — kept for the doc comment on the
+     * variant so a reader can see what the role was in the source `.lalrpop`.
+     */
+    private fun ensureVariant(kind: GrammarTypeKind, sourceLabel: String): String {
+        variantByKind[kind]?.let { return it }
+        val name = "Variant${variantOrder.size}"
+        variantOrder.add(name to kind)
+        variantByKind[kind] = name
+        sourceLabelByVariant[name] = sourceLabel
+        return name
+    }
+
 }
