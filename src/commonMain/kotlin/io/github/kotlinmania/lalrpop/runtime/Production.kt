@@ -41,7 +41,7 @@ fun interface ProductionAction<S, L> {
  * location at the point of reduction. The driver computes these from the popped stack
  * entries before invoking the action.
  */
-data class ProductionSpan<L>(
+data class ProductionSpan<out L>(
     val start: L,
     val end: L,
 )
