@@ -13,4 +13,4 @@ import io.github.kotlinmania.btree.BTreeMap
  */
 typealias Map<K, V> = BTreeMap<K, V>
 
-fun <K : Comparable<K>, V> map(): Map<K, V> = BTreeMap.default()
+fun <K : Comparable<K>, V> map(): Map<K, V> = BTreeMap()
