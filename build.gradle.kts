@@ -94,10 +94,14 @@ kotlin {
         }
     }
 
-    androidLibrary {
+    android {
         namespace = "io.github.kotlinmania.lalrpop"
         compileSdk = 34
         minSdk = 24
+        withHostTestBuilder {}.configure {}
+        withDeviceTestBuilder {
+            sourceSetTreeName = "test"
+        }
     }
 
     sourceSets {
