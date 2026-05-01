@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "io.github.kotlinmania"
-version = "0.1.4"
+version = "0.1.5"
 
 val androidSdkDir: String? =
     providers.environmentVariable("ANDROID_SDK_ROOT").orNull
@@ -44,12 +44,6 @@ kotlin {
     val xcf = XCFramework("LALRPOP")
 
     macosArm64 {
-        binaries.framework {
-            baseName = "LALRPOP"
-            xcf.add(this)
-        }
-    }
-    macosX64 {
         binaries.framework {
             baseName = "LALRPOP"
             xcf.add(this)
@@ -112,7 +106,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
-                implementation("io.github.kotlinmania:btree-kotlin:0.1.2")
+                implementation("io.github.kotlinmania:btree-kotlin:0.1.5")
             }
         }
 
@@ -122,9 +116,6 @@ kotlin {
             kotlin.srcDir(posixMainPath)
         }
         val macosArm64Main by getting {
-            kotlin.srcDir(posixMainPath)
-        }
-        val macosX64Main by getting {
             kotlin.srcDir(posixMainPath)
         }
         val iosArm64Main by getting {
