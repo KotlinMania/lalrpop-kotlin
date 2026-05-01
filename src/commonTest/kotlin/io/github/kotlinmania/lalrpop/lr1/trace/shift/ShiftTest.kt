@@ -55,8 +55,7 @@ pub Ty: () = {
                     buildStates(grammar, nt("Ty"))
                     error("expected build_states to fail")
                 } catch (e: TableConstructionErrorException) {
-                    @Suppress("UNCHECKED_CAST")
-                    e.inner as TableConstructionError<TokenSet>
+                    e.lr1Inner ?: error("expected TokenSet table construction error")
                 }
                 val conflict = err.conflicts[0]
                 println("conflict=$conflict")
