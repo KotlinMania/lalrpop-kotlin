@@ -6,14 +6,14 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     kotlin("multiplatform") version "2.3.20"
     kotlin("plugin.serialization") version "2.3.20"
-    id("com.android.kotlin.multiplatform.library") version "8.6.0"
+    id("com.android.kotlin.multiplatform.library") version "9.2.0"
     id("com.vanniktech.maven.publish") version "0.30.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("dev.detekt") version "2.0.0-alpha.3"
 }
 
 group = "io.github.kotlinmania"
-version = "0.1.3"
+version = "0.1.4"
 
 val androidSdkDir: String? =
     providers.environmentVariable("ANDROID_SDK_ROOT").orNull
@@ -31,6 +31,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     compilerOptions {
+        allWarningsAsErrors.set(true)
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
