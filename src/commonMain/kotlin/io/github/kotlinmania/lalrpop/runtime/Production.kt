@@ -25,12 +25,20 @@ class Production<S, L>(
 /**
  * A production action — typed lambda contract.
  *
- * Defined as a `fun interface` rather than a plain `(…) -> S` function type so the
- * generated tables can name the parameters at the call site, which makes generated
+ * Defined as a `fun interface` rather than a plain `(…) -> Result<S>` function type so
+ * the generated tables can name the parameters at the call site, which makes generated
  * action bodies easier to read in stack traces and IDE tooltips.
+ *
+ * Returns `Result<S>` because a production can fail (the user's grammar action runs
+ * arbitrary Kotlin code that may throw, and LALRPOP's existing `actionNNN` helpers
+ * model failure with the same stdlib `Result` type — see the fallible reducers in the
+ * current hand-ported `LrGrammar.kt` for the convention). The driver inspects the
+ * result, pushes on success, and propagates the throwable as a parse failure on
+ * `Result.failure`. Strict typing constraint holds: the success payload is a typed
+ * `S` variant, never `Any` or `Any?`.
  */
 fun interface ProductionAction<S, L> {
-    fun reduce(stack: ParseStack<S, L>, span: ProductionSpan<L>): S
+    fun reduce(stack: ParseStack<S, L>, span: ProductionSpan<L>): Result<S>
 }
 
 /**
