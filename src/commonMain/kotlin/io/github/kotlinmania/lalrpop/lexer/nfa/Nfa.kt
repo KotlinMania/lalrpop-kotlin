@@ -58,31 +58,13 @@ class Nfa private constructor(
     /**
      * Mirrors `fun edges<L: EdgeLabel>(from: NfaStateIndex): EdgeIterator<L>`.
      *
-     * Upstream dispatches via the type parameter `L`; in Kotlin we
-     * dispatch on the variant of [EdgeLabel] passed by the caller.
-     * Each branch reads the corresponding edge vector and the
-     * matching `firstXyzEdge` index off the state (where Xyz selects the edge kind: Noop, Test, or Other).
+     * Upstream dispatches via the type parameter `L`; in Kotlin the
+     * [EdgeLabel] value carries that type, so callers still get a typed
+     * [EdgeIterator] without unchecked casts.
      */
-    @Suppress("UNCHECKED_CAST")
-    fun <L : Any> edges(from: NfaStateIndex, label: EdgeLabel): EdgeIterator<L> {
+    fun <L : Any> edges(from: NfaStateIndex, label: EdgeLabel<L>): EdgeIterator<L> {
         val state = states[from.value]
-        return when (label) {
-            is EdgeLabel.Noop -> {
-                val vec = Noop.vec(edges)
-                val first = Noop.first(state)
-                EdgeIterator(vec, from, first) as EdgeIterator<L>
-            }
-            is EdgeLabel.Other -> {
-                val vec = Other.vec(edges)
-                val first = Other.first(state)
-                EdgeIterator(vec, from, first) as EdgeIterator<L>
-            }
-            is EdgeLabel.Test -> {
-                val vec = Test.vec(edges)
-                val first = Test.first(state)
-                EdgeIterator(vec, from, first) as EdgeIterator<L>
-            }
-        }
+        return EdgeIterator(label.vec(edges), from, label.first(state))
     }
 
     // Compatibility wrappers used by Interpret.kt and downstream code.
@@ -534,17 +516,40 @@ object Other {
  * and [Other] above; this sealed class exists so that callers can
  * pass a single [EdgeLabel] value and dispatch on it.
  */
-sealed class EdgeLabel {
+sealed class EdgeLabel<L : Any> {
+    abstract fun vec(nfa: Edges): List<Edge<L>>
+
+    abstract fun first(state: NfaState): Int
+
     /** Wrapper for a [io.github.kotlinmania.lalrpop.lexer.nfa.Test] edge label. */
-    data class Test(val test: io.github.kotlinmania.lalrpop.lexer.nfa.Test) : EdgeLabel() {
+    data class Test(val test: io.github.kotlinmania.lalrpop.lexer.nfa.Test) :
+        EdgeLabel<io.github.kotlinmania.lalrpop.lexer.nfa.Test>() {
+        override fun vec(nfa: Edges): List<Edge<io.github.kotlinmania.lalrpop.lexer.nfa.Test>> =
+            io.github.kotlinmania.lalrpop.lexer.nfa.Test.vec(nfa)
+
+        override fun first(state: NfaState): Int =
+            io.github.kotlinmania.lalrpop.lexer.nfa.Test.first(state)
+
         override fun toString(): String = test.toString()
     }
 
-    object Other : EdgeLabel() {
+    object Other : EdgeLabel<io.github.kotlinmania.lalrpop.lexer.nfa.Other>() {
+        override fun vec(nfa: Edges): List<Edge<io.github.kotlinmania.lalrpop.lexer.nfa.Other>> =
+            io.github.kotlinmania.lalrpop.lexer.nfa.Other.vec(nfa)
+
+        override fun first(state: NfaState): Int =
+            io.github.kotlinmania.lalrpop.lexer.nfa.Other.first(state)
+
         override fun toString(): String = "Other"
     }
 
-    object Noop : EdgeLabel() {
+    object Noop : EdgeLabel<io.github.kotlinmania.lalrpop.lexer.nfa.Noop>() {
+        override fun vec(nfa: Edges): List<Edge<io.github.kotlinmania.lalrpop.lexer.nfa.Noop>> =
+            io.github.kotlinmania.lalrpop.lexer.nfa.Noop.vec(nfa)
+
+        override fun first(state: NfaState): Int =
+            io.github.kotlinmania.lalrpop.lexer.nfa.Noop.first(state)
+
         override fun toString(): String = "Noop"
     }
 }
