@@ -93,7 +93,7 @@ jobs:
           npm --version
           yarn --version
 
-      - name: Build and test Linux, Android, JS, and WASM targets
+      - name: Build and test Linux, Android, JS Node, and WASM Node targets
         env:
           ORG_GRADLE_PROJECT_kotlin_js_yarn_download: "false"
         run: >
@@ -101,11 +101,19 @@ jobs:
           compileAndroidMain
           assembleUnitTest
           assembleAndroidTest
-          jsBrowserTest
           jsNodeTest
           linuxX64Test
-          wasmJsBrowserTest
           wasmJsNodeTest
+          --no-configuration-cache
+
+      - name: Build and test browser targets
+        env:
+          ORG_GRADLE_PROJECT_kotlin_js_yarn_download: "false"
+        run: >
+          ./gradlew
+          jsBrowserTest
+          wasmJsBrowserTest
+          --max-workers=1
           --no-configuration-cache
 
   build-windows:
