@@ -87,11 +87,25 @@ class TableDrivenLr1Driver<S, L>(
                     // reified pops drain it in RHS order (rightmost first).
                     val actionStack = ParseStack<S, L>(initialCapacity = popped.size)
                     for (entry in popped) actionStack.push(entry)
-                    val produced = production.action.reduce(actionStack, span)
+                    val result = production.action.reduce(actionStack, span)
                     check(actionStack.isEmpty()) {
                         "production $productionId left ${actionStack.size} unpopped " +
                         "symbols — action lambda doesn't match declared rhsLength " +
                         "${production.rhsLength}"
+                    }
+
+                    val produced = result.getOrElse { cause ->
+                        // The production's user code signaled failure. Surface it as a
+                        // typed parse failure carrying the cause, the production we
+                        // were running, and the span we'd computed for it. The driver
+                        // does not retry — a fallible reduce that fails terminates the
+                        // parse. Error recovery (which would intercept here in a fuller
+                        // implementation) lives in step 2 of the migration plan.
+                        return ParseOutcome.ProductionFailure(
+                            productionId = productionId,
+                            span = span,
+                            cause = cause,
+                        )
                     }
 
                     if (productionId == tables.acceptProductionId) {
@@ -140,6 +154,14 @@ data class TerminalToken<S, L>(
  *
  * Step 1 has no error recovery — error states return immediately with diagnostic info.
  * Step 2 wires this through the existing [ParserDefinition.usesErrorRecovery] machinery.
+ *
+ * Two distinct failure shapes:
+ *
+ * - [Failure] is a *table* error: the parse table had `0` (error) for the
+ *   `(state, terminal)` cell. The driver caught it before invoking any user code.
+ * - [ProductionFailure] is a *user-code* error: the parse table told us to reduce a
+ *   fallible production, the action lambda ran, and it returned `Result.failure`. The
+ *   driver propagates the cause unchanged.
  */
 sealed class ParseOutcome<out S, out L> {
     data class Success<out S, out L>(val tree: S, val span: ProductionSpan<L>) :
@@ -150,5 +172,11 @@ sealed class ParseOutcome<out S, out L> {
         val unexpectedTerminalId: Int,
         val unexpectedSymbol: S?,
         val location: L,
+    ) : ParseOutcome<S, L>()
+
+    data class ProductionFailure<out S, out L>(
+        val productionId: Int,
+        val span: ProductionSpan<L>,
+        val cause: Throwable,
     ) : ParseOutcome<S, L>()
 }
