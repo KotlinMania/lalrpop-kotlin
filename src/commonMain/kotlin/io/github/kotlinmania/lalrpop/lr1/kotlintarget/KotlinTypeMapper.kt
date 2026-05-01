@@ -71,7 +71,18 @@ class KotlinTypeMapper {
     }
 
     private fun mapNominal(n: NominalTypeRepr): MappedType {
-        val name = n.path.toString()
+        val rawName = n.path.toString()
+        // The path-form name (the canonical key) — used for matching stdlib types.
+        val name = rawName
+        // The Kotlin-renderable form: `::` becomes `.` since Kotlin uses dot-paths,
+        // and a leading `crate::` is dropped (the user crate root in Rust has no
+        // direct Kotlin analogue; emitted code references types via the file's own
+        // imports). The grammar-author-defined types pass through unchanged after
+        // this rewrite, so e.g. `lexer::Token` becomes `lexer.Token` and
+        // `crate::syntax::ast::AstExpr` becomes `syntax.ast.AstExpr`.
+        val kotlinName = rawName
+            .removePrefix("crate::")
+            .replace("::", ".")
         val args = n.types
 
         return when {
@@ -153,11 +164,12 @@ class KotlinTypeMapper {
 
             // Default: a user-defined nominal type. The grammar author wrote a Rust
             // type name; the emitter assumes a corresponding Kotlin type exists and
-            // refers to it verbatim. Generic args are recursively mapped.
-            args.isEmpty() -> MappedType(name)
+            // refers to it via the rewritten Kotlin path (`::` → `.`, `crate::`
+            // dropped). Generic args are recursively mapped.
+            args.isEmpty() -> MappedType(kotlinName)
             else -> {
                 val mappedArgs = args.joinToString(", ") { map(it).kotlinType }
-                MappedType("$name<$mappedArgs>")
+                MappedType("$kotlinName<$mappedArgs>")
             }
         }
     }
