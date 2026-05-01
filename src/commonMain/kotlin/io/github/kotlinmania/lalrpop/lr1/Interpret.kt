@@ -20,7 +20,6 @@ fun <L : LookaheadInterpret<L>> interpret(
     states: List<State<L>>,
     tokens: MutableList<TerminalString>,
 ): Result<ParseTree> {
-    println("interpret(tokens=$tokens)")
     val m = Machine.new(states)
     return m.execute(tokens.iterator())
 }
@@ -68,9 +67,6 @@ private class Machine<L : LookaheadInterpret<L>>(
             val terminal = token
             val state = topState()
 
-            println("state=$state")
-            println("terminal=$terminal")
-
             // check whether we can shift this token
             val nextIndex = state.shifts[terminal]
             if (nextIndex != null) {
@@ -113,8 +109,6 @@ private class Machine<L : LookaheadInterpret<L>>(
     }
 
     private fun reduce(production: Production): Boolean {
-        println("reduce=$production")
-
         val args = production.symbols.size
 
         // remove the top N items from the data stack
