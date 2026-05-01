@@ -23,10 +23,10 @@ import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toKString
 import platform.posix.fprintf
-import platform.posix.getenv
 import platform.posix.stderr
 import platform.windows.FreeEnvironmentStringsA
 import platform.windows.GetCurrentDirectoryA
+import platform.windows.GetEnvironmentVariableA
 import platform.windows.GetEnvironmentStrings
 import platform.windows.MAX_PATH
 
@@ -40,9 +40,12 @@ internal actual fun apiCurrentDir(): String = memScoped {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal actual fun apiEnvVar(name: String): String? {
-    val raw = getenv(name) ?: return null
-    return raw.toKString()
+internal actual fun apiEnvVar(name: String): String? = memScoped {
+    val needed = GetEnvironmentVariableA(name, null, 0u)
+    if (needed == 0u) return@memScoped null
+    val buf = allocArray<ByteVar>(needed.toInt())
+    val len = GetEnvironmentVariableA(name, buf, needed)
+    if (len == 0u) null else buf.toKString()
 }
 
 @OptIn(ExperimentalForeignApi::class)
