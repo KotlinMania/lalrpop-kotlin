@@ -76,8 +76,11 @@ class Lr<L>(
     val firstSets: FirstSets,
     val startNt: NonterminalString,
     val startLookahead: L,
-    var permitEarlyStop: Boolean,
+    permitEarlyStop: Boolean,
 ) where L : Lookahead<L>, L : LookaheadBuild<L> {
+    var permitEarlyStop: Boolean = permitEarlyStop
+        private set
+
     companion object {
         fun <L> new(grammar: Grammar, startNt: NonterminalString, startLookahead: L): Lr<L>
             where L : Lookahead<L>, L : LookaheadBuild<L> = Lr(
