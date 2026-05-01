@@ -23,14 +23,28 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
 
-      - name: Build and test Apple arm64 targets
+      - name: Compile Apple arm64 targets
+        timeout-minutes: 20
         run: >
           ./gradlew
           compileKotlinIosArm64
           compileKotlinIosSimulatorArm64
           compileKotlinMacosArm64
+          --no-configuration-cache
+
+      - name: Test Apple arm64 targets
+        timeout-minutes: 20
+        run: >
+          ./gradlew
           iosSimulatorArm64Test
           macosArm64Test
+          -PenableIosSimulatorTests=true
+          --no-configuration-cache
+
+      - name: Assemble LALRPOP XCFramework
+        timeout-minutes: 20
+        run: >
+          ./gradlew
           assembleLALRPOPXCFramework
           -PenableIosSimulatorTests=true
           --no-configuration-cache
@@ -51,10 +65,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
 
-      - name: Build and test iOS x64 target
+      - name: Compile iOS x64 target
+        timeout-minutes: 20
         run: >
           ./gradlew
           compileKotlinIosX64
+          --no-configuration-cache
+
+      - name: Test iOS x64 target
+        timeout-minutes: 20
+        run: >
+          ./gradlew
           iosX64Test
           -PenableIosSimulatorTests=true
           --no-configuration-cache

@@ -82,7 +82,8 @@ private fun setup(): TestState {
         API_TEST_MUTEX.clearPoison()
     })
     val origDir = apiCurrentDir()
-    apiSetCurrentDir("./src/api/test_files")
+    val testRoot = apiEnvVar("LALRPOP_TEST_ROOT") ?: origDir
+    apiSetCurrentDir(apiPathJoin(testRoot, "src/api/test_files"))
     if (apiPathExists(outDir)) {
         // unclean data from previous failed test run.  Clean up
         apiRemoveDirAll(outDir)

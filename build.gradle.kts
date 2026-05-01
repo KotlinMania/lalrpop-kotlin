@@ -117,6 +117,18 @@ kotlin {
         }
 
         val commonTest by getting { dependencies { implementation(kotlin("test")) } }
+        val hostNativeTest by creating {
+            dependsOn(commonTest)
+        }
+        val linuxX64Test by getting {
+            dependsOn(hostNativeTest)
+        }
+        val macosArm64Test by getting {
+            dependsOn(hostNativeTest)
+        }
+        val mingwX64Test by getting {
+            dependsOn(hostNativeTest)
+        }
         val posixMainPath = "src/posixMain/kotlin"
         val linuxX64Main by getting {
             kotlin.srcDir(posixMainPath)
@@ -140,16 +152,22 @@ kotlin {
 // The build gate is `./gradlew test` — the ported Rust tests must pass on
 // the same inputs the Rust tests use.
 
-// ApiTest (port of api/test.rs) uses `apiSetCurrentDir("./src/api/test_files")`
-// from the project root, matching the upstream crate-root test working
-// directory. Native test executables otherwise launch from
-// `build/bin/<target>/debugTest/`, so set their working directory back to
-// `rootDir` for parity with those fixture paths.
+// ApiTest (port of api/test.rs) reads fixture files from the repository
+// checkout. Keep it on host-native test source sets and launch those native
+// test executables from `rootDir`; simulator targets still run common tests
+// but cannot see the host checkout from inside the simulator sandbox.
 tasks
     .withType(org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest::class.java)
     .configureEach {
         workingDir = rootDir.absolutePath
+        environment("LALRPOP_TEST_ROOT", rootDir.absolutePath)
     }
+
+tasks.register("test") {
+    group = "verification"
+    description = "Runs the Kotlin Multiplatform test aggregate."
+    dependsOn("allTests")
+}
 
 ktlint {
     version.set("1.8.0")
