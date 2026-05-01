@@ -85,7 +85,7 @@ private object ToyGrammar {
             rhsLength = 1,
             action = ProductionAction { stack, _ ->
                 val s = stack.pop<ToyTree.S>()
-                ToyTree.Goal(s)
+                Result.success(ToyTree.Goal(s))
             },
         ),
         // Production 1: S → "a" "b"
@@ -95,7 +95,7 @@ private object ToyGrammar {
             action = ProductionAction { stack, _ ->
                 val b = stack.pop<ToyTree.TerminalB>()
                 val a = stack.pop<ToyTree.TerminalA>()
-                ToyTree.S(a, b)
+                Result.success(ToyTree.S(a, b))
             },
         ),
     )
@@ -107,6 +107,58 @@ private object ToyGrammar {
         action = ACTION,
         eofAction = EOF_ACTION,
         goto = GOTO,
+        productions = PRODUCTIONS,
+        acceptProductionId = 0,
+    )
+}
+
+/**
+ * A second fixture that swaps `S → "a" "b"` for a fallible variant: the production's
+ * action lambda enforces a semantic check (the two terminal payloads must agree) and
+ * returns `Result.failure` when they disagree. Mirrors the upstream LALRPOP convention
+ * for fallible reducers (see e.g. productions 205, 206, 386, 446, 447 in the current
+ * `LrGrammar.kt`, which all wrap a `Result<T>` return from their `actionNNN` helpers).
+ */
+private class SemanticCheckFailedException(message: String) : RuntimeException(message)
+
+private object FallibleToyGrammar {
+    val PRODUCTIONS: Array<Production<ToyTree, Int>> = arrayOf(
+        // Production 0: Goal → S
+        Production(
+            nonterminalId = ToyGrammar.NT_GOAL.toShort(),
+            rhsLength = 1,
+            action = ProductionAction { stack, _ ->
+                val s = stack.pop<ToyTree.S>()
+                Result.success(ToyTree.Goal(s))
+            },
+        ),
+        // Production 1: S → "a" "b" with a semantic check that the two payloads agree.
+        Production(
+            nonterminalId = ToyGrammar.NT_S.toShort(),
+            rhsLength = 2,
+            action = ProductionAction { stack, _ ->
+                val b = stack.pop<ToyTree.TerminalB>()
+                val a = stack.pop<ToyTree.TerminalA>()
+                if (a.text != b.text) {
+                    Result.failure(
+                        SemanticCheckFailedException(
+                            "expected matching payloads but got a='${a.text}' b='${b.text}'"
+                        )
+                    )
+                } else {
+                    Result.success(ToyTree.S(a, b))
+                }
+            },
+        ),
+    )
+
+    val TABLES: ParseTables<ToyTree, Int> = ParseTables(
+        numStates = ToyGrammar.NUM_STATES,
+        numTerminals = ToyGrammar.NUM_TERMINALS,
+        numNonterminals = ToyGrammar.NUM_NONTERMINALS,
+        action = ToyGrammar.ACTION,
+        eofAction = ToyGrammar.EOF_ACTION,
+        goto = ToyGrammar.GOTO,
         productions = PRODUCTIONS,
         acceptProductionId = 0,
     )
@@ -152,6 +204,8 @@ class TableDrivenLr1DriverTest {
                 assertEquals(2, outcome.span.end)
             }
             is ParseOutcome.Failure -> fail("expected success but got failure: $outcome")
+            is ParseOutcome.ProductionFailure ->
+                fail("expected success but got production failure: $outcome")
         }
     }
 
@@ -202,6 +256,78 @@ class TableDrivenLr1DriverTest {
         assertTrue(outcome is ParseOutcome.Failure, "expected failure")
         assertEquals(1, outcome.state)
         assertEquals(-1, outcome.unexpectedTerminalId)
+    }
+
+    @Test
+    fun fallibleProductionReturningSuccessParsesNormally() {
+        val tokens = listOf(
+            TerminalToken<ToyTree, Int>(
+                terminalId = ToyGrammar.T_A,
+                symbol = ToyTree.TerminalA("same"),
+                start = 0,
+                end = 4,
+            ),
+            TerminalToken<ToyTree, Int>(
+                terminalId = ToyGrammar.T_B,
+                symbol = ToyTree.TerminalB("same"),
+                start = 4,
+                end = 8,
+            ),
+        )
+
+        val outcome = TableDrivenLr1Driver(
+            tables = FallibleToyGrammar.TABLES,
+            tokens = tokens.iterator(),
+            eofLocation = 8,
+        ).parse()
+
+        assertTrue(outcome is ParseOutcome.Success, "expected success but got $outcome")
+        val tree = outcome.tree
+        assertTrue(tree is ToyTree.Goal)
+        assertEquals("same", tree.s.a.text)
+        assertEquals("same", tree.s.b.text)
+    }
+
+    @Test
+    fun fallibleProductionReturningFailureSurfacesAsProductionFailure() {
+        val tokens = listOf(
+            TerminalToken<ToyTree, Int>(
+                terminalId = ToyGrammar.T_A,
+                symbol = ToyTree.TerminalA("hello"),
+                start = 0,
+                end = 5,
+            ),
+            TerminalToken<ToyTree, Int>(
+                terminalId = ToyGrammar.T_B,
+                symbol = ToyTree.TerminalB("world"),
+                start = 5,
+                end = 10,
+            ),
+        )
+
+        val outcome = TableDrivenLr1Driver(
+            tables = FallibleToyGrammar.TABLES,
+            tokens = tokens.iterator(),
+            eofLocation = 10,
+        ).parse()
+
+        assertTrue(
+            outcome is ParseOutcome.ProductionFailure,
+            "expected ProductionFailure, got $outcome",
+        )
+        // Production 1 is the fallible S → "a" "b". Production 0 (Goal → S) never runs
+        // because the inner reduce returned Result.failure first.
+        assertEquals(1, outcome.productionId)
+        assertEquals(0, outcome.span.start)
+        assertEquals(10, outcome.span.end)
+        assertTrue(
+            outcome.cause is SemanticCheckFailedException,
+            "cause should be the typed semantic-check exception, got ${outcome.cause::class}",
+        )
+        assertEquals(
+            "expected matching payloads but got a='hello' b='world'",
+            outcome.cause.message,
+        )
     }
 
     @Test

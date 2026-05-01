@@ -71,7 +71,7 @@ class ParseStackTest {
                 // generated reducers.
                 val b = s.pop<ToyS.TerminalB>()
                 val a = s.pop<ToyS.TerminalA>()
-                ToyS.Pair(a, b)
+                Result.success(ToyS.Pair(a, b))
             },
         )
 
@@ -81,7 +81,7 @@ class ParseStackTest {
         // Re-push them so the lambda's pops drain them — mirrors how the real driver
         // hands the inputs to the lambda.
         for (entry in popped) stack.push(entry)
-        val produced = production.action.reduce(stack, span)
+        val produced = production.action.reduce(stack, span).getOrThrow()
 
         assertEquals(ToyS.Pair(ToyS.TerminalA("hello"), ToyS.TerminalB(7)), produced)
         assertTrue(stack.isEmpty())
