@@ -383,28 +383,6 @@ internal fun <BorrowType : Marker.BorrowType, K, V, Type> NodeRef<BorrowType, K,
  * internal storage. This list has size `len()` and indexed access reads
  * the (initialised) slot. `Search.kt` calls this method.
  */
-internal fun <K, V, Type> NodeRef<Marker.Immut, K, V, Type>.keys(): List<K> {
-    val n = node.len
-    // SAFETY: `keys[0..len]` are all initialised by node-shape invariants.
-    return object : AbstractList<K>() {
-        override val size: Int get() = n
-        override fun get(index: Int): K {
-            if (index < 0 || index >= n) throw IndexOutOfBoundsException("index $index out of bounds [0, $n)")
-            // SAFETY: index is in 0..len, slot is initialised.
-            @Suppress("UNCHECKED_CAST")
-            return node.keys[index] as K
-        }
-    }
-}
-
-/**
- * Generic `keys` accessor — the upstream `public(super) function keys(&self) -> &[K]`
- * is restricted to `Immut`, but Search.kt calls `keys()` on
- * `NodeRef<BorrowType, K, V, Type>` after a `reborrow()`, which yields an
- * `Immut` borrow. We expose this convenience with the same generic
- * BorrowType so Search.kt `node.reborrow().keys()` resolves identically
- * to upstream.
- */
 internal fun <BorrowType, K, V, Type> NodeRef<BorrowType, K, V, Type>.keys(): List<K> {
     val n = node.len
     return object : AbstractList<K>() {
@@ -1056,7 +1034,7 @@ private fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Leaf>, Marker.Edge>.i
         val (middleKvIdx, insertion) = splitpoint(idx)
         // SAFETY: middleKvIdx < node.len() == CAPACITY.
         val middle = Handle.newKv(node, middleKvIdx)
-        val result = middle.split()
+        val result = middle.splitLeaf()
         val insertionEdge = when (insertion) {
             is LeftOrRight.Left -> {
                 // SAFETY: insertion index from splitpoint is bounds-checked there.
@@ -1132,7 +1110,7 @@ private fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Internal>, Marker.Edg
         val (middleKvIdx, insertion) = splitpoint(idx)
         // SAFETY: middleKvIdx < node.len() == CAPACITY.
         val middle = Handle.newKv(node, middleKvIdx)
-        val result = middle.split()
+        val result = middle.splitInternal()
         val insertionEdge = when (insertion) {
             is LeftOrRight.Left -> {
                 // SAFETY: insertion index from splitpoint is bounds-checked there.
@@ -1377,7 +1355,7 @@ private fun <K, V, NodeType> Handle<NodeRef<Marker.Mut, K, V, NodeType>, Marker.
  * - The key and value pointed to by this handle are extracted.
  * - All the key-value pairs to the right of this handle are put into a newly allocated node.
  */
-internal fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Leaf>, Marker.KV>.split():
+internal fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Leaf>, Marker.KV>.splitLeaf():
     SplitResult<K, V, Marker.Leaf> {
     val newNode = LeafNode.new<K, V>()
     val kv = this.splitLeafData(newNode)
@@ -1413,7 +1391,7 @@ internal fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Leaf>, Marker.KV>.re
  * - All the edges and key-value pairs to the right of this handle are put into
  *   a newly allocated node.
  */
-internal fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Internal>, Marker.KV>.split():
+internal fun <K, V> Handle<NodeRef<Marker.Mut, K, V, Marker.Internal>, Marker.KV>.splitInternal():
     SplitResult<K, V, Marker.Internal> {
     val oldLen = node.len()
     val newNode = InternalNode.new<K, V>()
