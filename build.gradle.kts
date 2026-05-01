@@ -112,6 +112,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
+                implementation("io.github.kotlinmania:btree-kotlin:0.1.2")
             }
         }
 
