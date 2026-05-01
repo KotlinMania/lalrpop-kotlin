@@ -26,7 +26,10 @@ private fun buildLr1StatesLegacy(
     val eof = TokenSet.eof()
     val lr1: Lr<TokenSet> = Lr.new(grammar, start, eof)
     lr1.setPermitEarlyStop(true)
-    return lr1.buildStates()
+    return when (val outcome = lr1.buildStatesOrError()) {
+        is BuildOutcome.Ok -> outcome.states
+        is BuildOutcome.Err -> throw TableConstructionErrorException(outcome.error, outcome.error)
+    }
 }
 
 /**
@@ -267,7 +270,10 @@ class Lr<L>(
     }
 }
 
-class TableConstructionErrorException(val inner: TableConstructionError<*>) : RuntimeException()
+class TableConstructionErrorException(
+    val inner: TableConstructionError<*>,
+    val lr1Inner: Lr1TableConstructionError? = null,
+) : RuntimeException()
 
 /// Except for the initial state, the kernel sets always contain
 /// a set of "seed" items where something has been pushed (that is,

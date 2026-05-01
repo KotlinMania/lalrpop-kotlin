@@ -92,9 +92,8 @@ class LaneTableConstruct(
                             ?: mutableListOf()
                     }
                     .toMutableList()
-                throw TableConstructionErrorException(
-                    TableConstructionError(states = states, conflicts = conflicts),
-                )
+                val error = TableConstructionError(states = states, conflicts = conflicts)
+                throw TableConstructionErrorException(error, error)
             }
 
             i++

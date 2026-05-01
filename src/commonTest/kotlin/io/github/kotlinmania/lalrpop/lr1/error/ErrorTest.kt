@@ -40,7 +40,7 @@ private fun buildStatesError(
         buildStates(grammar, start)
         error("expected build_states to fail")
     } catch (e: TableConstructionErrorException) {
-        e.inner as TableConstructionError<TokenSet>
+        e.lr1Inner ?: error("expected TokenSet table construction error")
     }
 
 class ErrorTest {

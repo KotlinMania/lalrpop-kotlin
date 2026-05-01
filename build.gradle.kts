@@ -1,6 +1,7 @@
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
@@ -84,6 +85,7 @@ kotlin {
         nodejs()
     }
 
+    @OptIn(ExperimentalSwiftExportDsl::class)
     swiftExport {
         moduleName = "LALRPOP"
         flattenPackage = "io.github.kotlinmania.lalrpop"
@@ -110,6 +112,25 @@ kotlin {
         }
 
         val commonTest by getting { dependencies { implementation(kotlin("test")) } }
+        val posixMainPath = "src/posixMain/kotlin"
+        val linuxX64Main by getting {
+            kotlin.srcDir(posixMainPath)
+        }
+        val macosArm64Main by getting {
+            kotlin.srcDir(posixMainPath)
+        }
+        val macosX64Main by getting {
+            kotlin.srcDir(posixMainPath)
+        }
+        val iosArm64Main by getting {
+            kotlin.srcDir(posixMainPath)
+        }
+        val iosX64Main by getting {
+            kotlin.srcDir(posixMainPath)
+        }
+        val iosSimulatorArm64Main by getting {
+            kotlin.srcDir(posixMainPath)
+        }
     }
     jvmToolchain(21)
 }
