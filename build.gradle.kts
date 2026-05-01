@@ -71,7 +71,13 @@ kotlin {
     }
     js {
         browser()
-        nodejs()
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "30s"
+                }
+            }
+        }
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
