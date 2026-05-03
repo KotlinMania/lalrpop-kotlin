@@ -8,6 +8,9 @@ rust-source/
 /*/build/
 .gradle/
 local.properties
+
+# Android SDK staged by setup-android-sdk.sh (per-developer, not committed)
+/.android-sdk/
 *.class
 *.jar
 *.war
