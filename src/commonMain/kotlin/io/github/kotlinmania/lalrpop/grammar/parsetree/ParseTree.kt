@@ -818,7 +818,27 @@ sealed class TerminalString : Comparable<TerminalString> {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: TerminalString): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: TerminalString): Int {
+        // Mirrors the upstream `derive(Ord)`: compare by enum variant
+        // declaration order first, then by the variant's payload.
+        // Comparing via toString() would tie the sort to the
+        // debug-formatted form (which escapes control characters), and
+        // make the order depend on the formatter rather than the raw
+        // grammar tokens.
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is Literal -> literal.compareTo((other as Literal).literal)
+            is Bare -> atom.compareTo((other as Bare).atom)
+            Error -> 0
+        }
+    }
+
+    private fun variantOrder(): Int = when (this) {
+        is Literal -> 0
+        is Bare -> 1
+        Error -> 2
+    }
 
     fun asLiteral(): TerminalLiteral? = when (this) {
         is Literal -> literal
@@ -864,7 +884,24 @@ sealed class TerminalLiteral : Comparable<TerminalLiteral> {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: TerminalLiteral): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: TerminalLiteral): Int {
+        // Mirrors the upstream `derive(Ord)`: compare by enum variant
+        // declaration order (Quoted before Hir), then by the variant's
+        // inner Atom. Comparing via toString() ties the sort to the
+        // debug-formatted form, which makes the order depend on the
+        // formatter rather than the raw grammar tokens.
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is Quoted -> atom.compareTo((other as Quoted).atom)
+            is Hir -> atom.compareTo((other as Hir).atom)
+        }
+    }
+
+    private fun variantOrder(): Int = when (this) {
+        is Quoted -> 0
+        is Hir -> 1
+    }
 
     fun asLiteral(): TerminalLiteral = this
 
@@ -884,9 +921,34 @@ sealed class TerminalLiteral : Comparable<TerminalLiteral> {
     }
 
     fun fmt(): String = when (this) {
-        is Quoted -> "\"${atom.asRef()}\"" // the Debug impl adds the `"` and escaping
+        // Mirrors upstream `<&str as Debug>::fmt`: the inner atom is
+        // wrapped in double quotes with control characters and embedded
+        // quotes escaped using Rust escape syntax. Without this, a
+        // terminal containing a literal newline (e.g. starlark's `"\n"`
+        // token) would be rendered as a raw newline inside the
+        // generated debug comments, breaking byte parity with upstream.
+        is Quoted -> rustDebugQuoteString(atom.asRef())
         is Hir -> "r#\"${atom.asRef()}\"#" // NOTE -- need to determine proper number of #
     }
+}
+
+private fun rustDebugQuoteString(s: String): String = buildString {
+    append('"')
+    for (c in s) {
+        val cp = c.code
+        when {
+            cp == 0x22 -> append("\\\"")
+            cp == 0x5C -> append("\\\\")
+            cp == 0x0A -> append("\\n")
+            cp == 0x0D -> append("\\r")
+            cp == 0x09 -> append("\\t")
+            cp == 0x00 -> append("\\0")
+            cp < 0x20 || cp == 0x7F -> append("\\x").append(cp.toString(16).padStart(2, '0'))
+            cp >= 0x7F -> append("\\u{").append(cp.toString(16)).append('}')
+            else -> append(c)
+        }
+    }
+    append('"')
 }
 
 typealias MatchSymbol = TerminalLiteral
