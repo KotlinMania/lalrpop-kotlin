@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
@@ -43,6 +44,12 @@ kotlin {
     val xcf = XCFramework("LALRPOP")
 
     macosArm64 {
+        binaries.framework {
+            baseName = "LALRPOP"
+            xcf.add(this)
+        }
+    }
+    macosX64 {
         binaries.framework {
             baseName = "LALRPOP"
             xcf.add(this)
@@ -146,6 +153,12 @@ kotlin {
         }
     }
     jvmToolchain(21)
+}
+
+rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
+    resolution("diff", "8.0.3")
+    resolution("serialize-javascript", "7.0.5")
+    resolution("webpack", "5.106.2")
 }
 
 // The build gate is `./gradlew test` — the ported Rust tests must pass on
