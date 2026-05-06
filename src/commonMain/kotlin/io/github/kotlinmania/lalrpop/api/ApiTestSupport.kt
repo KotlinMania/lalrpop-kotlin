@@ -19,8 +19,7 @@ package io.github.kotlinmania.lalrpop.api
 // `std::fs::{exists, createDir, createDirAll, removeDirAll,
 // removeFile}`. Kotlin Multiplatform commonMain has no portable
 // filesystem; the actuals live alongside the production Api.kt actuals
-// per-platform. JS/wasmJs raise UnsupportedOperationException, mirroring
-// the production behaviour.
+// per-platform.
 // ---------------------------------------------------------------------------
 
 /** Mirror of `std::env::tempDir()`. Returns the absolute path to the system temp dir. */
