@@ -60,7 +60,7 @@ fun emitActionCode(grammar: Grammar, out: RustWrite) {
             is ActionFnDefnKind.User ->
                 emitUserActionCode(grammar, out, i, defn, kind.data)
             is ActionFnDefnKind.Lookaround ->
-                emitLookaroundActionCode(grammar, out, i, defn, kind.data)
+                emitLookaroundActionCode(grammar, out, i, kind.data)
             is ActionFnDefnKind.Inline ->
                 emitInlineActionCode(grammar, out, i, defn, kind.data)
         }
@@ -126,7 +126,6 @@ private fun emitLookaroundActionCode(
     grammar: Grammar,
     out: RustWrite,
     index: Int,
-    defn: ActionFnDefn,
     data: LookaroundActionFnDefn,
 ) {
     rust(out, "#[allow(clippy::needless_lifetimes)]")
