@@ -1,14 +1,9 @@
-// port-lint: source external/asciiCanvas/style.rs
 // The `Style` type is a simplified view of the various
 // attributes offered by the `term` library. These are
 // enumerated as bits so they can be easily or'd together
 // etc.
 package io.github.kotlinmania.lalrpop
 
-/**
- * `term::color::Color` — in the `term` crate this is `u16`. We reproduce
- * the named constants `Style.apply` references.
- */
 object TermColor {
     const val BLACK: Int = 0
     const val RED: Int = 1
@@ -28,7 +23,6 @@ object TermColor {
     const val BRIGHT_WHITE: Int = 15
 }
 
-/** `term::Attr` — the subset `Style.apply` passes through. */
 sealed class TermAttr {
     data object Bold : TermAttr()
     data object Dim : TermAttr()
@@ -40,12 +34,6 @@ sealed class TermAttr {
     data object Secure : TermAttr()
 }
 
-/**
- * `term::Terminal` trait — the subset `Style.apply` calls. In the Rust
- * source this comes from the `term` crate. Consumers implement the
- * interface; the crate is the abstract boundary, the same position
- * `term::Terminal` occupies on the Rust side.
- */
 interface Terminal {
     fun reset(): Result<Unit>
     fun supportsReset(): Boolean
@@ -59,20 +47,15 @@ interface Terminal {
     fun carriageReturn(): Result<Unit>
 }
 
-/** `class Style { bits: u64 }` */
 class Style private constructor(private val bits: Long) {
-    /** `fun with(self, otherStyle: Style) -> Style` */
     fun with(otherStyle: Style): Style = Style(bits or otherStyle.bits)
 
-    /** `fun contains(self, otherStyle: Style) -> bool` */
     fun contains(otherStyle: Style): Boolean = this.with(otherStyle) == this
 
     override fun equals(other: Any?): Boolean = other is Style && other.bits == bits
     override fun hashCode(): Int = bits.hashCode()
 
     /**
-     * `fun apply<T: Terminal + ?Sized>(self, term: &mut T) -> term::Result<()>`
-     *
      * Attempts to apply the given style to the given terminal. If the style is
      * not supported, either there is no effect or else a similar, substitute
      * style may be applied.
@@ -80,7 +63,6 @@ class Style private constructor(private val bits: Long) {
     fun apply(term: Terminal): Result<Unit> {
         term.reset().getOrElse { return Result.failure(it) }
 
-        // `fgColor!` macro expansion, one per FG color.
         fun fgColor(color: Style, termColor: Int): Result<Unit> {
             if (this.contains(color) && term.supportsColor()) {
                 return term.fg(termColor)
@@ -105,7 +87,6 @@ class Style private constructor(private val bits: Long) {
         fgColor(FG_WHITE, TermColor.WHITE).getOrElse { return Result.failure(it) }
         fgColor(FG_YELLOW, TermColor.YELLOW).getOrElse { return Result.failure(it) }
 
-        // `bgColor!` macro expansion, one per BG color.
         fun bgColor(color: Style, termColor: Int): Result<Unit> {
             if (this.contains(color) && term.supportsColor()) {
                 return term.bg(termColor)
