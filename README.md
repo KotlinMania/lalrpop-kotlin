@@ -1,40 +1,42 @@
 # lalrpop-kotlin
 
-A Kotlin Multiplatform port of [LALRPOP], the Rust LR(1) parser generator.
+[![GitHub](https://img.shields.io/badge/GitHub-KotlinMania%2Flalrpop--kotlin-blue.svg)](https://github.com/KotlinMania/lalrpop-kotlin)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.kotlinmania/lalrpop-kotlin)](https://central.sonatype.com/artifact/io.github.kotlinmania/lalrpop-kotlin)
+[![CI](https://img.shields.io/github/actions/workflow/status/KotlinMania/lalrpop-kotlin/ci.yml?branch=main)](https://github.com/KotlinMania/lalrpop-kotlin/actions)
 
-This project aims to bring LALRPOP's grammar-driven parser generation to the JVM, Native, and JS ecosystems. The long-term goal is a Gradle plugin that consumes `.lalrpop` grammar files and emits Kotlin parser code at build time — the same role LALRPOP's `build.rs` integration plays in Rust.
+Kotlin Multiplatform LR(1) parser generator based on the grammar language and architecture of the upstream Rust project [lalrpop/lalrpop](https://github.com/lalrpop/lalrpop).
 
-## Status
+## Installation
 
-Early work. Rust sources from upstream LALRPOP live under [tmp/lalrpop-rs/](tmp/lalrpop-rs/) as the translation reference. Kotlin code lives under `src/` (forthcoming).
+```kotlin
+dependencies {
+    implementation("io.github.kotlinmania:lalrpop-kotlin:0.1.6")
+}
+```
 
-## Why
+## Basic Usage
 
-Kotlin projects that port grammar-driven Rust crates (for example, [starlark-kotlin]) currently carry committed parser tables — the output of running LALRPOP once in Rust and transliterating its 20k+-line output by hand. That output is awkward to maintain, awkward to audit, and diverges from upstream every time the grammar changes.
+```kotlin
+import io.github.kotlinmania.lalrpop.api.Configuration
 
-A native Kotlin LALRPOP lets `.lalrpop` files be the single source of truth on the Kotlin side as well.
+fun generate() {
+    Configuration.new()
+        .useCargoDirConventions()
+        .processFile("src/syntax/grammar.lalrpop")
+}
+```
 
-## Layout
+## Targets
 
-- `tmp/lalrpop-rs/lalrpop/` — the generator crate (the bulk of the port surface)
-- `tmp/lalrpop-rs/lalrpop-util/` — runtime used by generated parsers
-- `tmp/lalrpop-rs/lalrpop-test/` — conformance tests (used to validate the Kotlin port)
-- `src/` — Kotlin implementation (forthcoming)
-
-## Acknowledgements
-
-LALRPOP is the work of [Niko Matsakis] and the LALRPOP contributors. This fork exists only because their design is worth translating — all credit for the architecture, grammar language, and LR(1) machinery belongs upstream. See the original project at <https://github.com/lalrpop/lalrpop>.
+- macOS arm64
+- Linux x64
+- Windows mingw-x64
+- iOS arm64 / simulator-arm64 / simulator-x64 (Swift export + XCFramework)
+- JS (Node.js)
+- Wasm-JS (Node.js)
+- Android (API 24+)
 
 ## License
 
-Dual-licensed under **Apache-2.0 OR MIT**, matching upstream. See [LICENSE-APACHE](LICENSE-APACHE), [LICENSE-MIT](LICENSE-MIT), and [NOTICE](NOTICE).
+Dual-licensed under **Apache-2.0 OR MIT**, matching upstream.
 
-## Maintainer
-
-Sydney Renee `<sydney@solace.ofharmony.ai>` — The Solace Project.
-
-Repository: <https://github.com/KotlinMania/lalrpop-kotlin>
-
-[LALRPOP]: https://github.com/lalrpop/lalrpop
-[starlark-kotlin]: https://github.com/KotlinMania/starlark-kotlin
-[Niko Matsakis]: https://github.com/nikomatsakis

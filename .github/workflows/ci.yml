@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main, master]
   pull_request:
-    branches: [master]
+    branches: [main, master]
 
 jobs:
   build-macos-arm64:
@@ -23,60 +23,15 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
 
-      - name: Compile Apple arm64 targets
-        timeout-minutes: 20
+      - name: Build and test Apple arm64 targets
         run: >
           ./gradlew
           compileKotlinIosArm64
           compileKotlinIosSimulatorArm64
           compileKotlinMacosArm64
-          --no-configuration-cache
-
-      - name: Test Apple arm64 targets
-        timeout-minutes: 20
-        run: >
-          ./gradlew
           iosSimulatorArm64Test
           macosArm64Test
-          -PenableIosSimulatorTests=true
-          --no-configuration-cache
-
-      - name: Assemble LALRPOP XCFramework
-        timeout-minutes: 20
-        run: >
-          ./gradlew
           assembleLALRPOPXCFramework
-          -PenableIosSimulatorTests=true
-          --no-configuration-cache
-
-  build-ios-x64:
-    name: Build and Test (iOS simulator x64)
-    runs-on: macos-15-intel
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6.0.2
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5.2.0
-        with:
-          distribution: zulu
-          java-version: '21'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6.1.0
-
-      - name: Compile iOS x64 target
-        timeout-minutes: 20
-        run: >
-          ./gradlew
-          compileKotlinIosX64
-          --no-configuration-cache
-
-      - name: Test iOS x64 target
-        timeout-minutes: 20
-        run: >
-          ./gradlew
-          iosX64Test
           -PenableIosSimulatorTests=true
           --no-configuration-cache
 
@@ -114,7 +69,7 @@ jobs:
           npm --version
           yarn --version
 
-      - name: Build and test Linux and Android targets
+      - name: Build and test Linux, Android, JS, and WASM targets
         env:
           ORG_GRADLE_PROJECT_kotlin_js_yarn_download: "false"
         run: >
@@ -122,27 +77,11 @@ jobs:
           compileAndroidMain
           assembleUnitTest
           assembleAndroidTest
-          linuxX64Test
-          --no-configuration-cache
-
-      - name: Build and test JS Node and WASM Node targets
-        env:
-          ORG_GRADLE_PROJECT_kotlin_js_yarn_download: "false"
-        run: >
-          ./gradlew
-          jsNodeTest
-          wasmJsNodeTest
-          --max-workers=1
-          --no-configuration-cache
-
-      - name: Build and test browser targets
-        env:
-          ORG_GRADLE_PROJECT_kotlin_js_yarn_download: "false"
-        run: >
-          ./gradlew
           jsBrowserTest
+          jsNodeTest
+          linuxX64Test
           wasmJsBrowserTest
-          --max-workers=1
+          wasmJsNodeTest
           --no-configuration-cache
 
   build-windows:
