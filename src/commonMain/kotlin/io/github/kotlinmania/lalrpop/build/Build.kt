@@ -207,7 +207,7 @@ fun processFileInto(
         val tls = Tls.install(session, fileText)
         try {
             // Do the LALRPOP processing itself and write the resulting
-            // buffer into a file. We import a buffer so that if LR(1)
+            // buffer into a file. We use a buffer so that if LR(1)
             // generation fails at some point, we do not leave a partial
             // file behind.
             val grammar = parseAndNormalizeGrammar(session, fileText)
@@ -523,9 +523,7 @@ internal expect fun pathStripPrefix(path: String, base: String): String?
  *
  * Upstream uses the `sha3` crate `Sha3256` here. There is no
  * commonMain SHA3 in the Kotlin stdlib, so each platform supplies its
- * own implementation: JVM/Android via `java.security.MessageDigest`,
- * Native via a vendored pure-Kotlin SHA3, JS/wasmJs throwing
- * `UnsupportedOperationException`.
+ * own implementation or reports that hashing is unavailable.
  */
 internal expect fun apiSha3Hex(file: String): String?
 
