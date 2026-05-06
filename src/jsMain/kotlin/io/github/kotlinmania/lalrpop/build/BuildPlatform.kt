@@ -1,4 +1,3 @@
-// port-lint: source build/mod.rs (platform glue, JS target)
 package io.github.kotlinmania.lalrpop.build
 
 @JsModule("node:fs")
@@ -19,11 +18,6 @@ private external object NodeFs {
 private external object NodeCrypto {
     fun createHash(algorithm: String): dynamic
 }
-
-// Path helpers are pure string operations, so we implement them
-// inline rather than throwing. Upstream `genResolveFile` uses them
-// to produce paths even when no filesystem is touched (the codegen
-// parity harness exercises them).
 
 internal actual fun pathParent(path: String): String? {
     val idx = path.lastIndexOf('/')
