@@ -72,6 +72,7 @@ class KotlinParserEmitTest {
             assertTrue(source.contains("TableDrivenParserDefinition<TinySymbol, Int, Tok, ParseUserError>"))
             assertTrue(source.contains("return Parser.drive(definition, tokens)"))
             assertTrue(source.contains("Result.success(TinySymbol.Variant0(Unit))"))
+            assertTrue(!source.contains(")\n        ),"))
         }
     }
 
