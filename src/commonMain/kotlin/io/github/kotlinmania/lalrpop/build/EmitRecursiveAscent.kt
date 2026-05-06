@@ -1,10 +1,3 @@
-// Transliterated from upstream module root.
-/**
- * The orchestrator that walks the LR(1) construction pipeline and feeds
- * it into the codegen back-end. Hosts [emitRecursiveAscent], [emitModuleAttributes],
- * [emitUses], [emitToTripleTrait], and [writeWhereClause] alongside their
- * action-emission sibling [emitActionCode].
- */
 package io.github.kotlinmania.lalrpop.build
 
 import io.github.kotlinmania.lalrpop.Level
@@ -15,27 +8,18 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.LrCodeGeneration
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
 import io.github.kotlinmania.lalrpop.lexer.compileInternToken
-import io.github.kotlinmania.lalrpop.lr1.buildStates
+import io.github.kotlinmania.lalrpop.lr1.BuildOutcome
+import io.github.kotlinmania.lalrpop.lr1.buildStatesOrError
 import io.github.kotlinmania.lalrpop.lr1.codegen.Ascent
 import io.github.kotlinmania.lalrpop.lr1.codegen.ParseTable
 import io.github.kotlinmania.lalrpop.lr1.codegen.TestAll
-import io.github.kotlinmania.lalrpop.lr1.generateReport
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
-import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.error.reportError as reportLr1Error
+import io.github.kotlinmania.lalrpop.lr1.report.LrResult
+import io.github.kotlinmania.lalrpop.lr1.report.generateReport
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
-/**
- * Runs the full Rust-emission back-end against an already-normalised
- * grammar and returns the emitted bytes (without the version/sha3 header,
- * which is added by [processFileInto]).
- *
- * Direct port of upstream `emitRecursiveAscent`.
- *
- * @throws IllegalStateException if the grammar declares no public start
- *   nonterminals (mirrors upstream `InvalidData` IO error).
- */
 fun emitRecursiveAscent(
     session: Session,
     grammar: Grammar,
@@ -77,14 +61,10 @@ fun emitRecursiveAscent(
     for ((userNt, startNt) in grammar.startNonterminals) {
         val ntVis = grammar.nonterminals[startNt]?.visibility ?: Visibility.Priv
         maxStartNtVisibility = when {
-            // (Pub(None), _) | (_, Priv) => keep current
             maxStartNtVisibility is Visibility.Pub && maxStartNtVisibility.path == null -> maxStartNtVisibility
             ntVis is Visibility.Priv -> maxStartNtVisibility
-            // equal — keep
             maxStartNtVisibility == ntVis -> maxStartNtVisibility
-            // (Priv, v) -> v
             maxStartNtVisibility is Visibility.Priv -> ntVis
-            // anything else: collapse to most-public Pub
             else -> Visibility.Pub(path = null)
         }
 
@@ -95,28 +75,26 @@ fun emitRecursiveAscent(
             "expected exactly 1 production for synthetic start `$startNt`"
         }
 
-        // log(session, Verbose, "Building states for public nonterminal `{}`", userNt)
         session.log.log(Level.Verbose) { "Building states for public nonterminal `$userNt`" }
 
         val lr1Tls = Lr1Tls.install(grammar.terminals.copy())
         try {
-            val states = try {
-                val builtStates = buildStates(grammar, startNt)
-                if (session.emitReport) {
-                    val report = reportOut ?: error("report output requested without a report sink")
-                    report.clear()
-                    generateReport(report, builtStates)
+            val lr1Result = buildStatesOrError(grammar, startNt)
+            if (session.emitReport) {
+                val report = reportOut ?: error("report output requested without a report sink")
+                report.clear()
+                when (lr1Result) {
+                    is BuildOutcome.Ok -> generateReport(report, LrResult.Ok(lr1Result.states))
+                    is BuildOutcome.Err -> generateReport(report, LrResult.Err(lr1Result.error))
                 }
-                builtStates
-            } catch (e: TableConstructionErrorException) {
-                val lr1Error = e.lr1Inner ?: throw e
-                if (session.emitReport) {
-                    val report = reportOut ?: error("report output requested without a report sink")
-                    report.clear()
-                    generateReport(report, lr1Error.states)
+            }
+
+            val states = when (lr1Result) {
+                is BuildOutcome.Ok -> lr1Result.states
+                is BuildOutcome.Err -> {
+                    reportLr1Error(grammar, lr1Result.error, ::reportMessage)
+                    error("Error: invalid LR(1) table construction")
                 }
-                reportLr1Error(grammar, lr1Error, ::reportMessage)
-                throw e
             }
 
             when (grammar.algorithm.codegen) {
@@ -177,17 +155,14 @@ fun emitRecursiveAscent(
     return buffer.toString()
 }
 
-/** Direct port of upstream `emitModuleAttributes`. */
 fun emitModuleAttributes(grammar: Grammar, rust: RustWrite) {
     rust.writeModuleAttributes(grammar)
 }
 
-/** Direct port of upstream `emitUses`. */
 fun emitUses(grammar: Grammar, rust: RustWrite) {
     rust.writeUses("", grammar)
 }
 
-/** Direct port of upstream `writeWhereClause`. */
 fun writeWhereClause(
     whereClauses: List<WhereClause>,
     toTripleWhereClauses: Sep<WhereClause>,
@@ -198,7 +173,6 @@ fun writeWhereClause(
     }
 }
 
-/** Direct port of upstream `emitToTripleTrait`. */
 fun emitToTripleTrait(
     grammar: Grammar,
     maxStartNtVisibility: Visibility,
