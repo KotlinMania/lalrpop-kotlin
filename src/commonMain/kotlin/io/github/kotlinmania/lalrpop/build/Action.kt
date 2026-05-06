@@ -6,27 +6,27 @@
  * symbols as input, e.g. from a production like `X = Y Z => ...`
  * (which takes Y and Z as input), they have this form:
  *
- * ```text
- * function __action17<
- *     input,                       // user-declared type parameters (*)
+ * ```rust
+ * fn __action17<
+ *     'input,                       // user-declared type parameters (*)
  * >(
- *     input: &input str,           // user-declared parameters
- *     __0: (size, size, size),     // symbols being reduced, if any
+ *     input: &'input str,           // user-declared parameters
+ *     __0: (usize, usize, usize),   // symbols being reduced, if any
  *     ...
- *     __N: (size, Foo, size),      // each has a type (L, T, L)
- * ) -> boxed-like Expr
+ *     __N: (usize, Foo, usize),     // each has a type (L, T, L)
+ * ) -> Box<Expr<'input>>
  * ```
  *
  * Otherwise, they have this form:
  *
- * ```text
- * function __action17<
- *     input,                       // user-declared type parameters (*)
+ * ```rust
+ * fn __action17<
+ *     'input,                       // user-declared type parameters (*)
  * >(
- *     input: &input str,           // user-declared parameters
- *    __lookbehind: &size,          // value for @R -- "end of previous token"
- *    __lookahead: &size,           // value for @L -- "start of next token"
- * ) -> boxed-like Expr
+ *     input: &'input str,           // user-declared parameters
+ *    __lookbehind: &usize,          // value for @R -- "end of previous token"
+ *    __lookahead: &usize,           // value for @L -- "start of next token"
+ * ) -> Box<Expr<'input>>
  * ```
  *
  * * -- in this case, those "user-declared" parameters are inserted by
