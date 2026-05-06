@@ -477,9 +477,9 @@ internal fun reportContent(content: Content): Result<Unit> {
 
     val sink = StringBuilder()
     val fake = FakeTerminal.new(sink)
-    canvas.writeTo(sink)
+    canvas.writeTo(fake)
     // FakeTerminal is the same shape as upstream `&mut FakeTerminal::new(stdout.lock())`;
-    // we drain the buffer through stdout once the canvas has finished writing.
+    // commonMain drains the wrapped buffer through stdout once the canvas has finished writing.
     apiBuildPrint(fake.intoInner().toString())
     return Result.success(Unit)
 }
