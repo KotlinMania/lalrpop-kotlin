@@ -21,6 +21,8 @@ import io.github.kotlinmania.lalrpop.lr1.codegen.ParseTable
 import io.github.kotlinmania.lalrpop.lr1.codegen.TestAll
 import io.github.kotlinmania.lalrpop.lr1.generateReport
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
+import io.github.kotlinmania.lalrpop.lr1.error.reportError as reportLr1Error
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
@@ -65,6 +67,7 @@ fun emitRecursiveAscent(
     emitUses(grammar, rust)
 
     if (grammar.startNonterminals.isEmpty()) {
+        apiBuildPrintln("Error: no public symbols declared in grammar")
         error("Error: no public symbols declared in grammar")
     }
 
@@ -97,15 +100,23 @@ fun emitRecursiveAscent(
 
         val lr1Tls = Lr1Tls.install(grammar.terminals.copy())
         try {
-            // Upstream wraps construction in a Result; the Kotlin port returns
-            // the state list directly and reports errors via thrown exceptions
-            // inside the LR(1) builder, so there is no Err arm to handle here.
-            val states = buildStates(grammar, startNt)
-
-            if (session.emitReport) {
-                val report = reportOut ?: error("report output requested without a report sink")
-                report.clear()
-                generateReport(report, states)
+            val states = try {
+                val builtStates = buildStates(grammar, startNt)
+                if (session.emitReport) {
+                    val report = reportOut ?: error("report output requested without a report sink")
+                    report.clear()
+                    generateReport(report, builtStates)
+                }
+                builtStates
+            } catch (e: TableConstructionErrorException) {
+                val lr1Error = e.lr1Inner ?: throw e
+                if (session.emitReport) {
+                    val report = reportOut ?: error("report output requested without a report sink")
+                    report.clear()
+                    generateReport(report, lr1Error.states)
+                }
+                reportLr1Error(grammar, lr1Error, ::reportMessage)
+                throw e
             }
 
             when (grammar.algorithm.codegen) {
