@@ -48,11 +48,15 @@ sealed class TermAttr {
  */
 interface Terminal {
     fun reset(): Result<Unit>
+    fun supportsReset(): Boolean
     fun supportsColor(): Boolean
     fun fg(color: Int): Result<Unit>
     fun bg(color: Int): Result<Unit>
     fun supportsAttr(attr: TermAttr): Boolean
     fun attr(attr: TermAttr): Result<Unit>
+    fun cursorUp(): Result<Unit>
+    fun deleteLine(): Result<Unit>
+    fun carriageReturn(): Result<Unit>
 }
 
 /** `class Style { bits: u64 }` */
