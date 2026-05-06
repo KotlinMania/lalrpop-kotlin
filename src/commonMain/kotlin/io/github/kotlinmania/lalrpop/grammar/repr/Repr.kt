@@ -386,11 +386,8 @@ sealed class TypeRepr : Comparable<TypeRepr> {
         val ao = ordinal()
         val bo = other.ordinal()
         if (ao != bo) return ao - bo
-        // Within-variant fallback to toString — the variants we ship
-        // (NominalTypeRepr, Path) all have stable Comparable
-        // implementations driven by their toString, so this matches
-        // upstream recursive Ord derive for the cases LALRPOP
-        // exercises.
+        // Within a variant, compare the rendered form used by the
+        // contained Kotlin port types.
         return toString().compareTo(other.toString())
     }
 
