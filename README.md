@@ -10,7 +10,7 @@ Kotlin Multiplatform LR(1) parser generator based on the grammar language and ar
 
 ```kotlin
 dependencies {
-    implementation("io.github.kotlinmania:lalrpop-kotlin:0.1.6")
+    implementation("io.github.kotlinmania:lalrpop-kotlin:0.1.7")
 }
 ```
 
@@ -39,4 +39,3 @@ fun generate() {
 ## License
 
 Dual-licensed under **Apache-2.0 OR MIT**, matching upstream.
-
