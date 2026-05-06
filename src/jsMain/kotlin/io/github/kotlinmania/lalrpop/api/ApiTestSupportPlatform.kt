@@ -13,24 +13,53 @@ package io.github.kotlinmania.lalrpop.api
  * at your option.
  */
 
-private fun unsupported(): Nothing =
-    throw UnsupportedOperationException(
-        "filesystem access is not available on the JS target",
-    )
+@JsModule("node:fs")
+@JsNonModule
+private external object NodeFs {
+    fun existsSync(path: String): Boolean
+    fun mkdirSync(path: String, options: dynamic = definedExternally)
+    fun rmSync(path: String, options: dynamic = definedExternally)
+    fun unlinkSync(path: String)
+}
 
-internal actual fun apiTempDir(): String = unsupported()
+@JsModule("node:os")
+@JsNonModule
+private external object NodeOs {
+    fun tmpdir(): String
+}
 
-internal actual fun apiSetCurrentDir(path: String): Unit = unsupported()
+@JsModule("node:process")
+@JsNonModule
+private external object NodeTestProcess {
+    val env: dynamic
+    fun chdir(path: String)
+}
+
+internal actual fun apiTempDir(): String = NodeOs.tmpdir().trimEnd('/').ifEmpty { "/" }
+
+internal actual fun apiSetCurrentDir(path: String) {
+    NodeTestProcess.chdir(path)
+}
 
 internal actual fun apiSetEnvVar(
     name: String,
     value: String,
-): Unit = unsupported()
+) {
+    NodeTestProcess.env[name] = value
+}
 
-internal actual fun apiPathExists(path: String): Boolean = unsupported()
+internal actual fun apiPathExists(path: String): Boolean = NodeFs.existsSync(path)
 
-internal actual fun apiCreateDir(path: String): Unit = unsupported()
+internal actual fun apiCreateDir(path: String) {
+    NodeFs.mkdirSync(path)
+}
 
-internal actual fun apiRemoveDirAll(path: String): Unit = unsupported()
+internal actual fun apiRemoveDirAll(path: String) {
+    if (NodeFs.existsSync(path)) {
+        NodeFs.rmSync(path, js("({ recursive: true, force: true })"))
+    }
+}
 
-internal actual fun apiRemoveFile(path: String): Unit = unsupported()
+internal actual fun apiRemoveFile(path: String) {
+    NodeFs.unlinkSync(path)
+}
