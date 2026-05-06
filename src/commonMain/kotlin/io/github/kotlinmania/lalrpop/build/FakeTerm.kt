@@ -23,11 +23,26 @@ import io.github.kotlinmania.lalrpop.Terminal
  */
 internal typealias Output = Appendable
 
-class FakeTerminal private constructor(private var write: Appendable) : Terminal {
+class FakeTerminal private constructor(private var write: Appendable) : Terminal, Appendable {
+
+    override fun append(value: CharSequence?): Appendable {
+        write.append(value)
+        return this
+    }
+
+    override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): Appendable {
+        write.append(value, startIndex, endIndex)
+        return this
+    }
+
+    override fun append(value: Char): Appendable {
+        write.append(value)
+        return this
+    }
 
     /** Appends [buf] to the wrapped sink and returns the number of characters written. */
     fun write(buf: String): Int {
-        write.append(buf)
+        append(buf)
         return buf.length
     }
 
