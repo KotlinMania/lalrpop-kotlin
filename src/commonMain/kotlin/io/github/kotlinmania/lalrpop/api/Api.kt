@@ -27,7 +27,7 @@ class Configuration internal constructor(
     internal var session: Session,
 ) {
     /**
-     * Always import ANSI colors in output, even if output does not appear to be a TTY.
+     * Always use ANSI colors in output, even if output does not appear to be a TTY.
      */
     fun alwaysUseColors(): Configuration {
         session.colorConfig = ColorConfig.Yes
@@ -35,7 +35,7 @@ class Configuration internal constructor(
     }
 
     /**
-     * Never import ANSI colors in output, even if output appears to be a TTY.
+     * Never use ANSI colors in output, even if output appears to be a TTY.
      */
     fun neverUseColors(): Configuration {
         session.colorConfig = ColorConfig.No
@@ -192,7 +192,7 @@ class Configuration internal constructor(
      *
      * As lalrpop is resolving a macro, it may discover new macros uses in the
      * macro definition to resolve.  Typically deep recursion indicates a
-     * recursive macro import that is non-resolvable.  The default resolution
+     * recursive macro use that is non-resolvable.  The default resolution
      * depth is 200.
      */
     fun setMacroRecursionLimit(`val`: Int): Configuration {
@@ -201,7 +201,7 @@ class Configuration internal constructor(
     }
 
     /**
-     * Sets the features used during compilation, disables the import of cargo features.
+     * Sets the features used during compilation, disables the use of cargo features.
      * (Default: Loaded from `CARGO_FEATURE_{}` environment variables).
      */
     fun setFeatures(iterable: Iterable<String>): Configuration {
@@ -255,7 +255,7 @@ class Configuration internal constructor(
         verifyNoInDirConflict(path)
         sessionCopy.inDir = path
 
-        // If out dir is empty, import cargo conventions by default.
+        // If out dir is empty, use cargo conventions by default.
         // See https://github.com/lalrpop/lalrpop/issues/280
         if (sessionCopy.outDir == null) {
             val outDir = apiEnvVar("OUT_DIR") ?: throw IllegalStateException("missing OUT_DIR variable")
