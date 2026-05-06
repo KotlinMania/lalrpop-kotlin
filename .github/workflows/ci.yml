@@ -77,10 +77,8 @@ jobs:
           compileAndroidMain
           assembleUnitTest
           assembleAndroidTest
-          jsBrowserTest
           jsNodeTest
           linuxX64Test
-          wasmJsBrowserTest
           wasmJsNodeTest
           --no-configuration-cache
 
