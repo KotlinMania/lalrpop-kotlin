@@ -1,6 +1,5 @@
 @file:OptIn(ExperimentalWasmJsInterop::class)
 
-// port-lint: source build/mod.rs (platform glue, wasmJs target)
 package io.github.kotlinmania.lalrpop.build
 
 import kotlin.JsFun
