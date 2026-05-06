@@ -1,4 +1,3 @@
-// port-lint: source build/action.rs
 /**
  * Code for generating action code.
  *
