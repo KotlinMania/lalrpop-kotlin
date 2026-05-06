@@ -2,19 +2,28 @@
 package io.github.kotlinmania.lalrpop.api
 
 import io.github.kotlinmania.lalrpop.Session
+import io.github.kotlinmania.lalrpop.build.processDir
+import io.github.kotlinmania.lalrpop.build.processFile
 
-// JS does not have a portable filesystem in the lalrpop build-script
-// sense (the API entry points are intended for `build.rs` scripts that
-// scan a Cargo workspace). Surface this as `UnsupportedOperationException`
-// so callers get a clear failure rather than a silent no-op.
-internal actual fun apiCurrentDir(): String =
-    throw UnsupportedOperationException(
-        "filesystem access is not available on the JS target",
-    )
+@JsModule("node:process")
+@JsNonModule
+private external object NodeProcess {
+    val env: dynamic
+    fun cwd(): String
+}
 
-internal actual fun apiEnvVar(name: String): String? = null
+internal actual fun apiCurrentDir(): String = NodeProcess.cwd()
 
-internal actual fun apiEnvVars(): Sequence<Pair<String, String>> = emptySequence()
+internal actual fun apiEnvVar(name: String): String? =
+    NodeProcess.env[name] as String?
+
+internal actual fun apiEnvVars(): Sequence<Pair<String, String>> {
+    val names = js("Object.keys(process.env)") as Array<String>
+    return names.asSequence().mapNotNull { name ->
+        val value = NodeProcess.env[name] as String?
+        if (value != null) name to value else null
+    }
+}
 
 internal actual fun apiEPrintln(message: String) {
     console.error(message)
@@ -23,9 +32,13 @@ internal actual fun apiEPrintln(message: String) {
 internal actual fun apiBuildProcessDir(
     session: Session,
     path: String,
-): Unit = throw UnsupportedOperationException("filesystem access is not available on the JS target")
+) {
+    processDir(session, path)
+}
 
 internal actual fun apiBuildProcessFile(
     session: Session,
     path: String,
-): Unit = throw UnsupportedOperationException("filesystem access is not available on the JS target")
+) {
+    processFile(session, path)
+}
