@@ -160,7 +160,7 @@ private fun emitProductions(
     out.line("private val PRODUCTIONS: Array<Production<$symbol, $location>> = arrayOf(")
     out.indented {
         for (row in rows) {
-            block("Production(", footer = ")") {
+            block("Production(", footer = "),") {
                 line("nonterminalId = ${row.nonterminalId}.toShort(),")
                 line("rhsLength = ${row.rhsLength},")
                 line("action = ProductionAction { stack, span ->")
@@ -171,7 +171,6 @@ private fun emitProductions(
                 }
                 line("},")
             }
-            line("),")
         }
     }
     out.line(")")
