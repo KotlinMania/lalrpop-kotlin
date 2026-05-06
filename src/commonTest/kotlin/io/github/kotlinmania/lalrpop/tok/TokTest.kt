@@ -12,9 +12,7 @@ private sealed class Expectation {
 }
 
 private fun genTest(rawInput: String, expected: List<Pair<String, Expectation>>) {
-    // use $ to signal EOL because it can be replaced with a single space
-    // for spans, and because it applies also to r#XXX# style strings:
-    val input = rawInput.replace('$', '\n')
+    val input = rawInput
 
     val tokenizer = Tokenizer(input, 0)
     val len = expected.size
@@ -25,9 +23,13 @@ private fun genTest(rawInput: String, expected: List<Pair<String, Expectation>>)
         val expectedEnd = expectedSpan.lastIndexOf('~') + 1
         when (expectation) {
             is Expectation.ExpectTok -> {
+                val actual = token.getOrElse { ex ->
+                    val err = (ex as TokError).err
+                    throw AssertionError("unexpected tokenizer error at ${err.location}: ${err.code}")
+                }
                 assertEquals(
                     Spanned(expectedStart, expectation.tok, expectedEnd),
-                    token.getOrThrow(),
+                    actual,
                 )
             }
             is Expectation.ExpectErr -> {
@@ -63,7 +65,7 @@ class TokTest {
     @Test
     fun eolComment() {
         test(
-            "extern // This is a comment\$ foo",
+            "extern // This is a comment\n foo",
             listOf(
                 "~~~~~~                          " to Tok.Extern,
                 "                             ~~~" to Tok.Id("foo"),
@@ -74,7 +76,7 @@ class TokTest {
     @Test
     fun blockComment() {
         test(
-            "extern /* This is a block comment */\$ foo",
+            "extern /* This is a block comment */\n foo",
             listOf(
                 "~~~~~~                                   " to Tok.Extern,
                 "                                      ~~~" to Tok.Id("foo"),
@@ -96,7 +98,7 @@ class TokTest {
     @Test
     fun nestedBlockComment() {
         test(
-            "extern /* This is a /* nested */ block comment */\$ foo",
+            "extern /* This is a /* nested */ block comment */\n foo",
             listOf(
                 "~~~~~~                                                " to Tok.Extern,
                 "                                                   ~~~" to Tok.Id("foo"),
@@ -107,7 +109,7 @@ class TokTest {
     @Test
     fun blockComment3Star() {
         test(
-            "extern /***/\$ foo",
+            "extern /***/\n foo",
             listOf(
                 "~~~~~~           " to Tok.Extern,
                 "              ~~~" to Tok.Id("foo"),
@@ -118,7 +120,7 @@ class TokTest {
     @Test
     fun blockCommentNested3StarWithLinefeeds() {
         test(
-            "extern /** /***/ \$*/\$ foo",
+            "extern /** /***/ \n*/\n foo",
             listOf(
                 "~~~~~~                   " to Tok.Extern,
                 "                      ~~~" to Tok.Id("foo"),
@@ -129,7 +131,7 @@ class TokTest {
     @Test
     fun blockComment5Star() {
         test(
-            "extern /*****/\$ foo",
+            "extern /*****/\n foo",
             listOf(
                 "~~~~~~             " to Tok.Extern,
                 "                ~~~" to Tok.Id("foo"),
@@ -140,7 +142,7 @@ class TokTest {
     @Test
     fun blockComment12Star() {
         test(
-            "extern /* **/\$ foo",
+            "extern /* **/\n foo",
             listOf(
                 "~~~~~~            " to Tok.Extern,
                 "               ~~~" to Tok.Id("foo"),
@@ -151,7 +153,7 @@ class TokTest {
     @Test
     fun blockCommentExtraSlashes() {
         test(
-            "extern /*//**/*/\$ foo",
+            "extern /*//**/*/\n foo",
             listOf(
                 "~~~~~~               " to Tok.Extern,
                 "                  ~~~" to Tok.Id("foo"),

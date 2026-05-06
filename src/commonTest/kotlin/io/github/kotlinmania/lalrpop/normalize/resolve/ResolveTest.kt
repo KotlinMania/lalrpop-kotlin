@@ -20,6 +20,20 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
+private fun removeRangeLiteral(s: String, start: Int, length: Int): String {
+    val out = StringBuilder(s.length - length)
+    var i = 0
+    while (i < s.length) {
+        if (i == start) {
+            i += length
+            continue
+        }
+        out.append(s[i])
+        i += 1
+    }
+    return out.toString()
+}
+
 private fun checkErr(expectedErr: String, grammar: String) {
     val expectedErrRegex = Regex(expectedErr)
 
@@ -27,10 +41,10 @@ private fun checkErr(expectedErr: String, grammar: String) {
     // indicate the span where an error is expected.
     val startIndex = grammar.indexOf(">>>")
     check(startIndex >= 0) { "missing `>>>` marker" }
-    val grammar1 = grammar.replace(">>>", "") // remove the `>>>` marker
+    val grammar1 = removeRangeLiteral(grammar, startIndex, 3) // remove the `>>>` marker
     val endIndex = grammar1.lastIndexOf("<<<")
     check(endIndex >= 0) { "missing `<<<` marker" }
-    val grammar2 = grammar1.replace("<<<", "")
+    val grammar2 = removeRangeLiteral(grammar1, endIndex, 3)
 
     check(startIndex <= endIndex)
 
