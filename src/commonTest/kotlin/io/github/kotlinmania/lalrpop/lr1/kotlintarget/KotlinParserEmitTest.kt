@@ -38,7 +38,7 @@ class KotlinParserEmitTest {
                                 lines = listOf(
                                     "Result.success(TinySymbol.Variant0(Unit))",
                                 ),
-                            ),
+                            )
                         },
                         config = KotlinParserEmitConfig(
                             packageName = "generated.tiny",
