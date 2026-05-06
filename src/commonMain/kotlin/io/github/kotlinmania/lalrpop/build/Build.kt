@@ -341,10 +341,33 @@ internal fun reportContent(content: Content): Result<Unit> {
         }
     }
 
-    val sink = StringBuilder()
+    val sink = object : Output {
+        private val buffer = StringBuilder()
+
+        override fun append(value: CharSequence?): Appendable {
+            buffer.append(value)
+            return this
+        }
+
+        override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): Appendable {
+            buffer.append(value, startIndex, endIndex)
+            return this
+        }
+
+        override fun append(value: Char): Appendable {
+            buffer.append(value)
+            return this
+        }
+
+        override fun flush(): Result<Unit> {
+            apiBuildPrint(buffer.toString())
+            buffer.clear()
+            return Result.success(Unit)
+        }
+    }
     val fake = FakeTerminal.new(sink)
     canvas.writeTo(fake)
-    apiBuildPrint(fake.intoInner().toString())
+    fake.flush().getOrElse { return Result.failure(it) }
     return Result.success(Unit)
 }
 
