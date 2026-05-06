@@ -141,7 +141,7 @@ private fun removeLocalGeneratedFiles() {
 
 // This is maybe a little nonintuitive at first.  We verify that the file exists where we expect
 // it, and nowhere else.  So fs::exists().unwrap() for a given location must be equal to our
-// expectation that it in that location.
+// expectation that it is in that location.
 private fun verifyFile(filename: String, expectedLocation: GenFileLoc) {
     println("Checking the location of $filename")
     assertEquals(
@@ -322,9 +322,10 @@ class ApiTest {
 // Mutex transliteration. the upstream `std::sync::Mutex<i32>` carries a "poison"
 // flag that is set when the holder of the lock panics. The Kotlin port
 // uses a simple recursion-tolerant lock built on a top-level mutable
-// flag — kotlin.test runs tests serially within a single JVM/process by
-// default, so contention is rare. The poison flag is set explicitly by
-// `setup()` if a previous run left the temp directory dirty.
+// flag. These host-native API tests mutate process-global state (current
+// directory and environment), so the lock keeps this file's tests serialized.
+// The poison flag is set explicitly by `setup()` if a previous run left the
+// temp directory dirty.
 // ---------------------------------------------------------------------------
 
 private class ApiTestMutex {
