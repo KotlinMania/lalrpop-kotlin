@@ -521,9 +521,8 @@ internal expect fun pathStripPrefix(path: String, base: String): String?
  * lower-case hex string (no `// sha3:` prefix). Returns `null` when
  * the file cannot be read.
  *
- * Upstream uses the `sha3` crate `Sha3256` here. There is no
- * commonMain SHA3 in the Kotlin stdlib, so each platform supplies its
- * own implementation or reports that hashing is unavailable.
+ * Upstream uses the `sha3` crate `Sha3256` here. Each platform actual
+ * supplies that digest over the file contents.
  */
 internal expect fun apiSha3Hex(file: String): String?
 
@@ -583,10 +582,7 @@ internal expect fun apiBuildIsStdoutTerminal(): Boolean
 /**
  * Mirror of `term::stdout()`: returns an ANSI-capable [Appendable]
  * representing standard output, or `null` if the terminfo for the
- * current terminal cannot be loaded. The Kotlin port treats every
- * platform as "no terminfo available" and always returns `null` —
- * the [reportContent] fallback through [FakeTerminal] is the path
- * upstream takes on those same platforms anyway.
+ * current terminal cannot be loaded.
  */
 internal expect fun apiBuildOpenAnsiStdout(): Appendable?
 
