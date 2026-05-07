@@ -60,7 +60,6 @@ file-private, omitted for public.
   as a direct compile/test failure caused by the primary change.
 - No repo-wide scripting (`find … -exec`, global `sed`, blanket regex).
 - No drive-by refactors, renames, or formatting churn.
-- More than ~5 files in a single change → stop and ask.
 - Commit after every file edit. Squash later if you want a logical unit.
 
 ## Backend architecture (one paragraph each)
