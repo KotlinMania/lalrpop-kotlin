@@ -62,12 +62,6 @@ kotlin {
             xcf.add(this)
         }
     }
-    iosX64 {
-        binaries.framework {
-            baseName = "LALRPOP"
-            xcf.add(this)
-        }
-    }
     iosSimulatorArm64 {
         binaries.framework {
             baseName = "LALRPOP"
@@ -140,9 +134,6 @@ kotlin {
             kotlin.srcDir(posixMainPath)
         }
         val iosArm64Main by getting {
-            kotlin.srcDir(posixMainPath)
-        }
-        val iosX64Main by getting {
             kotlin.srcDir(posixMainPath)
         }
         val iosSimulatorArm64Main by getting {
