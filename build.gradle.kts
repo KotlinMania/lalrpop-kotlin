@@ -62,12 +62,6 @@ kotlin {
             xcf.add(this)
         }
     }
-    iosX64 {
-        binaries.framework {
-            baseName = "LALRPOP"
-            xcf.add(this)
-        }
-    }
     iosSimulatorArm64 {
         binaries.framework {
             baseName = "LALRPOP"
@@ -115,7 +109,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
-                implementation("io.github.kotlinmania:btree-kotlin:0.1.5")
+                implementation("io.github.kotlinmania:btree-kotlin:0.2.0")
             }
         }
 
@@ -140,9 +134,6 @@ kotlin {
             kotlin.srcDir(posixMainPath)
         }
         val iosArm64Main by getting {
-            kotlin.srcDir(posixMainPath)
-        }
-        val iosX64Main by getting {
             kotlin.srcDir(posixMainPath)
         }
         val iosSimulatorArm64Main by getting {
