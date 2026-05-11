@@ -88,6 +88,35 @@ class KotlinSymbolEmitTest {
     }
 
     @Test
+    fun wideTupleVariantsEmitGeneratedTupleHelper() {
+        Tls.test().use {
+            val grammar = normalizedGrammar(
+                """
+                grammar;
+                extern { enum Tok { "a" => .. } }
+                pub S: (i32, String, bool, i64) = "a" => (0, "", true, 0);
+                """.trimIndent(),
+            )
+
+            val out = IndentedWriter()
+            val emit = KotlinSymbolEmit(grammar, "TupleSymbol")
+            emit.emitInto(out)
+
+            val source = out.toString()
+            assertTrue(
+                source.contains("data class GrammarTuple4<T0, T1, T2, T3>("),
+                "missing generated tuple helper",
+            )
+            assertTrue(
+                source.contains("data class Variant1(val value: GrammarTuple4<Int, String, Boolean, Long>)"),
+                "wide tuple variant did not use the generated helper",
+            )
+            assertTrue(!source.contains("TODO"), "generated tuple source must not contain placeholders")
+            assertTrue(!source.contains("List<Any"), "generated tuple source must preserve typed tuple fields")
+        }
+    }
+
+    @Test
     fun dumpStarlarkTerminalOrderAndTypes() {
         Tls.test().use {
             val grammar = normalizedGrammar(STARLARK_GRAMMAR_LALRPOP)
