@@ -5,15 +5,13 @@ package io.github.kotlinmania.lalrpop.lr1.kotlintarget
  * expression.
  *
  * Each [GrammarTypeKind] case has its own rendering rule chosen for *what reads
- * idiomatically in Kotlin*, not for "what does the Rust type look like." When Kotlin's
- * type system can't natively express a recipe (the canonical case is two nested
+ * idiomatically in Kotlin*, not for "what does the source-language type look like."
+ * When Kotlin's type system can't natively express a recipe (the canonical case is two nested
  * `Optional`s, which would collapse to a single `T?`), the code book records a wrapper
  * requirement so the generated source can declare the wrapper sealed class alongside.
  *
- * Adding a new target language is a matter of writing a parallel code book — for
- * example a `RustTypeBook` would render `Optional` as `Option<T>` and `ZeroOrMore` as
- * `Vec<T>`, with no wrappers required because Rust's type system handles the
- * recipes natively. The interpreter and the IR don't change.
+ * Adding a new target language is a matter of writing a parallel code book. The
+ * interpreter and the IR don't change.
  */
 class KotlinTypeBook {
 
@@ -22,8 +20,10 @@ class KotlinTypeBook {
      * one once at the top of the generated file, then references them by name.
      */
     private val _wrappersNeeded: MutableSet<KotlinWrapper> = mutableSetOf()
+    private val _tupleAritiesNeeded: MutableSet<Int> = mutableSetOf()
 
     val wrappersNeeded: Set<KotlinWrapper> get() = _wrappersNeeded
+    val tupleAritiesNeeded: Set<Int> get() = _tupleAritiesNeeded
 
     /**
      * Render a [GrammarTypeKind] as a Kotlin type expression. May add to
@@ -44,12 +44,10 @@ class KotlinTypeBook {
     // -------- per-kind renderers --------
 
     /**
-     * `Optional<T>` renders as `T?` when T is something Kotlin can make nullable.
-     * When T itself is already nullable (a nested `Optional<Optional<U>>` — Rust's
-     * `Option<Option<U>>`), Kotlin's nullable types collapse and lose the
-     * three-state distinction. The book emits a [KotlinWrapper.NULLABLE_OPTION]
-     * sealed class instead so the three states (`Absent` / `Empty` / `Present`)
-     * survive at the type level.
+     * Optional values render as `T?` when T is something Kotlin can make nullable.
+     * When T itself is already nullable, Kotlin's nullable types collapse and lose
+     * the three-state distinction. The book emits a [KotlinWrapper.NULLABLE_OPTION]
+     * sealed class instead so the three states survive at the type level.
      */
     private fun renderOptional(kind: GrammarTypeKind.Optional): RenderedKotlinType {
         val inner = render(kind.inner)
@@ -63,8 +61,8 @@ class KotlinTypeBook {
     }
 
     /**
-     * `ZeroOrMore<T>` renders as `MutableList<T>`. Kotlin's `MutableList` is the
-     * idiomatic accumulator type for sequences built up by reduction — production
+     * Repeated values render as `MutableList<T>`. Kotlin's `MutableList` is the
+     * idiomatic accumulator type for sequences built up by reduction - production
      * action lambdas append into them. A read-only `List<T>` would need defensive
      * copying at every push and isn't what generated reducer code needs.
      */
@@ -74,7 +72,7 @@ class KotlinTypeBook {
     }
 
     /**
-     * `Tuple` renders as Kotlin's `Pair<A, B>` for two parts, `Triple<A, B, C>` for
+     * Tuples render as Kotlin's `Pair<A, B>` for two parts, `Triple<A, B, C>` for
      * three, and as a per-grammar generated data class for four or more (Kotlin has
      * no built-in 4-tuple). Single-part tuples are degenerate; the interpreter
      * peels them off, but if one slips through we render the inner directly.
@@ -92,21 +90,17 @@ class KotlinTypeBook {
                     "${render(kind.parts[2]).expression}>",
             )
             else -> {
-                // Kotlin has no built-in N-tuple for N ≥ 4. The right answer is a
-                // generated data class for the specific shape; until the codegen
-                // pipeline supports that, fall back to a list-of-Any with a TODO
-                // surfaced in the rendered text. (Marked as a known limitation
-                // rather than silently downgrading to `List<Any>`.)
+                _tupleAritiesNeeded.add(kind.parts.size)
                 val parts = kind.parts.joinToString(", ") { render(it).expression }
-                RenderedKotlinType("/* TODO: data class for ${kind.parts.size}-tuple */ List<Any /* $parts */>")
+                RenderedKotlinType("GrammarTuple${kind.parts.size}<$parts>")
             }
         }
 
     /**
-     * Idiomatic Kotlin scalar for each grammar primitive. `usize` and `isize` map to
-     * `Int`, which is Kotlin's natural index type — a 64-bit-index grammar would
-     * need a different mapping, but that's rare and the grammar would have to
-     * declare it deliberately as a user-defined type.
+     * Idiomatic Kotlin scalar for each grammar primitive. Platform-sized integer
+     * types map to `Int`, which is Kotlin's natural index type. A 64-bit-index
+     * grammar would need a different mapping, but that's rare and the grammar
+     * would have to declare it deliberately as a user-defined type.
      */
     private fun renderPrimitive(kind: PrimitiveKind): RenderedKotlinType =
         when (kind) {
@@ -130,7 +124,7 @@ class KotlinTypeBook {
     /**
      * User-defined types pass through with their path joined by `.` (Kotlin's path
      * separator). The interpreter has already split the path into segments and
-     * dropped any `crate::` prefix, so this renderer just rejoins.
+     * removed source-language crate-root syntax, so this renderer just rejoins.
      */
     private fun renderUserDefined(kind: GrammarTypeKind.UserDefined): RenderedKotlinType {
         val basePath = kind.pathSegments.joinToString(".")
