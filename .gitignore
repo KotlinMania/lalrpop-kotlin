@@ -47,3 +47,4 @@ tools/ast_distance/build/
 # Temporary scratch files from message-port work
 src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/*.tmp
 src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/**/*.tmp
+.DS_Store
