@@ -31,7 +31,7 @@ fun generate() {
 - macOS arm64
 - Linux x64
 - Windows mingw-x64
-- iOS arm64 / simulator-arm64 / simulator-x64 (Swift export + XCFramework)
+- iOS arm64 / simulator-arm64 (Swift export + XCFramework)
 - JS (Node.js)
 - Wasm-JS (Node.js)
 - Android (API 24+)
