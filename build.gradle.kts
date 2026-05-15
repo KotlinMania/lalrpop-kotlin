@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
-import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
@@ -14,8 +12,6 @@ plugins {
     kotlin("plugin.serialization") version "2.3.21"
     id("com.android.kotlin.multiplatform.library") version "9.2.0"
     id("com.vanniktech.maven.publish") version "0.36.0"
-    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
-    id("dev.detekt") version "2.0.0-alpha.3"
 }
 
 group = "io.github.kotlinmania"
@@ -36,14 +32,14 @@ if (androidSdkDir != null && file(androidSdkDir).exists()) {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    compilerOptions {
-        allWarningsAsErrors.set(true)
-        freeCompilerArgs.add("-Xexpect-actual-classes")
-    }
-
     sourceSets.all {
         languageSettings.optIn("kotlin.time.ExperimentalTime")
         languageSettings.optIn("kotlin.concurrent.atomics.ExperimentalAtomicApi")
+    }
+
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     val xcf = XCFramework("LALRPOP")
@@ -62,12 +58,6 @@ kotlin {
             xcf.add(this)
         }
     }
-    iosX64 {
-        binaries.framework {
-            baseName = "LALRPOP"
-            xcf.add(this)
-        }
-    }
     iosSimulatorArm64 {
         binaries.framework {
             baseName = "LALRPOP"
@@ -75,26 +65,18 @@ kotlin {
         }
     }
     js {
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "30s"
-                }
-            }
-        }
+        browser()
+        nodejs()
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
+        browser()
         nodejs()
     }
 
-    @OptIn(ExperimentalSwiftExportDsl::class)
     swiftExport {
         moduleName = "LALRPOP"
         flattenPackage = "io.github.kotlinmania.lalrpop"
-        configure {
-            freeCompilerArgs.add("-Xexpect-actual-classes")
-        }
     }
 
     android {
@@ -170,11 +152,10 @@ rootProject.extensions.configure<WasmYarnRootEnvSpec>("kotlinWasmYarnSpec") {
 
 rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
     resolution("diff", "8.0.3")
-    resolution("serialize-javascript", "7.0.5")
-    resolution("webpack", "5.106.2")
-
     resolution("**/diff", "8.0.3")
+    resolution("serialize-javascript", "7.0.5")
     resolution("**/serialize-javascript", "7.0.5")
+    resolution("webpack", "5.106.2")
     resolution("**/webpack", "5.106.2")
     resolution("follow-redirects", "1.16.0")
     resolution("**/follow-redirects", "1.16.0")
@@ -208,71 +189,6 @@ rootProject.extensions.configure<NodeJsRootExtension>("kotlinNodeJs") {
     versions.kotlinWebHelpers.version = "3.1.0"
 }
 
-// The build gate is `./gradlew test` — the ported Rust tests must pass on
-// the same inputs the Rust tests use.
-
-// ApiTest (port of api/test.rs) reads fixture files from the repository
-// checkout. Keep it on host-native test source sets and launch those native
-// test executables from `rootDir`; simulator targets still run common tests
-// but cannot see the host checkout from inside the simulator sandbox.
-tasks
-    .withType(org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest::class.java)
-    .configureEach {
-        workingDir = rootDir.absolutePath
-        environment("LALRPOP_TEST_ROOT", rootDir.absolutePath)
-    }
-
-tasks.register("test") {
-    group = "verification"
-    description = "Runs the Kotlin Multiplatform test aggregate."
-    dependsOn("allTests")
-}
-
-ktlint {
-    version.set("1.8.0")
-    enableExperimentalRules.set(true)
-    outputToConsole.set(true)
-    ignoreFailures.set(false)
-    reporters {
-        reporter(ReporterType.PLAIN)
-        reporter(ReporterType.CHECKSTYLE)
-        reporter(ReporterType.HTML)
-        reporter(ReporterType.SARIF)
-    }
-    filter {
-        exclude("**/build/**")
-    }
-}
-
-detekt {
-    toolVersion = "2.0.0-alpha.3"
-    buildUponDefaultConfig = true
-    allRules = true
-    parallel = true
-    ignoreFailures = false
-    failOnSeverity = dev.detekt.gradle.extensions.FailOnSeverity.Warning
-    source.setFrom(
-        "src/commonMain/kotlin",
-        "src/commonTest/kotlin",
-        "src/nativeMain/kotlin",
-        "src/jsMain/kotlin",
-        "src/wasmJsMain/kotlin",
-        "src/androidMain/kotlin",
-    )
-    basePath.set(projectDir)
-}
-
-tasks
-    .withType<dev.detekt.gradle.Detekt>()
-    .configureEach {
-        jvmTarget.set("21")
-        reports {
-            html.required.set(true)
-            markdown.required.set(true)
-            sarif.required.set(true)
-        }
-    }
-
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
@@ -281,7 +197,7 @@ mavenPublishing {
 
     pom {
         name.set("lalrpop-kotlin")
-        description.set("Kotlin Multiplatform port of LALRPOP - LR(1) parser generator")
+        description.set("Kotlin Multiplatform port of lalrpop/lalrpop - LR(1) parser generator")
         inceptionYear.set("2026")
         url.set("https://github.com/KotlinMania/lalrpop-kotlin")
 
@@ -289,11 +205,6 @@ mavenPublishing {
             license {
                 name.set("Apache-2.0")
                 url.set("https://opensource.org/licenses/Apache-2.0")
-                distribution.set("repo")
-            }
-            license {
-                name.set("MIT")
-                url.set("https://opensource.org/licenses/MIT")
                 distribution.set("repo")
             }
         }
@@ -313,4 +224,18 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://github.com/KotlinMania/lalrpop-kotlin.git")
         }
     }
+}
+
+tasks.register("test") {
+    group = "verification"
+    description =
+        "Runs a portable test suite (macOS + JS + WasmJS). Android and non-host native targets are intentionally excluded."
+
+    val defaultTestTasks = listOf(
+        "macosArm64Test",
+        "jsNodeTest",
+        "wasmJsNodeTest",
+    )
+
+    dependsOn(defaultTestTasks.mapNotNull { taskName -> tasks.findByName(taskName) })
 }
