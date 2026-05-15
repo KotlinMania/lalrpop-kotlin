@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
-import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
@@ -14,8 +12,6 @@ plugins {
     kotlin("plugin.serialization") version "2.3.21"
     id("com.android.kotlin.multiplatform.library") version "9.2.0"
     id("com.vanniktech.maven.publish") version "0.36.0"
-    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
-    id("dev.detekt") version "2.0.0-alpha.3"
 }
 
 group = "io.github.kotlinmania"
@@ -47,6 +43,11 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     val xcf = XCFramework("LALRPOP")
 
     macosArm64 {
@@ -70,26 +71,18 @@ kotlin {
         }
     }
     js {
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "30s"
-                }
-            }
-        }
+        browser()
+        nodejs()
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
+        browser()
         nodejs()
     }
 
-    @OptIn(ExperimentalSwiftExportDsl::class)
     swiftExport {
         moduleName = "LALRPOP"
         flattenPackage = "io.github.kotlinmania.lalrpop"
-        configure {
-            freeCompilerArgs.add("-Xexpect-actual-classes")
-        }
     }
 
     android {
@@ -265,7 +258,7 @@ mavenPublishing {
 
     pom {
         name.set("lalrpop-kotlin")
-        description.set("Kotlin Multiplatform port of LALRPOP - LR(1) parser generator")
+        description.set("Kotlin Multiplatform port of lalrpop/lalrpop - LR(1) parser generator")
         inceptionYear.set("2026")
         url.set("https://github.com/KotlinMania/lalrpop-kotlin")
 
@@ -273,11 +266,6 @@ mavenPublishing {
             license {
                 name.set("Apache-2.0")
                 url.set("https://opensource.org/licenses/Apache-2.0")
-                distribution.set("repo")
-            }
-            license {
-                name.set("MIT")
-                url.set("https://opensource.org/licenses/MIT")
                 distribution.set("repo")
             }
         }
@@ -297,4 +285,18 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://github.com/KotlinMania/lalrpop-kotlin.git")
         }
     }
+}
+
+tasks.register("test") {
+    group = "verification"
+    description =
+        "Runs a portable test suite (macOS + JS + WasmJS). Android and non-host native targets are intentionally excluded."
+
+    val defaultTestTasks = listOf(
+        "macosArm64Test",
+        "jsNodeTest",
+        "wasmJsNodeTest",
+    )
+
+    dependsOn(defaultTestTasks.mapNotNull { taskName -> tasks.findByName(taskName) })
 }
