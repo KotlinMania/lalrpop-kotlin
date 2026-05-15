@@ -20,20 +20,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-private fun removeRangeLiteral(s: String, start: Int, length: Int): String {
-    val out = StringBuilder(s.length - length)
-    var i = 0
-    while (i < s.length) {
-        if (i == start) {
-            i += length
-            continue
-        }
-        out.append(s[i])
-        i += 1
-    }
-    return out.toString()
-}
-
 private fun checkErr(expectedErr: String, grammar: String) {
     val expectedErrRegex = Regex(expectedErr)
 
@@ -41,12 +27,32 @@ private fun checkErr(expectedErr: String, grammar: String) {
     // indicate the span where an error is expected.
     val startIndex = grammar.indexOf(">>>")
     check(startIndex >= 0) { "missing `>>>` marker" }
-    val grammar1 = removeRangeLiteral(grammar, startIndex, 3) // remove the `>>>` marker
-    val endIndex = grammar1.lastIndexOf("<<<")
-    check(endIndex >= 0) { "missing `<<<` marker" }
-    val grammar2 = removeRangeLiteral(grammar1, endIndex, 3)
+    val endMarkerIndex = grammar.lastIndexOf("<<<")
+    check(endMarkerIndex >= 0) { "missing `<<<` marker" }
 
-    check(startIndex <= endIndex)
+    check(startIndex <= endMarkerIndex)
+
+    // Strip marker sequences.
+    val chars = grammar.toCharArray()
+    val out = CharArray(chars.size)
+    var o = 0
+    var i = 0
+    while (i < chars.size) {
+        if (i + 2 < chars.size && chars[i] == '>' && chars[i + 1] == '>' && chars[i + 2] == '>') {
+            i += 3
+            continue
+        }
+        if (i + 2 < chars.size && chars[i] == '<' && chars[i + 1] == '<' && chars[i + 2] == '<') {
+            i += 3
+            continue
+        }
+        out[o] = chars[i]
+        o += 1
+        i += 1
+    }
+    val grammar2 = out.concatToString(0, o)
+
+    val endIndex = endMarkerIndex - 3
 
     val parsedGrammar = parseGrammar(grammar2).getOrThrow()
     val err = try {

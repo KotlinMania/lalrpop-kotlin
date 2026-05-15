@@ -15,7 +15,7 @@ plugins {
 }
 
 group = "io.github.kotlinmania"
-version = "0.1.6"
+version = "0.1.7"
 
 val androidSdkDir: String? =
     providers.environmentVariable("ANDROID_SDK_ROOT").orNull
@@ -35,6 +35,12 @@ kotlin {
     sourceSets.all {
         languageSettings.optIn("kotlin.time.ExperimentalTime")
         languageSettings.optIn("kotlin.concurrent.atomics.ExperimentalAtomicApi")
+        languageSettings.optIn("kotlin.ExperimentalUnsignedTypes")
+    }
+
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     compilerOptions {
@@ -97,7 +103,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
-                implementation("io.github.kotlinmania:btree-kotlin:0.1.5")
+                implementation("io.github.kotlinmania:btree-kotlin:0.2.1")
             }
         }
 
@@ -122,9 +128,6 @@ kotlin {
             kotlin.srcDir(posixMainPath)
         }
         val iosArm64Main by getting {
-            kotlin.srcDir(posixMainPath)
-        }
-        val iosX64Main by getting {
             kotlin.srcDir(posixMainPath)
         }
         val iosSimulatorArm64Main by getting {
@@ -188,6 +191,64 @@ rootProject.extensions.configure<NodeJsRootExtension>("kotlinNodeJs") {
     versions.mocha.version = "12.0.0-beta-10"
     versions.kotlinWebHelpers.version = "3.1.0"
 }
+
+tasks
+    .withType(org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest::class.java)
+    .configureEach {
+        workingDir = rootDir.absolutePath
+        environment("LALRPOP_TEST_ROOT", rootDir.absolutePath)
+    }
+
+tasks.register("test") {
+    group = "verification"
+    description = "Runs the Kotlin Multiplatform test aggregate."
+    dependsOn("allTests")
+}
+
+ktlint {
+    version.set("1.8.0")
+    enableExperimentalRules.set(true)
+    outputToConsole.set(true)
+    ignoreFailures.set(false)
+    reporters {
+        reporter(ReporterType.PLAIN)
+        reporter(ReporterType.CHECKSTYLE)
+        reporter(ReporterType.HTML)
+        reporter(ReporterType.SARIF)
+    }
+    filter {
+        exclude("**/build/**")
+    }
+}
+
+detekt {
+    toolVersion = "2.0.0-alpha.3"
+    buildUponDefaultConfig = true
+    allRules = true
+    parallel = true
+    ignoreFailures = false
+    failOnSeverity = dev.detekt.gradle.extensions.FailOnSeverity.Warning
+    source.setFrom(
+        "src/commonMain/kotlin",
+        "src/commonTest/kotlin",
+        "src/nativeMain/kotlin",
+        "src/jsMain/kotlin",
+        "src/wasmJsMain/kotlin",
+        "src/androidMain/kotlin",
+    )
+    basePath.set(projectDir)
+}
+
+tasks
+    .withType<dev.detekt.gradle.Detekt>()
+    .configureEach {
+        jvmTarget.set("21")
+        reports {
+            html.required.set(true)
+            markdown.required.set(true)
+            sarif.required.set(true)
+        }
+    }
 
 mavenPublishing {
     publishToMavenCentral()

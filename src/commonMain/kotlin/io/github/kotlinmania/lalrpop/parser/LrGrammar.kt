@@ -25287,7 +25287,8 @@ interface ToTriple {
  * wrapped error is recovered by the parser `parse` entry point
  * when converting a lexer failure into the user-error variant.
  */
-internal class LrParseErrorException(val parseError: ParseError<Int, Tok, TokError>) : RuntimeException()
+internal class LrParseErrorException(val parseError: ParseError<Int, Tok, TokError>) :
+    RuntimeException(parseError.toString())
 
 /**
  * Bare-triple case: returns the receiver wrapped in a successful result.

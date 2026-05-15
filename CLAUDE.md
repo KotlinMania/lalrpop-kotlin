@@ -161,7 +161,6 @@ X" cross-references. The reader of this codebase is a Kotlin developer.
 - **Comments and docstrings are first-class.** Never edited by bulk
   operations. Any comment change is intentional and reviewed in the diff
   like code.
-- **More than ~5 files in a single change?** Stop and ask.
 - `sed -i` on a single file is allowed only when the working tree is clean
   for that file, the substitution is a single specific token (not a regex
   over many patterns), and you re-read the file afterward to verify.
@@ -231,6 +230,22 @@ idiomatic Kotlin. It does not mirror the Rust-emitting backend's class
 shapes, builder fluencies, or macro vocabularies. If a piece looks like
 "the Rust version of this, with Kotlin syntax in the output strings," it
 is wrong.
+
+## Trait default methods with `where` clauses
+
+Rust trait default methods gated by `where T: SomeBound` translate to
+Kotlin **extension functions whose own generic type parameter carries
+the bound** — never tighten the interface, never add a runtime
+`is Comparable<*>` cast, never make the method abstract just to dodge
+the issue. Concrete subtypes specialise by declaring a same-named
+member (no `override` keyword); Kotlin resolves to the member for the
+concrete static receiver type and to the extension for the interface
+type, exactly mirroring Rust's per-impl override of a trait default.
+When the bound lives on a *class* parameter rather than a trait method,
+fall back to the `Comparator<in K>` field pattern with a
+comparator-or-natural dispatch helper. See
+[AGENTS.md](./AGENTS.md) §"Trait default methods with `where` clauses"
+for the worked recipe and rationale.
 
 ## File Organization
 
@@ -313,3 +328,42 @@ custom footers, exception safety, and custom indent strings.
   they conflict).
 - [README.md](./README.md) — project overview.
 - [NOTICE](./NOTICE) — attribution and licensing.
+
+## Re-exports from upstream `mod.rs` files
+
+When an upstream Rust `mod.rs` is **only re-exporting** something that actually lives elsewhere
+(`pub use <crate-path>::<Name>;`, often under a different name), do **not** preserve that
+re-export shape in Kotlin as a "central alias" API. Do not write a `typealias` for the
+re-exported name. The existing `Forbidden` rule against "Re-export typealias files at root
+packages" is enforced through this procedure.
+
+Workflow:
+
+1. **Identify what the `mod.rs` is re-exporting and the name it's exported as.** Record both
+   the original symbol's fully-qualified upstream path and the (possibly different) re-export
+   name.
+
+2. **Find callers across the kotlinmania monorepo.** A caller is any Kotlin file in another
+   `*-kotlin` repo that has both a `tmp/` folder and a Cargo.toml depending on the Rust
+   counterpart of *this* crate, where the file references the re-exported name. Search for:
+   - direct imports: `import <reexport-package>.<Name>`
+   - wildcard imports of the re-export package, when `<Name>` is used in the file body
+   - fully-qualified inline references
+
+3. **Rewrite each caller to reference the upstream/original symbol directly.** If the caller
+   still needs to write `<Name>` unchanged, use Kotlin aliasing:
+   `import <upstream-fully-qualified-name> as <Name>`. Never bridge with a Kotlin `typealias`.
+
+4. **Keep `Mod.kt` (or the equivalent file for that package) as a tracking file.** It carries
+   the translated upstream module-level comments and a literal-quoted reference to each upstream
+   `pub use` line (e.g. `// pub use crate::lib::result::Result;`). Each time a caller is migrated
+   off the re-export, append the caller's absolute path under a `// Callers migrated:` ledger in
+   `Mod.kt`. Append, never delete. Once all callers are migrated, the `typealias` (if any) is
+   removed; the tracking file remains as the ledger of the migration.
+
+Reference example: [/Volumes/stuff/Projects/kotlinmania/serde-kotlin/tmp/serde/serde_core/src/private/mod.rs](/Volumes/stuff/Projects/kotlinmania/serde-kotlin/tmp/serde/serde_core/src/private/mod.rs)
+re-exports `Result` from `crate::lib::result`. The Kotlin tracking file lives at
+[/Volumes/stuff/Projects/kotlinmania/serde-kotlin/src/commonMain/kotlin/io/github/kotlinmania/serde/core/private/Mod.kt](/Volumes/stuff/Projects/kotlinmania/serde-kotlin/src/commonMain/kotlin/io/github/kotlinmania/serde/core/private/Mod.kt).
+A caller that previously did `import io.github.kotlinmania.serde.core.private.Result` is
+rewritten to `import kotlin.Result as Result` (or just removes the import and relies on the
+auto-imported `kotlin.Result`).

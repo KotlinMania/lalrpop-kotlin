@@ -73,10 +73,14 @@ class KotlinSymbolEmit(
             renderedByVariant.getOrPut(name) { typeBook.render(kind) }
         }
 
-        // Pass 2: emit any wrapper sealed classes the code book requested. By now
-        // every variant's Kotlin type has been rendered, so [wrappersNeeded] is final.
+        // Pass 2: emit any helper classes the code book requested. By now every
+        // variant's Kotlin type has been rendered, so the helper requests are final.
         for (wrapper in typeBook.wrappersNeeded) {
             emitWrapper(out, wrapper)
+            out.line()
+        }
+        for (arity in typeBook.tupleAritiesNeeded.sorted()) {
+            emitTupleDataClass(out, arity)
             out.line()
         }
 
@@ -87,6 +91,16 @@ class KotlinSymbolEmit(
                 val sourceLabel = sourceLabelByVariant.getValue(variantName)
                 line("/** Source recipe: `$sourceLabel` */")
                 line("data class $variantName(val value: ${rendered.expression}) : $symbolClassName()")
+            }
+        }
+    }
+
+    private fun emitTupleDataClass(out: IndentedWriter, arity: Int) {
+        val typeParams = (0 until arity).joinToString(", ") { "T$it" }
+        out.block("data class GrammarTuple$arity<$typeParams>(", footer = ")") {
+            for (index in 0 until arity) {
+                val comma = if (index == arity - 1) "" else ","
+                line("val item$index: T$index$comma")
             }
         }
     }

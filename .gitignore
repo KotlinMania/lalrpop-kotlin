@@ -33,6 +33,12 @@ tools/ast_distance/NEXT_ACTIONS.md
 *.lock
 tools/ast_distance/.ast_distance_config.json
 
+# Kotlin/JS lockfiles are tracked for supply-chain security + reproducibility.
+kotlin-js-store/*
+!kotlin-js-store/yarn.lock
+!kotlin-js-store/wasm/
+!kotlin-js-store/wasm/yarn.lock
+
 # AST distance compiled binary (CMake output, rebuild from source)
 tools/ast_distance/ast_distance
 tools/ast_distance/ast_distance.real
@@ -41,3 +47,4 @@ tools/ast_distance/build/
 # Temporary scratch files from message-port work
 src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/*.tmp
 src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/**/*.tmp
+.DS_Store
