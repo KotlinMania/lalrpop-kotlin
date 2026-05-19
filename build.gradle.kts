@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 plugins {
     kotlin("multiplatform") version "2.3.21"
     kotlin("plugin.serialization") version "2.3.21"
-    id("com.android.kotlin.multiplatform.library") version "9.2.0"
+    id("com.android.kotlin.multiplatform.library") version "9.2.1"
     id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
@@ -98,10 +98,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
                 implementation("io.github.kotlinmania:btree-kotlin:0.2.1")
             }
@@ -138,11 +138,11 @@ kotlin {
 }
 
 rootProject.extensions.configure<NodeJsEnvSpec>("kotlinNodeJsSpec") {
-    version.set("22.22.2")
+    version.set("24.15.0")
 }
 
 rootProject.extensions.configure<WasmNodeJsEnvSpec>("kotlinWasmNodeJsSpec") {
-    version.set("22.22.2")
+    version.set("24.15.0")
 }
 
 rootProject.extensions.configure<YarnRootEnvSpec>("kotlinYarnSpec") {
@@ -156,6 +156,8 @@ rootProject.extensions.configure<WasmYarnRootEnvSpec>("kotlinWasmYarnSpec") {
 rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
     resolution("diff", "8.0.3")
     resolution("**/diff", "8.0.3")
+    resolution("fast-uri", "3.1.2")
+    resolution("**/fast-uri", "3.1.2")
     resolution("serialize-javascript", "7.0.5")
     resolution("**/serialize-javascript", "7.0.5")
     resolution("webpack", "5.106.2")
@@ -166,8 +168,8 @@ rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
     resolution("**/lodash", "4.18.1")
     resolution("ajv", "8.20.0")
     resolution("**/ajv", "8.20.0")
-    resolution("brace-expansion", "5.0.5")
-    resolution("**/brace-expansion", "5.0.5")
+    resolution("brace-expansion", "5.0.6")
+    resolution("**/brace-expansion", "5.0.6")
     resolution("flatted", "3.4.2")
     resolution("**/flatted", "3.4.2")
     resolution("minimatch", "10.2.5")
@@ -178,6 +180,8 @@ rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
     resolution("**/qs", "6.15.1")
     resolution("socket.io-parser", "4.2.6")
     resolution("**/socket.io-parser", "4.2.6")
+    resolution("ws", "8.20.1")
+    resolution("**/ws", "8.20.1")
 }
 
 
@@ -197,57 +201,6 @@ tasks
     .configureEach {
         workingDir = rootDir.absolutePath
         environment("LALRPOP_TEST_ROOT", rootDir.absolutePath)
-    }
-
-tasks.register("test") {
-    group = "verification"
-    description = "Runs the Kotlin Multiplatform test aggregate."
-    dependsOn("allTests")
-}
-
-ktlint {
-    version.set("1.8.0")
-    enableExperimentalRules.set(true)
-    outputToConsole.set(true)
-    ignoreFailures.set(false)
-    reporters {
-        reporter(ReporterType.PLAIN)
-        reporter(ReporterType.CHECKSTYLE)
-        reporter(ReporterType.HTML)
-        reporter(ReporterType.SARIF)
-    }
-    filter {
-        exclude("**/build/**")
-    }
-}
-
-detekt {
-    toolVersion = "2.0.0-alpha.3"
-    buildUponDefaultConfig = true
-    allRules = true
-    parallel = true
-    ignoreFailures = false
-    failOnSeverity = dev.detekt.gradle.extensions.FailOnSeverity.Warning
-    source.setFrom(
-        "src/commonMain/kotlin",
-        "src/commonTest/kotlin",
-        "src/nativeMain/kotlin",
-        "src/jsMain/kotlin",
-        "src/wasmJsMain/kotlin",
-        "src/androidMain/kotlin",
-    )
-    basePath.set(projectDir)
-}
-
-tasks
-    .withType<dev.detekt.gradle.Detekt>()
-    .configureEach {
-        jvmTarget.set("21")
-        reports {
-            html.required.set(true)
-            markdown.required.set(true)
-            sarif.required.set(true)
-        }
     }
 
 mavenPublishing {
