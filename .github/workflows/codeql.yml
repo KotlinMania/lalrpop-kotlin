@@ -17,7 +17,7 @@ name: "CodeQL Advanced"
 # for that language:
 #
 #   1. JDK + Gradle setup (the other two languages need no toolchain).
-#   2. A `./gradlew compileAndroidMain compileKotlinJs compileKotlinWasmJs`
+#   2. A `./gradlew setupAndroidSdk compileAndroidMain compileKotlinJs compileKotlinWasmJs`
 #      invocation under the CodeQL build tracer.
 #
 # This is a strict-KMP project with no JVM target, so the autobuild
@@ -27,13 +27,13 @@ name: "CodeQL Advanced"
 # extractor can trace.
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  # Weekly periodic scan catches supply-chain CVEs that appear after merge.
   schedule:
     - cron: '44 16 * * 0'
+
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -42,6 +42,7 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    timeout-minutes: 45
     permissions:
       # required for SARIF upload
       security-events: write
@@ -98,6 +99,7 @@ jobs:
         if: matrix.build-mode == 'manual'
         run: |
           ./gradlew \
+            setupAndroidSdk \
             compileAndroidMain \
             compileKotlinJs \
             compileKotlinWasmJs \

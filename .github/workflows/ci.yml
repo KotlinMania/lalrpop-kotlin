@@ -1,15 +1,16 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-macos-arm64:
     name: Build and Test (macOS arm64 / iOS simulator arm64 / Swift)
     runs-on: macos-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -38,6 +39,7 @@ jobs:
   build-linux:
     name: Build and Test (Linux / Android / JS / WASM)
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -74,6 +76,7 @@ jobs:
           ORG_GRADLE_PROJECT_kotlin_js_yarn_download: "false"
         run: >
           ./gradlew
+          setupAndroidSdk
           compileAndroidMain
           assembleUnitTest
           assembleAndroidTest
@@ -87,6 +90,7 @@ jobs:
   build-windows:
     name: Build and Test (Windows)
     runs-on: windows-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -102,4 +106,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v6.1.0
 
       - name: Build and test Windows target
-        run: ./gradlew mingwX64Test --no-configuration-cache
+        run: >
+          ./gradlew
+          setupAndroidSdk
+          mingwX64Test
+          --no-configuration-cache
