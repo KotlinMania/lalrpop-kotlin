@@ -47,7 +47,6 @@ class KotlinSymbolEmit(
     /** The unique grammar-type kinds in their assigned `VariantN` order, after [emitInto] runs. */
     private val variantOrder: MutableList<Pair<String, GrammarTypeKind>> = mutableListOf()
     private val variantByKind: MutableMap<GrammarTypeKind, String> = mutableMapOf()
-    private val sourceLabelByVariant: MutableMap<String, String> = mutableMapOf()
 
     /** Emit the sealed class declaration plus any required wrapper classes. */
     fun emitInto(out: IndentedWriter) {
@@ -61,14 +60,14 @@ class KotlinSymbolEmit(
         for (terminal in grammar.terminals.all) {
             val parsedType = grammar.types.terminalType(terminal)
             val kind = GrammarTypeKindInterpreter.interpret(parsedType)
-            val name = ensureVariant(kind, parsedType.toString())
+            val name = ensureVariant(kind)
             variantNameByTerminal[terminal] = name
             renderedByVariant.getOrPut(name) { typeBook.render(kind) }
         }
         for (nonterminal in grammar.nonterminals.keys) {
             val parsedType = grammar.types.nonterminalType(nonterminal)
             val kind = GrammarTypeKindInterpreter.interpret(parsedType)
-            val name = ensureVariant(kind, parsedType.toString())
+            val name = ensureVariant(kind)
             variantNameByNonterminal[nonterminal] = name
             renderedByVariant.getOrPut(name) { typeBook.render(kind) }
         }
@@ -88,8 +87,6 @@ class KotlinSymbolEmit(
         out.block("sealed class $symbolClassName {") {
             for ((variantName, _) in variantOrder) {
                 val rendered = renderedByVariant.getValue(variantName)
-                val sourceLabel = sourceLabelByVariant.getValue(variantName)
-                line("/** Source recipe: `$sourceLabel` */")
                 line("data class $variantName(val value: ${rendered.expression}) : $symbolClassName()")
             }
         }
@@ -114,12 +111,11 @@ class KotlinSymbolEmit(
 
     private fun emitNullableOption(out: IndentedWriter) {
         out.line("/**")
-        out.line(" * Three-state value distinguishing the cases of a nested Optional<Optional<T>>.")
+        out.line(" * Three-state value distinguishing outer-absent, inner-empty, and present cases.")
         out.line(" *")
-        out.line(" * Necessary because Kotlin's nullable types collapse: `T??` is the same as `T?`,")
-        out.line(" * which would lose the distinction between Absent, Empty (matched outer, inner")
-        out.line(" * absent), and Present(value). Some grammar productions push values that")
-        out.line(" * depend on this three-state distinction at the symbol-stack level.")
+        out.line(" * Necessary because nested nullable values would otherwise collapse to a single")
+        out.line(" * nullable type and lose which layer matched. Some grammar productions push")
+        out.line(" * values that depend on this distinction at the symbol-stack level.")
         out.line(" */")
         out.block("sealed class NullableOption<out T> {") {
             line("object Absent : NullableOption<Nothing>()")
@@ -150,16 +146,13 @@ class KotlinSymbolEmit(
     /**
      * If this [GrammarTypeKind] has not been seen before, assign it the next
      * sequential `VariantN` name, record it in the per-grammar maps, and return that
-     * name. Otherwise return the previously assigned name. [sourceLabel] is the
-     * original grammar-language type expression — kept for the doc comment on the
-     * variant so a reader can see what the role was in the source `.lalrpop`.
+     * name. Otherwise return the previously assigned name.
      */
-    private fun ensureVariant(kind: GrammarTypeKind, sourceLabel: String): String {
+    private fun ensureVariant(kind: GrammarTypeKind): String {
         variantByKind[kind]?.let { return it }
         val name = "Variant${variantOrder.size}"
         variantOrder.add(name to kind)
         variantByKind[kind] = name
-        sourceLabelByVariant[name] = sourceLabel
         return name
     }
 
