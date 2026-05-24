@@ -84,6 +84,14 @@ class KotlinSymbolEmitTest {
                 source.contains("NullableOption<"),
                 "no variant references NullableOption — wrapper emitted but not used",
             )
+            assertTrue(
+                !source.contains("Source recipe:"),
+                "generated Symbol source should not carry grammar-source recipe comments",
+            )
+            assertTrue(
+                !source.contains("Optional<Optional") && !source.contains("T??"),
+                "generated NullableOption KDoc should describe Kotlin semantics without Rust-shaped optional syntax",
+            )
         }
     }
 
