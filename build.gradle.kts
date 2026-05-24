@@ -417,8 +417,15 @@ val fullTargetBuildTasks = listOf(
     "exportTargetPublicationCoordinatesForWatchosSimulatorArm64ApiElements",
 )
 
+// The canonical fullTargetBuildTasks list above is shared with sibling
+// *-kotlin repos. lalrpop-kotlin intentionally ships a narrower target set
+// per CLAUDE.md: no JVM target, and no tvos/watchos/androidNative/linuxArm64/
+// wasmWasi until btree-kotlin (its only third-party dependency) publishes
+// artifacts for those targets. Resolve task references via findByName so the
+// gate enforces the broad canonical list where it applies, without failing
+// configuration on tasks Gradle has not generated for this target surface.
 tasks.named("build") {
-    dependsOn(fullTargetBuildTasks)
+    dependsOn(fullTargetBuildTasks.mapNotNull { tasks.findByName(it) })
 }
 
 afterEvaluate {
