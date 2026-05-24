@@ -67,6 +67,7 @@ kotlin {
     iosSimulatorArm64 {
         binaries.framework {
             baseName = "LALRPOP"
+            isStatic = true
             xcf.add(this)
         }
     }
@@ -176,8 +177,8 @@ rootProject.extensions.configure<YarnRootExtension>("kotlinYarn") {
     resolution("**/minimatch", "10.2.5")
     resolution("picomatch", "4.0.4")
     resolution("**/picomatch", "4.0.4")
-    resolution("qs", "6.15.1")
-    resolution("**/qs", "6.15.1")
+    resolution("qs", "6.15.2")
+    resolution("**/qs", "6.15.2")
     resolution("socket.io-parser", "4.2.6")
     resolution("**/socket.io-parser", "4.2.6")
     resolution("ws", "8.20.1")
@@ -416,8 +417,15 @@ val fullTargetBuildTasks = listOf(
     "exportTargetPublicationCoordinatesForWatchosSimulatorArm64ApiElements",
 )
 
+// The canonical fullTargetBuildTasks list above is shared with sibling
+// *-kotlin repos. lalrpop-kotlin intentionally ships a narrower target set
+// per CLAUDE.md: no JVM target, and no tvos/watchos/androidNative/linuxArm64/
+// wasmWasi until btree-kotlin (its only third-party dependency) publishes
+// artifacts for those targets. Resolve task references via findByName so the
+// gate enforces the broad canonical list where it applies, without failing
+// configuration on tasks Gradle has not generated for this target surface.
 tasks.named("build") {
-    dependsOn(fullTargetBuildTasks)
+    dependsOn(fullTargetBuildTasks.mapNotNull { tasks.findByName(it) })
 }
 
 afterEvaluate {
