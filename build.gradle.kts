@@ -67,6 +67,7 @@ kotlin {
     iosSimulatorArm64 {
         binaries.framework {
             baseName = "LALRPOP"
+            isStatic = true
             xcf.add(this)
         }
     }
