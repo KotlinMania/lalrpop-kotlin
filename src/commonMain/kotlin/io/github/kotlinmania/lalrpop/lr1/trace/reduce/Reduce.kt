@@ -10,7 +10,7 @@ import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraph
 import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraphNode
 
-fun Tracer.backtraceReduce(
+internal fun Tracer.backtraceReduce(
     itemState: StateIndex,
     item: Item<Nil>,
 ): TraceGraph {

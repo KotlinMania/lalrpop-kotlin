@@ -23,18 +23,18 @@ import io.github.kotlinmania.lalrpop.normalize.tyinfer.inferTypes
 import io.github.kotlinmania.lalrpop.lr1.Token
 
 
-typealias NormResult<T> = Result<T>
+internal typealias NormResult<T> = Result<T>
 
-data class NormError(
+internal data class NormError(
     val message: String,
     val span: Span,
 )
 
 /** Throws the equivalent of `return Err(NormError { ... })` in the Rust original. */
-fun returnErr(span: Span, message: String): Nothing =
+internal fun returnErr(span: Span, message: String): Nothing =
     throw NormErrorException(NormError(message, span))
 
-class NormErrorException(val err: NormError) : RuntimeException(err.message)
+internal class NormErrorException(val err: NormError) : RuntimeException(err.message)
 
 private inline fun <T> profile(session: Session, phaseName: String, action: () -> T): T {
     session.log.log(Level.Verbose) { "Phase `$phaseName` begun" }
@@ -43,11 +43,11 @@ private inline fun <T> profile(session: Session, phaseName: String, action: () -
     return result
 }
 
-fun normalize(session: Session, grammar: PtGrammar): RGrammar =
+internal fun normalize(session: Session, grammar: PtGrammar): RGrammar =
     normalizeHelper(session, grammar, true)
 
 /** for unit tests, it is convenient to skip the validation step, and supply a dummy session */
-fun normalizeWithoutValidating(grammar: PtGrammar): RGrammar =
+internal fun normalizeWithoutValidating(grammar: PtGrammar): RGrammar =
     normalizeHelper(Session.new(), grammar, false)
 
 private fun normalizeHelper(session: Session, grammar: PtGrammar, validate: Boolean): RGrammar {

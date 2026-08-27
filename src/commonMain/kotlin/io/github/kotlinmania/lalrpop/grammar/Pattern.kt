@@ -11,7 +11,7 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 
-data class Pattern<T>(
+internal data class Pattern<T>(
     var span: Span,
     var kind: PatternKind<T>,
 ) {
@@ -29,7 +29,7 @@ data class Pattern<T>(
     override fun toString(): String = fmt()
 }
 
-data class FieldPattern<T>(
+internal data class FieldPattern<T>(
     var fieldSpan: Span,
     var fieldName: Atom,
     var pattern: Pattern<T>,
@@ -45,7 +45,7 @@ data class FieldPattern<T>(
     override fun toString(): String = fmt()
 }
 
-sealed class PatternKind<T> {
+internal sealed class PatternKind<T> {
     data class Enum<T>(val path: Path, val pats: MutableList<Pattern<T>>) : PatternKind<T>() {
         override fun toString(): String = fmt()
     }

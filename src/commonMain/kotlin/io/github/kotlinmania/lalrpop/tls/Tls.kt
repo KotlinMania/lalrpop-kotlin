@@ -18,7 +18,7 @@ internal expect object TlsStorage {
     var current: TlsFields?
 }
 
-class Tls private constructor() : AutoCloseable {
+internal class Tls private constructor() : AutoCloseable {
 
     fun drop() {
         TlsStorage.current = null

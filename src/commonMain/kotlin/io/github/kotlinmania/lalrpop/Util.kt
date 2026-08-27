@@ -1,7 +1,7 @@
 // port-lint: source util.rs
 package io.github.kotlinmania.lalrpop
 
-class Sep<S>(val sep: String, val vec: Iterable<S>) {
+internal class Sep<S>(val sep: String, val vec: Iterable<S>) {
     fun fmt(fmt: StringBuilder) {
         val elems = vec.iterator()
         if (elems.hasNext()) {
@@ -17,7 +17,7 @@ class Sep<S>(val sep: String, val vec: Iterable<S>) {
     override fun toString(): String = buildString { fmt(this) }
 }
 
-class Escape<S : Any>(val value: S) {
+internal class Escape<S : Any>(val value: S) {
     fun fmt(fmt: StringBuilder) {
         val tmp = value.toString()
         for (c in tmp) {
@@ -35,7 +35,7 @@ class Escape<S : Any>(val value: S) {
     override fun toString(): String = buildString { fmt(this) }
 }
 
-class Prefix<S>(val prefix: String, val vec: Iterable<S>) {
+internal class Prefix<S>(val prefix: String, val vec: Iterable<S>) {
     fun fmt(fmt: StringBuilder) {
         for (elem in vec) {
             fmt.append(prefix)
@@ -47,6 +47,6 @@ class Prefix<S>(val prefix: String, val vec: Iterable<S>) {
 }
 
 /** Strip leading and trailing whitespace. */
-fun strip(s: String): String {
+internal fun strip(s: String): String {
     return s.trim { it.isWhitespace() }
 }

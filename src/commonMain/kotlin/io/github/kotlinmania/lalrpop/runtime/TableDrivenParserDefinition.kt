@@ -22,7 +22,7 @@ package io.github.kotlinmania.lalrpop.runtime
  * - `Action = IntAction`     — action encoding shared with the existing `LrGrammar.kt`.
  * - `Success = S`              — the start production's produced symbol.
  */
-class TableDrivenParserDefinition<S, L, T, E>(
+internal class TableDrivenParserDefinition<S, L, T, E>(
     private val tables: ParseTables<S, L>,
     /** Maps a lexer token to its terminal id, or `null` if the token is unrecognized. */
     private val tokenToTerminalId: (T) -> Int?,

@@ -136,7 +136,7 @@ sealed class ParseError<L, T, E> {
         mapIntern({ it }, { it }, op)
 
     /** Short, opaque description of this error. */
-    val description: String
+    val errorDescription: String
         get() = "parse error"
 
     companion object {

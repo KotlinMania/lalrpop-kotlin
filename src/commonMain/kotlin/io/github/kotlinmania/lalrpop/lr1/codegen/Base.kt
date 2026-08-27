@@ -24,7 +24,7 @@ import io.github.kotlinmania.btree.BTreeSet
  * code generator is customized by supplying distinct types for `C`
  * (e.g., `self::ascent::RecursiveAscent`).
  */
-class CodeGenerator<C>(
+internal class CodeGenerator<C>(
     /** the complete grammar */
     val grammar: Grammar,
 

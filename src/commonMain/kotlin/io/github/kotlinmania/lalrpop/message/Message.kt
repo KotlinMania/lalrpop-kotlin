@@ -33,7 +33,7 @@ import io.github.kotlinmania.lalrpop.message.vert.Vert
  * }
  * ```
  */
-class Message private constructor(
+internal class Message private constructor(
     private val span: Span,
     private val heading: Content,
     private val body: Content,

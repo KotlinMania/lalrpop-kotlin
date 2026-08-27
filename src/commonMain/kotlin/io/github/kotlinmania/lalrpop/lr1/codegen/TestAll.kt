@@ -17,7 +17,7 @@ import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
-object TestAll {
+internal object TestAll {
     /**
      * Direct port of upstream `lr1::codegen::testAll::compile`. Mirrors
      * the [Ascent.compile]/[ParseTable.compile] entry-point pattern so

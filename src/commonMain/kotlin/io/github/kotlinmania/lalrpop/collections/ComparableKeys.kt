@@ -12,7 +12,7 @@ package io.github.kotlinmania.lalrpop.collections
  * one is a prefix of the other. Used as a key when the upstream Rust
  * code keys on `Vec<T>` directly.
  */
-data class ComparableList<T : Comparable<T>>(
+internal data class ComparableList<T : Comparable<T>>(
     val items: List<T>,
 ) : Comparable<ComparableList<T>> {
     override fun compareTo(other: ComparableList<T>): Int {
@@ -32,7 +32,7 @@ data class ComparableList<T : Comparable<T>>(
  * `(A: Ord, B: Ord)`: compare `first`, then `second`. Used as a key
  * when the upstream Rust code keys on a 2-tuple directly.
  */
-data class ComparablePair<A : Comparable<A>, B : Comparable<B>>(
+internal data class ComparablePair<A : Comparable<A>, B : Comparable<B>>(
     val first: A,
     val second: B,
 ) : Comparable<ComparablePair<A, B>> {

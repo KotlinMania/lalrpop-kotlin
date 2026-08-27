@@ -3,7 +3,7 @@ package io.github.kotlinmania.lalrpop.message.wrap
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.message.Content
 
-class Wrap private constructor(
+internal class Wrap private constructor(
     private val items: List<Content>,
 ) : Content {
     companion object {

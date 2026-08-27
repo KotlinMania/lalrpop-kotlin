@@ -26,7 +26,7 @@ import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
 
-data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
+internal data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
     override fun compareTo(other: ConflictIndex): Int = index.compareTo(other.index)
 
     companion object {
@@ -34,7 +34,7 @@ data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
     }
 }
 
-class LaneTable(
+internal class LaneTable(
     private val grammar: Grammar,
     private val conflicts: Int,
     private val lookaheads: Map<ComparablePair<StateIndex, ConflictIndex>, TokenSet> = map(),
@@ -190,4 +190,4 @@ class LaneTable(
     }
 }
 
-class RowConflictException(val state: StateIndex) : RuntimeException()
+internal class RowConflictException(val state: StateIndex) : RuntimeException()

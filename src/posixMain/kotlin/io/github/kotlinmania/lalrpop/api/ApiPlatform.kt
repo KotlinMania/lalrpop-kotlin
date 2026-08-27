@@ -19,6 +19,7 @@ import io.github.kotlinmania.lalrpop.build.processFile
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toKString
@@ -33,7 +34,7 @@ import platform.posix.stderr
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiCurrentDir(): String = memScoped {
     val buf = allocArray<ByteVar>(PATH_MAX + 1)
-    val res = getcwd(buf, (PATH_MAX + 1).toULong())
+    val res = getcwd(buf, (PATH_MAX + 1).toUInt().convert())
         ?: error("getcwd failed")
     res.toKString()
 }
@@ -52,7 +53,7 @@ internal actual fun apiEnvVars(): Sequence<Pair<String, String>> {
         memScoped {
             val buf = allocArray<ByteVar>(4096)
             while (true) {
-                val n = platform.posix.fread(buf, 1.toULong(), 4096.toULong(), f).toInt()
+                val n = platform.posix.fread(buf, 1u.convert(), 4096u.convert(), f).toInt()
                 if (n <= 0) break
                 for (i in 0 until n) {
                     output.append((buf[i].toInt() and 0xff).toChar())

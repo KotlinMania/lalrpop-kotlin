@@ -13,7 +13,7 @@ package io.github.kotlinmania.lalrpop.lr1.kotlintarget
  * Adding a new target language is a matter of writing a parallel code book. The
  * interpreter and the IR don't change.
  */
-class KotlinTypeBook {
+internal class KotlinTypeBook {
 
     /**
      * The wrappers this book has requested across [render] calls. Caller emits each
@@ -150,7 +150,7 @@ class KotlinTypeBook {
  * lets a surrounding [GrammarTypeKind.Optional] detect Kotlin's collapsing-nullables
  * limitation and request the [KotlinWrapper.NULLABLE_OPTION] wrapper.
  */
-data class RenderedKotlinType(
+internal data class RenderedKotlinType(
     val expression: String,
     val isAlreadyNullable: Boolean = false,
 )
@@ -160,7 +160,7 @@ data class RenderedKotlinType(
  * `Symbol` class because the Kotlin type system can't natively express the
  * corresponding semantic recipe.
  */
-enum class KotlinWrapper {
+internal enum class KotlinWrapper {
     /**
      * Three-state wrapper for nested `Optional<Optional<T>>`. Kotlin's nullable types
      * collapse (`T??` is `T?`); the wrapper preserves the three states the recipe

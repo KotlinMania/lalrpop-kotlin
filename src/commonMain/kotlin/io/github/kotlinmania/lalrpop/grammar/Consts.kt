@@ -2,31 +2,31 @@
 package io.github.kotlinmania.lalrpop.grammar
 
 /** Recognized associated type for the token location */
-const val LOCATION: String = "Location"
+internal const val LOCATION: String = "Location"
 
 /** Recognized associated type for custom errors */
-const val ERROR: String = "Error"
+internal const val ERROR: String = "Error"
 
 /** The `'input` type parameter injected when we do not have an external token enum */
-const val INPUT_LIFETIME: String = "'input"
+internal const val INPUT_LIFETIME: String = "'input"
 
 /** The parameter injected when we do not have an external token enum */
-const val INPUT_PARAMETER: String = "input"
+internal const val INPUT_PARAMETER: String = "input"
 
 /** The attribute to request inlining. */
-const val INLINE: String = "inline"
+internal const val INLINE: String = "inline"
 
 /** The attribute to request conditional compilation. */
-const val CFG: String = "cfg"
+internal const val CFG: String = "cfg"
 
 /** The attribute to request LALR. */
-const val LALR: String = "LALR"
+internal const val LALR: String = "LALR"
 
 /** The attribute to request recursive-ascent-style code generation. */
-const val TABLE_DRIVEN: String = "table_driven"
+internal const val TABLE_DRIVEN: String = "table_driven"
 
 /** The attribute to request recursive-ascent-style code generation. */
-const val RECURSIVE_ASCENT: String = "recursive_ascent"
+internal const val RECURSIVE_ASCENT: String = "recursive_ascent"
 
 /** The attribute to request test-all-style code generation. */
-const val TEST_ALL: String = "test_all"
+internal const val TEST_ALL: String = "test_all"

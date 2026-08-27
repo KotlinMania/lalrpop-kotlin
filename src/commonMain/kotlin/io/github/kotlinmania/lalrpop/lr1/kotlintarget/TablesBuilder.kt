@@ -27,7 +27,7 @@ import io.github.kotlinmania.lalrpop.runtime.Production
  * supplied externally (e.g. for test fixtures, hand-written lambdas, or a future
  * codegen pass).
  */
-fun <S, L> tablesFromLr1States(
+internal fun <S, L> tablesFromLr1States(
     grammar: Grammar,
     states: List<Lr1State>,
     productions: Array<Production<S, L>>,

@@ -44,7 +44,7 @@ import io.github.kotlinmania.lalrpop.lr1.Action
 import io.github.kotlinmania.lalrpop.lr1.State
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 
-class ContextSet(
+internal class ContextSet(
     private val values: MutableList<TokenSet>,
 ) {
     companion object {
@@ -108,4 +108,4 @@ class ContextSet(
     }
 }
 
-object OverlappingLookahead : Exception()
+internal object OverlappingLookahead : Exception()

@@ -18,16 +18,16 @@ import io.github.kotlinmania.lalrpop.lexer.nfa.START as NFA_START
 import io.github.kotlinmania.lalrpop.lexer.nfa.Test
 import io.github.kotlinmania.lalrpop.regexsyntax.Hir
 
-data class Dfa(val states: List<State>)
+internal data class Dfa(val states: List<State>)
 
 @Deprecated("use `Dfa` instead", ReplaceWith("Dfa"))
-typealias DFA = Dfa
+internal typealias DFA = Dfa
 
-data class Precedence(val value: Int) : Comparable<Precedence> {
+internal data class Precedence(val value: Int) : Comparable<Precedence> {
     override fun compareTo(other: Precedence): Int = value.compareTo(other.value)
 }
 
-sealed class DfaConstructionError {
+internal sealed class DfaConstructionError {
     data class NfaConstructionErr(
         val index: NfaIndex,
         val error: NfaConstructionError,
@@ -38,11 +38,11 @@ sealed class DfaConstructionError {
 }
 
 @Deprecated("use `DfaConstructionError` instead", ReplaceWith("DfaConstructionError"))
-typealias DFAConstructionError = DfaConstructionError
+internal typealias DFAConstructionError = DfaConstructionError
 
-class DfaConstructionException(val error: DfaConstructionError) : RuntimeException(error.toString())
+internal class DfaConstructionException(val error: DfaConstructionError) : RuntimeException(error.toString())
 
-fun buildDfa(regexs: List<Hir>, precedences: List<Precedence>): Result<Dfa> = runCatching {
+internal fun buildDfa(regexs: List<Hir>, precedences: List<Precedence>): Result<Dfa> = runCatching {
     check(regexs.size == precedences.size)
     val nfas: List<Nfa> = regexs.mapIndexed { i, r ->
         try {
@@ -219,42 +219,42 @@ private class DfaBuilder(
     fun nfa(item: Item): Nfa = nfas[item.nfaIndex.value]
 }
 
-data class State(
+internal data class State(
     internal val itemSet: DfaItemSet,
     val kind: Kind,
     val testEdges: List<Pair<Test, DfaStateIndex>>,
     val otherEdge: DfaStateIndex,
 )
 
-sealed class Kind {
+internal sealed class Kind {
     data class Accepts(val nfa: NfaIndex) : Kind()
     object Reject : Kind()
     object Neither : Kind()
 }
 
-data class NfaIndex(val value: Int) : Comparable<NfaIndex> {
+internal data class NfaIndex(val value: Int) : Comparable<NfaIndex> {
     override fun compareTo(other: NfaIndex): Int = value.compareTo(other.value)
     fun index(): Int = value
     override fun toString(): String = "NfaIndex($value)"
 }
 
 @Deprecated("use `NfaIndex` instead", ReplaceWith("NfaIndex"))
-typealias NFAIndex = NfaIndex
+internal typealias NFAIndex = NfaIndex
 
-data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
+internal data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
     override fun compareTo(other: DfaStateIndex): Int = value.compareTo(other.value)
     fun index(): Int = value
     override fun toString(): String = "Dfa$value"
 }
 
 @Deprecated("use `DfaStateIndex` instead", ReplaceWith("DfaStateIndex"))
-typealias DFAStateIndex = DfaStateIndex
+internal typealias DFAStateIndex = DfaStateIndex
 
 internal typealias DfaKernelSet = KernelSet<DfaItemSet, DfaStateIndex>
 
 internal typealias Index = DfaStateIndex
 
-data class DfaItemSet(val items: List<Item>) : Kernel<DfaItemSet, DfaStateIndex>, Comparable<DfaItemSet> {
+internal data class DfaItemSet(val items: List<Item>) : Kernel<DfaItemSet, DfaStateIndex>, Comparable<DfaItemSet> {
     override fun index(c: Int): DfaStateIndex = DfaStateIndex(c)
 
     override fun compareTo(other: DfaItemSet): Int {
@@ -267,7 +267,7 @@ data class DfaItemSet(val items: List<Item>) : Kernel<DfaItemSet, DfaStateIndex>
     }
 }
 
-data class Item(
+internal data class Item(
     val nfaIndex: NfaIndex,
     val nfaState: NfaStateIndex,
 ) : Comparable<Item> {
@@ -281,6 +281,6 @@ data class Item(
     override fun toString(): String = "($nfaIndex:$nfaState)"
 }
 
-val START: DfaStateIndex = DfaStateIndex(0)
+internal val START: DfaStateIndex = DfaStateIndex(0)
 
-fun Dfa.state(index: DfaStateIndex): State = states[index.value]
+internal fun Dfa.state(index: DfaStateIndex): State = states[index.value]

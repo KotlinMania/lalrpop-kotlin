@@ -41,7 +41,7 @@ import io.github.kotlinmania.lalrpop.lr1.Token
  * is that some of those nonterminals could, for example, be
  * optional.
  */
-fun Tracer.backtraceShift(
+internal fun Tracer.backtraceShift(
     itemState: StateIndex,
     item: Item<Nil>,
 ): TraceGraph {

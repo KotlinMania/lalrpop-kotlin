@@ -23,10 +23,10 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 
-const val PREC_ATTR: String = "precedence"
-const val LVL_ARG: String = "level"
-const val ASSOC_ATTR: String = "assoc"
-const val SIDE_ARG: String = "side"
+internal const val PREC_ATTR: String = "precedence"
+internal const val LVL_ARG: String = "level"
+internal const val ASSOC_ATTR: String = "assoc"
+internal const val SIDE_ARG: String = "side"
 
 /**
  * Associativity of an alternative.
@@ -60,7 +60,7 @@ const val SIDE_ARG: String = "side"
  *
  * All recursive occurrences are replaced with the current level. This is the default associativity.
  */
-enum class Assoc {
+internal enum class Assoc {
     Left,
     Right,
     NonAssoc,
@@ -96,11 +96,11 @@ enum class Assoc {
  * Exception wrapper around [ParseAssocError] so it can be packaged as
  * a `Result.failure` payload.
  */
-class ParseAssocException(val error: ParseAssocError) :
+internal class ParseAssocException(val error: ParseAssocError) :
     RuntimeException(error.toString())
 
 /** Substitution plan. */
-sealed class Substitution {
+internal sealed class Substitution {
     /**
      * Replace the first encountered occurrence by the first argument, and all the following by
      * the second. Used for associativity: typically, a left associativity on level `3` perform a
@@ -113,12 +113,12 @@ sealed class Substitution {
 }
 
 /** Direction for substitution. */
-enum class Direction {
+internal enum class Direction {
     Forward,
     Backward,
 }
 
-data class ParseAssocError(private val priv: Unit = Unit) {
+internal data class ParseAssocError(private val priv: Unit = Unit) {
     override fun toString(): String =
         "provided value was neither `left`, `right` nor `none`"
 }
@@ -127,7 +127,7 @@ data class ParseAssocError(private val priv: Unit = Unit) {
  * Perform precedence expansion. Rewrite rules where at least one alternative has a precedence
  * attribute, and generate derived rules for each level of precedence.
  */
-fun expandPrecedence(input: Grammar): Grammar {
+internal fun expandPrecedence(input: Grammar): Grammar {
     val resolved = resolve(input)
     val result: MutableList<GrammarItem> = ArrayList(resolved.items.size)
 
@@ -143,7 +143,7 @@ fun expandPrecedence(input: Grammar): Grammar {
 }
 
 /** Determine if a rule has at least one precedence attribute. */
-fun hasPrecAttr(nonTerm: NonterminalData): Boolean {
+internal fun hasPrecAttr(nonTerm: NonterminalData): Boolean {
     // After prevalidation, either at least the first alternative of a nonterminal have a
     // precedence attributes, or none have, so we just have to check the first one.
     return nonTerm

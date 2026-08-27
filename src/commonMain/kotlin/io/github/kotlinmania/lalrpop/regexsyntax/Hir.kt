@@ -15,7 +15,7 @@ package io.github.kotlinmania.lalrpop.regexsyntax
  * Mirrors `regexSyntax::hir::Hir`. An `Hir` is a thin wrapper around a
  * `HirKind`; the Nfa builder switches on `.kind()` to traverse.
  */
-data class Hir(private val kindValue: HirKind) {
+internal data class Hir(private val kindValue: HirKind) {
     fun kind(): HirKind = kindValue
 
     /**
@@ -34,7 +34,7 @@ data class Hir(private val kindValue: HirKind) {
  * builder handles every variant listed here; `Look` causes a construction
  * error because LALRPOP does not support look-around or anchors.
  */
-sealed class HirKind {
+internal sealed class HirKind {
     // Mirrors `regexSyntax::hir::HirKind`'s `Display` implementation. Each
     // variant overrides `toString()` explicitly because the
     // `data class`-generated toString would otherwise shadow any
@@ -85,7 +85,7 @@ sealed class HirKind {
  * `regexSyntax::hir::Literal`. The Nfa builder iterates the bytes in
  * reverse to build a chain of single-byte test edges.
  */
-data class RegexLiteral(val bytes: ByteArray) {
+internal data class RegexLiteral(val bytes: ByteArray) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is RegexLiteral) return false
@@ -125,7 +125,7 @@ data class RegexLiteral(val bytes: ByteArray) {
  * a unicode class (iterating `ClassUnicodeRange`) or a bytes class
  * (iterating `ClassBytesRange`). LALRPOP supports both.
  */
-sealed class RegexClass {
+internal sealed class RegexClass {
     abstract val ranges: List<Any>
 
     // Each subclass overrides toString explicitly. Mirrors
@@ -156,13 +156,13 @@ sealed class RegexClass {
 }
 
 /** Inclusive range of unicode code points (characters). */
-data class ClassUnicodeRange(val startValue: Char, val endValue: Char) {
+internal data class ClassUnicodeRange(val startValue: Char, val endValue: Char) {
     fun start(): Char = startValue
     fun end(): Char = endValue
 }
 
 /** Inclusive range of bytes. */
-data class ClassBytesRange(val startValue: UByte, val endValue: UByte) {
+internal data class ClassBytesRange(val startValue: UByte, val endValue: UByte) {
     fun start(): UByte = startValue
     fun end(): UByte = endValue
 }
@@ -173,7 +173,7 @@ data class ClassBytesRange(val startValue: UByte, val endValue: UByte) {
  * LALRPOP rejects named captures (`NamedCaptures` error) but passes
  * through unnamed captures transparently to the inner expression.
  */
-data class RegexCapture(val name: String?, val sub: Hir) {
+internal data class RegexCapture(val name: String?, val sub: Hir) {
     /** `regexSyntax::hir::Capture::Display`: emits `(?P<name>sub)` or `(sub)`. */
     override fun toString(): String =
         if (name != null) "(?P<$name>$sub)" else "($sub)"
@@ -185,7 +185,7 @@ data class RegexCapture(val name: String?, val sub: Hir) {
  * repetitions (`NonGreedy` error) since its matcher always picks the
  * longest match.
  */
-data class RegexRepetition(
+internal data class RegexRepetition(
     val min: UInt,
     val max: UInt?,
     val greedy: Boolean,
@@ -240,7 +240,7 @@ internal fun LookKind.regexSource(): String = when (this) {
     LookKind.WordEndHalfUnicode -> "\\b{end-half}"
 }
 
-enum class LookKind {
+internal enum class LookKind {
     StartLine,
     EndLine,
     StartText,
@@ -260,4 +260,4 @@ enum class LookKind {
 }
 
 /** Parsing error raised by [ParserBuilder.parse]. */
-class RegexSyntaxError(message: String, val position: Int = -1) : RuntimeException(message)
+internal class RegexSyntaxError(message: String, val position: Int = -1) : RuntimeException(message)

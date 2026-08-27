@@ -1,7 +1,7 @@
 // port-lint: source lexer/dfa/interpret.rs
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
-fun interpret(dfa: Dfa, input: String): Pair<NfaIndex, String>? {
+internal fun interpret(dfa: Dfa, input: String): Pair<NfaIndex, String>? {
     var longest: Pair<NfaIndex, Int>? = null
     var stateIndex = START
 

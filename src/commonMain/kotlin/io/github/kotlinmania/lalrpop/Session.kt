@@ -32,7 +32,7 @@ enum class ColorConfig {
  * considered part of the semver guarantees as end-users are not
  * expected to use it.
  */
-data class Session(
+internal data class Session(
     var log: Log,
 
     var forceBuild: Boolean,

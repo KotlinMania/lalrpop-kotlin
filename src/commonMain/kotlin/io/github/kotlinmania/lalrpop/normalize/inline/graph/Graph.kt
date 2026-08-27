@@ -20,7 +20,7 @@ import io.github.kotlinmania.lalrpop.normalize.returnErr
  * order we do the inlining, really, but this order seems better
  * somehow. :) (That is, inline into something before we inline it.)
  */
-fun inlineOrder(grammar: Grammar): List<NonterminalString> {
+internal fun inlineOrder(grammar: Grammar): List<NonterminalString> {
     val graph = NonterminalGraph.new(grammar)
     graph.createNodes()
     graph.addEdges()

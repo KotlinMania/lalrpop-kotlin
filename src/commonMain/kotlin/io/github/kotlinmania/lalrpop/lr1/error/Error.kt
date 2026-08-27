@@ -37,7 +37,7 @@ import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.Nil
 
-fun reportError(
+internal fun reportError(
     grammar: Grammar,
     error: TableConstructionError<TokenSet>,
     reporter: (Message) -> Unit,

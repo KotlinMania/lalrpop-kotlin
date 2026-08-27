@@ -17,7 +17,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause as ReprWhereClause
  * type and lt parameters that appear and are not bound. For
  * example, T: Foo[U] would return [T, U].
  */
-interface FreeVariables {
+internal interface FreeVariables {
     fun freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter>
 }
 
@@ -49,7 +49,7 @@ private fun freeLifetime(typeParameters: List<TypeParameter>, lt: Lifetime): Lis
     }
 }
 
-fun TypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> =
+internal fun TypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> =
     when (this) {
         is TypeRepr.Tuple -> this.types.flatMap { t -> t.freeVariables(typeParameters) }
         is TypeRepr.Slice -> this.ty.freeVariables(typeParameters)
@@ -69,7 +69,7 @@ fun TypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<TypeParame
         }
     }
 
-fun ReprWhereClause.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> =
+internal fun ReprWhereClause.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> =
     when (this) {
         is ReprWhereClause.Forall ->
             this.clause.freeVariables(typeParameters)
@@ -80,7 +80,7 @@ fun ReprWhereClause.freeVariables(typeParameters: List<TypeParameter>): List<Typ
                 this.bound.freeVariables(typeParameters) { t, tps -> t.freeVariables(tps) }
     }
 
-fun Path.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> {
+internal fun Path.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> {
     // A path like `foo::Bar` is considered no free variables; a
     // single identifier like `T` is a free variable `T`. Note
     // that we cannot distinguish type parameters from random names
@@ -93,14 +93,14 @@ fun Path.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter>
     }
 }
 
-fun NominalTypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> {
+internal fun NominalTypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> {
     val path = this.path
     val types = this.types
     return path.freeVariables(typeParameters) +
         types.flatMap { t -> t.freeVariables(typeParameters) }
 }
 
-fun <T> ParseTreeWhereClause<T>.freeVariables(
+internal fun <T> ParseTreeWhereClause<T>.freeVariables(
     typeParameters: List<TypeParameter>,
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =
@@ -110,14 +110,14 @@ fun <T> ParseTreeWhereClause<T>.freeVariables(
                 this.bounds.asSequence().map { l -> TypeParameter.LifetimeTp(l) })
                 .toList()
 
-        is ParseTreeWhereClause.Type<T> -> {
+        is ParseTreeWhereClause.TypeClause<T> -> {
             val tyVars = freeVars(this.ty, typeParameters)
             val boundVars = this.bounds.flatMap { b -> b.freeVariables(typeParameters, freeVars) }
             (tyVars + boundVars).filter { tp -> !this.forall.contains(tp) }
         }
     }
 
-fun <T> TypeBoundParameter<T>.freeVariables(
+internal fun <T> TypeBoundParameter<T>.freeVariables(
     typeParameters: List<TypeParameter>,
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =
@@ -127,7 +127,7 @@ fun <T> TypeBoundParameter<T>.freeVariables(
         is TypeBoundParameter.Associated<T> -> listOf()
     }
 
-fun <T> TypeBound<T>.freeVariables(
+internal fun <T> TypeBound<T>.freeVariables(
     typeParameters: List<TypeParameter>,
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =

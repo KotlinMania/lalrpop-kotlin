@@ -39,22 +39,22 @@ private fun buildLr1StatesLegacy(
  * [TableConstructionError] payload without relying on a runtime cast
  * out of the erased [TableConstructionErrorException.inner].
  */
-sealed class BuildOutcome<L : Lookahead<L>> {
+internal sealed class BuildOutcome<L : Lookahead<L>> {
     data class Ok<L : Lookahead<L>>(val states: MutableList<State<L>>) : BuildOutcome<L>()
     data class Err<L : Lookahead<L>>(val error: TableConstructionError<L>) : BuildOutcome<L>()
 }
 
-fun buildLr0StatesOrError(
+internal fun buildLr0StatesOrError(
     grammar: Grammar,
     start: NonterminalString,
 ): BuildOutcome<Nil> = Lr.new(grammar, start, Nil()).buildStatesOrError()
 
 
-fun useLaneTable(): Boolean {
+internal fun useLaneTable(): Boolean {
     return true
 }
 
-fun buildLr1States(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
+internal fun buildLr1States(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
     val (methodName: String, methodFn: ConstructionFunction) = if (useLaneTable()) {
         Pair("lane", ::buildLaneTableStates)
     } else {
@@ -66,7 +66,7 @@ fun buildLr1States(grammar: Grammar, start: NonterminalString): MutableList<Stat
     return methodFn(grammar, start)
 }
 
-fun buildLr0States(
+internal fun buildLr0States(
     grammar: Grammar,
     start: NonterminalString,
 ): MutableList<State<Nil>> {
@@ -74,7 +74,7 @@ fun buildLr0States(
     return lr1.buildStates()
 }
 
-class Lr<L>(
+internal class Lr<L>(
     val grammar: Grammar,
     val firstSets: FirstSets,
     val startNt: NonterminalString,
@@ -270,7 +270,7 @@ class Lr<L>(
     }
 }
 
-class TableConstructionErrorException(
+internal class TableConstructionErrorException(
     val inner: TableConstructionError<*>,
     val lr1Inner: Lr1TableConstructionError? = null,
 ) : RuntimeException()
@@ -295,7 +295,7 @@ class TableConstructionErrorException(
 /// because the transitive closure algorithm only adds
 /// items where `index == 0`, and hence it can never add an
 /// item found in a kernel set.
-data class Kernel<L>(
+internal data class Kernel<L>(
     val items: MutableList<Item<L>>,
 ) : KKernelInterface<Kernel<L>, StateIndex> where L : Lookahead<L>, L : LookaheadBuild<L> {
     companion object {
@@ -328,7 +328,7 @@ data class Kernel<L>(
     }
 }
 
-interface LookaheadBuild<Self> where Self : Lookahead<Self>, Self : LookaheadBuild<Self> {
+internal interface LookaheadBuild<Self> where Self : Lookahead<Self>, Self : LookaheadBuild<Self> {
     // Given that there exists an item
     //
     //     X = ... (*) Y ...s [L]

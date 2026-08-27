@@ -11,6 +11,6 @@ import io.github.kotlinmania.btree.BTreeMap
  * matter much. I'd probably prefer to use a hash-based map with an
  * alternative hasher, but that's not stable.
  */
-typealias Map<K, V> = BTreeMap<K, V>
+internal typealias Map<K, V> = BTreeMap<K, V>
 
-fun <K : Comparable<K>, V> map(): Map<K, V> = BTreeMap()
+internal fun <K : Comparable<K>, V> map(): Map<K, V> = BTreeMap()

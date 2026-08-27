@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 
-sealed class ParseTree {
+internal sealed class ParseTree {
     data class Nonterminal(val nt: NonterminalString, val trees: MutableList<ParseTree>) : ParseTree() {
         override fun toString(): String = "[${nt}: ${Sep(", ", trees)}]"
     }
@@ -37,11 +37,11 @@ sealed class ParseTree {
  * usage in this file is required. Callers provide any deterministic
  * RNG satisfying this interface.
  */
-interface ChaCha20Rng {
+internal interface ChaCha20Rng {
     fun randomRange(rangeEnd: Int): Int
 }
 
-fun randomParseTree(
+internal fun randomParseTree(
     grammar: Grammar,
     symbol: NonterminalString,
     rng: ChaCha20Rng,

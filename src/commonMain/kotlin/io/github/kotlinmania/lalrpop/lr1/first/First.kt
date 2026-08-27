@@ -11,7 +11,7 @@ import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 
-data class FirstSets(
+internal data class FirstSets(
     val map: Map<NonterminalString, TokenSet>,
 ) {
     companion object {

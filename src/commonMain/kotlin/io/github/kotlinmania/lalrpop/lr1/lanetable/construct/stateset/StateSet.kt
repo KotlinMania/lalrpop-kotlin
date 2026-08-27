@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingL
  * sets are merged as well; this will fail if that would produce an
  * overlapping conflict set.
  */
-data class StateSet(
+internal data class StateSet(
     private val indexValue: Int,
 ) : UnifyKey<ContextSet> {
     override fun index(): Int = indexValue
@@ -31,9 +31,9 @@ data class StateSet(
 // index that maps to a [ContextSet]), and do the merging ourselves.
 // But this is easier for now, and cloning a [ContextSet] is not THAT
 // expensive, right? :)
-typealias Error = Pair<ContextSet, ContextSet>
+internal typealias Error = Pair<ContextSet, ContextSet>
 
-fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
+internal fun unifyValues(value1: ContextSet, value2: ContextSet): ContextSet? =
     try {
         ContextSet.union(value1, value2)
     } catch (_: OverlappingLookahead) {

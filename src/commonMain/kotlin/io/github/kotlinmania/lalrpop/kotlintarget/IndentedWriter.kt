@@ -22,7 +22,7 @@ package io.github.kotlinmania.lalrpop.kotlintarget
  * changes from punctuation in the line itself, which keeps the structure of the emitted
  * code visible in the call site rather than hidden in the writer's heuristics.
  */
-class IndentedWriter(private val indent: String = "    ") {
+internal class IndentedWriter(private val indent: String = "    ") {
     private val buffer = StringBuilder()
     private var depth = 0
 

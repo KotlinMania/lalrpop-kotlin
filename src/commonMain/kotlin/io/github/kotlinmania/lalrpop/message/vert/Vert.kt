@@ -3,7 +3,7 @@ package io.github.kotlinmania.lalrpop.message.vert
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.message.Content
 
-class Vert private constructor(
+internal class Vert private constructor(
     private val items: List<Content>,
     private val separate: Int, // 0 => overlapping, 1 => each on its own line, 2 => paragraphs
 ) : Content {
@@ -23,7 +23,7 @@ class Vert private constructor(
     }
 }
 
-fun emitVert(view: AsciiView, items: List<Content>, separate: Int) {
+internal fun emitVert(view: AsciiView, items: List<Content>, separate: Int) {
     var row = 0
     for (item in items) {
         val (endRow, _) = item.emitAt(view, row, 0)

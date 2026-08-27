@@ -53,7 +53,7 @@ import io.github.kotlinmania.lalrpop.normalize.condcomp.cfgActive
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.lr1.Token
 
-fun lower(session: Session, grammar: PtGrammar, types: Types): RGrammar {
+internal fun lower(session: Session, grammar: PtGrammar, types: Types): RGrammar {
     val state = LowerState.new(session, types, grammar)
     return state.lower(session, grammar)
 }
@@ -302,7 +302,7 @@ private fun LowerState.lowerWhereClause(wc: PtWhereClause<TypeRef>): List<RWhere
             )
         }
 
-        is PtWhereClause.Type -> wc.bounds
+        is PtWhereClause.TypeClause -> wc.bounds
             .map { bound ->
                 RWhereClause.Bound(
                     subject = wc.ty.typeRepr(),

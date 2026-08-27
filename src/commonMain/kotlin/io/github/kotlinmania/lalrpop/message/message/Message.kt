@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.message.shift
 import io.github.kotlinmania.lalrpop.message.styled.Styled
 
 /** Content which can be rendered. */
-interface Content {
+internal interface Content {
     fun minWidth(): Int
 
     fun emit(view: AsciiView)

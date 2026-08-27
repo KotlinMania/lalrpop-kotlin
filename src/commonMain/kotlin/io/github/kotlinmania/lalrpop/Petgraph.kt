@@ -4,7 +4,7 @@
 // from LALRPOP `stateGraph` are provided.
 package io.github.kotlinmania.lalrpop
 
-data class NodeIndex(private val value: Int) : Comparable<NodeIndex> {
+internal data class NodeIndex(private val value: Int) : Comparable<NodeIndex> {
     fun index(): Int = value
     override fun compareTo(other: NodeIndex): Int = value.compareTo(other.value)
 
@@ -13,22 +13,18 @@ data class NodeIndex(private val value: Int) : Comparable<NodeIndex> {
     }
 }
 
-enum class EdgeDirection {
+internal enum class EdgeDirection {
     Incoming,
     Outgoing,
 }
 
-class EdgeRef<E> internal constructor(
+internal class EdgeRef<E> internal constructor(
     val source: NodeIndex,
     val target: NodeIndex,
     val weight: E,
-) {
-    fun source(): NodeIndex = source
-    fun target(): NodeIndex = target
-    fun weight(): E = weight
-}
+)
 
-class Graph<N, E>(
+internal class Graph<N, E>(
     nodesCapacity: Int = 0,
     edgesCapacity: Int = 0,
 ) {

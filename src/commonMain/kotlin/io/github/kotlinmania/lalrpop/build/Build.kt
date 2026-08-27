@@ -19,9 +19,9 @@ import io.github.kotlinmania.lalrpop.tok.ErrorCode
 import io.github.kotlinmania.lalrpop.tok.Tok
 import io.github.kotlinmania.lalrpop.tok.Error as TokError
 
-const val LALRPOP_VERSION_HEADER: String = "// auto-generated: \"lalrpop 0.23.1\""
+internal const val LALRPOP_VERSION_HEADER: String = "// auto-generated: \"lalrpop 0.23.1\""
 
-fun parseAndNormalizeGrammar(session: Session, fileText: FileText): Grammar {
+internal fun parseAndNormalizeGrammar(session: Session, fileText: FileText): Grammar {
     val ptGrammar = parseGrammar(fileText.text())
         .getOrElse { exception ->
             val parseError: ParseError<Int, Tok, TokError> = (exception as? LrParseErrorException)?.parseError
@@ -37,14 +37,14 @@ fun parseAndNormalizeGrammar(session: Session, fileText: FileText): Grammar {
     }
 }
 
-fun processDir(session: Session, rootDir: String) {
+internal fun processDir(session: Session, rootDir: String) {
     val files = lalrpopFiles(rootDir)
     for (lalrpopFile in files) {
         processFile(session, lalrpopFile)
     }
 }
 
-fun processFile(session: Session, lalrpopFile: String) {
+internal fun processFile(session: Session, lalrpopFile: String) {
     val rsFile = resolveRsFile(session, lalrpopFile)
     val reportFile = resolveReportFile(session, lalrpopFile)
     processFileInto(session, lalrpopFile, rsFile, reportFile)
@@ -108,7 +108,7 @@ internal fun genResolveFile(session: Session, lalrpopFile: String, ext: String):
     return pathWithExtension(pathJoin(outDir, fileName), ext)
 }
 
-fun processFileInto(
+internal fun processFileInto(
     session: Session,
     lalrpopFile: String,
     rsFile: String,
@@ -229,7 +229,7 @@ internal fun lalrpopFiles(rootDir: String): List<String> {
  * callback that constructs [E] from the error message, source file
  * text, and span.
  */
-fun <E> reportParseError(
+internal fun <E> reportParseError(
     fileText: FileText,
     error: ParseError<Int, Tok, TokError>,
     reporter: (FileText, Span, String) -> E,

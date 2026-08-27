@@ -26,7 +26,7 @@ import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 import io.github.kotlinmania.lalrpop.tls.Tls
 
-object Ascent {
+internal object Ascent {
     fun compile(
         grammar: Grammar,
         userStartSymbol: NonterminalString,
@@ -39,7 +39,7 @@ object Ascent {
     }
 }
 
-fun compileAscent(
+internal fun compileAscent(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
@@ -60,7 +60,7 @@ fun compileAscent(
     ascent.write()
 }
 
-class RecursiveAscent(
+internal class RecursiveAscent(
     val graph: StateGraph,
 
     /**
@@ -104,7 +104,7 @@ class RecursiveAscent(
  * Depending on what comes next, if we reduce NT1, we will consume
  * all six symbols, but if we reduce NT2, we will only reduce three.
  */
-data class StackSuffix(
+internal data class StackSuffix(
     /** all symbols that are known to be on the stack (optional + fixed). */
     val all: List<Symbol>,
 

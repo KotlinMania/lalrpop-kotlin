@@ -64,14 +64,14 @@ private fun rustPrettyDebug(value: Any): String {
     return value.toString()
 }
 
-fun <D : Any> expectDebug(actual: D, expected: String) {
+internal fun <D : Any> expectDebug(actual: D, expected: String) {
     compare(
         ExpectedDebug(rustPrettyDebug(actual)),
         ExpectedDebug(expected),
     )
 }
 
-fun <D : Any, E : Any> compare(actual: D, expected: E) {
+internal fun <D : Any, E : Any> compare(actual: D, expected: E) {
     val actualS = actual.toString()
     val expectedS = expected.toString()
 
@@ -98,10 +98,10 @@ fun <D : Any, E : Any> compare(actual: D, expected: E) {
 private fun normalize(withSpans: String): String =
     SPAN.replace(withSpans, "Span(..)")
 
-fun normalizedGrammar(s: String): Grammar =
+internal fun normalizedGrammar(s: String): Grammar =
     normalizeWithoutValidating(parseGrammar(s).getOrThrow())
 
-fun checkNormErr(expectedErr: String, span: String, err: NormError) {
+internal fun checkNormErr(expectedErr: String, span: String, err: NormError) {
     val expected = Regex(expectedErr)
     val startIndex = span.indexOf('~')
     val endIndex = span.lastIndexOf('~') + 1

@@ -48,7 +48,7 @@ import io.github.kotlinmania.lalrpop.tls.Tls
  *
  * The "empty space" between A and B would be represented as `None`.
  */
-data class Example(
+internal data class Example(
     val symbols: MutableList<ExampleSymbol>,
     val cursor: Int,
     val reductions: MutableList<Reduction>,
@@ -346,12 +346,12 @@ data class Example(
     }
 }
 
-sealed class ExampleSymbol {
+internal sealed class ExampleSymbol {
     data class SymbolValue(val symbol: Symbol) : ExampleSymbol()
     object Epsilon : ExampleSymbol()
 }
 
-data class ExampleStyles(
+internal data class ExampleStyles(
     val beforeCursor: Style,
     val onCursor: Style,
     val afterCursor: Style,
@@ -383,7 +383,7 @@ data class ExampleStyles(
     }
 }
 
-data class Reduction(
+internal data class Reduction(
     val start: Int,
     val end: Int,
     val nonterminal: NonterminalString,

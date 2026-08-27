@@ -90,7 +90,7 @@ internal actual fun apiBuildWriteFileBytes(path: String, content: String) {
         if (bytes.isNotEmpty()) {
             val pinned = bytes.pin()
             try {
-                fwrite(pinned.addressOf(0), 1.toULong(), bytes.size.toULong(), f)
+                fwrite(pinned.addressOf(0), 1u.convert(), bytes.size.toUInt().convert(), f)
             } finally {
                 pinned.unpin()
             }
@@ -125,7 +125,7 @@ internal actual fun apiBuildReadFirstTwoLines(path: String): Pair<String, String
             // We only need the first two lines, so read enough then split.
             var newlines = 0
             while (newlines < 2) {
-                val n = fread(buf, 1.toULong(), 4096.toULong(), f).toInt()
+                val n = fread(buf, 1u.convert(), 4096u.convert(), f).toInt()
                 if (n <= 0) break
                 for (i in 0 until n) {
                     val b = buf[i].toInt()
@@ -254,7 +254,7 @@ private fun readFileBytes(path: String): ByteArray? {
         memScoped {
             val buf = allocArray<ByteVar>(4096)
             while (true) {
-                val n = fread(buf, 1.toULong(), 4096.toULong(), f).toInt()
+                val n = fread(buf, 1u.convert(), 4096u.convert(), f).toInt()
                 if (n <= 0) break
                 for (i in 0 until n) out.add(buf[i])
             }

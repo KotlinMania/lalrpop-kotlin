@@ -29,7 +29,7 @@ import io.github.kotlinmania.lalrpop.kotlintarget.IndentedWriter
  * parse-table generator ([tablesFromLr1States]) refers to variants positionally, so
  * any change here has to land in lockstep there.
  */
-class KotlinSymbolEmit(
+internal class KotlinSymbolEmit(
     private val grammar: Grammar,
     private val symbolClassName: String,
     private val typeBook: KotlinTypeBook = KotlinTypeBook(),

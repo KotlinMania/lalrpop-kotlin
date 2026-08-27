@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.tok.Error as TokError
 // only in the test configuration would require changes at multiple code
 // points across several files to define both a test variant and a non-test
 // variant, reducing readability.
-sealed class Top {
+internal sealed class Top {
     data class Grammar(val grammar: io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar) : Top()
     data class Pattern(val pattern: io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRef>) : Top()
     data class MatchMapping(val matchMapping: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping) : Top()
@@ -46,7 +46,7 @@ private fun startPrefixed(start: Tok, offset: Int, input: String): Iterator<Resu
     }
 }
 
-fun parseGrammar(
+internal fun parseGrammar(
     input: String,
 ): Result<io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar> {
     val tokens = startPrefixed(Tok.StartGrammar, 0, input)
@@ -83,7 +83,7 @@ internal fun parseMatchMapping(
     }
 }
 
-fun parseTypeRef(input: String): Result<TypeRef> {
+internal fun parseTypeRef(input: String): Result<TypeRef> {
     val tokens = startPrefixed(Tok.StartTypeRef, 0, input)
     return when (val r = TopParser.new().parse(input, tokens)) {
         is ParseResult.Success -> Result.success((r.value as Top.TypeRefTop).typeRef)
@@ -91,7 +91,7 @@ fun parseTypeRef(input: String): Result<TypeRef> {
     }
 }
 
-fun parseWhereClauses(input: String): Result<List<WhereClause<TypeRef>>> {
+internal fun parseWhereClauses(input: String): Result<List<WhereClause<TypeRef>>> {
     val tokens = startPrefixed(Tok.StartGrammarWhereClauses, 0, input)
     return when (val r = TopParser.new().parse(input, tokens)) {
         is ParseResult.Success -> Result.success((r.value as Top.GrammarWhereClauses).whereClauses)

@@ -18,11 +18,11 @@ import io.github.kotlinmania.lalrpop.regexsyntax.RegexClass
 // plain top-level `val`s. Note: callers treat them as effectively
 // constant — they are immutable and the NfaStateIndex value type is
 // itself a single-Int wrapper.
-val ACCEPT: NfaStateIndex = NfaStateIndex(0)
-val REJECT: NfaStateIndex = NfaStateIndex(1)
-val START: NfaStateIndex = NfaStateIndex(2)
+internal val ACCEPT: NfaStateIndex = NfaStateIndex(0)
+internal val REJECT: NfaStateIndex = NfaStateIndex(1)
+internal val START: NfaStateIndex = NfaStateIndex(2)
 
-class Nfa private constructor(
+internal class Nfa private constructor(
     internal val states: MutableList<NfaState>,
     internal val edges: Edges,
 ) {
@@ -395,7 +395,7 @@ private const val UNSET: Int = Int.MAX_VALUE
  * that this range may contain some endpoints that are not valid
  * unicode, hence we store u32.
  */
-data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
+internal data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
     fun start(): UInt = rangeStart
     fun end(): UInt = rangeEnd
 
@@ -487,7 +487,7 @@ data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
 }
 
 /** An "epsilon" edge -- no input */
-object Noop {
+internal object Noop {
     override fun toString(): String = "Noop"
 
     // `implementation EdgeLabel for Noop`
@@ -498,7 +498,7 @@ object Noop {
 }
 
 /** An "other" edge -- fallback if no other edges apply */
-object Other {
+internal object Other {
     override fun toString(): String = "Other"
 
     // `implementation EdgeLabel for Other`
@@ -516,7 +516,7 @@ object Other {
  * and [Other] above; this sealed class exists so that callers can
  * pass a single [EdgeLabel] value and dispatch on it.
  */
-sealed class EdgeLabel<L : Any> {
+internal sealed class EdgeLabel<L : Any> {
     abstract fun vec(nfa: Edges): List<Edge<L>>
 
     abstract fun first(state: NfaState): Int
@@ -560,20 +560,20 @@ sealed class EdgeLabel<L : Any> {
  * edges by enumerating subsequent edges in the vectors until you
  * find one with a different `from` value.
  */
-data class NfaState(
+internal data class NfaState(
     val kind: StateKind,
     val firstNoopEdge: Int,
     val firstTestEdge: Int,
     val firstOtherEdge: Int,
 )
 
-enum class StateKind : Comparable<StateKind> {
+internal enum class StateKind : Comparable<StateKind> {
     Accept,
     Reject,
     Neither,
 }
 
-data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
+internal data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
     override fun compareTo(other: NfaStateIndex): Int = value.compareTo(other.value)
 
     /**
@@ -599,7 +599,7 @@ data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
  * now we just ensure this during construction, but one could easily
  * sort).
  */
-class Edges {
+internal class Edges {
     val noopEdges: MutableList<Edge<Noop>> = mutableListOf()
 
     // edges where we are testing the character in some way; for any
@@ -617,7 +617,7 @@ class Edges {
  * lift it to a regular class so the explicit [toString] override
  * tracks the upstream `write(fmt, "{:?} -{:?}-> {:?}", ...)` line-by-line.
  */
-class Edge<L>(
+internal class Edge<L>(
     val from: NfaStateIndex,
     val label: L,
     val to: NfaStateIndex,
@@ -645,7 +645,7 @@ class Edge<L>(
  * Mirrors `class EdgeIterator<L: EdgeLabel>` plus the
  * `Iterator` implementation at line 483.
  */
-class EdgeIterator<L>(
+internal class EdgeIterator<L>(
     private val edges: List<Edge<L>>,
     private val from: NfaStateIndex,
     private var index: Int,
@@ -697,7 +697,7 @@ class EdgeIterator<L>(
  * Raised (via [NfaConstructionException]) when LALRPOP encounters a
  * regex feature it does not support.
  */
-enum class NfaConstructionError {
+internal enum class NfaConstructionError {
     NamedCaptures,
     NonGreedy,
     LookAround,
@@ -706,7 +706,7 @@ enum class NfaConstructionError {
 
 
 /** Exception carrier for [NfaConstructionError] — thrown across the expr walk. */
-class NfaConstructionException(val error: NfaConstructionError) : RuntimeException(error.name)
+internal class NfaConstructionException(val error: NfaConstructionError) : RuntimeException(error.name)
 
 // Mirrors upstream `pub type NFA = Nfa;` (lexer/nfa/mod.rs:27),
 // `pub type NFAStateIndex = NfaStateIndex;` (line 83), and
@@ -715,10 +715,10 @@ class NfaConstructionException(val error: NfaConstructionError) : RuntimeExcepti
 // of the new PascalCase names but still part of the public API.
 
 @Deprecated("Use `Nfa` instead", ReplaceWith("Nfa"))
-typealias NFA = Nfa
+internal typealias NFA = Nfa
 
 @Deprecated("Use `NfaStateIndex` instead", ReplaceWith("NfaStateIndex"))
-typealias NFAStateIndex = NfaStateIndex
+internal typealias NFAStateIndex = NfaStateIndex
 
 @Deprecated("Use `NfaConstructionError` instead", ReplaceWith("NfaConstructionError"))
-typealias NFAConstructionError = NfaConstructionError
+internal typealias NFAConstructionError = NfaConstructionError

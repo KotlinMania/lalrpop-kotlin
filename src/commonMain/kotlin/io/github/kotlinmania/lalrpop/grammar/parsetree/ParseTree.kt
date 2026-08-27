@@ -24,7 +24,7 @@ import io.github.kotlinmania.lalrpop.grammar.TABLE_DRIVEN
 import io.github.kotlinmania.lalrpop.grammar.RECURSIVE_ASCENT
 import io.github.kotlinmania.lalrpop.grammar.TEST_ALL
 
-data class Grammar(
+internal data class Grammar(
     // see field `prefix` in `grammar::repr::Grammar`
     var prefix: String,
     var span: Span,
@@ -36,7 +36,7 @@ data class Grammar(
     var moduleAttributes: MutableList<String>,
 )
 
-data class Span(val start: Int, val end: Int) : Comparable<Span> {
+internal data class Span(val start: Int, val end: Int) : Comparable<Span> {
     override fun compareTo(other: Span): Int {
         val c = start.compareTo(other.start)
         return if (c != 0) c else end.compareTo(other.end)
@@ -46,7 +46,7 @@ data class Span(val start: Int, val end: Int) : Comparable<Span> {
     }
 }
 
-fun Span.toContent(): Content {
+internal fun Span.toContent(): Content {
     val fileText = Tls.fileText()
     val string = fileText.spanStr(this)
     // Insert an Adjacent block to prevent wrapping inside this string:
@@ -57,9 +57,9 @@ fun Span.toContent(): Content {
         .end()
 }
 
-fun from(value: Span): Content = value.toContent()
+internal fun from(value: Span): Content = value.toContent()
 
-sealed class GrammarItem {
+internal sealed class GrammarItem {
     data class MatchToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchToken) : GrammarItem()
     data class ExternToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.ExternToken) : GrammarItem()
     data class InternToken(val inner: io.github.kotlinmania.lalrpop.grammar.parsetree.InternToken) : GrammarItem()
@@ -67,7 +67,7 @@ sealed class GrammarItem {
     data class Use(val code: String) : GrammarItem()
 }
 
-data class MatchToken(
+internal data class MatchToken(
     var contents: MutableList<MatchContents>,
     var span: Span,
 ) {
@@ -84,13 +84,13 @@ data class MatchToken(
     }
 }
 
-data class MatchContents(
+internal data class MatchContents(
     var items: MutableList<MatchItem>,
 )
 
 // NOTE: Validate that TerminalLiteral is actually a TerminalString::Literal
 //          and that MatchMapping is an Id or String
-sealed class MatchItem {
+internal sealed class MatchItem {
     data class CatchAll(val span: Span) : MatchItem()
     data class Unmapped(val symbol: MatchSymbol, val span: Span) : MatchItem()
     data class Mapped(val symbol: MatchSymbol, val mapping: MatchMapping, val span: Span) : MatchItem()
@@ -102,7 +102,7 @@ sealed class MatchItem {
     }
 }
 
-sealed class MatchMapping : Comparable<MatchMapping> {
+internal sealed class MatchMapping : Comparable<MatchMapping> {
     data class Terminal(val terminal: TerminalString) : MatchMapping() {
         override fun toString(): String = fmt()
     }
@@ -132,7 +132,7 @@ sealed class MatchMapping : Comparable<MatchMapping> {
  * the absence of an "extern" declaration with information about the
  * string literals etc that appear in the grammar.
  */
-data class InternToken(
+internal data class InternToken(
     /**
      * Set of `r"foo"` and `"foo"` literals extracted from the
      * grammar. Sorted by order of increasing precedence.
@@ -172,7 +172,7 @@ data class InternToken(
  * - Each match group G is combined with the implicit priority IP of 1 for literals and 0 for
  *   regex to yield the final precedence; the formula is `G*2 + IP`.
  */
-data class MatchEntry(
+internal data class MatchEntry(
     /**
      * The precedence of this `MatchEntry`.
      *
@@ -191,7 +191,7 @@ data class MatchEntry(
     }
 }
 
-data class ExternToken(
+internal data class ExternToken(
     var span: Span,
     var associatedTypes: MutableList<AssociatedType>,
     var enumToken: EnumToken?,
@@ -200,26 +200,26 @@ data class ExternToken(
         associatedTypes.firstOrNull { it.typeName == name }
 }
 
-data class AssociatedType(
+internal data class AssociatedType(
     var typeSpan: Span,
     var typeName: Atom,
     var typeRef: TypeRef,
 )
 
-data class EnumToken(
+internal data class EnumToken(
     var typeName: TypeRef,
     var typeSpan: Span,
     var conversions: MutableList<Conversion>,
 )
 
-data class Conversion(
+internal data class Conversion(
     var span: Span,
     var attributes: MutableList<Attribute>,
     var from: TerminalString,
     var to: Pattern<TypeRef>,
 )
 
-data class Path(
+internal data class Path(
     var absolute: Boolean,
     var ids: MutableList<Atom>,
 ) : Comparable<Path> {
@@ -254,7 +254,7 @@ data class Path(
     }
 }
 
-sealed class TypeRef {
+internal sealed class TypeRef {
     // (T1, T2)
     data class Tuple(val types: MutableList<TypeRef>) : TypeRef() {
         override fun toString(): String = fmt()
@@ -363,7 +363,7 @@ sealed class TypeRef {
     }
 }
 
-sealed class WhereClause<T> : Comparable<WhereClause<T>> {
+internal sealed class WhereClause<T> : Comparable<WhereClause<T>> {
     // Clause form (a: b + c)
     data class LifetimeClause<T>(
         val lifetime: Lifetime,
@@ -372,7 +372,7 @@ sealed class WhereClause<T> : Comparable<WhereClause<T>> {
         override fun toString(): String = fmt()
     }
 
-    data class Type<T>(
+    data class TypeClause<T>(
         val forall: MutableList<TypeParameter>,
         val ty: T,
         val bounds: MutableList<TypeBound<T>>,
@@ -390,7 +390,7 @@ sealed class WhereClause<T> : Comparable<WhereClause<T>> {
                 append(" $b")
             }
         }
-        is Type<T> -> buildString {
+        is TypeClause<T> -> buildString {
             if (forall.isNotEmpty()) {
                 append("for<")
                 for ((i, l) in forall.withIndex()) {
@@ -410,7 +410,7 @@ sealed class WhereClause<T> : Comparable<WhereClause<T>> {
     override fun toString(): String = fmt()
 }
 
-sealed class TypeBound<T> : Comparable<TypeBound<T>> {
+internal sealed class TypeBound<T> : Comparable<TypeBound<T>> {
     // A bound parameter in a type constraint.
     data class LifetimeBound<T>(val lifetime: Lifetime) : TypeBound<T>() {
         override fun toString(): String = fmt()
@@ -493,7 +493,7 @@ sealed class TypeBound<T> : Comparable<TypeBound<T>> {
     override fun toString(): String = fmt()
 }
 
-sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
+internal sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
     // Bound parameter
     data class LifetimeParam<T>(val lifetime: Lifetime) : TypeBoundParameter<T>() {
         override fun toString(): String = fmt()
@@ -526,7 +526,7 @@ sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
     override fun toString(): String = fmt()
 }
 
-sealed class TypeParameter : Comparable<TypeParameter> {
+internal sealed class TypeParameter : Comparable<TypeParameter> {
     data class LifetimeTp(val lifetime: Lifetime) : TypeParameter() {
         override fun toString(): String = fmt()
     }
@@ -545,7 +545,7 @@ sealed class TypeParameter : Comparable<TypeParameter> {
     override fun toString(): String = fmt()
 }
 
-data class Parameter(
+internal data class Parameter(
     var name: Atom,
     var ty: TypeRef,
 ) {
@@ -554,7 +554,7 @@ data class Parameter(
     override fun toString(): String = fmt()
 }
 
-sealed class Visibility {
+internal sealed class Visibility {
     data class Pub(val path: Path?) : Visibility() {
         override fun toString(): String = fmt()
     }
@@ -582,7 +582,7 @@ sealed class Visibility {
     override fun toString(): String = fmt()
 }
 
-data class NonterminalData(
+internal data class NonterminalData(
     var visibility: Visibility,
     var name: NonterminalString,
     var attributes: MutableList<Attribute>,
@@ -594,7 +594,7 @@ data class NonterminalData(
     fun isMacroDef(): Boolean = args.isNotEmpty()
 }
 
-data class Attribute(
+internal data class Attribute(
     var idSpan: Span,
     var id: Atom,
     var arg: AttributeArg,
@@ -611,7 +611,7 @@ data class Attribute(
     }
 }
 
-sealed class AttributeArg {
+internal sealed class AttributeArg {
     data object Empty : AttributeArg()
     data class Paren(val attrs: MutableList<Attribute>) : AttributeArg()
     data class Equal(val value: String) : AttributeArg()
@@ -621,7 +621,7 @@ sealed class AttributeArg {
     }
 }
 
-data class Alternative(
+internal data class Alternative(
     var span: Span,
     var expr: ExprSymbol,
     // if C, only legal in macros
@@ -631,7 +631,7 @@ data class Alternative(
     var attributes: MutableList<Attribute>,
 )
 
-sealed class ActionKind {
+internal sealed class ActionKind {
     data class User(val code: String) : ActionKind()
     data class Fallible(val code: String) : ActionKind()
     data object Lookahead : ActionKind()
@@ -639,14 +639,14 @@ sealed class ActionKind {
 }
 
 
-data class Condition(
+internal data class Condition(
     var span: Span,
     var lhs: NonterminalString, // X
     var rhs: Atom,              // "Foo"
     var op: ConditionOp,
 )
 
-enum class ConditionOp {
+internal enum class ConditionOp {
     // X == "Foo", equality
     Equals,
     // X != "Foo", inequality
@@ -657,7 +657,7 @@ enum class ConditionOp {
     NotMatch,
 }
 
-data class Symbol(
+internal data class Symbol(
     var span: Span,
     var kind: SymbolKind,
 ) {
@@ -677,7 +677,7 @@ data class Symbol(
     override fun toString(): String = fmt()
 }
 
-sealed class SymbolKind {
+internal sealed class SymbolKind {
     // (X Y)
     data class Expr(val expr: ExprSymbol) : SymbolKind() {
         override fun toString(): String = fmt()
@@ -755,7 +755,7 @@ sealed class SymbolKind {
     override fun toString(): String = fmt()
 }
 
-data class Name(
+internal data class Name(
     var mutable: Boolean,
     var name: Atom,
 ) {
@@ -770,7 +770,7 @@ data class Name(
     override fun toString(): String = fmt()
 }
 
-data class Tuple(
+internal data class Tuple(
     // Vec<(mutable, name)>
     var tuples: MutableList<ArgPattern>,
 ) {
@@ -783,7 +783,7 @@ data class Tuple(
     override fun toString(): String = fmt()
 }
 
-sealed class ArgPattern {
+internal sealed class ArgPattern {
     data class NamePat(val name: io.github.kotlinmania.lalrpop.grammar.parsetree.Name) : ArgPattern() {
         override fun toString(): String = fmt()
     }
@@ -805,7 +805,7 @@ sealed class ArgPattern {
     override fun toString(): String = fmt()
 }
 
-sealed class TerminalString : Comparable<TerminalString> {
+internal sealed class TerminalString : Comparable<TerminalString> {
     data class Literal(val literal: TerminalLiteral) : TerminalString() {
         override fun toString(): String = fmt()
     }
@@ -865,7 +865,7 @@ sealed class TerminalString : Comparable<TerminalString> {
     }
 }
 
-fun TerminalString.toContent(): Content {
+internal fun TerminalString.toContent(): Content {
     val session = Tls.session()
     return InlineBuilder.new()
         .text(this)
@@ -873,9 +873,9 @@ fun TerminalString.toContent(): Content {
         .end()
 }
 
-fun from(value: TerminalString): Content = value.toContent()
+internal fun from(value: TerminalString): Content = value.toContent()
 
-sealed class TerminalLiteral : Comparable<TerminalLiteral> {
+internal sealed class TerminalLiteral : Comparable<TerminalLiteral> {
     data class Quoted(val atom: Atom) : TerminalLiteral() {
         override fun toString(): String = fmt()
     }
@@ -951,9 +951,9 @@ private fun rustDebugQuoteString(s: String): String = buildString {
     append('"')
 }
 
-typealias MatchSymbol = TerminalLiteral
+internal typealias MatchSymbol = TerminalLiteral
 
-data class NonterminalString(val atom: Atom) : Comparable<NonterminalString> {
+internal data class NonterminalString(val atom: Atom) : Comparable<NonterminalString> {
     fun len(): Int = atom.len()
 
     override fun compareTo(other: NonterminalString): Int = atom.compareTo(other.atom)
@@ -963,7 +963,7 @@ data class NonterminalString(val atom: Atom) : Comparable<NonterminalString> {
     override fun toString(): String = fmt()
 }
 
-fun NonterminalString.toContent(): Content {
+internal fun NonterminalString.toContent(): Content {
     val session = Tls.session()
     return InlineBuilder.new()
         .text(this)
@@ -971,9 +971,9 @@ fun NonterminalString.toContent(): Content {
         .end()
 }
 
-fun from(value: NonterminalString): Content = value.toContent()
+internal fun from(value: NonterminalString): Content = value.toContent()
 
-data class Lifetime(val atom: Atom) : Comparable<Lifetime> {
+internal data class Lifetime(val atom: Atom) : Comparable<Lifetime> {
     companion object {
         fun anonymous(): Lifetime = Lifetime(Atom.from("'_"))
         fun statik(): Lifetime = Lifetime(Atom.from("'static"))
@@ -991,7 +991,7 @@ data class Lifetime(val atom: Atom) : Comparable<Lifetime> {
     override fun toString(): String = fmt()
 }
 
-enum class RepeatOp {
+internal enum class RepeatOp {
     Star, Plus, Question;
 
     fun fmt(): String = when (this) {
@@ -1003,7 +1003,7 @@ enum class RepeatOp {
     override fun toString(): String = fmt()
 }
 
-data class RepeatSymbol(
+internal data class RepeatSymbol(
     var op: RepeatOp,
     var symbol: Symbol,
 ) {
@@ -1014,7 +1014,7 @@ data class RepeatSymbol(
     override fun toString(): String = fmt()
 }
 
-data class ExprSymbol(
+internal data class ExprSymbol(
     var symbols: MutableList<Symbol>,
 ) {
     fun canonicalForm(): String = "$this"
@@ -1024,7 +1024,7 @@ data class ExprSymbol(
     override fun toString(): String = fmt()
 }
 
-data class MacroSymbol(
+internal data class MacroSymbol(
     var name: NonterminalString,
     var args: MutableList<Symbol>,
 ) {
@@ -1035,53 +1035,53 @@ data class MacroSymbol(
     override fun toString(): String = fmt()
 }
 
-fun Grammar.externToken(): ExternToken? =
+internal fun Grammar.externToken(): ExternToken? =
     items.asSequence()
         .mapNotNull { it.asExternToken() }
         .firstOrNull()
 
-fun Grammar.enumToken(): EnumToken? =
+internal fun Grammar.enumToken(): EnumToken? =
     items.asSequence()
         .mapNotNull { it.asExternToken() }
         .mapNotNull { it.enumToken }
         .firstOrNull()
 
-fun Grammar.internToken(): InternToken? =
+internal fun Grammar.internToken(): InternToken? =
     items.asSequence()
         .mapNotNull { it.asInternToken() }
         .firstOrNull()
 
-fun Grammar.matchToken(): MatchToken? =
+internal fun Grammar.matchToken(): MatchToken? =
     items.asSequence()
         .mapNotNull { it.asMatchToken() }
         .firstOrNull()
 
-fun GrammarItem.isMacroDef(): Boolean = when (this) {
+internal fun GrammarItem.isMacroDef(): Boolean = when (this) {
     is GrammarItem.Nonterminal -> data.isMacroDef()
     else -> false
 }
 
-fun GrammarItem.asNonterminal(): NonterminalData? = when (this) {
+internal fun GrammarItem.asNonterminal(): NonterminalData? = when (this) {
     is GrammarItem.Nonterminal -> data
     else -> null
 }
 
-fun GrammarItem.asMatchToken(): MatchToken? = when (this) {
+internal fun GrammarItem.asMatchToken(): MatchToken? = when (this) {
     is GrammarItem.MatchToken -> inner
     else -> null
 }
 
-fun GrammarItem.asExternToken(): ExternToken? = when (this) {
+internal fun GrammarItem.asExternToken(): ExternToken? = when (this) {
     is GrammarItem.ExternToken -> inner
     else -> null
 }
 
-fun GrammarItem.asInternToken(): InternToken? = when (this) {
+internal fun GrammarItem.asInternToken(): InternToken? = when (this) {
     is GrammarItem.InternToken -> inner
     else -> null
 }
 
-fun readAlgorithm(attributes: List<Attribute>, algorithm: Algorithm) {
+internal fun readAlgorithm(attributes: List<Attribute>, algorithm: Algorithm) {
     for (attribute in attributes) {
         when {
             attribute.id.toString() == LALR -> algorithm.lalr = true

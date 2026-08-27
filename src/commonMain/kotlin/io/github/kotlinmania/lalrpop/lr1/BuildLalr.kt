@@ -23,7 +23,7 @@ private class Lalr1State(
     var gotos: Map<NonterminalString, StateIndex>,
 )
 
-fun buildLalrStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
+internal fun buildLalrStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
     // First build the LR(1) states
     val lrStates = buildLr1States(grammar, start)
 
@@ -39,7 +39,7 @@ fun buildLalrStates(grammar: Grammar, start: NonterminalString): MutableList<Sta
     return collapseToLalrStates(lrStates)
 }
 
-fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<State<TokenSet>> {
+internal fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<State<TokenSet>> {
     // Now compress them. This vector stores, for each state, the
     // LALR(1) state to which we will remap it.
     val remap: MutableList<StateIndex> = MutableList(lrStates.size) { StateIndex(0) }

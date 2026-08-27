@@ -16,7 +16,7 @@ package io.github.kotlinmania.lalrpop
 import io.github.kotlinmania.lalrpop.build.apiBuildReadFileToString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 
-class FileText(
+internal class FileText(
     private val path: String,
     private val inputStr: String,
     private val newlines: List<Int>,

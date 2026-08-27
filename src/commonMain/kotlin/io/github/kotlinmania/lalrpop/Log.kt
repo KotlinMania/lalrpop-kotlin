@@ -1,7 +1,7 @@
 // port-lint: source log.rs
 package io.github.kotlinmania.lalrpop
 
-class Log(level: Level) {
+internal class Log(level: Level) {
     var level: Level = level
         private set
 

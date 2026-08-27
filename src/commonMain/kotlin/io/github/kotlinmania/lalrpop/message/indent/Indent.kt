@@ -4,7 +4,7 @@ import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.shift
 import io.github.kotlinmania.lalrpop.message.message.Content
 
-class Indent private constructor(
+internal class Indent private constructor(
     private val amount: Int,
     private val content: Content,
 ) : Content {

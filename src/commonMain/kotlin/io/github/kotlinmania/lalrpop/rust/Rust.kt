@@ -13,14 +13,14 @@ import io.github.kotlinmania.lalrpop.tls.Tls
 /**
  * The [rust] helper should be called only on a [RustWrite] instance.
  */
-fun assertRustWrite(w: RustWrite) {
+internal fun assertRustWrite(w: RustWrite) {
 }
 
 /**
  * Like writeln, but for writing emitted code to a [RustWrite], which
  * handles indentation.
  */
-fun rust(w: RustWrite, fmt: String = "", vararg args: Any?) {
+internal fun rust(w: RustWrite, fmt: String = "", vararg args: Any?) {
     assertRustWrite(w)
     w.writeFmt(format(fmt, *args))
 }
@@ -82,7 +82,7 @@ internal fun format(fmt: String, vararg args: Any?): String {
  * things look prettier, but seems like...meh, just run it through
  * some rustfmt tool.
  */
-class RustWrite private constructor(
+internal class RustWrite private constructor(
     private val write: Appendable,
     private var indent: Int,
 ) {
@@ -206,7 +206,7 @@ class RustWrite private constructor(
     }
 }
 
-class FnHeader private constructor(
+internal class FnHeader private constructor(
     internal val write: RustWrite,
     internal val visibility: Visibility,
     internal val name: String,
@@ -318,7 +318,7 @@ class FnHeader private constructor(
  * below, which mirrors `implementation ParameterDisplay for String` and
  * `implementation ParameterDisplay for &repr::Parameter`.
  */
-interface ParameterDisplay {
+internal interface ParameterDisplay {
     fun toParameterString(): String
 }
 

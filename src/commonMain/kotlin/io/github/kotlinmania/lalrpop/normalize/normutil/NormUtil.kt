@@ -8,17 +8,17 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 
-sealed class AlternativeAction {
+internal sealed class AlternativeAction {
     data class User(val code: ActionKind) : AlternativeAction()
     data class Default(val symbols: Symbols) : AlternativeAction()
 }
 
-sealed class Symbols {
+internal sealed class Symbols {
     data class Named(val list: List<Triple<Int, ArgPattern, Symbol>>) : Symbols()
     data class Anon(val list: List<Pair<Int, Symbol>>) : Symbols()
 }
 
-fun analyzeAction(alt: Alternative): AlternativeAction {
+internal fun analyzeAction(alt: Alternative): AlternativeAction {
     // We cannot infer types for alternatives with actions
     val code = alt.action
     if (code != null) {
@@ -28,7 +28,7 @@ fun analyzeAction(alt: Alternative): AlternativeAction {
     return AlternativeAction.Default(analyzeExpr(alt.expr))
 }
 
-fun analyzeExpr(expr: ExprSymbol): Symbols {
+internal fun analyzeExpr(expr: ExprSymbol): Symbols {
     // First look for named symbols.
     val namedSymbols: List<Triple<Int, ArgPattern, Symbol>> = expr
         .symbols
@@ -64,7 +64,7 @@ fun analyzeExpr(expr: ExprSymbol): Symbols {
     return Symbols.Anon(expr.symbols.withIndex().map { (idx, sym) -> Pair(idx, sym) }.toList())
 }
 
-enum class Presence {
+internal enum class Presence {
     None,
     InCurlyBrackets,
     Normal;
@@ -72,7 +72,7 @@ enum class Presence {
     fun isInCurlyBrackets(): Boolean = this == InCurlyBrackets
 }
 
-fun checkBetweenBraces(action: String): Presence {
+internal fun checkBetweenBraces(action: String): Presence {
     val funkyIndex = action.indexOf("<>")
     if (funkyIndex >= 0) {
         val (before, after) = run {

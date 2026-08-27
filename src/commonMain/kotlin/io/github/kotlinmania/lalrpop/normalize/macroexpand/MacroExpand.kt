@@ -35,7 +35,7 @@ import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map
 
-fun expandMacros(input: Grammar, recursionLimit: Int): Grammar {
+internal fun expandMacros(input: Grammar, recursionLimit: Int): Grammar {
     val inputResolved = resolve(input)
 
     val items = inputResolved.items

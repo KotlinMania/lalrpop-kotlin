@@ -4,7 +4,7 @@
 // etc.
 package io.github.kotlinmania.lalrpop
 
-object TermColor {
+internal object TermColor {
     const val BLACK: Int = 0
     const val RED: Int = 1
     const val GREEN: Int = 2
@@ -23,7 +23,7 @@ object TermColor {
     const val BRIGHT_WHITE: Int = 15
 }
 
-sealed class TermAttr {
+internal sealed class TermAttr {
     data object Bold : TermAttr()
     data object Dim : TermAttr()
     data class Italic(val on: Boolean) : TermAttr()
@@ -34,7 +34,7 @@ sealed class TermAttr {
     data object Secure : TermAttr()
 }
 
-interface Terminal {
+internal interface Terminal {
     fun reset(): Result<Unit>
     fun supportsReset(): Boolean
     fun supportsColor(): Boolean
@@ -47,7 +47,7 @@ interface Terminal {
     fun carriageReturn(): Result<Unit>
 }
 
-class Style private constructor(private val bits: Long) {
+internal class Style private constructor(private val bits: Long) {
     fun with(otherStyle: Style): Style = Style(bits or otherStyle.bits)
 
     fun contains(otherStyle: Style): Boolean = this.with(otherStyle) == this
@@ -200,7 +200,7 @@ class Style private constructor(private val bits: Long) {
  * Tracks the currently applied style so `setStyle` can skip redundant apply
  * calls.
  */
-class StyleCursor private constructor(
+internal class StyleCursor private constructor(
     private var currentStyle: Style,
     private val terminal: Terminal,
 ) {
