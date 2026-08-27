@@ -14,7 +14,7 @@ import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 
-data class Item<L : Lookahead<L>>(
+internal data class Item<L : Lookahead<L>>(
     val production: Production,
     /** the dot comes before `index`, so `index` would be 1 for X = A (*) B C */
     val index: Int,
@@ -117,25 +117,25 @@ data class Item<L : Lookahead<L>>(
     }
 }
 
-typealias Lr0Item = Item<Nil>
+internal typealias Lr0Item = Item<Nil>
 
-typealias Lr1Item = Item<TokenSet>
+internal typealias Lr1Item = Item<TokenSet>
 
-data class StateIndex(val value: Int) : Comparable<StateIndex> {
+internal data class StateIndex(val value: Int) : Comparable<StateIndex> {
     override fun toString(): String = "S$value"
     fun display(): String = "$value"
     override fun compareTo(other: StateIndex): Int = value.compareTo(other.value)
 }
 
-data class Items<L : Lookahead<L>>(
+internal data class Items<L : Lookahead<L>>(
     val vec: MutableList<Item<L>>,
 )
 
-typealias Lr0Items = Items<Nil>
+internal typealias Lr0Items = Items<Nil>
 
-typealias Lr1Items = Items<TokenSet>
+internal typealias Lr1Items = Items<TokenSet>
 
-data class State<L : Lookahead<L>>(
+internal data class State<L : Lookahead<L>>(
     var index: StateIndex,
     val items: Items<L>,
     val shifts: Map<TerminalString, StateIndex> = map(),
@@ -202,9 +202,9 @@ data class State<L : Lookahead<L>>(
     }
 }
 
-typealias Lr0State = State<Nil>
+internal typealias Lr0State = State<Nil>
 
-typealias Lr1State = State<TokenSet>
+internal typealias Lr1State = State<TokenSet>
 
 private fun <T> endsWith(list: List<T>, suffix: List<T>): Boolean {
     if (suffix.size > list.size) return false
@@ -223,7 +223,7 @@ private fun <T> Iterable<T>.dedup(): List<T> {
     return out
 }
 
-sealed class Action : Comparable<Action> {
+internal sealed class Action : Comparable<Action> {
     data class Shift(val terminal: TerminalString, val state: StateIndex) : Action()
     data class Reduce(val production: Production) : Action()
 
@@ -247,7 +247,7 @@ sealed class Action : Comparable<Action> {
     }
 }
 
-data class Conflict<L>(
+internal data class Conflict<L>(
     // when in this state...
     val state: StateIndex,
     // with the following lookahead...
@@ -258,11 +258,11 @@ data class Conflict<L>(
     val action: Action,
 )
 
-typealias Lr0Conflict = Conflict<Nil>
+internal typealias Lr0Conflict = Conflict<Nil>
 
-typealias Lr1Conflict = Conflict<TokenSet>
+internal typealias Lr1Conflict = Conflict<TokenSet>
 
-data class TableConstructionError<L : Lookahead<L>>(
+internal data class TableConstructionError<L : Lookahead<L>>(
     // LR(1) state set, possibly incomplete if construction is
     // configured to terminate early.
     val states: MutableList<State<L>>,
@@ -270,16 +270,16 @@ data class TableConstructionError<L : Lookahead<L>>(
     val conflicts: MutableList<Conflict<L>>,
 )
 
-typealias Lr0TableConstructionError = TableConstructionError<Nil>
+internal typealias Lr0TableConstructionError = TableConstructionError<Nil>
 
-typealias Lr1TableConstructionError = TableConstructionError<TokenSet>
+internal typealias Lr1TableConstructionError = TableConstructionError<TokenSet>
 
-typealias LrResult<L> = Result<MutableList<State<L>>>
+internal typealias LrResult<L> = Result<MutableList<State<L>>>
 
-typealias Lr1Result = LrResult<TokenSet>
+internal typealias Lr1Result = LrResult<TokenSet>
 
 /** `A = B C (*) D E F` or `A = B C (*)` */
-data class SymbolSets(
+internal data class SymbolSets(
     val prefix: List<Symbol>,       // both cases, [B, C]
     val cursor: Symbol?,            // first [D], second []
     val suffix: List<Symbol>,       // first [E, F], second []

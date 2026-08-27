@@ -11,7 +11,7 @@ import io.github.kotlinmania.lalrpop.lr1.Conflict
 import io.github.kotlinmania.lalrpop.lr1.State
 import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.LaneTableConstruct
 
-fun buildLaneTableStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> =
+internal fun buildLaneTableStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> =
     LaneTableConstruct.new(grammar, start).construct()
 
 internal fun <L : Lookahead<L>> conflictingActions(

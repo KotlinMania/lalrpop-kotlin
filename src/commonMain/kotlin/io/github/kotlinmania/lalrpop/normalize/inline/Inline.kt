@@ -13,7 +13,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.normalize.inline.graph.inlineOrder
 
-fun inline(grammar: Grammar): Grammar {
+internal fun inline(grammar: Grammar): Grammar {
     val order = inlineOrder(grammar)
     for (nt in order) {
         inlineNt(grammar, nt)

@@ -11,7 +11,7 @@ import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
 // Each state `s` corresponds to the node in the graph with index
 // `s`. The edges are the shift transitions.
-class StateGraph(
+internal class StateGraph(
     private val graph: Graph<Unit, Symbol>,
 ) {
     companion object {
@@ -68,8 +68,8 @@ class StateGraph(
                 val tail = symbols.subList(0, symbols.size - 1)
                 stack.addAll(
                     graph.edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Incoming)
-                        .filter { edge -> edge.weight() == head }
-                        .map { edge -> Pair(StateIndex(edge.source().index()), tail) },
+                        .filter { edge -> edge.weight == head }
+                        .map { edge -> Pair(StateIndex(edge.source.index()), tail) },
                 )
             } else {
                 result.add(stateIndex)
@@ -87,11 +87,11 @@ class StateGraph(
     fun successors(stateIndex: StateIndex): Sequence<StateIndex> =
         graph.edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Outgoing)
             .asSequence()
-            .map { edge -> StateIndex(edge.target().index()) }
+            .map { edge -> StateIndex(edge.target.index()) }
 
     fun predecessors(stateIndex: StateIndex, symbol: Symbol): Sequence<StateIndex> =
         graph.edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Incoming)
             .asSequence()
-            .filter { edge -> edge.weight() == symbol }
-            .map { edge -> StateIndex(edge.source().index()) }
+            .filter { edge -> edge.weight == symbol }
+            .map { edge -> StateIndex(edge.source.index()) }
 }

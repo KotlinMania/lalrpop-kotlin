@@ -3,7 +3,7 @@ package io.github.kotlinmania.lalrpop.message.horiz
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.message.Content
 
-class Horiz private constructor(
+internal class Horiz private constructor(
     private val items: List<Content>,
     private val separate: Int, // 0 => overlapping, 1 => each on its own line, 2 => paragraphs
 ) : Content {
@@ -31,7 +31,7 @@ class Horiz private constructor(
     }
 }
 
-fun emitHoriz(view: AsciiView, items: List<Content>, separate: Int) {
+internal fun emitHoriz(view: AsciiView, items: List<Content>, separate: Int) {
     var column = 0
     for (item in items) {
         val (_, endColumn) = item.emitAt(view, 0, column)

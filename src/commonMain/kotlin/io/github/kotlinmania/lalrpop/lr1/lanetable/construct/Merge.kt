@@ -29,7 +29,7 @@ import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
  *
  * [r]: ../README.md
  */
-class Merge internal constructor(
+internal class Merge internal constructor(
     private val table: LaneTable,
     private val states: MutableList<State<TokenSet>>,
     private val visited: Set<StateIndex>,

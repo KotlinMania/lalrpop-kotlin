@@ -22,12 +22,12 @@ import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
  * list of states, or a construction error capturing partial states
  * plus the list of conflicts we found.
  */
-sealed class LrResult<L : Lookahead<L>> {
+internal sealed class LrResult<L : Lookahead<L>> {
     data class Ok<L : Lookahead<L>>(val states: List<State<L>>) : LrResult<L>()
     data class Err<L : Lookahead<L>>(val error: TableConstructionError<L>) : LrResult<L>()
 }
 
-fun <L : Lookahead<L>> generateReport(
+internal fun <L : Lookahead<L>> generateReport(
     out: Appendable,
     lr1result: LrResult<L>,
 ) {
@@ -39,7 +39,7 @@ fun <L : Lookahead<L>> generateReport(
  * Convenience overload for the common-case typealias used by `Lr1.kt`
  * where only the successful states list is available.
  */
-fun generateReport(
+internal fun generateReport(
     out: Appendable,
     lr1result: List<State<TokenSet>>,
 ) {

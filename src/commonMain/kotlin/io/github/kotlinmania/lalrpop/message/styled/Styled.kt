@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.message.styled
 import io.github.kotlinmania.lalrpop.message.message.Content
 import io.github.kotlinmania.lalrpop.message.message.intoWrapItemsMap
 
-class Styled private constructor(
+internal class Styled private constructor(
     private val style: Style,
     private val content: Content,
 ) : Content {

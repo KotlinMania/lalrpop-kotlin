@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraph
 
-class Tracer(
+internal class Tracer(
     internal val states: List<State<TokenSet>>,
     internal val firstSets: FirstSets,
     internal val stateGraph: StateGraph,

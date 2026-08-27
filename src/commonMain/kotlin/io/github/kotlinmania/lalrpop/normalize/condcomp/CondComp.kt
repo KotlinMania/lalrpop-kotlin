@@ -10,7 +10,7 @@ import io.github.kotlinmania.lalrpop.grammar.CFG
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
 
-fun removeDisabledDecls(session: Session, grammar: Grammar): Grammar {
+internal fun removeDisabledDecls(session: Session, grammar: Grammar): Grammar {
     grammar.items.retainAll { item ->
         when (item) {
             is GrammarItem.ExternToken -> {
@@ -35,7 +35,7 @@ fun removeDisabledDecls(session: Session, grammar: Grammar): Grammar {
     return grammar
 }
 
-fun cfgActive(session: Session, attrs: List<Attribute>): Boolean {
+internal fun cfgActive(session: Session, attrs: List<Attribute>): Boolean {
     fun testFeatAttr(attr: Attribute): Boolean {
         val arg = attr.arg
         return when {

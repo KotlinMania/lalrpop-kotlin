@@ -3,7 +3,7 @@ package io.github.kotlinmania.lalrpop.message
 
 import io.github.kotlinmania.lalrpop.Style
 
-class Row private constructor(
+internal class Row private constructor(
     private val text: String,
     private val styles: List<Style>,
 ) {

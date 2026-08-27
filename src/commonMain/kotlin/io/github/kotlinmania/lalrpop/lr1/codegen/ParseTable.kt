@@ -22,7 +22,7 @@ import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 import io.github.kotlinmania.lalrpop.tls.Tls
 
-object ParseTable {
+internal object ParseTable {
     const val DEBUG_PRINT: Boolean = false
 
     fun compile(
@@ -37,7 +37,7 @@ object ParseTable {
     }
 }
 
-fun compileParseTable(
+internal fun compileParseTable(
     grammar: Grammar,
     userStartSymbol: NonterminalString,
     startSymbol: NonterminalString,
@@ -56,7 +56,7 @@ fun compileParseTable(
     tableDriven.write()
 }
 
-sealed class Comment<T> {
+internal sealed class Comment<T> {
     abstract override fun toString(): String
 
     data class Goto<T>(val token: T, val newState: Int) : Comment<T>() {
@@ -72,7 +72,7 @@ sealed class Comment<T> {
     }
 }
 
-class TableDriven(
+internal class TableDriven(
     /** type parameters for the `Nonterminal` type */
     val symbolTypeParams: List<TypeParameter>,
 
@@ -1287,7 +1287,7 @@ private fun CodeGenerator<TableDriven>.emitExpectedTokensFromStatesFn() {
     rust(this.out, "}")
 }
 
-class MachineParameters(
+internal class MachineParameters(
     val typeParameters: MutableList<TypeParameter>,
     val fields: List<Parameter>,
     val whereClauses: MutableList<WhereClause>,

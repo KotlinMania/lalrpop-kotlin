@@ -34,7 +34,7 @@ import io.github.kotlinmania.lalrpop.normalize.normutil.analyzeAction
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 import io.github.kotlinmania.lalrpop.lr1.Token
 
-fun inferTypes(grammar: Grammar): Types {
+internal fun inferTypes(grammar: Grammar): Types {
     val inferencer = TypeInferencer.new(grammar)
     return inferencer.inferTypes()
 }

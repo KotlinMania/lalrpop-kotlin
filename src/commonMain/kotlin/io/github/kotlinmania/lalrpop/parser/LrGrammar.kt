@@ -3427,7 +3427,7 @@ internal fun tokenToInteger(
         is Tok.Mut -> 6
         is Tok.Pub -> 7
         is Tok.In -> 8
-        is Tok.Type -> 9
+        is Tok.KwType -> 9
         is Tok.Where -> 10
         is Tok.For -> 11
         is Tok.Bang -> 12
@@ -8058,7 +8058,7 @@ internal fun action12(
     sym2: Triple<Int, Tok, Int>,
     bounds: Triple<Int, List<TypeBound<TypeRef>>, Int>,
 ): WhereClause<TypeRef> {
-    return WhereClause.Type(
+    return WhereClause.TypeClause(
         forall = f.second.toMutableList(),
         ty = ty.second,
         bounds = bounds.second.toMutableList())
@@ -25277,7 +25277,7 @@ internal fun action844
 }
 
 
-interface ToTriple {
+internal interface ToTriple {
     fun toTriple(): Result<Triple<Int, Tok, Int>>
 }
 
@@ -37683,7 +37683,7 @@ internal fun reduce(
     return null
 }
 
-class TopParser {
+internal class TopParser {
     companion object {
         fun new(): TopParser
         {

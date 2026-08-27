@@ -46,7 +46,7 @@ import io.github.kotlinmania.lalrpop.lexer.parseLiteral
 import io.github.kotlinmania.lalrpop.lexer.parseRegex
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 
-fun validate(grammar: Grammar): Grammar {
+internal fun validate(grammar: Grammar): Grammar {
     val mode: TokenMode = run {
         val mode: TokenMode = run {
             val enumToken = grammar.enumToken()

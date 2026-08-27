@@ -23,7 +23,7 @@ package io.github.kotlinmania.lalrpop.runtime
  * `acceptProductionId` is the production index for the synthetic start rule. Reducing
  * by that production ends the parse and returns the produced symbol as the result.
  */
-class ParseTables<S, L>(
+internal class ParseTables<S, L>(
     val numStates: Int,
     val numTerminals: Int,
     val numNonterminals: Int,

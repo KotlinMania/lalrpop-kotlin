@@ -39,7 +39,7 @@ import io.github.kotlinmania.lalrpop.normalize.precedence.PREC_ATTR
 import io.github.kotlinmania.lalrpop.normalize.precedence.SIDE_ARG
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 
-fun validate(grammar: Grammar) {
+internal fun validate(grammar: Grammar) {
     val matchToken: MatchToken? = grammar
         .items
         .asSequence()

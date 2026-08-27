@@ -44,7 +44,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.UserActionFnDefn
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
-fun emitActionCode(grammar: Grammar, out: RustWrite) {
+internal fun emitActionCode(grammar: Grammar, out: RustWrite) {
     for ((i, defn) in grammar.actionFnDefns.withIndex()) {
         rust(out, "")
 

@@ -32,7 +32,7 @@ import io.github.kotlinmania.lalrpop.lr1.lanetable.table.RowConflictException
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
 
-class LaneTableConstruct(
+internal class LaneTableConstruct(
     private val grammar: Grammar,
     private val firstSets: FirstSets,
     private val startNt: NonterminalString,

@@ -20,7 +20,7 @@ package io.github.kotlinmania.lalrpop.lr1.kotlintarget
  * Interpretation happens once. Code books are independent, language-idiomatic
  * derivations from the same IR.
  */
-sealed class GrammarTypeKind {
+internal sealed class GrammarTypeKind {
 
     /**
      * "May or may not have a value" — at most one instance present.
@@ -127,7 +127,7 @@ sealed class GrammarTypeKind {
  * unusual primitive (Rust's `f128` or some platform-specific size) has to declare it
  * via [GrammarTypeKind.UserDefined] instead.
  */
-enum class PrimitiveKind {
+internal enum class PrimitiveKind {
     BOOL, CHAR, STRING,
     I8, I16, I32, I64, ISIZE,
     U8, U16, U32, U64, USIZE,

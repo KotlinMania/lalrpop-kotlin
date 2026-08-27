@@ -11,7 +11,7 @@ import io.github.kotlinmania.lalrpop.message.message.Content
  * the container; e.g., in a Horiz, it will be one unit, but in a
  * Wrap, it will be broken up word by word.
  */
-class Text private constructor(
+internal class Text private constructor(
     private val text: String,
 ) : Content {
     companion object {

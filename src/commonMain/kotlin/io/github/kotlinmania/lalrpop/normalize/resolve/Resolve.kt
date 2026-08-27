@@ -21,7 +21,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 
-fun resolve(grammar: Grammar): Grammar {
+internal fun resolve(grammar: Grammar): Grammar {
     resolveInPlace(grammar)
     return grammar
 }

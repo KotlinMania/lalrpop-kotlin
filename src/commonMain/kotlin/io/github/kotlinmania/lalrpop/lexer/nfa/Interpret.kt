@@ -6,7 +6,7 @@ package io.github.kotlinmania.lalrpop.lexer.nfa
  * Interpret [nfa] applied to [text], returning the longest matching
  * string that we can find (if any).
  */
-fun interpret(nfa: Nfa, text: String): String? {
+internal fun interpret(nfa: Nfa, text: String): String? {
     var longest: Int? = null
     val stack: MutableList<Pair<NfaStateIndex, Int>> = mutableListOf(START to 0)
 

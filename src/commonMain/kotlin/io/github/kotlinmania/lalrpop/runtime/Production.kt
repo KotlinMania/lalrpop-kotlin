@@ -16,7 +16,7 @@ package io.github.kotlinmania.lalrpop.runtime
  * `S` (the per-grammar `Symbol` sealed class) means there is no `Any` payload — the
  * compiler enforces that the produced symbol is one of the declared variants.
  */
-class Production<S, L>(
+internal class Production<S, L>(
     val nonterminalId: Short,
     val rhsLength: Int,
     val action: ProductionAction<S, L>,
@@ -37,7 +37,7 @@ class Production<S, L>(
  * `Result.failure`. Strict typing constraint holds: the success payload is a typed
  * `S` variant, never `Any` or `Any?`.
  */
-fun interface ProductionAction<S, L> {
+internal fun interface ProductionAction<S, L> {
     fun reduce(stack: ParseStack<S, L>, span: ProductionSpan<L>): Result<S>
 }
 
@@ -49,7 +49,7 @@ fun interface ProductionAction<S, L> {
  * location at the point of reduction. The driver computes these from the popped stack
  * entries before invoking the action.
  */
-data class ProductionSpan<out L>(
+internal data class ProductionSpan<out L>(
     val start: L,
     val end: L,
 )

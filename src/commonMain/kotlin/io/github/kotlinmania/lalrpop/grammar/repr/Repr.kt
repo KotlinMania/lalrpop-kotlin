@@ -28,7 +28,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.parsetree.toContent
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
-data class Grammar(
+internal data class Grammar(
     // a unique prefix that can be appended to identifiers to ensure
     // that they do not conflict with any action strings
     var prefix: String,
@@ -94,7 +94,7 @@ data class Grammar(
         }
 }
 
-sealed class WhereClause : Comparable<WhereClause> {
+internal sealed class WhereClause : Comparable<WhereClause> {
     data class Forall(
         val binder: MutableList<TypeParameter>,
         val clause: WhereClause,
@@ -124,19 +124,19 @@ sealed class WhereClause : Comparable<WhereClause> {
  * For each terminal, we map it to a small integer from 0 to N.
  * This struct contains the mappings to go back and forth.
  */
-data class TerminalSet(
+internal data class TerminalSet(
     var all: MutableList<TerminalString>,
     var bits: Map<TerminalString, Int>,
 )
 
-data class NonterminalData(
+internal data class NonterminalData(
     var visibility: Visibility,
     var span: Span,
     var attributes: MutableList<Attribute>,
     var productions: MutableList<Production>,
 )
 
-data class Algorithm(
+internal data class Algorithm(
     var lalr: Boolean,
     var codegen: LrCodeGeneration,
 ) {
@@ -148,11 +148,11 @@ data class Algorithm(
     }
 }
 
-enum class LrCodeGeneration {
+internal enum class LrCodeGeneration {
     TableDriven, RecursiveAscent, TestAll,
 }
 
-data class Parameter(
+internal data class Parameter(
     var name: Atom,
     var ty: TypeRepr,
 ) {
@@ -161,7 +161,7 @@ data class Parameter(
     override fun toString(): String = fmt()
 }
 
-data class Production(
+internal data class Production(
     // this overlaps with the key in the hashmap, obviously, but it
     // handy to have it
     var nonterminal: NonterminalString,
@@ -190,7 +190,7 @@ data class Production(
     override fun toString(): String = fmt()
 }
 
-sealed class Symbol : Comparable<Symbol> {
+internal sealed class Symbol : Comparable<Symbol> {
     data class Nonterminal(val nt: NonterminalString) : Symbol() {
         override fun toString(): String = fmt()
     }
@@ -235,14 +235,14 @@ sealed class Symbol : Comparable<Symbol> {
     }
 }
 
-fun Symbol.toContent(): Content = when (this) {
+internal fun Symbol.toContent(): Content = when (this) {
     is Symbol.Nonterminal -> nt.toContent()
     is Symbol.Terminal -> term.toContent()
 }
 
-fun from(value: Symbol): Content = value.toContent()
+internal fun from(value: Symbol): Content = value.toContent()
 
-data class ActionFnDefn(
+internal data class ActionFnDefn(
     var fallible: Boolean,
     var retType: TypeRepr,
     var kind: ActionFnDefnKind,
@@ -256,14 +256,14 @@ data class ActionFnDefn(
     override fun toString(): String = toFnString("_")
 }
 
-sealed class ActionFnDefnKind {
+internal sealed class ActionFnDefnKind {
     data class User(val data: UserActionFnDefn) : ActionFnDefnKind()
     data class Inline(val data: InlineActionFnDefn) : ActionFnDefnKind()
     data class Lookaround(val data: LookaroundActionFnDefn) : ActionFnDefnKind()
 }
 
 /** An action function written by a user. */
-data class UserActionFnDefn(
+internal data class UserActionFnDefn(
     var argPatterns: MutableList<ArgPattern>,
     var argTypes: MutableList<TypeRepr>,
     var code: String,
@@ -285,7 +285,7 @@ data class UserActionFnDefn(
  * }
  * ```
  */
-data class InlineActionFnDefn(
+internal data class InlineActionFnDefn(
     /** in the example above, this would be `action22` */
     var action: ActionFn,
 
@@ -303,17 +303,17 @@ data class InlineActionFnDefn(
     }
 }
 
-sealed class LookaroundActionFnDefn {
+internal sealed class LookaroundActionFnDefn {
     data object Lookahead : LookaroundActionFnDefn()
     data object Lookbehind : LookaroundActionFnDefn()
 }
 
-sealed class InlinedSymbol {
+internal sealed class InlinedSymbol {
     data class Original(val sym: Symbol) : InlinedSymbol()
     data class Inlined(val action: ActionFn, val syms: MutableList<Symbol>) : InlinedSymbol()
 }
 
-sealed class TypeRepr : Comparable<TypeRepr> {
+internal sealed class TypeRepr : Comparable<TypeRepr> {
     abstract override fun toString(): String
 
     data class Tuple(val types: MutableList<TypeRepr>) : TypeRepr() {
@@ -510,7 +510,7 @@ sealed class TypeRepr : Comparable<TypeRepr> {
     }
 }
 
-data class NominalTypeRepr(
+internal data class NominalTypeRepr(
     var path: Path,
     var types: MutableList<TypeRepr>,
 ) : Comparable<NominalTypeRepr> {
@@ -525,7 +525,7 @@ data class NominalTypeRepr(
     override fun toString(): String = fmt()
 }
 
-class Types(
+internal class Types(
     prefix: String,
     private var terminalLocType: TypeRepr?,
     private var errorType: TypeRepr?,
@@ -632,7 +632,7 @@ class Types(
     }
 }
 
-data class ActionFn(private val id: Int) : Comparable<ActionFn> {
+internal data class ActionFn(private val id: Int) : Comparable<ActionFn> {
     fun index(): Int = id
 
     override fun compareTo(other: ActionFn): Int = id.compareTo(other.id)

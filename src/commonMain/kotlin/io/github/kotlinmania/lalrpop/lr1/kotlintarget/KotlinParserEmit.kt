@@ -7,7 +7,7 @@ import io.github.kotlinmania.lalrpop.lr1.Lr1State
 import io.github.kotlinmania.lalrpop.runtime.Production
 import io.github.kotlinmania.lalrpop.runtime.ProductionAction
 
-data class KotlinParserEmitConfig(
+internal data class KotlinParserEmitConfig(
     val packageName: String?,
     val parserClassName: String,
     val symbolClassName: String,
@@ -24,7 +24,7 @@ data class KotlinParserEmitConfig(
     val supportsErrorRecovery: Boolean,
 )
 
-data class KotlinProductionBody(
+internal data class KotlinProductionBody(
     val lines: List<String>,
 ) {
     init {
@@ -32,7 +32,7 @@ data class KotlinProductionBody(
     }
 }
 
-fun emitTableDrivenKotlinParser(
+internal fun emitTableDrivenKotlinParser(
     grammar: Grammar,
     states: List<Lr1State>,
     acceptProductionId: Int,

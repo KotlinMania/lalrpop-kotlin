@@ -16,7 +16,7 @@ package io.github.kotlinmania.lalrpop.runtime
  * generated tables disagree with the lambdas (i.e. a codegen bug), the cast fails fast
  * with a typed exception rather than corrupting the parse silently.
  */
-class ParseStack<S, L>(
+internal class ParseStack<S, L>(
     initialCapacity: Int = 32,
 ) {
     private val storage: ArrayDeque<Located<S, L>> = ArrayDeque(initialCapacity)
@@ -100,7 +100,7 @@ class ParseStack<S, L>(
  * Equivalent to the upstream Rust `(L, Symbol, L)` triple but as a named type so the
  * span endpoints can't be silently swapped at the call site.
  */
-data class Located<out S, out L>(
+internal data class Located<out S, out L>(
     val start: L,
     val symbol: S,
     val end: L,
@@ -115,7 +115,7 @@ data class Located<out S, out L>(
  * should never trigger this in practice; if a user sees it, the generator has shipped a
  * miscompiled grammar.
  */
-class ParseStackTypeException(
+internal class ParseStackTypeException(
     val expected: String,
     val actual: String,
 ) : IllegalStateException("parse stack type mismatch: expected $expected, got $actual")

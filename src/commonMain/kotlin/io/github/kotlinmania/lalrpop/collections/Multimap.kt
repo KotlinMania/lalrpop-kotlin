@@ -7,7 +7,7 @@ import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.set
 
-class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
+internal class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
     private val collectionFactory: () -> C,
 ) : Iterable<Pair<K, C>> {
     // The K : Comparable<K> bound mirrors upstream
@@ -51,7 +51,7 @@ class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
     fun default(): Multimap<K, C, Item> = Multimap(collectionFactory)
 }
 
-fun <K : Comparable<K>, C : Collection<Item>, Item> fromIter(
+internal fun <K : Comparable<K>, C : Collection<Item>, Item> fromIter(
     collectionFactory: () -> C,
     iterator: Iterable<Pair<K, Item>>,
 ): Multimap<K, C, Item> {
@@ -64,7 +64,7 @@ fun <K : Comparable<K>, C : Collection<Item>, Item> fromIter(
 
 internal typealias IntoIter<K, C> = Iterator<Pair<K, C>>
 
-interface Collection<Item> {
+internal interface Collection<Item> {
     /**
      * Push `item` into the collection and return `true` if
      * collection changed.
@@ -72,11 +72,11 @@ interface Collection<Item> {
     fun push(item: Item): Boolean
 }
 
-class UnitCollection : Collection<Unit> {
+internal class UnitCollection : Collection<Unit> {
     override fun push(item: Unit): Boolean = false
 }
 
-class VecCollection<T> : Collection<T> {
+internal class VecCollection<T> : Collection<T> {
     private val inner: MutableList<T> = mutableListOf()
 
     override fun push(item: T): Boolean {
@@ -87,7 +87,7 @@ class VecCollection<T> : Collection<T> {
     fun asList(): List<T> = inner
 }
 
-class SetCollection<T : Comparable<T>> : Collection<T> {
+internal class SetCollection<T : Comparable<T>> : Collection<T> {
     // Mirrors `implementation<T: Ord> Default for BTreeSet<T>` — Rust adds the bound
     // implicitly via `BTreeSet<T>: Default` requiring `T: Ord`.
     private val inner: Set<T> = set()
@@ -97,7 +97,7 @@ class SetCollection<T : Comparable<T>> : Collection<T> {
     fun asSet(): Set<T> = inner
 }
 
-class MultimapCollection<K : Comparable<K>, C : Collection<Item>, Item>(
+internal class MultimapCollection<K : Comparable<K>, C : Collection<Item>, Item>(
     private val inner: Multimap<K, C, Item>,
 ) : Collection<Pair<K, Item>> {
     override fun push(item: Pair<K, Item>): Boolean {

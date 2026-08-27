@@ -8,7 +8,7 @@ package io.github.kotlinmania.lalrpop.regexsyntax
  * Escape all regex metacharacters in `s` so that the result matches `s`
  * literally when parsed as a regex. Mirrors `regexSyntax::escape`.
  */
-fun escape(s: String): String {
+internal fun escape(s: String): String {
     val sb = StringBuilder(s.length)
     for (c in s) {
         if (isMetacharacter(c)) sb.append('\\')
@@ -25,7 +25,7 @@ private fun isMetacharacter(c: Char): Boolean = when (c) {
 /**
  * Builder for a regex parser. Mirrors `regexSyntax::ParserBuilder`.
  */
-class ParserBuilder {
+internal class ParserBuilder {
     private var utf8: Boolean = true
     private var unicode: Boolean = true
 
@@ -39,7 +39,7 @@ class ParserBuilder {
  * A regex parser. Mirrors `regexSyntax::Parser`. The `parse` method
  * returns a [Result] mirroring the upstream `Result<Hir, Error>`.
  */
-class Parser internal constructor(
+internal class Parser internal constructor(
     private val utf8: Boolean,
     private val unicode: Boolean,
 ) {

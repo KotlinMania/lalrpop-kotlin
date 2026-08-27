@@ -8,7 +8,7 @@ internal expect object Lr1TlsStorage {
     var terminals: TerminalSet?
 }
 
-class Lr1Tls private constructor(
+internal class Lr1Tls private constructor(
     private var oldValue: TerminalSet?,
 ) {
     companion object {

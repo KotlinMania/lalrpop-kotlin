@@ -3,9 +3,9 @@ package io.github.kotlinmania.lalrpop
 
 import io.github.kotlinmania.lalrpop.api.Configuration
 
-const val VERSION: String = "0.22.2"
+internal const val VERSION: String = "0.22.2"
 
-const val USAGE: String = "" +
+internal const val USAGE: String = "" +
     "Usage: lalrpop [options] <inputs>...\n" +
     "       lalrpop --help\n" +
     "       lalrpop (-V | --version)\n" +
@@ -129,7 +129,7 @@ internal fun parseArgs(args: Arguments): Result<Args> {
     )
 }
 
-fun main(args: Array<String>): Int {
+internal fun main(args: Array<String>): Int {
     val parsed = parseArgs(Arguments.fromEnv(args))
     val parsedArgs = parsed.getOrElse { err ->
         println(err.message ?: err.toString())

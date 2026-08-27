@@ -8,13 +8,13 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 
-interface Lookahead<Self : Lookahead<Self>> : Collection<Self>, Comparable<Self> {
+internal interface Lookahead<Self : Lookahead<Self>> : Collection<Self>, Comparable<Self> {
     fun fmtAsItemSuffix(): String
 
     fun conflicts(thisState: State<Self>): MutableList<Conflict<Self>>
 }
 
-class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
+internal class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
     override fun push(item: Nil): Boolean = false
 
     override fun fmtAsItemSuffix(): String = ""
@@ -76,7 +76,7 @@ class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
  * either one of the terminals of our language, or else the
  * pseudo-symbol EOF that represents "end of input".
  */
-sealed class Token : Comparable<Token> {
+internal sealed class Token : Comparable<Token> {
     abstract override fun toString(): String
 
     object Eof : Token() {
@@ -118,7 +118,7 @@ sealed class Token : Comparable<Token> {
     }
 }
 
-class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInterpret<TokenSet> {
+internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInterpret<TokenSet> {
     internal val bitSet: MutableSet<Int> = mutableSetOf()
 
     override fun fmtAsItemSuffix(): String = " $this"
@@ -312,7 +312,7 @@ class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInter
     }
 }
 
-class TokenSetIter(private val bitSet: Iterator<Int>) : Iterator<Token> {
+internal class TokenSetIter(private val bitSet: Iterator<Int>) : Iterator<Token> {
     override fun hasNext(): Boolean = bitSet.hasNext()
 
     override fun next(): Token {

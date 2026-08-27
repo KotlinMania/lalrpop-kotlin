@@ -7,16 +7,16 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 
-data class InterpretError<L : Lookahead<L>>(
+internal data class InterpretError<L : Lookahead<L>>(
     val state: State<L>,
     val token: Token,
 )
 
-class InterpretErrorException(val error: InterpretError<*>) :
+internal class InterpretErrorException(val error: InterpretError<*>) :
     RuntimeException("Interpret error at state ${error.state.index}: unexpected token ${error.token}")
 
 /** Feed in the given tokens and then EOF, returning the final parse tree that is reduced. */
-fun <L : LookaheadInterpret<L>> interpret(
+internal fun <L : LookaheadInterpret<L>> interpret(
     states: List<State<L>>,
     tokens: MutableList<TerminalString>,
 ): Result<ParseTree> {
@@ -25,7 +25,7 @@ fun <L : LookaheadInterpret<L>> interpret(
 }
 
 /** Feed in the given tokens and returns the states on the stack. */
-fun <L : LookaheadInterpret<L>> interpretPartial(
+internal fun <L : LookaheadInterpret<L>> interpretPartial(
     states: List<State<L>>,
     tokens: Iterable<TerminalString>,
 ): Result<MutableList<StateIndex>> {
@@ -139,6 +139,6 @@ private class Machine<L : LookaheadInterpret<L>>(
     }
 }
 
-interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {
+internal interface LookaheadInterpret<Self : Lookahead<Self>> : Lookahead<Self> {
     fun reduction(state: State<Self>, token: Token): Production?
 }

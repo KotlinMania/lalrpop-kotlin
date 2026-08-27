@@ -5,7 +5,7 @@
 // lane-table construction is modeled.
 package io.github.kotlinmania.lalrpop
 
-interface UnifyKey<V> {
+internal interface UnifyKey<V> {
     fun index(): Int
 
     companion object {
@@ -13,7 +13,7 @@ interface UnifyKey<V> {
     }
 }
 
-interface UnifyValue<Self> {
+internal interface UnifyValue<Self> {
     /**
      * Merge two values. Returns `null` if the merge is not possible;
      * callers treat that as a unification failure.
@@ -21,7 +21,7 @@ interface UnifyValue<Self> {
     fun unifyValues(other: Self): Self?
 }
 
-class InPlaceUnificationTable<K : UnifyKey<V>, V>(
+internal class InPlaceUnificationTable<K : UnifyKey<V>, V>(
     private val keyFromIndex: (Int) -> K,
     private val unifyValues: (V, V) -> V?,
 ) {

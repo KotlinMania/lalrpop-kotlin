@@ -15,7 +15,7 @@ import io.github.kotlinmania.lalrpop.Style
  * `AsciiCanvas` are defined as inherent methods on an `AsciiView`
  * trait object.
  */
-interface AsciiView {
+internal interface AsciiView {
     fun columns(): Int
     fun readChar(row: Int, column: Int): Char
     fun writeChar(row: Int, column: Int, ch: Char, style: Style)
@@ -28,7 +28,7 @@ private fun AsciiView.addBoxDirs(row: Int, column: Int, dirs: Int) {
 }
 
 /** Draws a line for the given range of rows at the given column. */
-fun AsciiView.drawVerticalLine(rows: IntRange, column: Int) {
+internal fun AsciiView.drawVerticalLine(rows: IntRange, column: Int) {
     val len = rows.count()
     for ((index, r) in rows.withIndex()) {
         val newDirs = when {
@@ -44,7 +44,7 @@ fun AsciiView.drawVerticalLine(rows: IntRange, column: Int) {
  * Draws a horizontal line along a given row for the given range
  * of columns.
  */
-fun AsciiView.drawHorizontalLine(row: Int, columns: IntRange) {
+internal fun AsciiView.drawHorizontalLine(row: Int, columns: IntRange) {
     val len = columns.count()
     for ((index, c) in columns.withIndex()) {
         val newDirs = when {
@@ -57,7 +57,7 @@ fun AsciiView.drawHorizontalLine(row: Int, columns: IntRange) {
 }
 
 /** Writes characters in the given style at the given position. */
-fun AsciiView.writeChars(row: Int, column: Int, chars: Iterator<Char>, style: Style) {
+internal fun AsciiView.writeChars(row: Int, column: Int, chars: Iterator<Char>, style: Style) {
     var i = 0
     for (ch in chars) {
         this.writeChar(row, column + i, ch, style)
@@ -66,17 +66,17 @@ fun AsciiView.writeChars(row: Int, column: Int, chars: Iterator<Char>, style: St
 }
 
 /** Creates a new view onto the same canvas, but writing at an offset. */
-fun AsciiView.shift(row: Int, column: Int): ShiftedView =
+internal fun AsciiView.shift(row: Int, column: Int): ShiftedView =
     ShiftedView.new(this, row, column)
 
 /**
  * Creates a new view onto the same canvas, but applying a style
  * to all the characters written.
  */
-fun AsciiView.styled(style: Style): StyleView =
+internal fun AsciiView.styled(style: Style): StyleView =
     StyleView.new(this, style)
 
-class AsciiCanvas(
+internal class AsciiCanvas(
     private var rowsCount: Int,
     private val columnsCount: Int,
     private val characters: MutableList<Char>,
@@ -164,7 +164,7 @@ private data class Point(val row: Int, val column: Int)
  * written through them; the `close()` method can be used to read
  * that out when you are finished.
  */
-class ShiftedView private constructor(
+internal class ShiftedView private constructor(
     // either the base canvas or another view
     private val base: AsciiView,
     // fixed at creation: the content is always allowed to grow down,
@@ -222,7 +222,7 @@ class ShiftedView private constructor(
  * to things that are written. You can get one of these by calling
  * the `styled()` method on any ASCII view.
  */
-class StyleView private constructor(
+internal class StyleView private constructor(
     private val base: AsciiView,
     private val style: Style,
 ) : AsciiView {

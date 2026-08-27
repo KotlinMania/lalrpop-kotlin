@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.rust.rust
  * `<prefix>internToken` Rust module that builds a `MatcherBuilder`
  * from the grammar regex set.
  */
-fun compileInternToken(
+internal fun compileInternToken(
     grammar: Grammar,
     internToken: InternToken,
     out: RustWrite,

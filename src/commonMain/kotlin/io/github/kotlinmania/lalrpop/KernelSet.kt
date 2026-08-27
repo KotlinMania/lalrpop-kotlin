@@ -4,7 +4,7 @@ package io.github.kotlinmania.lalrpop
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map
 
-class KernelSet<K : Kernel<K, Index>, Index> {
+internal class KernelSet<K : Kernel<K, Index>, Index> {
     private var counter: Int = 0
     private val kernels: ArrayDeque<K> = ArrayDeque()
     private val map: Map<K, Index> = map()
@@ -26,6 +26,6 @@ class KernelSet<K : Kernel<K, Index>, Index> {
     fun next(): K? = kernels.removeFirstOrNull()
 }
 
-interface Kernel<K : Kernel<K, Index>, Index> : Comparable<K> {
+internal interface Kernel<K : Kernel<K, Index>, Index> : Comparable<K> {
     fun index(c: Int): Index
 }

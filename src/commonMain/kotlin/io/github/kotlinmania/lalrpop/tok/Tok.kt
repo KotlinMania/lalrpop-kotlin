@@ -4,12 +4,12 @@ package io.github.kotlinmania.lalrpop.tok
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
 
-data class Error(
+internal data class Error(
     val location: Int,
     val code: ErrorCode,
 )
 
-enum class ErrorCode {
+internal enum class ErrorCode {
     UnrecognizedToken,
     UnterminatedEscape,
     UnterminatedAsciiEscape,
@@ -27,7 +27,7 @@ internal class TokError(val err: Error) : RuntimeException()
 private fun <T> error(c: ErrorCode, l: Int): Result<T> =
     Result.failure(TokError(Error(location = l, code = c)))
 
-sealed class Tok {
+internal sealed class Tok {
     // Keywords;
     object Enum : Tok()
     object Extern : Tok()
@@ -38,7 +38,7 @@ sealed class Tok {
     object Mut : Tok()
     object Pub : Tok()
     object In : Tok()
-    object Type : Tok()
+    object KwType : Tok()
     object Where : Tok()
     object For : Tok()
     object Dyn : Tok()
@@ -99,7 +99,7 @@ sealed class Tok {
     object StartTypeRef : Tok()
 }
 
-class Tokenizer(val text: String, val shift: Int) : Iterator<Spanned<Tok>> {
+internal class Tokenizer(val text: String, val shift: Int) : Iterator<Spanned<Tok>> {
     var chars: Int = 0
     var lookahead: Pair<Int, Char>? = null
 
@@ -120,7 +120,7 @@ class Tokenizer(val text: String, val shift: Int) : Iterator<Spanned<Tok>> {
             "mut" to Tok.Mut,
             "pub" to Tok.Pub,
             "in" to Tok.In,
-            "type" to Tok.Type,
+            "type" to Tok.KwType,
             "where" to Tok.Where,
             "for" to Tok.For,
             "dyn" to Tok.Dyn,
@@ -790,12 +790,12 @@ private enum class BlockCommentState {
     Complete,
 }
 
-data class Spanned<T>(val start: Int, val value: T, val end: Int)
+internal data class Spanned<T>(val start: Int, val value: T, val end: Int)
 
-fun isIdentifierStart(c: Char): Boolean =
+internal fun isIdentifierStart(c: Char): Boolean =
     isXidStart(c) || c == '_'
 
-fun isIdentifierContinue(c: Char): Boolean =
+internal fun isIdentifierContinue(c: Char): Boolean =
     isXidContinue(c) || c == '_'
 
 // Approximation of unicodeXid::UnicodeXID; LALRPOP grammar is predominantly ASCII.
@@ -870,7 +870,7 @@ private class CharIndicesIter(private val s: String) {
  * representation to the text it represents. The `idx0` argument should be the
  * position in the input stream of the first character of `text`, the position
  * after the opening double-quote. */
-fun applyStringEscapes(code: String, idx0: Int): Result<String> {
+internal fun applyStringEscapes(code: String, idx0: Int): Result<String> {
     return if (!code.contains('\\')) {
         Result.success(code)
     } else {

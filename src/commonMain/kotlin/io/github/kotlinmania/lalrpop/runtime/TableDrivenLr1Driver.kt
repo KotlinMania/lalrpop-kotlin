@@ -21,7 +21,7 @@ package io.github.kotlinmania.lalrpop.runtime
  * paths leave the action-lambda contract — which is what generated code commits to —
  * untouched, so locking the contract here is what step 1 needs.
  */
-class TableDrivenLr1Driver<S, L>(
+internal class TableDrivenLr1Driver<S, L>(
     private val tables: ParseTables<S, L>,
     private val tokens: Iterator<TerminalToken<S, L>>,
     private val eofLocation: L,
@@ -142,7 +142,7 @@ class TableDrivenLr1Driver<S, L>(
  * is later consumed by a reduction. Wrapping happens at the lexer/driver boundary so the
  * action lambdas never have to call a `tokenToSymbol` adapter mid-reduction.
  */
-data class TerminalToken<S, L>(
+internal data class TerminalToken<S, L>(
     val terminalId: Int,
     val symbol: S,
     val start: L,
@@ -163,7 +163,7 @@ data class TerminalToken<S, L>(
  *   fallible production, the action lambda ran, and it returned `Result.failure`. The
  *   driver propagates the cause unchanged.
  */
-sealed class ParseOutcome<out S, out L> {
+internal sealed class ParseOutcome<out S, out L> {
     data class Success<out S, out L>(val tree: S, val span: ProductionSpan<L>) :
         ParseOutcome<S, L>()
 

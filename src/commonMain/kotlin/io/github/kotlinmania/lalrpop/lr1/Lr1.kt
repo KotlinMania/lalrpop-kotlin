@@ -5,7 +5,7 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.lr1.report.generateReport as generateReportImpl
 
-fun buildStatesOrError(grammar: Grammar, start: NonterminalString): BuildOutcome<TokenSet> {
+internal fun buildStatesOrError(grammar: Grammar, start: NonterminalString): BuildOutcome<TokenSet> {
     return try {
         BuildOutcome.Ok(buildStates(grammar, start))
     } catch (e: TableConstructionErrorException) {
@@ -13,7 +13,7 @@ fun buildStatesOrError(grammar: Grammar, start: NonterminalString): BuildOutcome
     }
 }
 
-fun buildStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
+internal fun buildStates(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
     val lr1States: MutableList<State<TokenSet>> = if (!grammar.algorithm.lalr) {
         buildLr1States(grammar, start)
     } else {
@@ -25,7 +25,7 @@ fun buildStates(grammar: Grammar, start: NonterminalString): MutableList<State<T
     return lr1States
 }
 
-fun generateReport(
+internal fun generateReport(
     out: Appendable,
     lr1result: MutableList<State<TokenSet>>,
 ) {

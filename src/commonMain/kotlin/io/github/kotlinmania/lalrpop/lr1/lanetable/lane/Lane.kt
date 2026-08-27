@@ -23,7 +23,7 @@ import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
 
-class LaneTracer<L : Lookahead<L>>(
+internal class LaneTracer<L : Lookahead<L>>(
     private val states: List<State<L>>,
     private val firstSets: FirstSets,
     private val stateGraph: StateGraph,

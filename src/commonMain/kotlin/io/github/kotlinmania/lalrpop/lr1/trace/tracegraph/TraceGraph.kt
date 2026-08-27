@@ -48,7 +48,7 @@ import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
  * - `B` will produce the symbol in `cursor`
  * - shift the symbols in `suffix` after `B` is popped
  */
-class TraceGraph(
+internal class TraceGraph(
     // A -L-> B means:
     //
     //     Transition from a state containing A to a state containing
@@ -76,7 +76,7 @@ class TraceGraph(
         val fromIdx = this.addNode(from)
         val toIdx = this.addNode(to)
         if (!this.graph.edgesDirected(fromIdx, EdgeDirection.Outgoing)
-                .any { edge -> edge.target() == toIdx && edge.weight() == labels }
+                .any { edge -> edge.target == toIdx && edge.weight == labels }
         ) {
             this.graph.addEdge(fromIdx, toIdx, labels)
         }
@@ -92,11 +92,11 @@ class TraceGraph(
         val entries = mutableListOf<TraceGraphEdge>()
         for ((node, index) in this.indices) {
             for (edge in this.graph.edgesDirected(index, EdgeDirection.Outgoing)) {
-                val label = edge.weight()
+                val label = edge.weight
                 entries.add(
                     TraceGraphEdge(
                         from = node,
-                        to = this.graph[edge.target()],
+                        to = this.graph[edge.target],
                         label = Triple(label.prefix, label.cursor, label.suffix),
                     )
                 )
@@ -115,7 +115,7 @@ class TraceGraph(
     }
 }
 
-sealed class TraceGraphNode : Comparable<TraceGraphNode> {
+internal sealed class TraceGraphNode : Comparable<TraceGraphNode> {
     data class Nonterminal(val nonterminal: NonterminalString) : TraceGraphNode() {
         override fun toString(): String = "Nonterminal($nonterminal)"
     }
@@ -167,7 +167,7 @@ private data class TraceGraphEdge(
 // is found, you can then find the complete list of symbols by calling
 // `symbolsAndCursor` and also get access to the state.
 
-class PathEnumerator internal constructor(
+internal class PathEnumerator internal constructor(
     internal val graph: TraceGraph,
     internal val stack: MutableList<EnumeratorState>,
 ) : Iterator<Example> {
@@ -239,8 +239,8 @@ class PathEnumerator internal constructor(
      */
     private fun pushNextChildIfAny(next: EdgeRef<SymbolSets>?): Boolean {
         return if (next != null) {
-            val index = next.source()
-            val symbolSets = next.weight()
+            val index = next.source
+            val symbolSets = next.weight
             pushNextChild(index, symbolSets)
         } else {
             this.stack.removeLast()
@@ -403,7 +403,7 @@ internal class EnumeratorState(
 // Like the path enumerator, but tests for examples with some specific
 // lookahead
 
-class FilteredPathEnumerator internal constructor(
+internal class FilteredPathEnumerator internal constructor(
     private val base: PathEnumerator,
     private val firstSets: FirstSets,
     private val lookahead: TokenSet,

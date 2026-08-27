@@ -3,7 +3,7 @@
 // Interning is not implemented here; this is a plain string wrapper.
 package io.github.kotlinmania.lalrpop
 
-class Atom private constructor(private val value: String) : Comparable<Atom> {
+internal class Atom private constructor(private val value: String) : Comparable<Atom> {
     fun len(): Int = value.length
     fun asRef(): String = value
 

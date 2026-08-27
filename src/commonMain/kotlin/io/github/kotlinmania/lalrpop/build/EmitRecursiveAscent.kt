@@ -20,7 +20,7 @@ import io.github.kotlinmania.lalrpop.lr1.report.generateReport
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 
-fun emitRecursiveAscent(
+internal fun emitRecursiveAscent(
     session: Session,
     grammar: Grammar,
     reportOut: StringBuilder? = null,
@@ -155,15 +155,15 @@ fun emitRecursiveAscent(
     return buffer.toString()
 }
 
-fun emitModuleAttributes(grammar: Grammar, rust: RustWrite) {
+internal fun emitModuleAttributes(grammar: Grammar, rust: RustWrite) {
     rust.writeModuleAttributes(grammar)
 }
 
-fun emitUses(grammar: Grammar, rust: RustWrite) {
+internal fun emitUses(grammar: Grammar, rust: RustWrite) {
     rust.writeUses("", grammar)
 }
 
-fun writeWhereClause(
+internal fun writeWhereClause(
     whereClauses: List<WhereClause>,
     toTripleWhereClauses: Sep<WhereClause>,
     rust: RustWrite,
@@ -173,7 +173,7 @@ fun writeWhereClause(
     }
 }
 
-fun emitToTripleTrait(
+internal fun emitToTripleTrait(
     grammar: Grammar,
     maxStartNtVisibility: Visibility,
     rust: RustWrite,

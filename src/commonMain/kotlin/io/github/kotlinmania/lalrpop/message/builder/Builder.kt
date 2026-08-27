@@ -12,7 +12,7 @@ import io.github.kotlinmania.lalrpop.message.text.Text
 import io.github.kotlinmania.lalrpop.message.vert.Vert
 import io.github.kotlinmania.lalrpop.message.wrap.Wrap
 
-class MessageBuilder(
+internal class MessageBuilder(
     private val span: Span,
     private var heading: Content? = null,
     private var body: Content? = null,
@@ -48,14 +48,14 @@ class MessageBuilder(
     }
 }
 
-class HeadingCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
+internal class HeadingCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setHeading(Vert.new(items, 1))
         return this.message
     }
 }
 
-class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
+internal class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setBody(Vert.new(items, 2))
         return this.message
@@ -68,7 +68,7 @@ class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBui
 // `end` that is what you get; otherwise, you get items laid out
 // adjacent to one another horizontally (no spaces in between).
 
-class InlineBuilder : Character<Content> {
+internal class InlineBuilder : Character<Content> {
     companion object {
         fun new(): Builder<Content> = Builder.new(InlineBuilder())
     }
@@ -111,7 +111,7 @@ class InlineBuilder : Character<Content> {
  *                    // for more details)
  * ```
  */
-class Builder<End>(
+internal class Builder<End>(
     private val items: MutableList<Content>,
     private val character: Character<End>,
 ) {
@@ -197,11 +197,11 @@ class Builder<End>(
     fun end(): End = this.character.end(this.items)
 }
 
-interface Character<End> {
+internal interface Character<End> {
     fun end(items: MutableList<Content>): End
 }
 
-class HorizCharacter<C>(
+internal class HorizCharacter<C>(
     internal val base: Builder<C>,
     internal val separate: Int,
 ) : Character<Builder<C>> {
@@ -209,7 +209,7 @@ class HorizCharacter<C>(
         this.base.push(Horiz.new(items, this.separate))
 }
 
-class VertCharacter<C>(
+internal class VertCharacter<C>(
     internal val base: Builder<C>,
     internal val separate: Int,
 ) : Character<Builder<C>> {
@@ -217,7 +217,7 @@ class VertCharacter<C>(
         this.base.push(Vert.new(items, this.separate))
 }
 
-class WrapCharacter<C>(
+internal class WrapCharacter<C>(
     internal val base: Builder<C>,
 ) : Character<Builder<C>> {
     override fun end(items: MutableList<Content>): Builder<C> =

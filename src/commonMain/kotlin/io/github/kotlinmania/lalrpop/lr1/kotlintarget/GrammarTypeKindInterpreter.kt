@@ -19,7 +19,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
  * supported a non-LALRPOP grammar source), we'd add a parallel interpreter that
  * targets the same [GrammarTypeKind] IR. Code books wouldn't need to change.
  */
-object GrammarTypeKindInterpreter {
+internal object GrammarTypeKindInterpreter {
 
     fun interpret(rust: TypeRepr): GrammarTypeKind = when (rust) {
         is TypeRepr.Tuple -> interpretTuple(rust)
