@@ -8,11 +8,11 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.grammar.repr.toContent
 import io.github.kotlinmania.lalrpop.message.AsciiView
 import io.github.kotlinmania.lalrpop.message.Row
+import io.github.kotlinmania.lalrpop.message.builder.InlineBuilder
 import io.github.kotlinmania.lalrpop.message.drawHorizontalLine
 import io.github.kotlinmania.lalrpop.message.drawVerticalLine
-import io.github.kotlinmania.lalrpop.message.writeChars
 import io.github.kotlinmania.lalrpop.message.message.Content
-import io.github.kotlinmania.lalrpop.message.builder.InlineBuilder
+import io.github.kotlinmania.lalrpop.message.writeChars
 import io.github.kotlinmania.lalrpop.tls.Tls
 
 /**
@@ -60,12 +60,14 @@ internal data class Example(
      * as the end position.
      */
     internal fun lengths(): MutableList<Int> {
-        val out: MutableList<Int> = symbols.map { s ->
-            when (s) {
-                is ExampleSymbol.SymbolValue -> s.symbol.toString().length
-                ExampleSymbol.Epsilon -> 1 // display as " "
-            }
-        }.toMutableList()
+        val out: MutableList<Int> =
+            symbols
+                .map { s ->
+                    when (s) {
+                        is ExampleSymbol.SymbolValue -> s.symbol.toString().length
+                        ExampleSymbol.Epsilon -> 1 // display as " "
+                    }
+                }.toMutableList()
         out.add(0)
         return out
     }
@@ -80,17 +82,31 @@ internal data class Example(
         var builder = InlineBuilder.new().beginSpaced()
 
         for ((index, symbol) in symbols.subList(0, length).withIndex()) {
-            val style = when {
-                index < this.cursor -> styles.beforeCursor
-                index == this.cursor -> when (symbol) {
-                    is ExampleSymbol.SymbolValue -> when (symbol.symbol) {
-                        is Symbol.Terminal -> styles.onCursor
-                        is Symbol.Nonterminal -> styles.afterCursor
+            val style =
+                when {
+                    index < this.cursor -> {
+                        styles.beforeCursor
                     }
-                    ExampleSymbol.Epsilon -> styles.afterCursor
+
+                    index == this.cursor -> {
+                        when (symbol) {
+                            is ExampleSymbol.SymbolValue -> {
+                                when (symbol.symbol) {
+                                    is Symbol.Terminal -> styles.onCursor
+                                    is Symbol.Nonterminal -> styles.afterCursor
+                                }
+                            }
+
+                            ExampleSymbol.Epsilon -> {
+                                styles.afterCursor
+                            }
+                        }
+                    }
+
+                    else -> {
+                        styles.afterCursor
+                    }
                 }
-                else -> styles.afterCursor
-            }
 
             if (symbol is ExampleSymbol.SymbolValue) {
                 builder = builder.push(symbol.symbol.toContent()).styled(style)
@@ -107,13 +123,15 @@ internal data class Example(
     fun intoPicture(styles: ExampleStyles): Content {
         val lengths = this.lengths()
         val positions = this.positions(lengths)
-        return InlineBuilder.new()
-            .push(ExamplePicture(
-                example = this,
-                positions = positions,
-                styles = styles,
-            ))
-            .indented()
+        return InlineBuilder
+            .new()
+            .push(
+                ExamplePicture(
+                    example = this,
+                    positions = positions,
+                    styles = styles,
+                ),
+            ).indented()
             .end()
     }
 
@@ -302,44 +320,60 @@ internal data class Example(
     ) {
         val session = Tls.session()
         for ((index, exSymbol) in symbols.withIndex()) {
-            val style = when {
-                index < this.cursor -> styles.beforeCursor
-                index == this.cursor -> {
-                    // Only display actual terminals in the "on-cursor"
-                    // font, because it might be misleading to show a
-                    // nonterminal that way. Really it'd be nice to expand
-                    // so that the cursor is always a terminal.
-                    when (exSymbol) {
-                        is ExampleSymbol.SymbolValue -> when (exSymbol.symbol) {
-                            is Symbol.Terminal -> styles.onCursor
-                            else -> styles.afterCursor
+            val style =
+                when {
+                    index < this.cursor -> {
+                        styles.beforeCursor
+                    }
+
+                    index == this.cursor -> {
+                        // Only display actual terminals in the "on-cursor"
+                        // font, because it might be misleading to show a
+                        // nonterminal that way. Really it'd be nice to expand
+                        // so that the cursor is always a terminal.
+                        when (exSymbol) {
+                            is ExampleSymbol.SymbolValue -> {
+                                when (exSymbol.symbol) {
+                                    is Symbol.Terminal -> styles.onCursor
+                                    else -> styles.afterCursor
+                                }
+                            }
+
+                            else -> {
+                                styles.afterCursor
+                            }
                         }
-                        else -> styles.afterCursor
+                    }
+
+                    else -> {
+                        styles.afterCursor
                     }
                 }
-                else -> styles.afterCursor
-            }
 
             val column = positions[index]
             when (exSymbol) {
-                is ExampleSymbol.SymbolValue -> when (val sym = exSymbol.symbol) {
-                    is Symbol.Terminal -> {
-                        view.writeChars(
-                            0,
-                            column,
-                            sym.term.toString().iterator(),
-                            style.with(session.terminalSymbol),
-                        )
-                    }
-                    is Symbol.Nonterminal -> {
-                        view.writeChars(
-                            0,
-                            column,
-                            sym.nt.toString().iterator(),
-                            style.with(session.nonterminalSymbol),
-                        )
+                is ExampleSymbol.SymbolValue -> {
+                    when (val sym = exSymbol.symbol) {
+                        is Symbol.Terminal -> {
+                            view.writeChars(
+                                0,
+                                column,
+                                sym.term.toString().iterator(),
+                                style.with(session.terminalSymbol),
+                            )
+                        }
+
+                        is Symbol.Nonterminal -> {
+                            view.writeChars(
+                                0,
+                                column,
+                                sym.nt.toString().iterator(),
+                                style.with(session.nonterminalSymbol),
+                            )
+                        }
                     }
                 }
+
                 ExampleSymbol.Epsilon -> {}
             }
         }
@@ -347,7 +381,10 @@ internal data class Example(
 }
 
 internal sealed class ExampleSymbol {
-    data class SymbolValue(val symbol: Symbol) : ExampleSymbol()
+    data class SymbolValue(
+        val symbol: Symbol,
+    ) : ExampleSymbol()
+
     object Epsilon : ExampleSymbol()
 }
 
@@ -375,11 +412,12 @@ internal data class ExampleStyles(
             )
         }
 
-        val default: ExampleStyles get() = ExampleStyles(
-            beforeCursor = Style.new(),
-            onCursor = Style.new(),
-            afterCursor = Style.new(),
-        )
+        val default: ExampleStyles get() =
+            ExampleStyles(
+                beforeCursor = Style.new(),
+                onCursor = Style.new(),
+                afterCursor = Style.new(),
+            )
     }
 }
 

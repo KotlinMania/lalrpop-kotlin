@@ -1,23 +1,14 @@
 package io.github.kotlinmania.lalrpop.build
 
-@JsModule("node:fs")
-@JsNonModule
-private external object NodeFs {
-    fun readFileSync(path: String): dynamic
-    fun writeFileSync(path: String, content: String)
-    fun mkdirSync(path: String, options: dynamic = definedExternally)
-    fun unlinkSync(path: String)
-    fun existsSync(path: String): Boolean
-    fun lstatSync(path: String): dynamic
-    fun statSync(path: String): dynamic
-    fun readdirSync(path: String): dynamic
-}
+// Hiding require('fs') and require('crypto') from webpack via (new Function('return require'))()
+// per AGENTS.md §10 to prevent webpack bundling failures in jsBrowserTest.
+private fun nodeFs(): dynamic = js(
+    "(function(){ try { var rq = (new Function('return typeof require === \"function\" ? require : null'))(); return rq ? rq('fs') : null; } catch (e) { return null; } })()",
+)
 
-@JsModule("node:crypto")
-@JsNonModule
-private external object NodeCrypto {
-    fun createHash(algorithm: String): dynamic
-}
+private fun nodeCrypto(): dynamic = js(
+    "(function(){ try { var rq = (new Function('return typeof require === \"function\" ? require : null'))(); return rq ? rq('crypto') : null; } catch (e) { return null; } })()",
+)
 
 internal actual fun pathParent(path: String): String? {
     val idx = path.lastIndexOf('/')
@@ -58,33 +49,41 @@ internal actual fun pathStripPrefix(path: String, base: String): String? {
 }
 
 internal actual fun apiSha3Hex(file: String): String? {
-    if (!NodeFs.existsSync(file)) return null
-    return NodeCrypto.createHash("sha3-256")
-        .update(NodeFs.readFileSync(file))
+    val fs = nodeFs() ?: return null
+    val crypto = nodeCrypto() ?: return null
+    if (!(fs.existsSync(file) as Boolean)) return null
+    return crypto.createHash("sha3-256")
+        .update(fs.readFileSync(file))
         .digest("hex") as String
 }
 
-internal actual fun apiBuildReadFileToString(path: String): String =
-    NodeFs.readFileSync(path).toString()
+internal actual fun apiBuildReadFileToString(path: String): String {
+    val fs = nodeFs() ?: error("node:fs not available in this environment")
+    return fs.readFileSync(path).toString()
+}
 
 internal actual fun apiBuildWriteFileBytes(path: String, content: String) {
-    NodeFs.writeFileSync(path, content)
+    val fs = nodeFs() ?: error("node:fs not available in this environment")
+    fs.writeFileSync(path, content)
 }
 
 internal actual fun apiBuildCreateDirAll(path: String) {
     if (path.isNotEmpty()) {
-        NodeFs.mkdirSync(path, js("({ recursive: true })"))
+        val fs = nodeFs() ?: return
+        fs.mkdirSync(path, js("({ recursive: true })"))
     }
 }
 
 internal actual fun apiBuildRemoveFileIgnoringMissing(path: String) {
-    if (NodeFs.existsSync(path)) {
-        NodeFs.unlinkSync(path)
+    val fs = nodeFs() ?: return
+    if (fs.existsSync(path) as Boolean) {
+        fs.unlinkSync(path)
     }
 }
 
 internal actual fun apiBuildReadFirstTwoLines(path: String): Pair<String, String>? {
-    if (!NodeFs.existsSync(path)) return null
+    val fs = nodeFs() ?: return null
+    if (!(fs.existsSync(path) as Boolean)) return null
     val text = apiBuildReadFileToString(path)
     val firstNl = text.indexOf('\n')
     if (firstNl < 0) return text to ""
@@ -95,15 +94,18 @@ internal actual fun apiBuildReadFirstTwoLines(path: String): Pair<String, String
     return first to second
 }
 
-internal actual fun apiBuildPathIsSymlink(path: String): Boolean =
-    NodeFs.existsSync(path) && (NodeFs.lstatSync(path).isSymbolicLink() as Boolean)
+internal actual fun apiBuildPathIsSymlink(path: String): Boolean {
+    val fs = nodeFs() ?: return false
+    return (fs.existsSync(path) as Boolean) && (fs.lstatSync(path).isSymbolicLink() as Boolean)
+}
 
 internal actual fun apiBuildWalkDir(root: String): Sequence<WalkEntry> = sequence {
-    if (!NodeFs.existsSync(root)) {
+    val fs = nodeFs()
+    if (fs == null || !(fs.existsSync(root) as Boolean)) {
         yield(WalkEntry.Err(WalkDirError("no such file: $root", root, kindIsNotFound = true)))
         return@sequence
     }
-    walkDir(root).forEach { yield(it) }
+    walkDir(root, fs).forEach { yield(it) }
 }
 
 internal actual fun apiBuildEPrintln(message: String) {
@@ -126,15 +128,15 @@ internal actual fun apiBuildIsStdoutTerminal(): Boolean = false
 
 internal actual fun apiBuildOpenAnsiStdout(): Appendable? = null
 
-private fun walkDir(path: String): List<WalkEntry> {
-    val stat = NodeFs.statSync(path)
+private fun walkDir(path: String, fs: dynamic): List<WalkEntry> {
+    val stat = fs.statSync(path)
     val isFile = stat.isFile() as Boolean
     if (isFile) return listOf(WalkEntry.Ok(path, isFile = true))
 
     val entries = mutableListOf<WalkEntry>(WalkEntry.Ok(path, isFile = false))
-    val names = (NodeFs.readdirSync(path) as Array<String>).sorted()
+    val names = (fs.readdirSync(path) as Array<String>).sorted()
     for (name in names) {
-        entries.addAll(walkDir(pathJoin(path, name)))
+        entries.addAll(walkDir(pathJoin(path, name), fs))
     }
     return entries
 }

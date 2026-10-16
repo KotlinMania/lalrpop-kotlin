@@ -8,9 +8,10 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 private fun dfa(inputs: List<Pair<String, Precedence>>): Result<Dfa> {
-    val regexs = inputs.map { (s, _) ->
-        parseRegex(s).getOrElse { error("unexpected parse error") }
-    }
+    val regexs =
+        inputs.map { (s, _) ->
+            parseRegex(s).getOrElse { error("unexpected parse error") }
+        }
     val precedences = inputs.map { (_, p) -> p }
     return buildDfa(regexs, precedences)
 }
@@ -21,16 +22,17 @@ private val P0 = Precedence(0)
 class DfaTest {
     @Test
     fun tokenizer() {
-        val dfa = dfa(
-            listOf(
-                """class""" to P1,                  // 0
-                """[a-zA-Z_][a-zA-Z0-9_]*""" to P0, // 1
-                """[0-9]+""" to P0,                 // 2
-                """ +""" to P0,                     // 3
-                """>>""" to P0,                     // 4
-                """>""" to P0,                      // 5
-            ),
-        ).getOrThrow()
+        val dfa =
+            dfa(
+                listOf(
+                    """class""" to P1, // 0
+                    """[a-zA-Z_][a-zA-Z0-9_]*""" to P0, // 1
+                    """[0-9]+""" to P0, // 2
+                    """ +""" to P0, // 3
+                    """>>""" to P0, // 4
+                    """>""" to P0, // 5
+                ),
+            ).getOrThrow()
 
         assertEquals(NfaIndex(0) to "class", interpret(dfa, "class Foo"))
         assertEquals(NfaIndex(1) to "classz", interpret(dfa, "classz Foo"))

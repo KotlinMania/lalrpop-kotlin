@@ -3,8 +3,8 @@ package io.github.kotlinmania.lalrpop.message.text
 
 import io.github.kotlinmania.lalrpop.Style
 import io.github.kotlinmania.lalrpop.message.AsciiView
-import io.github.kotlinmania.lalrpop.message.writeChars
 import io.github.kotlinmania.lalrpop.message.message.Content
+import io.github.kotlinmania.lalrpop.message.writeChars
 
 /**
  * Text to be display. This will be flowed appropriately depending on

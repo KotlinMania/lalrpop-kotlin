@@ -8,19 +8,19 @@ import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.toContent
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.grammar.repr.toContent
-import io.github.kotlinmania.lalrpop.grammar.parsetree.toContent
-import io.github.kotlinmania.lalrpop.lr1.Token
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.Action
 import io.github.kotlinmania.lalrpop.lr1.Conflict
 import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.State
-import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.Token
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.example.Example
 import io.github.kotlinmania.lalrpop.lr1.example.ExampleStyles
 import io.github.kotlinmania.lalrpop.lr1.example.ExampleSymbol
@@ -28,14 +28,10 @@ import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.lr1.trace.reduce.backtraceReduce
 import io.github.kotlinmania.lalrpop.lr1.trace.shift.backtraceShift
-import io.github.kotlinmania.lalrpop.message.builder.Builder
-import io.github.kotlinmania.lalrpop.message.builder.BodyCharacter
-import io.github.kotlinmania.lalrpop.message.builder.Character
 import io.github.kotlinmania.lalrpop.message.Message
+import io.github.kotlinmania.lalrpop.message.builder.Builder
 import io.github.kotlinmania.lalrpop.message.builder.MessageBuilder
 import io.github.kotlinmania.lalrpop.tls.Tls
-import io.github.kotlinmania.lalrpop.lr1.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.Nil
 
 internal fun reportError(
     grammar: Grammar,
@@ -59,12 +55,13 @@ internal class ErrorReportingCx private constructor(
             grammar: Grammar,
             states: List<State<TokenSet>>,
             conflicts: List<Conflict<TokenSet>>,
-        ): ErrorReportingCx = ErrorReportingCx(
-            grammar = grammar,
-            firstSets = FirstSets.new(grammar),
-            states = states,
-            conflicts = conflicts,
-        )
+        ): ErrorReportingCx =
+            ErrorReportingCx(
+                grammar = grammar,
+                firstSets = FirstSets.new(grammar),
+                states = states,
+                conflicts = conflicts,
+            )
     }
 
     fun reportErrors(reporter: (Message) -> Unit) {
@@ -98,42 +95,56 @@ internal class ErrorReportingCx private constructor(
     fun reportError(
         conflict: Conflict<Token>,
         conflictClass: ConflictClassification,
-    ): Message = when (conflictClass) {
-        is ConflictClassification.Ambiguity ->
-            this.reportErrorAmbiguity(conflict, conflictClass.action, conflictClass.reduce)
-        is ConflictClassification.Precedence ->
-            this.reportErrorPrecedence(
-                conflict,
-                conflictClass.shift,
-                conflictClass.reduce,
-                conflictClass.nonterminal,
-            )
-        is ConflictClassification.SuggestInline ->
-            this.reportErrorSuggestInline(
-                conflict,
-                conflictClass.shift,
-                conflictClass.reduce,
-                conflictClass.nonterminal,
-            )
-        is ConflictClassification.SuggestQuestion ->
-            this.reportErrorSuggestQuestion(
-                conflict,
-                conflictClass.shift,
-                conflictClass.reduce,
-                conflictClass.nonterminal,
-                conflictClass.symbol,
-            )
-        is ConflictClassification.AmbiguousReduction ->
-            this.reportErrorAmbiguousReduction(
-                conflictClass.reduce,
-                conflictClass.span1,
-                conflictClass.span2,
-            )
-        is ConflictClassification.InsufficientLookahead ->
-            this.reportErrorInsufficientLookahead(conflict, conflictClass.action, conflictClass.reduce)
-        is ConflictClassification.Naive ->
-            this.reportErrorNaive(conflict)
-    }
+    ): Message =
+        when (conflictClass) {
+            is ConflictClassification.Ambiguity -> {
+                this.reportErrorAmbiguity(conflict, conflictClass.action, conflictClass.reduce)
+            }
+
+            is ConflictClassification.Precedence -> {
+                this.reportErrorPrecedence(
+                    conflict,
+                    conflictClass.shift,
+                    conflictClass.reduce,
+                    conflictClass.nonterminal,
+                )
+            }
+
+            is ConflictClassification.SuggestInline -> {
+                this.reportErrorSuggestInline(
+                    conflict,
+                    conflictClass.shift,
+                    conflictClass.reduce,
+                    conflictClass.nonterminal,
+                )
+            }
+
+            is ConflictClassification.SuggestQuestion -> {
+                this.reportErrorSuggestQuestion(
+                    conflict,
+                    conflictClass.shift,
+                    conflictClass.reduce,
+                    conflictClass.nonterminal,
+                    conflictClass.symbol,
+                )
+            }
+
+            is ConflictClassification.AmbiguousReduction -> {
+                this.reportErrorAmbiguousReduction(
+                    conflictClass.reduce,
+                    conflictClass.span1,
+                    conflictClass.span2,
+                )
+            }
+
+            is ConflictClassification.InsufficientLookahead -> {
+                this.reportErrorInsufficientLookahead(conflict, conflictClass.action, conflictClass.reduce)
+            }
+
+            is ConflictClassification.Naive -> {
+                this.reportErrorNaive(conflict)
+            }
+        }
 
     fun reportErrorAmbiguityCore(
         conflict: Conflict<Token>,
@@ -141,7 +152,8 @@ internal class ErrorReportingCx private constructor(
         reduce: Example,
     ): Builder<MessageBuilder> {
         val styles = ExampleStyles.ambig()
-        return MessageBuilder.new(conflict.production.span)
+        return MessageBuilder
+            .new(conflict.production.span)
             .heading()
             .text("Ambiguous grammar detected")
             .end()
@@ -165,13 +177,13 @@ internal class ErrorReportingCx private constructor(
         shift: Example,
         reduce: Example,
     ): Message =
-        this.reportErrorAmbiguityCore(conflict, shift, reduce)
+        this
+            .reportErrorAmbiguityCore(conflict, shift, reduce)
             .wrapText(
                 "LALRPOP does not yet support ambiguous grammars. " +
                     "See the LALRPOP manual for advice on " +
                     "making your grammar unambiguous.",
-            )
-            .end()
+            ).end()
             .end()
 
     fun reportErrorPrecedence(
@@ -180,7 +192,8 @@ internal class ErrorReportingCx private constructor(
         reduce: Example,
         nonterminal: NonterminalString,
     ): Message =
-        this.reportErrorAmbiguityCore(conflict, shift, reduce)
+        this
+            .reportErrorAmbiguityCore(conflict, shift, reduce)
             .beginWrap()
             .text("Hint:")
             .styled(Tls.session().hintText)
@@ -199,50 +212,65 @@ internal class ErrorReportingCx private constructor(
         reduce: Example,
     ): Builder<MessageBuilder> {
         val styles = ExampleStyles.new()
-        val base = MessageBuilder.new(conflict.production.span)
-            .heading()
-            .text("Local ambiguity detected")
-            .end()
-            .body()
+        val base =
+            MessageBuilder
+                .new(conflict.production.span)
+                .heading()
+                .text("Local ambiguity detected")
+                .end()
+                .body()
 
-        val afterSymbols = base
-            .beginLines()
-            .beginWrap()
-            .text("The problem arises after having observed the following symbols")
-            .text("in the input:")
-            .end()
-            .push(
-                if (action.cursor >= reduce.cursor) {
-                    action.toSymbolList(action.cursor, styles)
-                } else {
-                    reduce.toSymbolList(reduce.cursor, styles)
-                },
-            )
-            .beginWrap()
+        val afterSymbols =
+            base
+                .beginLines()
+                .beginWrap()
+                .text("The problem arises after having observed the following symbols")
+                .text("in the input:")
+                .end()
+                .push(
+                    if (action.cursor >= reduce.cursor) {
+                        action.toSymbolList(action.cursor, styles)
+                    } else {
+                        reduce.toSymbolList(reduce.cursor, styles)
+                    },
+                ).beginWrap()
 
-        val afterLookahead = when (val look = conflict.lookahead) {
-            is Token.Terminal -> afterSymbols
-                .text("At that point, if the next token is a")
-                .push(look.terminalString.toContent())
-                .verbatimed()
-                .styled(Tls.session().cursorSymbol)
-                .punctuated(",")
-            Token.Error -> afterSymbols.text("If an error has been found,")
-            Token.Eof -> afterSymbols.text("If the end of the input is reached,")
-        }
+        val afterLookahead =
+            when (val look = conflict.lookahead) {
+                is Token.Terminal -> {
+                    afterSymbols
+                        .text("At that point, if the next token is a")
+                        .push(look.terminalString.toContent())
+                        .verbatimed()
+                        .styled(Tls.session().cursorSymbol)
+                        .punctuated(",")
+                }
 
-        val afterSplit = afterLookahead
-            .text("then the parser can proceed in two different ways.")
-            .end()
-            .end()
+                Token.Error -> {
+                    afterSymbols.text("If an error has been found,")
+                }
+
+                Token.Eof -> {
+                    afterSymbols.text("If the end of the input is reached,")
+                }
+            }
+
+        val afterSplit =
+            afterLookahead
+                .text("then the parser can proceed in two different ways.")
+                .end()
+                .end()
 
         val withReduce = this.describeReduce(afterSplit, styles, conflict.production, reduce, "First")
 
         return when (val action0 = conflict.action) {
-            is Action.Shift ->
+            is Action.Shift -> {
                 this.describeShift(withReduce, styles, action0.terminal, action, "Alternatively")
-            is Action.Reduce ->
+            }
+
+            is Action.Reduce -> {
                 this.describeReduce(withReduce, styles, action0.production, action, "Alternatively")
+            }
         }
     }
 
@@ -357,8 +385,7 @@ internal class ErrorReportingCx private constructor(
             .text(
                 "(or, alternatively, by adding the attribute `#[inline]` " +
                     "to the definition of",
-            )
-            .push(nonterminal.toContent())
+            ).push(nonterminal.toContent())
             .punctuated(").")
             .text("For more information, see the section on inlining")
             .text("in the LALRPOP manual.")
@@ -381,20 +408,19 @@ internal class ErrorReportingCx private constructor(
         val span1Line = fileText.lineCol(span1.start).first + 1
         val span2Line = fileText.lineCol(span2.start).first + 1
 
-        return MessageBuilder.new(span1)
+        return MessageBuilder
+            .new(span1)
             .heading()
             .text("Multiple productions for the same reduction")
             .end()
             .body()
             .beginLines()
             .wrapText(
-                "The following symbols can be reduced into a ${reduce.reductions.first().nonterminal} in two ways"
-            )
-            .push(reduce.toSymbolList(reduce.symbols.size, styles))
+                "The following symbols can be reduced into a ${reduce.reductions.first().nonterminal} in two ways",
+            ).push(reduce.toSymbolList(reduce.symbols.size, styles))
             .wrapText(
-                "They could be reduced using the production on line $span1Line:"
-            )
-            .wrapText(span1Str)
+                "They could be reduced using the production on line $span1Line:",
+            ).wrapText(span1Str)
             .wrapText("...or using the production on line $span2Line:")
             .wrapText(span2Str)
             .end()
@@ -430,8 +456,7 @@ internal class ErrorReportingCx private constructor(
             .wrapText(
                 "See the LALRPOP manual for advice on " +
                     "making your grammar LR(1).",
-            )
-            .end()
+            ).end()
             .end()
     }
 
@@ -440,48 +465,59 @@ internal class ErrorReportingCx private constructor(
      * never actually executes.
      */
     fun reportErrorNaive(conflict: Conflict<Token>): Message {
-        var builder: Builder<Builder<MessageBuilder>> = MessageBuilder.new(conflict.production.span)
-            .heading()
-            .text("Conflict detected")
-            .end()
-            .body()
-            .beginLines()
-            .wrapText("when in this state:")
-            .indented()
+        var builder: Builder<Builder<MessageBuilder>> =
+            MessageBuilder
+                .new(conflict.production.span)
+                .heading()
+                .text("Conflict detected")
+                .end()
+                .body()
+                .beginLines()
+                .wrapText("when in this state:")
+                .indented()
         for (item in this.states[conflict.state.value].items.vec) {
             builder = builder.text("$item")
         }
-        var afterWrap: Builder<Builder<MessageBuilder>> = builder
-            .end()
-            .beginWrap()
-            .text("and looking at a token `${conflict.lookahead}`")
-            .text("we can reduce to a")
-            .push(conflict.production.nonterminal.toContent())
-            .verbatimed()
-        afterWrap = when (val action = conflict.action) {
-            is Action.Shift -> afterWrap.text("but we can also shift")
-            is Action.Reduce -> afterWrap
-                .text("but we can also reduce to a")
-                .text(action.production.nonterminal)
+        var afterWrap: Builder<Builder<MessageBuilder>> =
+            builder
+                .end()
+                .beginWrap()
+                .text("and looking at a token `${conflict.lookahead}`")
+                .text("we can reduce to a")
+                .push(conflict.production.nonterminal.toContent())
                 .verbatimed()
-        }
+        afterWrap =
+            when (val action = conflict.action) {
+                is Action.Shift -> {
+                    afterWrap.text("but we can also shift")
+                }
+
+                is Action.Reduce -> {
+                    afterWrap
+                        .text("but we can also reduce to a")
+                        .text(action.production.nonterminal)
+                        .verbatimed()
+                }
+            }
         return afterWrap.end().end().end()
     }
 
     fun classify(conflict: Conflict<Token>): ConflictClassification {
         // Find examples from the conflicting action (either a shift
         // or a reduce).
-        val actionExamples: MutableList<Example> = when (val action = conflict.action) {
-            is Action.Shift -> this.shiftExamples(conflict)
-            is Action.Reduce -> this.reduceExamples(conflict.state, action.production, conflict.lookahead)
-        }
+        val actionExamples: MutableList<Example> =
+            when (val action = conflict.action) {
+                is Action.Shift -> this.shiftExamples(conflict)
+                is Action.Reduce -> this.reduceExamples(conflict.state, action.production, conflict.lookahead)
+            }
 
         // Find examples from the conflicting reduce.
-        val reduceExamples: MutableList<Example> = this.reduceExamples(
-            conflict.state,
-            conflict.production,
-            conflict.lookahead,
-        )
+        val reduceExamples: MutableList<Example> =
+            this.reduceExamples(
+                conflict.state,
+                conflict.production,
+                conflict.lookahead,
+            )
 
         // Prefer shorter examples to longer ones.
         actionExamples.sortBy { it.symbols.size }
@@ -505,7 +541,9 @@ internal class ErrorReportingCx private constructor(
         // Give up. Just grab an example from each and pair them up.
         // If there are not even two examples, something pretty
         // bogus, but we will just call it naive.
-        return actionExamples.asSequence().zip(reduceExamples.asSequence())
+        return actionExamples
+            .asSequence()
+            .zip(reduceExamples.asSequence())
             .firstOrNull()
             ?.let { (action, reduce) ->
                 ConflictClassification.InsufficientLookahead(action = action, reduce = reduce)
@@ -518,7 +556,8 @@ internal class ErrorReportingCx private constructor(
         actionExamples: List<Example>,
         reduceExamples: List<Example>,
     ): ConflictClassification? =
-        actionExamples.asSequence()
+        actionExamples
+            .asSequence()
             .flatMap { a -> reduceExamples.asSequence().map { r -> Pair(a, r) } }
             .filter { (action, reduce) -> action.symbols == reduce.symbols }
             .filter { (action, reduce) -> action.cursor == reduce.cursor }
@@ -556,8 +595,7 @@ internal class ErrorReportingCx private constructor(
                     action = action,
                     reduce = reduce,
                 )
-            }
-            .firstOrNull()
+            }.firstOrNull()
 
     fun tryClassifyQuestion(
         conflict: Conflict<Token>,
@@ -623,7 +661,8 @@ internal class ErrorReportingCx private constructor(
         // would help; but maybe we want to restrict it to cases
         // where inlining would help *all* the examples...?
 
-        return actionExamples.asSequence()
+        return actionExamples
+            .asSequence()
             .flatMap { a -> reduceExamples.asSequence().map { r -> Pair(a, r) } }
             .mapNotNull { (shift, reduce) ->
                 if (this.tryClassifyInlineExample(shift, reduce)) {
@@ -636,8 +675,7 @@ internal class ErrorReportingCx private constructor(
                 } else {
                     null
                 }
-            }
-            .firstOrNull()
+            }.firstOrNull()
     }
 
     fun tryClassifyInlineExample(shift: Example, reduce: Example): Boolean {
@@ -706,7 +744,9 @@ internal class ErrorReportingCx private constructor(
 
         // Compare the two suffixes to see whether they
         // diverge at some point.
-        return shiftUpcoming.asSequence().zip(reduceUpcoming.asSequence())
+        return shiftUpcoming
+            .asSequence()
+            .zip(reduceUpcoming.asSequence())
             .mapNotNull { (shiftSym, reduceSym) ->
                 if (shiftSym is ExampleSymbol.SymbolValue && reduceSym is ExampleSymbol.SymbolValue) {
                     if (shiftSym.symbol == reduceSym.symbol) {
@@ -729,8 +769,7 @@ internal class ErrorReportingCx private constructor(
                     // top level
                     false
                 }
-            }
-            .firstOrNull()
+            }.firstOrNull()
             ?: false
     }
 
@@ -758,11 +797,12 @@ internal class ErrorReportingCx private constructor(
         lookahead: Token,
     ): MutableList<Example> {
         Tls.session().log.log(Level.Verbose) { "Gathering reduce examples" }
-        val item = Item(
-            production = production,
-            index = production.symbols.size,
-            lookahead = TokenSet.from(lookahead),
-        )
+        val item =
+            Item(
+                production = production,
+                index = production.symbols.size,
+                lookahead = TokenSet.from(lookahead),
+            )
         val tracer = Tracer.new(this.firstSets, this.states)
         val reduceTrace = tracer.backtraceReduce(state, item.toLr0())
         val iter = reduceTrace.lr1Examples(this.firstSets, item)
@@ -796,7 +836,10 @@ internal sealed class ConflictClassification {
      * precisely the same set of symbols which can be reduced in two
      * distinct ways.
      */
-    data class Ambiguity(val action: Example, val reduce: Example) : ConflictClassification()
+    data class Ambiguity(
+        val action: Example,
+        val reduce: Example,
+    ) : ConflictClassification()
 
     /**
      * The grammar is ambiguous, and moreover it looks like a
@@ -846,12 +889,14 @@ internal sealed class ConflictClassification {
     ) : ConflictClassification()
 
     /** Can't say much beyond that a conflict occurred. */
-    data class InsufficientLookahead(val action: Example, val reduce: Example) : ConflictClassification()
+    data class InsufficientLookahead(
+        val action: Example,
+        val reduce: Example,
+    ) : ConflictClassification()
 
     /** Really cannot say *ANYTHING*. */
     object Naive : ConflictClassification()
 }
-
 
 internal fun tokenConflicts(
     conflicts: List<Conflict<TokenSet>>,
@@ -865,7 +910,7 @@ internal fun tokenConflicts(
                     lookahead = token,
                     production = conflict.production,
                     action = conflict.action,
-                )
+                ),
             )
         }
         out

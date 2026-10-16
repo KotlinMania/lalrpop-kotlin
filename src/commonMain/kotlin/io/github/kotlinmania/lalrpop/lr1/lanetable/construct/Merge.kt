@@ -45,15 +45,16 @@ internal class Merge internal constructor(
             states: MutableList<State<TokenSet>>,
             stateSets: Map<StateIndex, StateSet>,
             inconsistentState: StateIndex,
-        ): Merge = Merge(
-            table = table,
-            states = states,
-            visited = set(),
-            originalIndices = map(),
-            clones = Multimap(collectionFactory = { VecCollection() }),
-            targetStates = mutableListOf(inconsistentState),
-            contextSets = ContextSets(unify = unify, stateSets = stateSets),
-        )
+        ): Merge =
+            Merge(
+                table = table,
+                states = states,
+                visited = set(),
+                originalIndices = map(),
+                clones = Multimap(collectionFactory = { VecCollection() }),
+                targetStates = mutableListOf(inconsistentState),
+                contextSets = ContextSets(unify = unify, stateSets = stateSets),
+            )
     }
 
     fun start(beachheadState: StateIndex) {
@@ -91,11 +92,16 @@ internal class Merge internal constructor(
                 walk(successor)
             } else {
                 // search for an existing clone with which we can merge
-                val existingClones = this.clones.get(successor)?.asList().orEmpty()
+                val existingClones =
+                    this.clones
+                        .get(successor)
+                        ?.asList()
+                        .orEmpty()
                 val contextSetsRef = this.contextSets
-                val existingClone = existingClones.firstOrNull { successor1 ->
-                    contextSetsRef.union(state, successor1)
-                }
+                val existingClone =
+                    existingClones.firstOrNull { successor1 ->
+                        contextSetsRef.union(state, successor1)
+                    }
 
                 if (existingClone != null) {
                     patchLinks(state, successor, existingClone)
@@ -118,13 +124,14 @@ internal class Merge internal constructor(
         // create a new state with same contents as the old one
         val newIndex = StateIndex(this.states.size)
         val oldState = this.states[state.value]
-        val newState = oldState.copy(
-            index = newIndex,
-            items = oldState.items.copy(vec = oldState.items.vec.toMutableList()),
-            shifts = map<TerminalString, StateIndex>().also { it.putAll(oldState.shifts) },
-            reductions = oldState.reductions.toMutableList(),
-            gotos = map<NonterminalString, StateIndex>().also { it.putAll(oldState.gotos) },
-        )
+        val newState =
+            oldState.copy(
+                index = newIndex,
+                items = oldState.items.copy(vec = oldState.items.vec.toMutableList()),
+                shifts = map<TerminalString, StateIndex>().also { it.putAll(oldState.shifts) },
+                reductions = oldState.reductions.toMutableList(),
+                gotos = map<NonterminalString, StateIndex>().also { it.putAll(oldState.gotos) },
+            )
         this.states.add(newState)
 
         // track the original index and clones

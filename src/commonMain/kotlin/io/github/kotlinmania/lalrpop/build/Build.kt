@@ -13,7 +13,7 @@ import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.normalize.normalize
 import io.github.kotlinmania.lalrpop.parser.LrParseErrorException
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
-import io.github.kotlinmania.lalrpop.runtime.ParseError
+import io.github.kotlinmania.lalrpoputil.ParseError
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.lalrpop.tok.ErrorCode
 import io.github.kotlinmania.lalrpop.tok.Tok

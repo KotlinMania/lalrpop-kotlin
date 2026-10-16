@@ -30,17 +30,18 @@ private fun nt(name: String): NonterminalString = NonterminalString(Atom.from(na
 private fun syms(vararg names: String): MutableList<Symbol> =
     names.map { Symbol.Nonterminal(nt(it)) as Symbol }.toMutableList()
 
-private fun production(name: String, vararg sym: String): Production = Production(
-    nonterminal = nt(name),
-    symbols = syms(*sym),
-    action = ActionFn.new(0),
-    span = Span(0, 0),
-)
+private fun production(name: String, vararg sym: String): Production =
+    Production(
+        nonterminal = nt(name),
+        symbols = syms(*sym),
+        action = ActionFn.new(0),
+        span = Span(0, 0),
+    )
 
 class TraceGraphTest {
     @Test
     fun enumerator() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             // Build this graph:
             //
             //     X = X0 (*) X1
@@ -57,11 +58,12 @@ class TraceGraphTest {
             //    [Y0 X0 (*) X1 Y1]
             //    [Z0 X0 (*) X1 Z1]
 
-            val productions = listOf(
-                production("X", "X0", "X1"),
-                production("Y", "Y0", "X", "Y1"),
-                production("Z", "Z0", "X", "Z1"),
-            )
+            val productions =
+                listOf(
+                    production("X", "X0", "X1"),
+                    production("Y", "Y0", "X", "Y1"),
+                    production("Z", "Z0", "X", "Z1"),
+                )
 
             val graph = TraceGraph.new()
 
@@ -98,7 +100,7 @@ class TraceGraphTest {
 
     @Test
     fun enumerator1() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             // Build this graph:
             //
             //     W = W0 W1 (*)
@@ -118,12 +120,13 @@ class TraceGraphTest {
             //    [Y0 X0 (*) X1 Y1]
             //    [Z0 X0 (*) X1 Z1]
 
-            val productions = listOf(
-                production("W", "W0", "W1"),
-                production("X", "X0", "W", "X1"), // where X1 may be empty
-                production("Y", "Y0", "X", "Y1"),
-                production("Z", "Z0", "X", "Z1"),
-            )
+            val productions =
+                listOf(
+                    production("W", "W0", "W1"),
+                    production("X", "X0", "W", "X1"), // where X1 may be empty
+                    production("Y", "Y0", "X", "Y1"),
+                    production("Z", "Z0", "X", "Z1"),
+                )
 
             val graph = TraceGraph.new()
 

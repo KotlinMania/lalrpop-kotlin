@@ -2,19 +2,24 @@
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.collections.Collection
-import io.github.kotlinmania.lalrpop.grammar.repr.TerminalSet
-import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
+import io.github.kotlinmania.lalrpop.grammar.repr.TerminalSet
 
-internal interface Lookahead<Self : Lookahead<Self>> : Collection<Self>, Comparable<Self> {
+internal interface Lookahead<Self : Lookahead<Self>> :
+    Collection<Self>,
+    Comparable<Self> {
     fun fmtAsItemSuffix(): String
 
     fun conflicts(thisState: State<Self>): MutableList<Conflict<Self>>
 }
 
-internal class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil> {
+internal class Nil :
+    Lookahead<Nil>,
+    LookaheadBuild<Nil>,
+    LookaheadInterpret<Nil> {
     override fun push(item: Nil): Boolean = false
 
     override fun fmtAsItemSuffix(): String = ""
@@ -30,8 +35,11 @@ internal class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil
         state.reductions.firstOrNull()?.second
 
     override fun equals(other: Any?): Boolean = other is Nil
+
     override fun hashCode(): Int = 0
+
     override fun toString(): String = "Nil"
+
     override fun compareTo(other: Nil): Int = 0
 
     override fun conflicts(thisState: State<Nil>): MutableList<Conflict<Nil>> {
@@ -47,7 +55,7 @@ internal class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil
                         lookahead = Nil(),
                         production = production,
                         action = Action.Shift(terminal, nextState),
-                    )
+                    ),
                 )
             }
         }
@@ -62,7 +70,7 @@ internal class Nil : Lookahead<Nil>, LookaheadBuild<Nil>, LookaheadInterpret<Nil
                         lookahead = Nil(),
                         production = production,
                         action = Action.Reduce(otherProduction),
-                    )
+                    ),
                 )
             }
         }
@@ -87,14 +95,17 @@ internal sealed class Token : Comparable<Token> {
         override fun toString(): String = "Error"
     }
 
-    data class Terminal(val terminalString: TerminalString) : Token() {
+    data class Terminal(
+        val terminalString: TerminalString,
+    ) : Token() {
         override fun toString(): String = "$terminalString"
     }
 
-    fun unwrapTerminal(): TerminalString = when (this) {
-        is Terminal -> terminalString
-        Eof, Error -> error("`unwrapTerminal()` invoked but with EOF or Error")
-    }
+    fun unwrapTerminal(): TerminalString =
+        when (this) {
+            is Terminal -> terminalString
+            Eof, Error -> error("`unwrapTerminal()` invoked but with EOF or Error")
+        }
 
     override fun compareTo(other: Token): Int {
         val ao = ordinal()
@@ -106,11 +117,12 @@ internal sealed class Token : Comparable<Token> {
         }
     }
 
-    private fun ordinal(): Int = when (this) {
-        Eof -> 0
-        Error -> 1
-        is Terminal -> 2
-    }
+    private fun ordinal(): Int =
+        when (this) {
+            Eof -> 0
+            Error -> 1
+            is Terminal -> 2
+        }
 
     companion object {
         @Deprecated("use `Eof` instead", ReplaceWith("Token.Eof"))
@@ -118,7 +130,10 @@ internal sealed class Token : Comparable<Token> {
     }
 }
 
-internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, LookaheadInterpret<TokenSet> {
+internal class TokenSet :
+    Lookahead<TokenSet>,
+    LookaheadBuild<TokenSet>,
+    LookaheadInterpret<TokenSet> {
     internal val bitSet: MutableSet<Int> = mutableSetOf()
 
     override fun fmtAsItemSuffix(): String = " $this"
@@ -174,9 +189,10 @@ internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, Looka
 
         for ((terminal, nextState) in thisState.shifts) {
             val token: Token = Token.Terminal(terminal)
-            val inconsistent = thisState.reductions.mapNotNull { (reduceTokens, production) ->
-                if (reduceTokens.contains(token)) production else null
-            }
+            val inconsistent =
+                thisState.reductions.mapNotNull { (reduceTokens, production) ->
+                    if (reduceTokens.contains(token)) production else null
+                }
             val set = TokenSet.from(token)
             for (production in inconsistent) {
                 conflicts.add(
@@ -185,7 +201,7 @@ internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, Looka
                         lookahead = set.clone(),
                         production = production,
                         action = Action.Shift(terminal, nextState),
-                    )
+                    ),
                 )
             }
         }
@@ -206,7 +222,7 @@ internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, Looka
                         lookahead = iTokens.intersection(jTokens),
                         production = iProduction,
                         action = Action.Reduce(jProduction),
-                    )
+                    ),
                 )
             }
         }
@@ -218,11 +234,12 @@ internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, Looka
 
     private fun bit(lookahead: Token): Int = with { t -> bitWith(lookahead, t) }
 
-    private fun bitWith(lookahead: Token, terminals: TerminalSet): Int = when (lookahead) {
-        Token.Eof -> terminals.all.size
-        Token.Error -> terminals.all.size + 1
-        is Token.Terminal -> terminals.bits[lookahead.terminalString]!!
-    }
+    private fun bitWith(lookahead: Token, terminals: TerminalSet): Int =
+        when (lookahead) {
+            Token.Eof -> terminals.all.size
+            Token.Error -> terminals.all.size + 1
+            is Token.Terminal -> terminals.bits[lookahead.terminalString]!!
+        }
 
     fun reserve(len: Int) {
         // bitSet.reserveLen(len) — MutableSet has no reserve; no-op
@@ -298,6 +315,7 @@ internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, Looka
     override fun toString(): String = buildString { fmt(this) }
 
     override fun equals(other: Any?): Boolean = other is TokenSet && other.bitSet == this.bitSet
+
     override fun hashCode(): Int = bitSet.hashCode()
 
     override fun compareTo(other: TokenSet): Int {
@@ -312,10 +330,13 @@ internal class TokenSet() : Lookahead<TokenSet>, LookaheadBuild<TokenSet>, Looka
     }
 }
 
-internal class TokenSetIter(private val bitSet: Iterator<Int>) : Iterator<Token> {
+internal class TokenSetIter(
+    private val bitSet: Iterator<Int>,
+) : Iterator<Token> {
     override fun hasNext(): Boolean = bitSet.hasNext()
 
     override fun next(): Token {
+        if (!hasNext()) throw NoSuchElementException()
         val bit = bitSet.next()
         return with { terminals ->
             when {

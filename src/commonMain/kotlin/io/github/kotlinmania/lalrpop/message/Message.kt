@@ -3,11 +3,8 @@ package io.github.kotlinmania.lalrpop.message
 
 import io.github.kotlinmania.lalrpop.Style
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
-import io.github.kotlinmania.lalrpop.tls.Tls
-import io.github.kotlinmania.lalrpop.message.horiz.Horiz
 import io.github.kotlinmania.lalrpop.message.message.Content
-import io.github.kotlinmania.lalrpop.message.text.Text
-import io.github.kotlinmania.lalrpop.message.vert.Vert
+import io.github.kotlinmania.lalrpop.tls.Tls
 
 /**
  * The top-level message display like this:
@@ -60,8 +57,9 @@ internal class Message private constructor(
         val count = span.length
         view.writeChars(0, count, ":".iterator(), Style.new())
 
-        val (row, _) = this.heading
-            .emitAt(view.styled(session.heading), 0, count + 2)
+        val (row, _) =
+            this.heading
+                .emitAt(view.styled(session.heading), 0, count + 2)
 
         this.body.emitAt(view, row + 2, 2)
     }
@@ -71,9 +69,13 @@ internal class Message private constructor(
     }
 
     fun fmt(fmt: StringBuilder) {
-        fmt.append("Message { span: ").append(span)
-            .append(", heading: ").append(heading.toString())
-            .append(", body: ").append(body.toString())
+        fmt
+            .append("Message { span: ")
+            .append(span)
+            .append(", heading: ")
+            .append(heading.toString())
+            .append(", body: ")
+            .append(body.toString())
             .append(" }")
     }
 

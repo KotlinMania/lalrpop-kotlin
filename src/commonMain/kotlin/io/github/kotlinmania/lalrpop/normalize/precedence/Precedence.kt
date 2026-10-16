@@ -64,31 +64,34 @@ internal enum class Assoc {
     Left,
     Right,
     NonAssoc,
-    FullyAssoc;
+    FullyAssoc,
+    ;
 
     companion object {
         val default: Assoc = FullyAssoc
 
-        fun parse(s: String): Assoc? = when (s) {
-            "left" -> Left
-            "right" -> Right
-            "none" -> NonAssoc
-            "all" -> FullyAssoc
-            else -> null
-        }
+        fun parse(s: String): Assoc? =
+            when (s) {
+                "left" -> Left
+                "right" -> Right
+                "none" -> NonAssoc
+                "all" -> FullyAssoc
+                else -> null
+            }
 
         /**
          * Mirrors `implementation FromStr for Assoc { function fromStr(s: &str) -> Result<Assoc, ParseAssocError> }`.
          * Returns `Result.success(Assoc)` for a valid associativity
          * keyword and `Result.failure(ParseAssocError)` otherwise.
          */
-        fun fromString(s: String): Result<Assoc> = when (s) {
-            "left" -> Result.success(Left)
-            "right" -> Result.success(Right)
-            "none" -> Result.success(NonAssoc)
-            "all" -> Result.success(FullyAssoc)
-            else -> Result.failure(ParseAssocException(ParseAssocError()))
-        }
+        fun fromString(s: String): Result<Assoc> =
+            when (s) {
+                "left" -> Result.success(Left)
+                "right" -> Result.success(Right)
+                "none" -> Result.success(NonAssoc)
+                "all" -> Result.success(FullyAssoc)
+                else -> Result.failure(ParseAssocException(ParseAssocError()))
+            }
     }
 }
 
@@ -96,8 +99,9 @@ internal enum class Assoc {
  * Exception wrapper around [ParseAssocError] so it can be packaged as
  * a `Result.failure` payload.
  */
-internal class ParseAssocException(val error: ParseAssocError) :
-    RuntimeException(error.toString())
+internal class ParseAssocException(
+    val error: ParseAssocError,
+) : RuntimeException(error.toString())
 
 /** Substitution plan. */
 internal sealed class Substitution {
@@ -106,10 +110,15 @@ internal sealed class Substitution {
      * the second. Used for associativity: typically, a left associativity on level `3` perform a
      * `OneThen(Rule3, Rule2)`.
      */
-    data class OneThen(val first: SymbolKind, val then: SymbolKind) : Substitution()
+    data class OneThen(
+        val first: SymbolKind,
+        val then: SymbolKind,
+    ) : Substitution()
 
     /** Standard substitution mode. Replace every encountered occurrence with the same given symbol. */
-    data class Every(val kind: SymbolKind) : Substitution()
+    data class Every(
+        val kind: SymbolKind,
+    ) : Substitution()
 }
 
 /** Direction for substitution. */
@@ -118,7 +127,9 @@ internal enum class Direction {
     Backward,
 }
 
-internal data class ParseAssocError(private val priv: Unit = Unit) {
+internal data class ParseAssocError(
+    private val priv: Unit = Unit,
+) {
     override fun toString(): String =
         "provided value was neither `left`, `right` nor `none`"
 }
@@ -133,9 +144,13 @@ internal fun expandPrecedence(input: Grammar): Grammar {
 
     for (item in resolved.items) {
         when {
-            item is GrammarItem.Nonterminal && hasPrecAttr(item.data) ->
+            item is GrammarItem.Nonterminal && hasPrecAttr(item.data) -> {
                 result.addAll(expandNonterm(item.data))
-            else -> result.add(item)
+            }
+
+            else -> {
+                result.add(item)
+            }
         }
     }
 
@@ -184,24 +199,26 @@ private fun expandNonterm(nonterm: NonterminalData): List<GrammarItem> {
         // If there is a new precedence association, the associativity is reset to the default
         // one (that is, `FullyAssoc`), instead of using the last one encountered.
         val precIndex = alt.attributes.indexOfFirst { attr -> attr.id == Atom.from(PREC_ATTR) }
-        val (lvl, assocAfterPrec) = if (precIndex >= 0) {
-            val attr = alt.attributes.removeAt(precIndex)
-            // SAFETY: see comment above
-            val (_, value) = attr.getArgEqual()!!
-            Pair(value.toUInt(), Assoc.default)
-        } else {
-            Pair(lastLvl, lastAssoc)
-        }
+        val (lvl, assocAfterPrec) =
+            if (precIndex >= 0) {
+                val attr = alt.attributes.removeAt(precIndex)
+                // SAFETY: see comment above
+                val (_, value) = attr.getArgEqual()!!
+                Pair(value.toUInt(), Assoc.default)
+            } else {
+                Pair(lastLvl, lastAssoc)
+            }
 
         val assocIndex = alt.attributes.indexOfFirst { attr -> attr.id == Atom.from(ASSOC_ATTR) }
-        val assoc = if (assocIndex >= 0) {
-            val attr = alt.attributes.removeAt(assocIndex)
-            // SAFETY: see comment above
-            val (_, value) = attr.getArgEqual()!!
-            Assoc.parse(value)!!
-        } else {
-            assocAfterPrec
-        }
+        val assoc =
+            if (assocIndex >= 0) {
+                val attr = alt.attributes.removeAt(assocIndex)
+                // SAFETY: see comment above
+                val (_, value) = attr.getArgEqual()!!
+                Assoc.parse(value)!!
+            } else {
+                assocAfterPrec
+            }
 
         altsWithAttr.add(Triple(lvl, assoc, alt))
         lvls.add(lvl)
@@ -216,91 +233,110 @@ private fun expandNonterm(nonterm: NonterminalData): List<GrammarItem> {
     val lvlMax: UInt = sortedLvls.last()
     // Iterate on pairs (lvls[i], lvls[i+1])
     val lvlPrecOpts: List<UInt?> = listOf<UInt?>(null) + sortedLvls.dropLast(1).map<UInt, UInt?> { it }
-    val result: List<GrammarItem> = lvlPrecOpts.zip(sortedLvls).map { (lvlPrecOpt, lvl) ->
-        // The generated non terminal corresponding to the last level keeps the same name as the
-        // initial item, so that all external references to it are still valid. Other levels get
-        // the names `Name1`, `Name2`, etc. where `Name` is the name of the initial item.
-        val name = NonterminalString(
-            Atom.from(
-                if (lvl == lvlMax) {
-                    "${nonterm.name}"
-                } else {
-                    "${nonterm.name}$lvl"
-                },
-            ),
-        )
-
-        val nontermPrev: SymbolKind? = lvlPrecOpt?.let { lvlPrec ->
-            SymbolKind.Nonterminal(NonterminalString(Atom.from("${nonterm.name}$lvlPrec")))
-        }
-
-        val altsWithPrec = rest.filter { (l, _, _) -> l == lvl }
-        val newRest = rest.filter { (l, _, _) -> l != lvl }
-        rest.clear()
-        rest.addAll(newRest)
-
-        val altsWithAssoc: MutableList<Pair<Assoc, Alternative>> = altsWithPrec
-            .map { (_, a, alt) -> Pair(a, alt) }
-            .toMutableList()
-
-        val symbolKind: SymbolKind = SymbolKind.Nonterminal(name)
-        for ((currAssoc, alt) in altsWithAssoc) {
-            val errMsg = "unexpected associativity attribute on the first precedence level"
-            val (subst, dir) = when (currAssoc) {
-                Assoc.Left -> Pair(
-                    Substitution.OneThen(symbolKind, nontermPrev ?: error(errMsg)),
-                    Direction.Forward,
-                )
-                Assoc.Right -> Pair(
-                    Substitution.OneThen(symbolKind, nontermPrev ?: error(errMsg)),
-                    Direction.Backward,
-                )
-                Assoc.NonAssoc -> Pair(
-                    Substitution.Every(nontermPrev ?: error(errMsg)),
-                    Direction.Forward,
-                )
-                Assoc.FullyAssoc -> Pair(Substitution.Every(symbolKind), Direction.Forward)
-            }
-            replaceNonterm(alt, nonterm.name, subst, dir)
-        }
-
-        val alternatives: MutableList<Alternative> = altsWithAssoc
-            .map { (_, alt) -> alt }
-            .toMutableList()
-
-        // Include the previous level
-        if (nontermPrev != null) {
-            alternatives.add(
-                Alternative(
-                    // Don't really know what span should we put here
-                    span = nonterm.span,
-                    expr = ExprSymbol(
-                        symbols = mutableListOf(
-                            Symbol(
-                                kind = nontermPrev,
-                                span = nonterm.span,
-                            ),
-                        ),
+    val result: List<GrammarItem> =
+        lvlPrecOpts.zip(sortedLvls).map { (lvlPrecOpt, lvl) ->
+            // The generated non terminal corresponding to the last level keeps the same name as the
+            // initial item, so that all external references to it are still valid. Other levels get
+            // the names `Name1`, `Name2`, etc. where `Name` is the name of the initial item.
+            val name =
+                NonterminalString(
+                    Atom.from(
+                        if (lvl == lvlMax) {
+                            "${nonterm.name}"
+                        } else {
+                            "${nonterm.name}$lvl"
+                        },
                     ),
-                    condition = null,
-                    action = null,
-                    attributes = mutableListOf(),
+                )
+
+            val nontermPrev: SymbolKind? =
+                lvlPrecOpt?.let { lvlPrec ->
+                    SymbolKind.Nonterminal(NonterminalString(Atom.from("${nonterm.name}$lvlPrec")))
+                }
+
+            val altsWithPrec = rest.filter { (l, _, _) -> l == lvl }
+            val newRest = rest.filter { (l, _, _) -> l != lvl }
+            rest.clear()
+            rest.addAll(newRest)
+
+            val altsWithAssoc: MutableList<Pair<Assoc, Alternative>> =
+                altsWithPrec
+                    .map { (_, a, alt) -> Pair(a, alt) }
+                    .toMutableList()
+
+            val symbolKind: SymbolKind = SymbolKind.Nonterminal(name)
+            for ((currAssoc, alt) in altsWithAssoc) {
+                val errMsg = "unexpected associativity attribute on the first precedence level"
+                val (subst, dir) =
+                    when (currAssoc) {
+                        Assoc.Left -> {
+                            Pair(
+                                Substitution.OneThen(symbolKind, nontermPrev ?: error(errMsg)),
+                                Direction.Forward,
+                            )
+                        }
+
+                        Assoc.Right -> {
+                            Pair(
+                                Substitution.OneThen(symbolKind, nontermPrev ?: error(errMsg)),
+                                Direction.Backward,
+                            )
+                        }
+
+                        Assoc.NonAssoc -> {
+                            Pair(
+                                Substitution.Every(nontermPrev ?: error(errMsg)),
+                                Direction.Forward,
+                            )
+                        }
+
+                        Assoc.FullyAssoc -> {
+                            Pair(Substitution.Every(symbolKind), Direction.Forward)
+                        }
+                    }
+                replaceNonterm(alt, nonterm.name, subst, dir)
+            }
+
+            val alternatives: MutableList<Alternative> =
+                altsWithAssoc
+                    .map { (_, alt) -> alt }
+                    .toMutableList()
+
+            // Include the previous level
+            if (nontermPrev != null) {
+                alternatives.add(
+                    Alternative(
+                        // Don't really know what span should we put here
+                        span = nonterm.span,
+                        expr =
+                            ExprSymbol(
+                                symbols =
+                                    mutableListOf(
+                                        Symbol(
+                                            kind = nontermPrev,
+                                            span = nonterm.span,
+                                        ),
+                                    ),
+                            ),
+                        condition = null,
+                        action = null,
+                        attributes = mutableListOf(),
+                    ),
+                )
+            }
+
+            GrammarItem.Nonterminal(
+                NonterminalData(
+                    visibility = nonterm.visibility,
+                    name = name,
+                    attributes = nonterm.attributes.toMutableList(),
+                    span = nonterm.span,
+                    args = nonterm.args.toMutableList(), // macro arguments
+                    typeDecl = nonterm.typeDecl,
+                    alternatives = alternatives,
                 ),
             )
         }
-
-        GrammarItem.Nonterminal(
-            NonterminalData(
-                visibility = nonterm.visibility,
-                name = name,
-                attributes = nonterm.attributes.toMutableList(),
-                span = nonterm.span,
-                args = nonterm.args.toMutableList(), // macro arguments
-                typeDecl = nonterm.typeDecl,
-                alternatives = alternatives,
-            ),
-        )
-    }
 
     check(rest.isEmpty())
     return result
@@ -324,11 +360,16 @@ private fun replaceSymbols(
     dir: Direction,
 ): Substitution =
     when (dir) {
-        Direction.Forward -> symbols.fold(subst) { s, symbol ->
-            replaceSymbol(symbol, target, s, dir)
+        Direction.Forward -> {
+            symbols.fold(subst) { s, symbol ->
+                replaceSymbol(symbol, target, s, dir)
+            }
         }
-        Direction.Backward -> symbols.asReversed().fold(subst) { s, symbol ->
-            replaceSymbol(symbol, target, s, dir)
+
+        Direction.Backward -> {
+            symbols.asReversed().fold(subst) { s, symbol ->
+                replaceSymbol(symbol, target, s, dir)
+            }
         }
     }
 
@@ -338,25 +379,30 @@ private fun replaceSymbol(
     target: NonterminalString,
     subst: Substitution,
     dir: Direction,
-): Substitution {
-    return when (val kind = symbol.kind) {
+): Substitution =
+    when (val kind = symbol.kind) {
         is SymbolKind.AmbiguousId -> {
             error("ambiguous id `${kind.atom}` encountered after name resolution")
         }
-        is SymbolKind.Nonterminal -> if (kind.nt == target) {
-            when (subst) {
-                is Substitution.Every -> {
-                    symbol.kind = subst.kind
-                    subst
+
+        is SymbolKind.Nonterminal -> {
+            if (kind.nt == target) {
+                when (subst) {
+                    is Substitution.Every -> {
+                        symbol.kind = subst.kind
+                        subst
+                    }
+
+                    is Substitution.OneThen -> {
+                        symbol.kind = subst.first
+                        Substitution.Every(subst.then)
+                    }
                 }
-                is Substitution.OneThen -> {
-                    symbol.kind = subst.first
-                    Substitution.Every(subst.then)
-                }
+            } else {
+                subst
             }
-        } else {
-            subst
         }
+
         is SymbolKind.Macro -> {
             val m = kind.sym
             if (dir == Direction.Forward) {
@@ -365,11 +411,28 @@ private fun replaceSymbol(
                 m.args.asReversed().fold(subst) { s, sym -> replaceSymbol(sym, target, s, dir) }
             }
         }
-        is SymbolKind.Expr -> replaceSymbols(kind.expr.symbols, target, subst, dir)
-        is SymbolKind.Repeat -> replaceSymbol(kind.sym.symbol, target, subst, dir)
-        is SymbolKind.Choose -> replaceSymbol(kind.sym, target, subst, dir)
-        is SymbolKind.Name -> replaceSymbol(kind.sym, target, subst, dir)
-        is SymbolKind.TupleKind -> replaceSymbol(kind.sym, target, subst, dir)
-        is SymbolKind.Terminal, SymbolKind.Error, SymbolKind.Lookahead, SymbolKind.Lookbehind -> subst
+
+        is SymbolKind.Expr -> {
+            replaceSymbols(kind.expr.symbols, target, subst, dir)
+        }
+
+        is SymbolKind.Repeat -> {
+            replaceSymbol(kind.sym.symbol, target, subst, dir)
+        }
+
+        is SymbolKind.Choose -> {
+            replaceSymbol(kind.sym, target, subst, dir)
+        }
+
+        is SymbolKind.Name -> {
+            replaceSymbol(kind.sym, target, subst, dir)
+        }
+
+        is SymbolKind.TupleKind -> {
+            replaceSymbol(kind.sym, target, subst, dir)
+        }
+
+        is SymbolKind.Terminal, SymbolKind.Error, SymbolKind.Lookahead, SymbolKind.Lookbehind -> {
+            subst
+        }
     }
-}

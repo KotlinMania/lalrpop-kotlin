@@ -14,7 +14,6 @@ package io.github.kotlinmania.lalrpop.lr1
  */
 
 import io.github.kotlinmania.lalrpop.Atom
-import io.github.kotlinmania.lalrpop.ChaCha20Rng
 import io.github.kotlinmania.lalrpop.compare
 import io.github.kotlinmania.lalrpop.expectDebug
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
@@ -23,7 +22,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.randomParseTree
 import io.github.kotlinmania.lalrpop.tls.Tls
-import kotlin.random.Random
+import io.github.kotlinmania.rand.rngs.StdRng
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -33,18 +32,8 @@ private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
 
 private const val ITERATIONS: Int = 96
 
-/**
- * Stand-in for the upstream `ChaCha20Rng::seedFromU64(0)`. The test only
- * requires a deterministic source of `randomRange`; we import Kotlin
- * `Random` seeded with `0` for reproducibility within a single run.
- */
-private class SeededRng(seed: Long) : ChaCha20Rng {
-    private val rng: Random = Random(seed)
-    override fun randomRange(rangeEnd: Int): Int = rng.nextInt(rangeEnd)
-}
-
 private fun randomTest(grammar: Grammar, states: List<State<TokenSet>>, startSymbol: NonterminalString) {
-    val rng: ChaCha20Rng = SeededRng(0L)
+    val rng = StdRng.seedFromU64(0uL)
 
     for (i in 0 until ITERATIONS) {
         val inputTree = randomParseTree(grammar, startSymbol, rng)
@@ -70,8 +59,9 @@ private fun items(grammar: Grammar, nonterminal: String, index: Int, la: Token):
 class BuildTest {
     @Test
     fun startState() {
-        val grammar = normalizedGrammar(
-            """
+        val grammar =
+            normalizedGrammar(
+                """
 grammar;
     extern { enum Tok { "C" => .., "D" => .. } }
     A = B "C";
@@ -80,7 +70,7 @@ grammar;
         () => None
     };
 """,
-        )
+            )
         val lr1Tls = Lr1Tls.install(grammar.terminals)
         try {
             val items = items(grammar, "A", 0, Token.Eof)
@@ -99,8 +89,9 @@ grammar;
 
     @Test
     fun startState1() {
-        val grammar = normalizedGrammar(
-            """
+        val grammar =
+            normalizedGrammar(
+                """
 grammar;
 extern { enum Tok { "B1" => .., "C1" => .. } }
 A = B C;
@@ -113,7 +104,7 @@ C: Option<u32> = {
     () => None
 };
 """,
-        )
+            )
 
         val lr1Tls = Lr1Tls.install(grammar.terminals)
         try {
@@ -142,8 +133,9 @@ C: Option<u32> = {
     @Test
     fun exprGrammar1() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
     extern { enum Tok { "-" => .., "N" => .., "(" => .., ")" => .. } }
 
@@ -160,7 +152,7 @@ grammar;
         "(" E ")" => ()
     };
 """,
-            )
+                )
 
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
@@ -229,8 +221,9 @@ grammar;
             // rules would address it, but it an interesting one for
             // producing a useful error message.
 
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
         grammar;
         extern { enum Tok { "L" => .., "&" => .., } }
         E: () = {
@@ -242,7 +235,7 @@ grammar;
             "L"
         };
     """,
-            )
+                )
 
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
@@ -257,8 +250,9 @@ grammar;
     @Test
     fun lr0ExprGrammarWithExplicitEof() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 
 S: () = E "${'$'}";
@@ -273,7 +267,7 @@ T: () = {
     "(" E ")",
 };
 """,
-            )
+                )
 
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
@@ -291,8 +285,9 @@ T: () = {
     @Test
     fun lr0ExprGrammarWithImplicitEof() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 
 S: () = E;
@@ -307,7 +302,7 @@ T: () = {
     "(" E ")",
 };
 """,
-            )
+                )
 
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
@@ -326,8 +321,9 @@ T: () = {
     @Test
     fun issue144() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 
 pub ForeignItem: () = {
@@ -366,7 +362,7 @@ ty: () = {
     "ty"
 };
 """,
-            )
+                )
 
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
@@ -382,8 +378,9 @@ ty: () = {
     @Test
     fun matchGrammar() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 
 match {
@@ -394,7 +391,7 @@ match {
 
 pub Query = SELECT r"[a-z]+";
 """,
-            )
+                )
 
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {

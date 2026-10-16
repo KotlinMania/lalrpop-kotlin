@@ -6,16 +6,16 @@ import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
-import io.github.kotlinmania.lalrpop.lr1.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.Nil
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.Action
 import io.github.kotlinmania.lalrpop.lr1.Conflict
 import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.Items
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.State
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 
 /**
  * Result analogue used by the report generator: either a successful
@@ -23,8 +23,13 @@ import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
  * plus the list of conflicts we found.
  */
 internal sealed class LrResult<L : Lookahead<L>> {
-    data class Ok<L : Lookahead<L>>(val states: List<State<L>>) : LrResult<L>()
-    data class Err<L : Lookahead<L>>(val error: TableConstructionError<L>) : LrResult<L>()
+    data class Ok<L : Lookahead<L>>(
+        val states: List<State<L>>,
+    ) : LrResult<L>()
+
+    data class Err<L : Lookahead<L>>(
+        val error: TableConstructionError<L>,
+    ) : LrResult<L>()
 }
 
 internal fun <L : Lookahead<L>> generateReport(
@@ -64,6 +69,7 @@ private class ReportGenerator<W : Appendable>(
                 out.appendLine("Constructed ${lr1result.states.size} states")
                 reportStates(lr1result.states, map())
             }
+
             is LrResult.Err -> {
                 val tableConstructionError = lr1result.error
                 out.appendLine("Failure")
@@ -148,24 +154,27 @@ private class ReportGenerator<W : Appendable>(
             is Action.Shift -> {
                 val terminal = action.terminal
                 val state = action.state
-                val maxWidth = maxOf(
-                    terminal.displayLen(),
-                    conflict.production.nonterminal.len(),
-                )
+                val maxWidth =
+                    maxOf(
+                        terminal.displayLen(),
+                        conflict.production.nonterminal.len(),
+                    )
                 out.appendLine("${INDENT_STRING}shift/reduce conflict")
                 out.append("${INDENT_STRING}${INDENT_STRING}reduction ")
                 writeProduction(conflict.production, maxWidth)
                 val sterminal = terminal.toString()
                 out.appendLine(
-                    "${INDENT_STRING}${INDENT_STRING}shift     ${sterminal.padEnd(maxWidth)}    shift and goto $state"
+                    "${INDENT_STRING}${INDENT_STRING}shift     ${sterminal.padEnd(maxWidth)}    shift and goto $state",
                 )
             }
+
             is Action.Reduce -> {
                 val otherProduction = action.production
-                val maxWidth = maxOf(
-                    otherProduction.nonterminal.len(),
-                    conflict.production.nonterminal.len(),
-                )
+                val maxWidth =
+                    maxOf(
+                        otherProduction.nonterminal.len(),
+                        conflict.production.nonterminal.len(),
+                    )
                 out.appendLine("${INDENT_STRING}reduce/reduce conflict")
                 out.append("${INDENT_STRING}${INDENT_STRING}reduction ")
                 writeProduction(conflict.production, maxWidth)
@@ -274,6 +283,7 @@ private class ReportGenerator<W : Appendable>(
 
 private interface LookaheadPrinter {
     fun print(out: Appendable)
+
     fun hasAnythingToPrint(): Boolean
 }
 
@@ -285,7 +295,9 @@ private object NilLookaheadPrinter : LookaheadPrinter {
     override fun hasAnythingToPrint(): Boolean = false
 }
 
-private class TokenSetLookaheadPrinter(val ts: TokenSet) : LookaheadPrinter {
+private class TokenSetLookaheadPrinter(
+    val ts: TokenSet,
+) : LookaheadPrinter {
     override fun print(out: Appendable) {
         for (token in ts) {
             out.append(" $token")
@@ -295,11 +307,12 @@ private class TokenSetLookaheadPrinter(val ts: TokenSet) : LookaheadPrinter {
     override fun hasAnythingToPrint(): Boolean = ts.len() > 0
 }
 
-private fun <L : Lookahead<L>> L.lookaheadPrinter(): LookaheadPrinter = when (this) {
-    is Nil -> NilLookaheadPrinter
-    is TokenSet -> TokenSetLookaheadPrinter(this)
-    else -> error("unsupported Lookahead type: $this")
-}
+private fun <L : Lookahead<L>> L.lookaheadPrinter(): LookaheadPrinter =
+    when (this) {
+        is Nil -> NilLookaheadPrinter
+        is TokenSet -> TokenSetLookaheadPrinter(this)
+        else -> error("unsupported Lookahead type: $this")
+    }
 
 private fun <L : Lookahead<L>> L.printTo(out: Appendable) {
     this.lookaheadPrinter().print(out)
@@ -312,11 +325,15 @@ private interface HasDisplayLen {
     fun displayLen(): Int
 }
 
-private class TerminalDisplayLen(val t: TerminalString) : HasDisplayLen {
+private class TerminalDisplayLen(
+    val t: TerminalString,
+) : HasDisplayLen {
     override fun displayLen(): Int = t.displayLen()
 }
 
-private class NonterminalDisplayLen(val nt: NonterminalString) : HasDisplayLen {
+private class NonterminalDisplayLen(
+    val nt: NonterminalString,
+) : HasDisplayLen {
     override fun displayLen(): Int = nt.len()
 }
 

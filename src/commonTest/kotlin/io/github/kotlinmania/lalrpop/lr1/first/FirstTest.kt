@@ -34,8 +34,9 @@ private fun first1(first: FirstSets, symbols: List<Symbol>, lookahead: Token): L
 class FirstTest {
     @Test
     fun basicFirst1() {
-        val grammar = normalizedGrammar(
-            """
+        val grammar =
+            normalizedGrammar(
+                """
     grammar;
     A = B "C";
     B: Option<u32> = {
@@ -44,7 +45,7 @@ class FirstTest {
     };
     X = "E"; // intentionally unreachable
 """,
-        )
+            )
         val lr1Tls = Lr1Tls.install(grammar.terminals)
         try {
             val firstSets = FirstSets.new(grammar)
@@ -75,8 +76,9 @@ class FirstTest {
 
     @Test
     fun basicFirst0() {
-        val grammar = normalizedGrammar(
-            """
+        val grammar =
+            normalizedGrammar(
+                """
     grammar;
     A = B "C";
     B: Option<u32> = {
@@ -85,7 +87,7 @@ class FirstTest {
     };
     X = "E"; // intentionally unreachable
 """,
-        )
+            )
         val lr1Tls = Lr1Tls.install(grammar.terminals)
         try {
             val firstSets = FirstSets.new(grammar)

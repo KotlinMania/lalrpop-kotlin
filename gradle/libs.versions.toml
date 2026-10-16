@@ -5,16 +5,23 @@ serialization = "1.11.0"
 datetime = "0.8.0"
 collectionsImmutable = "0.5.2"
 btree = "0.2.2"
+itertools = "0.1.1"
+lalrpopUtil = "0.1.1"
+logos = "0.2.0"
+rand = "0.1.0"
+regex = "0.1.0"
+regexSyntax = "0.1.3"
 androidKmp = "9.4.1"
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+detekt = "2.0.0-alpha.6"
+ktlint = "14.2.0"
+ktlintEngine = "1.8.0"
 kotlinxBenchmark = "0.5.0"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-kmp = { id = "com.android.kotlin.multiplatform.library", version.ref = "androidKmp" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinxBenchmark" }
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
@@ -26,6 +33,12 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "collectionsImmutable" }
 btree-kotlin = { module = "io.github.kotlinmania:btree-kotlin", version.ref = "btree" }
+itertools-kotlin = { module = "io.github.kotlinmania:itertools-kotlin", version.ref = "itertools" }
+lalrpop-util-kotlin = { module = "io.github.kotlinmania:lalrpop-util-kotlin", version.ref = "lalrpopUtil" }
+logos-kotlin = { module = "io.github.kotlinmania:logos-kotlin", version.ref = "logos" }
+rand-kotlin = { module = "io.github.kotlinmania:rand-kotlin", version.ref = "rand" }
+regex-kotlin = { module = "io.github.kotlinmania:regex-kotlin", version.ref = "regex" }
+regex-syntax-kotlin = { module = "io.github.kotlinmania:regex-syntax-kotlin", version.ref = "regexSyntax" }
 kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinxBenchmark" }
 
 [bundles]
@@ -36,4 +49,10 @@ lalrpop-commonMain = [
   "kotlinx-datetime",
   "collections-immutable",
   "btree-kotlin",
+  "itertools-kotlin",
+  "lalrpop-util-kotlin",
+  "logos-kotlin",
+  "rand-kotlin",
+  "regex-kotlin",
+  "regex-syntax-kotlin",
 ]

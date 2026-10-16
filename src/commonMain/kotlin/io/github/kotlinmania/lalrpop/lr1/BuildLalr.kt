@@ -2,10 +2,10 @@
 /** Mega naive LALR(1) generation algorithm. */
 package io.github.kotlinmania.lalrpop.lr1
 
+import io.github.kotlinmania.lalrpop.collections.ComparableList
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.Multimap
 import io.github.kotlinmania.lalrpop.collections.SetCollection
-import io.github.kotlinmania.lalrpop.collections.ComparableList
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
@@ -47,25 +47,27 @@ internal fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<
     val lalr1States: MutableList<Lalr1State> = mutableListOf()
 
     for ((lr1Index, lr1State) in lrStates.withIndex()) {
-        val lr0Kernel: ComparableList<Item<Nil>> = ComparableList(
-            lr1State.items.vec
-                .map { it.toLr0() }
-                .dedup()
-        )
-
-        val lalr1Index = lalr1Map.getOrPut(lr0Kernel) {
-            val index = StateIndex(lalr1States.size)
-            lalr1States.add(
-                Lalr1State(
-                    index = index,
-                    items = mutableListOf(),
-                    shifts = map(),
-                    reductions = Multimap(collectionFactory = { SetCollection() }),
-                    gotos = map(),
-                )
+        val lr0Kernel: ComparableList<Item<Nil>> =
+            ComparableList(
+                lr1State.items.vec
+                    .map { it.toLr0() }
+                    .dedup(),
             )
-            index
-        }
+
+        val lalr1Index =
+            lalr1Map.getOrPut(lr0Kernel) {
+                val index = StateIndex(lalr1States.size)
+                lalr1States.add(
+                    Lalr1State(
+                        index = index,
+                        items = mutableListOf(),
+                        shifts = map(),
+                        reductions = Multimap(collectionFactory = { SetCollection() }),
+                        gotos = map(),
+                    ),
+                )
+                index
+            }
 
         lalr1States[lalr1Index.value].items.addAll(lr1State.items.vec)
 
@@ -122,33 +124,41 @@ internal fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<
     }
 
     // Finally, create the new states and detect conflicts
-    val lr1StatesOut: MutableList<State<TokenSet>> = lalr1States.map { lr ->
-        val reductions: MutableList<Pair<TokenSet, Production>> = mutableListOf()
-        for ((p, tsColl) in lr.reductions) {
-            // Flatten: each production maps to one TokenSet (union of pushed tokens),
-            // recorded as (TokenSet, Production) pairs in the state.
-            for (ts in tsColl.asSet()) {
-                reductions.add(Pair(ts, p))
-            }
-        }
-        State(
-            index = lr.index,
-            items = Items(vec = lr.items.toMutableList()),
-            shifts = lr.shifts,
-            reductions = reductions,
-            gotos = lr.gotos,
-        )
-    }.toMutableList()
+    val lr1StatesOut: MutableList<State<TokenSet>> =
+        lalr1States
+            .map { lr ->
+                val reductions: MutableList<Pair<TokenSet, Production>> = mutableListOf()
+                for ((p, tsColl) in lr.reductions) {
+                    // Flatten: each production maps to one TokenSet (union of pushed tokens),
+                    // recorded as (TokenSet, Production) pairs in the state.
+                    for (ts in tsColl.asSet()) {
+                        reductions.add(Pair(ts, p))
+                    }
+                }
+                State(
+                    index = lr.index,
+                    items = Items(vec = lr.items.toMutableList()),
+                    shifts = lr.shifts,
+                    reductions = reductions,
+                    gotos = lr.gotos,
+                )
+            }.toMutableList()
 
-    val conflicts = lr1StatesOut.flatMap { state ->
-        state.reductions.firstOrNull()?.first?.conflicts(state) ?: mutableListOf()
-    }.toMutableList()
+    val conflicts =
+        lr1StatesOut
+            .flatMap { state ->
+                state.reductions
+                    .firstOrNull()
+                    ?.first
+                    ?.conflicts(state) ?: mutableListOf()
+            }.toMutableList()
 
     return if (conflicts.isNotEmpty()) {
-        val error = TableConstructionError(
-            states = lr1StatesOut,
-            conflicts = conflicts,
-        )
+        val error =
+            TableConstructionError(
+                states = lr1StatesOut,
+                conflicts = conflicts,
+            )
         throw TableConstructionErrorException(error, error)
     } else {
         lr1StatesOut

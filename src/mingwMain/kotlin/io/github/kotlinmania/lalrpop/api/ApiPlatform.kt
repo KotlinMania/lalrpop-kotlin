@@ -26,27 +26,29 @@ import platform.posix.fprintf
 import platform.posix.stderr
 import platform.windows.FreeEnvironmentStringsA
 import platform.windows.GetCurrentDirectoryA
-import platform.windows.GetEnvironmentVariableA
 import platform.windows.GetEnvironmentStrings
+import platform.windows.GetEnvironmentVariableA
 import platform.windows.MAX_PATH
 
 @OptIn(ExperimentalForeignApi::class)
-internal actual fun apiCurrentDir(): String = memScoped {
-    val buf = allocArray<ByteVar>(MAX_PATH + 1)
-    if (GetCurrentDirectoryA((MAX_PATH + 1).toUInt(), buf) == 0u) {
-        error("GetCurrentDirectoryA failed")
+internal actual fun apiCurrentDir(): String =
+    memScoped {
+        val buf = allocArray<ByteVar>(MAX_PATH + 1)
+        if (GetCurrentDirectoryA((MAX_PATH + 1).toUInt(), buf) == 0u) {
+            error("GetCurrentDirectoryA failed")
+        }
+        buf.toKString()
     }
-    buf.toKString()
-}
 
 @OptIn(ExperimentalForeignApi::class)
-internal actual fun apiEnvVar(name: String): String? = memScoped {
-    val needed = GetEnvironmentVariableA(name, null, 0u)
-    if (needed == 0u) return@memScoped null
-    val buf = allocArray<ByteVar>(needed.toInt())
-    val len = GetEnvironmentVariableA(name, buf, needed)
-    if (len == 0u) null else buf.toKString()
-}
+internal actual fun apiEnvVar(name: String): String? =
+    memScoped {
+        val needed = GetEnvironmentVariableA(name, null, 0u)
+        if (needed == 0u) return@memScoped null
+        val buf = allocArray<ByteVar>(needed.toInt())
+        val len = GetEnvironmentVariableA(name, buf, needed)
+        if (len == 0u) null else buf.toKString()
+    }
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiEnvVars(): Sequence<Pair<String, String>> {

@@ -100,9 +100,7 @@ class Configuration internal constructor(
      *
      * This was the default behaviour up to version 0.15.
      */
-    fun generateInSourceTree(): Configuration {
-        return setInDir(".").setOutDir(".")
-    }
+    fun generateInSourceTree(): Configuration = setInDir(".").setOutDir(".")
 
     /**
      * If true, always convert `.lalrpop` files into `.rs` files, even if the
@@ -244,7 +242,6 @@ class Configuration internal constructor(
             error(
                 "\"processXxx()\" functions contradict previously set inDir.  The inDir is set by either `setInDir()` or `useCargoDirConventions()`.  Either use `process()` instead, or omit `setInDir()`.  (Note: in previous versions of lalrpop, this combination could affect the parser output dir.  If you were relying on this behavior to output the parser in your source directory, you may want to use `setOutDir()` to retain that behavior.",
             )
-
         }
     }
 

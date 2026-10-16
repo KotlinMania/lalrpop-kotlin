@@ -56,8 +56,9 @@ class InlineTest {
         // rules would address it, but it an interesting one for
         // producing a useful error message.
 
-        val grammar = inlinedGrammar(
-            """
+        val grammar =
+            inlinedGrammar(
+                """
         grammar;
 
         E: () = {
@@ -70,7 +71,7 @@ class InlineTest {
             "L"
         };
     """,
-        )
+            )
 
         val nt = NonterminalString(Atom.from("E"))
 
@@ -90,8 +91,9 @@ class InlineTest {
 
     @Test
     fun issue55() {
-        val grammar = inlinedGrammar(
-            """
+        val grammar =
+            inlinedGrammar(
+                """
 grammar;
 
 pub E: () = {
@@ -106,7 +108,7 @@ ET: () = {
     "enum" "{" "}" => ()
 };
     """,
-        )
+            )
         val nt = NonterminalString(Atom.from("E"))
 
         // The problem in issue #55 was that we would inline both `AT*`

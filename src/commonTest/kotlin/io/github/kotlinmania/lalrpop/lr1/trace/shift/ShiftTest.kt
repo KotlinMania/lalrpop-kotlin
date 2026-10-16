@@ -16,14 +16,14 @@ package io.github.kotlinmania.lalrpop.lr1.trace.shift
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.expectDebug
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
-import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.lr1.buildStates
+import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
+import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
@@ -37,9 +37,10 @@ class ShiftTest {
         // This grammar yields a S/R conflict. Is it `(int -> int) -> int`
         // or `int -> (int -> int)`?
 
-        Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+        Tls.test().use { _ ->
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 pub Ty: () = {
     "int" => (),
@@ -47,16 +48,17 @@ pub Ty: () = {
     <t1:Ty> "->" <t2:Ty> => (),
 };
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val firstSets = FirstSets.new(grammar)
-                val err: TableConstructionError<TokenSet> = try {
-                    buildStates(grammar, nt("Ty"))
-                    error("expected build_states to fail")
-                } catch (e: TableConstructionErrorException) {
-                    e.lr1Inner ?: error("expected TokenSet table construction error")
-                }
+                val err: TableConstructionError<TokenSet> =
+                    try {
+                        buildStates(grammar, nt("Ty"))
+                        error("expected build_states to fail")
+                    } catch (e: TableConstructionErrorException) {
+                        e.lr1Inner ?: error("expected TokenSet table construction error")
+                    }
                 val conflict = err.conflicts[0]
                 println("conflict=$conflict")
 
@@ -84,7 +86,12 @@ pub Ty: () = {
 """.trim(),
                 )
 
-                val list = graph.lr0Examples(item).asSequence().map { it.paintUnstyled() }.toList()
+                val list =
+                    graph
+                        .lr0Examples(item)
+                        .asSequence()
+                        .map { it.paintUnstyled() }
+                        .toList()
                 expectDebug(
                     list,
                     """

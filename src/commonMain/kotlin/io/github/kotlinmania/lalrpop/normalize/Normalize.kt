@@ -9,19 +9,17 @@ package io.github.kotlinmania.lalrpop.normalize
 import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
-import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar as PtGrammar
-import io.github.kotlinmania.lalrpop.grammar.repr.Grammar as RGrammar
 import io.github.kotlinmania.lalrpop.normalize.condcomp.removeDisabledDecls
 import io.github.kotlinmania.lalrpop.normalize.inline.inline
 import io.github.kotlinmania.lalrpop.normalize.lower.lower
 import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros
 import io.github.kotlinmania.lalrpop.normalize.precedence.expandPrecedence
-import io.github.kotlinmania.lalrpop.normalize.prevalidate.validate as prevalidateValidate
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
-import io.github.kotlinmania.lalrpop.normalize.tokencheck.validate as tokenCheckValidate
 import io.github.kotlinmania.lalrpop.normalize.tyinfer.inferTypes
-import io.github.kotlinmania.lalrpop.lr1.Token
-
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar as PtGrammar
+import io.github.kotlinmania.lalrpop.grammar.repr.Grammar as RGrammar
+import io.github.kotlinmania.lalrpop.normalize.prevalidate.validate as prevalidateValidate
+import io.github.kotlinmania.lalrpop.normalize.tokencheck.validate as tokenCheckValidate
 
 internal typealias NormResult<T> = Result<T>
 
@@ -34,7 +32,9 @@ internal data class NormError(
 internal fun returnErr(span: Span, message: String): Nothing =
     throw NormErrorException(NormError(message, span))
 
-internal class NormErrorException(val err: NormError) : RuntimeException(err.message)
+internal class NormErrorException(
+    val err: NormError,
+) : RuntimeException(err.message)
 
 private inline fun <T> profile(session: Session, phaseName: String, action: () -> T): T {
     session.log.log(Level.Verbose) { "Phase `$phaseName` begun" }
@@ -61,16 +61,19 @@ internal fun lowerHelper(session: Session, grammar: PtGrammar, validate: Boolean
             prevalidateValidate(grammar)
         }
     }
-    val afterCondComp = profile(session, "Conditional compilation") {
-        removeDisabledDecls(session, grammar)
-    }
+    val afterCondComp =
+        profile(session, "Conditional compilation") {
+            removeDisabledDecls(session, grammar)
+        }
     val resolved = profile(session, "Grammar resolution") { resolve(afterCondComp) }
-    val precedenceExpanded = profile(session, "Precedence expansion") {
-        expandPrecedence(resolved)
-    }
-    val macroExpanded = profile(session, "Macro expansion") {
-        expandMacros(precedenceExpanded, session.macroRecursionLimit)
-    }
+    val precedenceExpanded =
+        profile(session, "Precedence expansion") {
+            expandPrecedence(resolved)
+        }
+    val macroExpanded =
+        profile(session, "Macro expansion") {
+            expandMacros(precedenceExpanded, session.macroRecursionLimit)
+        }
     val tokenChecked = profile(session, "Token check") { tokenCheckValidate(macroExpanded) }
     val types = profile(session, "Infer types") { inferTypes(tokenChecked) }
     return profile(session, "Lowering") { lower(session, tokenChecked, types) }

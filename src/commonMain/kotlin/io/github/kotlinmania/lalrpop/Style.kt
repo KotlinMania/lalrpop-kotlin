@@ -25,34 +25,59 @@ internal object TermColor {
 
 internal sealed class TermAttr {
     data object Bold : TermAttr()
+
     data object Dim : TermAttr()
-    data class Italic(val on: Boolean) : TermAttr()
-    data class Underline(val on: Boolean) : TermAttr()
+
+    data class Italic(
+        val on: Boolean,
+    ) : TermAttr()
+
+    data class Underline(
+        val on: Boolean,
+    ) : TermAttr()
+
     data object Blink : TermAttr()
-    data class Standout(val on: Boolean) : TermAttr()
+
+    data class Standout(
+        val on: Boolean,
+    ) : TermAttr()
+
     data object Reverse : TermAttr()
+
     data object Secure : TermAttr()
 }
 
 internal interface Terminal {
     fun reset(): Result<Unit>
+
     fun supportsReset(): Boolean
+
     fun supportsColor(): Boolean
+
     fun fg(color: Int): Result<Unit>
+
     fun bg(color: Int): Result<Unit>
+
     fun supportsAttr(attr: TermAttr): Boolean
+
     fun attr(attr: TermAttr): Result<Unit>
+
     fun cursorUp(): Result<Unit>
+
     fun deleteLine(): Result<Unit>
+
     fun carriageReturn(): Result<Unit>
 }
 
-internal class Style private constructor(private val bits: Long) {
+internal class Style private constructor(
+    private val bits: Long,
+) {
     fun with(otherStyle: Style): Style = Style(bits or otherStyle.bits)
 
     fun contains(otherStyle: Style): Boolean = this.with(otherStyle) == this
 
     override fun equals(other: Any?): Boolean = other is Style && other.bits == bits
+
     override fun hashCode(): Int = bits.hashCode()
 
     /**
@@ -142,6 +167,7 @@ internal class Style private constructor(private val bits: Long) {
 
         // Expansion of `declareStyles!` — one `Style` constant per bit.
         private var nextBit: Long = 0
+
         private fun bit(): Style {
             val s = Style(1L shl nextBit.toInt())
             nextBit += 1

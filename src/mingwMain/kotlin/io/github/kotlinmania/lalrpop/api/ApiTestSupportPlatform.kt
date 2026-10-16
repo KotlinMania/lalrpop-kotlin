@@ -56,10 +56,11 @@ internal actual fun apiSetEnvVar(name: String, value: String) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal actual fun apiPathExists(path: String): Boolean = memScoped {
-    val st = alloc<stat>()
-    stat(path, st.ptr) == 0
-}
+internal actual fun apiPathExists(path: String): Boolean =
+    memScoped {
+        val st = alloc<stat>()
+        stat(path, st.ptr) == 0
+    }
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiCreateDir(path: String) {
@@ -74,7 +75,10 @@ internal actual fun apiRemoveDirAll(path: String) {
         try {
             while (true) {
                 val ent = readdir(dir) ?: break
-                val name = ent.pointed.d_name.reinterpret<ByteVar>().toKString()
+                val name =
+                    ent.pointed.d_name
+                        .reinterpret<ByteVar>()
+                        .toKString()
                 if (name == "." || name == "..") continue
                 val full = if (path.endsWith('/')) path + name else "$path/$name"
                 apiRemoveDirAll(full)
@@ -94,8 +98,9 @@ internal actual fun apiRemoveFile(path: String) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun isDirectoryNative(path: String): Boolean = memScoped {
-    val st = alloc<stat>()
-    if (stat(path, st.ptr) != 0) return@memScoped false
-    (st.st_mode.toInt() and S_IFMT) == S_IFDIR
-}
+private fun isDirectoryNative(path: String): Boolean =
+    memScoped {
+        val st = alloc<stat>()
+        if (stat(path, st.ptr) != 0) return@memScoped false
+        (st.st_mode.toInt() and S_IFMT) == S_IFDIR
+    }

@@ -53,16 +53,17 @@ internal fun format(fmt: String, vararg args: Any?): String {
             val end = fmt.indexOf('}', i + 1)
             if (end > 0) {
                 val body = fmt.substring(i + 1, end)
-                val idx: Int = if (body.isEmpty()) {
-                    positional++
-                    positional - 1
-                } else {
-                    val cleaned = body.substringBefore(':').substringBefore('=')
-                    cleaned.toIntOrNull() ?: run {
+                val idx: Int =
+                    if (body.isEmpty()) {
                         positional++
                         positional - 1
+                    } else {
+                        val cleaned = body.substringBefore(':').substringBefore('=')
+                        cleaned.toIntOrNull() ?: run {
+                            positional++
+                            positional - 1
+                        }
                     }
-                }
                 out.append(args.getOrNull(idx))
                 i = end + 1
                 continue
@@ -235,7 +236,8 @@ internal class FnHeader private constructor(
      * the grammar.
      */
     fun withGrammar(grammar: Grammar): FnHeader =
-        this.withTypeParameters(grammar.typeParameters)
+        this
+            .withTypeParameters(grammar.typeParameters)
             .withWhereClauses(grammar.whereClauses)
             .withParameters(grammar.parameters)
 
@@ -327,9 +329,10 @@ internal interface ParameterDisplay {
  * the Rust `ParameterDisplay` trait implementations for `String` and
  * `&repr::Parameter`.
  */
-private fun Any.toParameterString(): String = when (this) {
-    is ParameterDisplay -> this.toParameterString()
-    is String -> this
-    is Parameter -> "${this.name}: ${this.ty}"
-    else -> this.toString()
-}
+private fun Any.toParameterString(): String =
+    when (this) {
+        is ParameterDisplay -> this.toParameterString()
+        is String -> this
+        is Parameter -> "${this.name}: ${this.ty}"
+        else -> this.toString()
+    }

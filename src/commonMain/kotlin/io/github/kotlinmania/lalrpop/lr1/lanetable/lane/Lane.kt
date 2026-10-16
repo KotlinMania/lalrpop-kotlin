@@ -10,15 +10,15 @@ import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.Nil
-import io.github.kotlinmania.lalrpop.lr1.StateGraph
-import io.github.kotlinmania.lalrpop.lr1.Token
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.Action
 import io.github.kotlinmania.lalrpop.lr1.Item
+import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.Token
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
@@ -38,13 +38,14 @@ internal class LaneTracer<L : Lookahead<L>>(
             firstSets: FirstSets,
             stateGraph: StateGraph,
             conflicts: Int,
-        ): LaneTracer<L> = LaneTracer(
-            states = states,
-            firstSets = firstSets,
-            stateGraph = stateGraph,
-            startNt = startNt,
-            table = LaneTable.new(grammar, conflicts),
-        )
+        ): LaneTracer<L> =
+            LaneTracer(
+                states = states,
+                firstSets = firstSets,
+                stateGraph = stateGraph,
+                startNt = startNt,
+                table = LaneTable.new(grammar, conflicts),
+            )
     }
 
     fun intoTable(): LaneTable = this.table
@@ -100,11 +101,12 @@ internal class LaneTracer<L : Lookahead<L>>(
             // reached by shifting T. Those predecessors will contain
             // an item like `X = ...p (*) T ...s`, which we will then
             // process in turn.
-            val unshiftedItem = Item(
-                production = item.production,
-                index = item.index - 1,
-                lookahead = item.lookahead,
-            )
+            val unshiftedItem =
+                Item(
+                    production = item.production,
+                    index = item.index - 1,
+                    lookahead = item.lookahead,
+                )
             val shiftedSymbol = item.production.symbols[unshiftedItem.index]
             val predecessors = this.stateGraph.predecessors(state, shiftedSymbol)
             for (predecessor in predecessors) {

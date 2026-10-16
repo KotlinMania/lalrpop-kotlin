@@ -18,16 +18,15 @@ import io.github.kotlinmania.lalrpop.expectDebug
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.BuildOutcome
-import io.github.kotlinmania.lalrpop.lr1.buildLr0StatesOrError
-import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.State
 import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.buildLr0StatesOrError
+import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.interpret
 import io.github.kotlinmania.lalrpop.lr1.interpretPartial
@@ -39,36 +38,28 @@ import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 private fun tokens(vararg t: String): MutableList<TerminalString> =
     t.map { TerminalString.quoted(Atom.from(it)) }.toMutableList()
 
-private fun sym(t: String): Symbol =
-    if (t[0].isUpperCase()) {
-        Symbol.Nonterminal(nt(t))
-    } else {
-        Symbol.Terminal(term(t))
-    }
-
 private fun term(t: String): TerminalString = TerminalString.quoted(Atom.from(t))
 
 private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
 
-private fun traverse(states: List<State<Nil>>, tokens: Array<out String>): StateIndex {
-    return interpretPartial(states, tokens.map { term(it) })
+private fun traverse(states: List<State<Nil>>, tokens: Array<out String>): StateIndex =
+    interpretPartial(states, tokens.map { term(it) })
         .getOrThrow()
         .last()
-}
 
 /**
  * A simplified version of the paper initial grammar; this version
  * only has one inconsistent state (the same state they talk about in
  * the paper).
  */
-internal fun paperExampleG0(): Grammar = normalizedGrammar(
-    """
+internal fun paperExampleG0(): Grammar =
+    normalizedGrammar(
+        """
 grammar;
 
 pub G: () = {
@@ -86,7 +77,7 @@ Y: () = {
     "e"
 };
 """,
-)
+    )
 
 /**
  * A (corrected) version of the sample grammar G1 from the paper. The
@@ -95,8 +86,9 @@ Y: () = {
  * smallest examples that still requires splitting states from the
  * LR0 states.
  */
-internal fun paperExampleG1(): Grammar = normalizedGrammar(
-    """
+internal fun paperExampleG1(): Grammar =
+    normalizedGrammar(
+        """
 grammar;
 
 pub G: () = {
@@ -121,11 +113,12 @@ Y: () = {
     "e"
 };
 """,
-)
+    )
 
 /** A variation on G1 to omit the possibility of shifting */
-internal fun exampleG2(): Grammar = normalizedGrammar(
-    """
+internal fun exampleG2(): Grammar =
+    normalizedGrammar(
+        """
 grammar;
 
 pub G = {
@@ -143,7 +136,7 @@ Y = {
         "e"
 };
 """,
-)
+    )
 
 private fun expectLr0Failure(
     grammar: Grammar,
@@ -174,14 +167,15 @@ private fun buildTable(
     println("conflicting_items=$conflictingItems")
     val firstSets = FirstSets.new(grammar)
     val stateGraph = StateGraph.new(lr0Err.states)
-    val tracer = LaneTracer.new(
-        grammar,
-        nt("G"),
-        lr0Err.states,
-        firstSets,
-        stateGraph,
-        conflictingItems.size,
-    )
+    val tracer =
+        LaneTracer.new(
+            grammar,
+            nt("G"),
+            lr0Err.states,
+            firstSets,
+            stateGraph,
+            conflictingItems.size,
+        )
     for ((i, conflictingItem) in conflictingItems.withIndex()) {
         tracer.startTrace(
             inconsistentState.index,
@@ -417,8 +411,9 @@ class LaneTableTest {
     }
 }
 
-internal fun paperExampleLarge(): Grammar = normalizedGrammar(
-    """
+internal fun paperExampleLarge(): Grammar =
+    normalizedGrammar(
+        """
 grammar;
 
 pub G: () = {
@@ -471,4 +466,4 @@ P: () = {
     "z"
 };
 """,
-)
+    )

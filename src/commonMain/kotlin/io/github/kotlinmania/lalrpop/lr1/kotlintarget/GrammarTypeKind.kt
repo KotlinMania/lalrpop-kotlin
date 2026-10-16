@@ -21,7 +21,6 @@ package io.github.kotlinmania.lalrpop.lr1.kotlintarget
  * derivations from the same IR.
  */
 internal sealed class GrammarTypeKind {
-
     /**
      * "May or may not have a value" — at most one instance present.
      *
@@ -34,7 +33,9 @@ internal sealed class GrammarTypeKind {
      *   Kotlin → `NullableOption<T>` (when T is itself optional — Kotlin's `T??`
      *            collapses, losing the three-state distinction; the wrapper carries it)
      */
-    data class Optional(val inner: GrammarTypeKind) : GrammarTypeKind()
+    data class Optional(
+        val inner: GrammarTypeKind,
+    ) : GrammarTypeKind()
 
     /**
      * "Accumulate zero or more values into a sequence" — the LALRPOP `*` quantifier.
@@ -45,7 +46,9 @@ internal sealed class GrammarTypeKind {
      *   Rust  → `Vec<T>`
      *   Kotlin → `MutableList<T>` (matches Vec's mutability — reductions append)
      */
-    data class ZeroOrMore(val inner: GrammarTypeKind) : GrammarTypeKind()
+    data class ZeroOrMore(
+        val inner: GrammarTypeKind,
+    ) : GrammarTypeKind()
 
     /**
      * "Bundle several pieces into one stack element" — produced by parenthesised
@@ -59,7 +62,9 @@ internal sealed class GrammarTypeKind {
      *   Kotlin (3 parts) → `Triple<T1, T2, T3>`
      *   Kotlin (≥4 parts) → generated data class (Kotlin has no built-in 4-tuple)
      */
-    data class Tuple(val parts: List<GrammarTypeKind>) : GrammarTypeKind()
+    data class Tuple(
+        val parts: List<GrammarTypeKind>,
+    ) : GrammarTypeKind()
 
     /**
      * A primitive value type — not user-defined, not collection-shaped.
@@ -70,7 +75,9 @@ internal sealed class GrammarTypeKind {
      * `USize` and `ISize` to `Int` (Kotlin's natural index type); a 64-bit-index
      * grammar would need a different mapping, which is rare.
      */
-    data class Primitive(val kind: PrimitiveKind) : GrammarTypeKind()
+    data class Primitive(
+        val kind: PrimitiveKind,
+    ) : GrammarTypeKind()
 
     /**
      * A user-defined nominal type referenced by the grammar's host language. The path
@@ -119,7 +126,9 @@ internal sealed class GrammarTypeKind {
      *
      * Pseudocode: `value: T, with a memory wrapper the GC handles for free`.
      */
-    data class Erased(val inner: GrammarTypeKind) : GrammarTypeKind()
+    data class Erased(
+        val inner: GrammarTypeKind,
+    ) : GrammarTypeKind()
 }
 
 /**
@@ -128,8 +137,19 @@ internal sealed class GrammarTypeKind {
  * via [GrammarTypeKind.UserDefined] instead.
  */
 internal enum class PrimitiveKind {
-    BOOL, CHAR, STRING,
-    I8, I16, I32, I64, ISIZE,
-    U8, U16, U32, U64, USIZE,
-    F32, F64,
+    BOOL,
+    CHAR,
+    STRING,
+    I8,
+    I16,
+    I32,
+    I64,
+    ISIZE,
+    U8,
+    U16,
+    U32,
+    U64,
+    USIZE,
+    F32,
+    F64,
 }

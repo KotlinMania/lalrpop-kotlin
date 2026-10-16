@@ -9,13 +9,23 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 
 internal sealed class AlternativeAction {
-    data class User(val code: ActionKind) : AlternativeAction()
-    data class Default(val symbols: Symbols) : AlternativeAction()
+    data class User(
+        val code: ActionKind,
+    ) : AlternativeAction()
+
+    data class Default(
+        val symbols: Symbols,
+    ) : AlternativeAction()
 }
 
 internal sealed class Symbols {
-    data class Named(val list: List<Triple<Int, ArgPattern, Symbol>>) : Symbols()
-    data class Anon(val list: List<Pair<Int, Symbol>>) : Symbols()
+    data class Named(
+        val list: List<Triple<Int, ArgPattern, Symbol>>,
+    ) : Symbols()
+
+    data class Anon(
+        val list: List<Pair<Int, Symbol>>,
+    ) : Symbols()
 }
 
 internal fun analyzeAction(alt: Alternative): AlternativeAction {
@@ -30,44 +40,50 @@ internal fun analyzeAction(alt: Alternative): AlternativeAction {
 
 internal fun analyzeExpr(expr: ExprSymbol): Symbols {
     // First look for named symbols.
-    val namedSymbols: List<Triple<Int, ArgPattern, Symbol>> = expr
-        .symbols
-        .withIndex()
-        .mapNotNull { (idx, sym) ->
-            when (val kind = sym.kind) {
-                is SymbolKind.Name -> Triple(idx, ArgPattern.NamePat(kind.name), kind.sym)
-                is SymbolKind.TupleKind -> Triple(idx, ArgPattern.TuplePat(kind.tuple), kind.sym)
-                else -> null
-            }
-        }
-        .toList()
+    val namedSymbols: List<Triple<Int, ArgPattern, Symbol>> =
+        expr
+            .symbols
+            .withIndex()
+            .mapNotNull { (idx, sym) ->
+                when (val kind = sym.kind) {
+                    is SymbolKind.Name -> Triple(idx, ArgPattern.NamePat(kind.name), kind.sym)
+                    is SymbolKind.TupleKind -> Triple(idx, ArgPattern.TuplePat(kind.tuple), kind.sym)
+                    else -> null
+                }
+            }.toList()
     if (namedSymbols.isNotEmpty()) {
         return Symbols.Named(namedSymbols)
     }
 
     // Otherwise, make a tuple of the items they chose with `<>`.
-    val chosenSymbolTypes: List<Pair<Int, Symbol>> = expr
-        .symbols
-        .withIndex()
-        .mapNotNull { (idx, sym) ->
-            when (val kind = sym.kind) {
-                is SymbolKind.Choose -> Pair(idx, kind.sym)
-                else -> null
-            }
-        }
-        .toList()
+    val chosenSymbolTypes: List<Pair<Int, Symbol>> =
+        expr
+            .symbols
+            .withIndex()
+            .mapNotNull { (idx, sym) ->
+                when (val kind = sym.kind) {
+                    is SymbolKind.Choose -> Pair(idx, kind.sym)
+                    else -> null
+                }
+            }.toList()
     if (chosenSymbolTypes.isNotEmpty()) {
         return Symbols.Anon(chosenSymbolTypes)
     }
 
     // If they did not choose anything with `<>`, make a tuple of everything.
-    return Symbols.Anon(expr.symbols.withIndex().map { (idx, sym) -> Pair(idx, sym) }.toList())
+    return Symbols.Anon(
+        expr.symbols
+            .withIndex()
+            .map { (idx, sym) -> Pair(idx, sym) }
+            .toList(),
+    )
 }
 
 internal enum class Presence {
     None,
     InCurlyBrackets,
-    Normal;
+    Normal,
+    ;
 
     fun isInCurlyBrackets(): Boolean = this == InCurlyBrackets
 }
@@ -75,11 +91,12 @@ internal enum class Presence {
 internal fun checkBetweenBraces(action: String): Presence {
     val funkyIndex = action.indexOf("<>")
     if (funkyIndex >= 0) {
-        val (before, after) = run {
-            val rawBefore = action.substring(0, funkyIndex)
-            val rawAfter = action.substring(funkyIndex + 2)
-            Pair(rawBefore.trim(), rawAfter.trim())
-        }
+        val (before, after) =
+            run {
+                val rawBefore = action.substring(0, funkyIndex)
+                val rawAfter = action.substring(funkyIndex + 2)
+                Pair(rawBefore.trim(), rawAfter.trim())
+            }
 
         // If we have an odd number of quotes on both sides, we are inside a string, and therefore,
         // this is a format arg, not a struct.  That considered "Normal" here, because this is

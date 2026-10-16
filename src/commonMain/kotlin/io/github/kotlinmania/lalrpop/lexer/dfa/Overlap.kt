@@ -56,9 +56,10 @@ private fun addRange(range: Test, startIndex: Int, disjointRanges: MutableList<T
     }
 
     // Find first overlapping range in `disjointRanges`, if any.
-    val relativeIndex = (startIndex until disjointRanges.size).firstOrNull { i ->
-        disjointRanges[i].intersects(range)
-    }
+    val relativeIndex =
+        (startIndex until disjointRanges.size).firstOrNull { i ->
+            disjointRanges[i].intersects(range)
+        }
 
     if (relativeIndex != null) {
         val index = relativeIndex
@@ -80,14 +81,15 @@ private fun addRange(range: Test, startIndex: Int, disjointRanges: MutableList<T
         // the meeting points of low-midRange and mid-maxRange.
         // So we adjust the end of the lowRange and start of maxRange as these elements are already included in the start of their corresponding next ranges.
 
-        val lowRange = if (midMin == 0u) {
-            // This is an edgecase where both ranges start at the null character
-            // In this case we do not want to create a range from 0 to -1
-            // Thus we create an empty range
-            Test.new(1u, 0u)
-        } else {
-            Test.new(minMin, midMin - 1u)
-        }
+        val lowRange =
+            if (midMin == 0u) {
+                // This is an edgecase where both ranges start at the null character
+                // In this case we do not want to create a range from 0 to -1
+                // Thus we create an empty range
+                Test.new(1u, 0u)
+            } else {
+                Test.new(minMin, midMin - 1u)
+            }
         val midRange = Test.new(midMin, midMax)
         val maxRange = Test.new(midMax + 1u, maxMax)
 

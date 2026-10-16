@@ -1,16 +1,17 @@
 @file:OptIn(ExperimentalWasmJsInterop::class)
 
 // port-lint: source api/mod.rs (platform glue, wasmJs target)
+
 package io.github.kotlinmania.lalrpop.api
 
 import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.build.processDir
 import io.github.kotlinmania.lalrpop.build.processFile
-import kotlin.JsFun
-import kotlin.js.ExperimentalWasmJsInterop
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlin.JsFun
+import kotlin.js.ExperimentalWasmJsInterop
 
 @JsFun("() => globalThis.KotlinManiaLalrpopHost.currentDir()")
 private external fun hostCurrentDir(): String

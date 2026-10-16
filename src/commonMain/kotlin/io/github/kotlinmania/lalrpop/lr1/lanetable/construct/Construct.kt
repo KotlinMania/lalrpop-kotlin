@@ -8,29 +8,29 @@ import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.StateGraph
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
-import io.github.kotlinmania.lalrpop.lr1.BuildOutcome
-import io.github.kotlinmania.lalrpop.lr1.buildLr0StatesOrError
 import io.github.kotlinmania.lalrpop.lr1.Action
+import io.github.kotlinmania.lalrpop.lr1.BuildOutcome
 import io.github.kotlinmania.lalrpop.lr1.Conflict
 import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.Items
 import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.buildLr0StatesOrError
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.conflictingActions
 import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.StateSet
-import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.unifyValues as unifyContextSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.lane.LaneTracer
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.LaneTable
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.RowConflictException
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
+import io.github.kotlinmania.lalrpop.lr1.lanetable.construct.stateset.unifyValues as unifyContextSets
 
 internal class LaneTableConstruct(
     private val grammar: Grammar,
@@ -86,12 +86,15 @@ internal class LaneTableConstruct(
                 // We failed because of irreconcilable conflicts
                 // somewhere. Just compute the conflicts from the final set of
                 // states.
-                val conflicts: MutableList<Conflict<TokenSet>> = states
-                    .flatMap { state ->
-                        state.reductions.firstOrNull()?.first?.conflicts(state)
-                            ?: mutableListOf()
-                    }
-                    .toMutableList()
+                val conflicts: MutableList<Conflict<TokenSet>> =
+                    states
+                        .flatMap { state ->
+                            state.reductions
+                                .firstOrNull()
+                                ?.first
+                                ?.conflicts(state)
+                                ?: mutableListOf()
+                        }.toMutableList()
                 val error = TableConstructionError(states = states, conflicts = conflicts)
                 throw TableConstructionErrorException(error, error)
             }
@@ -109,27 +112,29 @@ internal class LaneTableConstruct(
      */
     private fun promoteLr0States(lr0: List<State<Nil>>): MutableList<State<TokenSet>> {
         val all = TokenSet.all()
-        return lr0.map { s ->
-            val items = s.items.vec
-                .map { item ->
-                    Item(
-                        production = item.production,
-                        index = item.index,
-                        lookahead = all.clone(),
-                    )
-                }
-                .toMutableList()
-            val reductions = s.reductions
-                .map { (_, p) -> Pair(all.clone(), p) }
-                .toMutableList()
-            State(
-                index = s.index,
-                items = Items(vec = items),
-                shifts = s.shifts,
-                reductions = reductions,
-                gotos = s.gotos,
-            )
-        }.toMutableList()
+        return lr0
+            .map { s ->
+                val items =
+                    s.items.vec
+                        .map { item ->
+                            Item(
+                                production = item.production,
+                                index = item.index,
+                                lookahead = all.clone(),
+                            )
+                        }.toMutableList()
+                val reductions =
+                    s.reductions
+                        .map { (_, p) -> Pair(all.clone(), p) }
+                        .toMutableList()
+                State(
+                    index = s.index,
+                    items = Items(vec = items),
+                    shifts = s.shifts,
+                    reductions = reductions,
+                    gotos = s.gotos,
+                )
+            }.toMutableList()
     }
 
     private fun resolveInconsistencies(
@@ -148,7 +153,9 @@ internal class LaneTableConstruct(
             //
             // In particular, if there is too much lookahead, we will
             // reduce even when it is inappropriate to do so.
-            val collected: Set<Action> = io.github.kotlinmania.lalrpop.collections.set()
+            val collected: Set<Action> =
+                io.github.kotlinmania.lalrpop.collections
+                    .set()
             for ((_, prod) in states[inconsistentState.value].reductions) {
                 collected.add(Action.Reduce(prod))
             }
@@ -172,15 +179,17 @@ internal class LaneTableConstruct(
         //
         // (To handle unification, we also map each state to a
         // `StateSet` that is its entry in the `ena` table.)
-        val rows: Map<StateIndex, ContextSet> = try {
-            table.rows()
-        } catch (e: RowConflictException) {
-            throw UnresolvedInconsistencyException(e.state)
-        }
-        val unify = InPlaceUnificationTable<StateSet, ContextSet>(
-            keyFromIndex = { idx -> StateSet.fromIndex(idx) },
-            unifyValues = { a, b -> unifyContextSets(a, b) },
-        )
+        val rows: Map<StateIndex, ContextSet> =
+            try {
+                table.rows()
+            } catch (e: RowConflictException) {
+                throw UnresolvedInconsistencyException(e.state)
+            }
+        val unify =
+            InPlaceUnificationTable<StateSet, ContextSet>(
+                keyFromIndex = { idx -> StateSet.fromIndex(idx) },
+                unifyValues = { a, b -> unifyContextSets(a, b) },
+            )
         val stateSets: Map<StateIndex, StateSet> = map()
         for ((stateIndex, contextSet) in rows) {
             val stateSet = unify.newKey(contextSet.clone())
@@ -188,13 +197,14 @@ internal class LaneTableConstruct(
         }
 
         // Now merge state-sets, cloning states where needed.
-        val merge = Merge.new(
-            table = table,
-            unify = unify,
-            states = states,
-            stateSets = stateSets,
-            inconsistentState = inconsistentState,
-        )
+        val merge =
+            Merge.new(
+                table = table,
+                unify = unify,
+                states = states,
+                stateSets = stateSets,
+                inconsistentState = inconsistentState,
+            )
         val beachheadStates = table.beachheadStates()
         for (beachheadState in beachheadStates) {
             try {
@@ -225,14 +235,15 @@ internal class LaneTableConstruct(
         actions: Set<Action>,
     ): LaneTable {
         val stateGraph = StateGraph.new(states)
-        val tracer = LaneTracer.new<TokenSet>(
-            grammar = grammar,
-            startNt = startNt,
-            states = states,
-            firstSets = firstSets,
-            stateGraph = stateGraph,
-            conflicts = actions.size,
-        )
+        val tracer =
+            LaneTracer.new<TokenSet>(
+                grammar = grammar,
+                startNt = startNt,
+                states = states,
+                firstSets = firstSets,
+                stateGraph = stateGraph,
+                conflicts = actions.size,
+            )
         for ((i, action) in actions.withIndex()) {
             tracer.startTrace(inconsistentState, ConflictIndex.new(i), action)
         }
@@ -240,6 +251,11 @@ internal class LaneTableConstruct(
     }
 }
 
-internal class UnresolvedInconsistencyException(val source: StateIndex) : RuntimeException()
+internal class UnresolvedInconsistencyException(
+    val source: StateIndex,
+) : RuntimeException()
 
-internal class MergeFailureException(val source: StateIndex, val target: StateIndex) : RuntimeException()
+internal class MergeFailureException(
+    val source: StateIndex,
+    val target: StateIndex,
+) : RuntimeException()

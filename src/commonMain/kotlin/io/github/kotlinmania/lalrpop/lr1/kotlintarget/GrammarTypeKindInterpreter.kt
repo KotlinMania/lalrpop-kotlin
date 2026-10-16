@@ -20,29 +20,53 @@ import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
  * targets the same [GrammarTypeKind] IR. Code books wouldn't need to change.
  */
 internal object GrammarTypeKindInterpreter {
+    fun interpret(rust: TypeRepr): GrammarTypeKind =
+        when (rust) {
+            is TypeRepr.Tuple -> {
+                interpretTuple(rust)
+            }
 
-    fun interpret(rust: TypeRepr): GrammarTypeKind = when (rust) {
-        is TypeRepr.Tuple -> interpretTuple(rust)
-        is TypeRepr.Slice -> GrammarTypeKind.ZeroOrMore(interpret(rust.ty))
-        is TypeRepr.Nominal -> interpretNominal(rust.data)
-        is TypeRepr.Ref -> GrammarTypeKind.Erased(interpret(rust.referent))
-        is TypeRepr.LifetimeRepr -> GrammarTypeKind.Unit
-        is TypeRepr.Associated -> GrammarTypeKind.UserDefined(
-            pathSegments = listOf(rust.typeParameter.toString(), rust.id.toString()),
-            typeArgs = emptyList(),
-        )
-        is TypeRepr.TraitObject -> interpretNominal(rust.data)
-        is TypeRepr.Fn -> GrammarTypeKind.FunctionOf(
-            params = rust.parameters.map { interpret(it) },
-            ret = rust.ret?.let { interpret(it) },
-        )
-    }
+            is TypeRepr.Slice -> {
+                GrammarTypeKind.ZeroOrMore(interpret(rust.ty))
+            }
 
-    private fun interpretTuple(t: TypeRepr.Tuple): GrammarTypeKind = when (t.types.size) {
-        0 -> GrammarTypeKind.Unit
-        1 -> interpret(t.types[0])
-        else -> GrammarTypeKind.Tuple(t.types.map { interpret(it) })
-    }
+            is TypeRepr.Nominal -> {
+                interpretNominal(rust.data)
+            }
+
+            is TypeRepr.Ref -> {
+                GrammarTypeKind.Erased(interpret(rust.referent))
+            }
+
+            is TypeRepr.LifetimeRepr -> {
+                GrammarTypeKind.Unit
+            }
+
+            is TypeRepr.Associated -> {
+                GrammarTypeKind.UserDefined(
+                    pathSegments = listOf(rust.typeParameter.toString(), rust.id.toString()),
+                    typeArgs = emptyList(),
+                )
+            }
+
+            is TypeRepr.TraitObject -> {
+                interpretNominal(rust.data)
+            }
+
+            is TypeRepr.Fn -> {
+                GrammarTypeKind.FunctionOf(
+                    params = rust.parameters.map { interpret(it) },
+                    ret = rust.ret?.let { interpret(it) },
+                )
+            }
+        }
+
+    private fun interpretTuple(t: TypeRepr.Tuple): GrammarTypeKind =
+        when (t.types.size) {
+            0 -> GrammarTypeKind.Unit
+            1 -> interpret(t.types[0])
+            else -> GrammarTypeKind.Tuple(t.types.map { interpret(it) })
+        }
 
     private fun interpretNominal(n: NominalTypeRepr): GrammarTypeKind {
         val name = n.path.toString()
@@ -56,45 +80,93 @@ internal object GrammarTypeKindInterpreter {
 
             // Zero-or-more sequence — Rust spells this `Vec<T>` (or `VecDeque<T>`,
             // which has the same intent for grammar purposes).
-            (name == "Vec" || name == "alloc::vec::Vec" ||
-                name == "VecDeque" || name == "std::collections::VecDeque") && args.size == 1 -> {
+            (
+                name == "Vec" || name == "alloc::vec::Vec" ||
+                    name == "VecDeque" || name == "std::collections::VecDeque"
+            ) && args.size == 1 -> {
                 GrammarTypeKind.ZeroOrMore(interpret(args[0]))
             }
 
             // GC-subsumed wrappers — Rust uses `Box<T>` / `Rc<T>` / `Arc<T>` for
             // ownership reasons that don't translate to managed-memory languages.
-            (name == "Box" || name == "alloc::boxed::Box" ||
-                name == "Rc" || name == "alloc::rc::Rc" ||
-                name == "Arc" || name == "alloc::sync::Arc") && args.size == 1 -> {
+            (
+                name == "Box" || name == "alloc::boxed::Box" ||
+                    name == "Rc" || name == "alloc::rc::Rc" ||
+                    name == "Arc" || name == "alloc::sync::Arc"
+            ) && args.size == 1 -> {
                 GrammarTypeKind.Erased(interpret(args[0]))
             }
 
             // Primitive scalars.
-            name == "bool" -> GrammarTypeKind.Primitive(PrimitiveKind.BOOL)
-            name == "char" -> GrammarTypeKind.Primitive(PrimitiveKind.CHAR)
-            name == "str" || name == "String" || name == "alloc::string::String" ->
+            name == "bool" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.BOOL)
+            }
+
+            name == "char" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.CHAR)
+            }
+
+            name == "str" || name == "String" || name == "alloc::string::String" -> {
                 GrammarTypeKind.Primitive(PrimitiveKind.STRING)
-            name == "i8" -> GrammarTypeKind.Primitive(PrimitiveKind.I8)
-            name == "i16" -> GrammarTypeKind.Primitive(PrimitiveKind.I16)
-            name == "i32" -> GrammarTypeKind.Primitive(PrimitiveKind.I32)
-            name == "i64" -> GrammarTypeKind.Primitive(PrimitiveKind.I64)
-            name == "isize" -> GrammarTypeKind.Primitive(PrimitiveKind.ISIZE)
-            name == "u8" -> GrammarTypeKind.Primitive(PrimitiveKind.U8)
-            name == "u16" -> GrammarTypeKind.Primitive(PrimitiveKind.U16)
-            name == "u32" -> GrammarTypeKind.Primitive(PrimitiveKind.U32)
-            name == "u64" -> GrammarTypeKind.Primitive(PrimitiveKind.U64)
-            name == "usize" -> GrammarTypeKind.Primitive(PrimitiveKind.USIZE)
-            name == "f32" -> GrammarTypeKind.Primitive(PrimitiveKind.F32)
-            name == "f64" -> GrammarTypeKind.Primitive(PrimitiveKind.F64)
+            }
+
+            name == "i8" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.I8)
+            }
+
+            name == "i16" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.I16)
+            }
+
+            name == "i32" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.I32)
+            }
+
+            name == "i64" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.I64)
+            }
+
+            name == "isize" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.ISIZE)
+            }
+
+            name == "u8" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.U8)
+            }
+
+            name == "u16" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.U16)
+            }
+
+            name == "u32" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.U32)
+            }
+
+            name == "u64" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.U64)
+            }
+
+            name == "usize" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.USIZE)
+            }
+
+            name == "f32" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.F32)
+            }
+
+            name == "f64" -> {
+                GrammarTypeKind.Primitive(PrimitiveKind.F64)
+            }
 
             // User-defined nominal type — Rust spells the path with `::`. We split it
             // into segments so each target language can re-join with its own
             // separator and apply its own scope rules.
             else -> {
-                val segments = name
-                    .removePrefix("crate::")
-                    .split("::")
-                    .filter { it.isNotEmpty() }
+                val segments =
+                    name
+                        .removePrefix("crate::")
+                        .split("::")
+                        .filter { it.isNotEmpty() }
                 GrammarTypeKind.UserDefined(
                     pathSegments = segments,
                     typeArgs = args.map { interpret(it) },

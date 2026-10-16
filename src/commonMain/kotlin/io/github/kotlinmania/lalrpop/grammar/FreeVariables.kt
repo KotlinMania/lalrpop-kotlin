@@ -7,9 +7,9 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBound
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeBoundParameter
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
-import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause as ParseTreeWhereClause
 import io.github.kotlinmania.lalrpop.grammar.repr.NominalTypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
+import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause as ParseTreeWhereClause
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause as ReprWhereClause
 
 /**
@@ -51,16 +51,35 @@ private fun freeLifetime(typeParameters: List<TypeParameter>, lt: Lifetime): Lis
 
 internal fun TypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> =
     when (this) {
-        is TypeRepr.Tuple -> this.types.flatMap { t -> t.freeVariables(typeParameters) }
-        is TypeRepr.Slice -> this.ty.freeVariables(typeParameters)
-        is TypeRepr.Nominal -> this.data.freeVariables(typeParameters)
-        is TypeRepr.TraitObject -> this.data.freeVariables(typeParameters)
-        is TypeRepr.Associated -> freeType(typeParameters, this.typeParameter)
-        is TypeRepr.LifetimeRepr -> freeLifetime(typeParameters, this.lifetime)
+        is TypeRepr.Tuple -> {
+            this.types.flatMap { t -> t.freeVariables(typeParameters) }
+        }
+
+        is TypeRepr.Slice -> {
+            this.ty.freeVariables(typeParameters)
+        }
+
+        is TypeRepr.Nominal -> {
+            this.data.freeVariables(typeParameters)
+        }
+
+        is TypeRepr.TraitObject -> {
+            this.data.freeVariables(typeParameters)
+        }
+
+        is TypeRepr.Associated -> {
+            freeType(typeParameters, this.typeParameter)
+        }
+
+        is TypeRepr.LifetimeRepr -> {
+            freeLifetime(typeParameters, this.lifetime)
+        }
+
         is TypeRepr.Ref -> {
             val fromLifetime = this.lifetime?.let { listOf(TypeParameter.LifetimeTp(it)) } ?: listOf()
             fromLifetime + this.referent.freeVariables(typeParameters)
         }
+
         is TypeRepr.Fn -> {
             val pathVars = this.path.freeVariables(typeParameters)
             val paramVars = this.parameters.flatMap { param -> param.freeVariables(typeParameters) }
@@ -71,13 +90,16 @@ internal fun TypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<T
 
 internal fun ReprWhereClause.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> =
     when (this) {
-        is ReprWhereClause.Forall ->
-            this.clause.freeVariables(typeParameters)
+        is ReprWhereClause.Forall -> {
+            this.clause
+                .freeVariables(typeParameters)
                 .filter { tp -> !this.binder.contains(tp) }
+        }
 
-        is ReprWhereClause.Bound ->
+        is ReprWhereClause.Bound -> {
             this.subject.freeVariables(typeParameters) +
                 this.bound.freeVariables(typeParameters) { t, tps -> t.freeVariables(tps) }
+        }
     }
 
 internal fun Path.freeVariables(typeParameters: List<TypeParameter>): List<TypeParameter> {
@@ -105,10 +127,12 @@ internal fun <T> ParseTreeWhereClause<T>.freeVariables(
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =
     when (this) {
-        is ParseTreeWhereClause.LifetimeClause<T> ->
-            (sequenceOf(TypeParameter.LifetimeTp(this.lifetime)) +
-                this.bounds.asSequence().map { l -> TypeParameter.LifetimeTp(l) })
-                .toList()
+        is ParseTreeWhereClause.LifetimeClause<T> -> {
+            (
+                sequenceOf(TypeParameter.LifetimeTp(this.lifetime)) +
+                    this.bounds.asSequence().map { l -> TypeParameter.LifetimeTp(l) }
+            ).toList()
+        }
 
         is ParseTreeWhereClause.TypeClause<T> -> {
             val tyVars = freeVars(this.ty, typeParameters)
@@ -132,14 +156,19 @@ internal fun <T> TypeBound<T>.freeVariables(
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =
     when (this) {
-        is TypeBound.LifetimeBound<T> -> freeLifetime(typeParameters, this.lifetime)
+        is TypeBound.LifetimeBound<T> -> {
+            freeLifetime(typeParameters, this.lifetime)
+        }
+
         is TypeBound.Fn<T> -> {
             val paramVars = this.parameters.flatMap { p -> freeVars(p, typeParameters) }
             val retVars = this.ret?.let { freeVars(it, typeParameters) } ?: listOf()
             (paramVars + retVars).filter { tp -> !this.forall.contains(tp) }
         }
-        is TypeBound.Trait<T> ->
+
+        is TypeBound.Trait<T> -> {
             this.parameters
                 .flatMap { p -> p.freeVariables(typeParameters, freeVars) }
                 .filter { tp -> !this.forall.contains(tp) }
+        }
     }

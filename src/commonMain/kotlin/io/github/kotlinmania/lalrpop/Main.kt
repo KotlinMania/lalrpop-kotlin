@@ -5,23 +5,24 @@ import io.github.kotlinmania.lalrpop.api.Configuration
 
 internal const val VERSION: String = "0.22.2"
 
-internal const val USAGE: String = "" +
-    "Usage: lalrpop [options] <inputs>...\n" +
-    "       lalrpop --help\n" +
-    "       lalrpop (-V | --version)\n" +
-    "\n" +
-    "Options:\n" +
-    "    -h, --help           Print help.\n" +
-    "    -V, --version        Print version.\n" +
-    "    -l, --level LEVEL    Set the debug level. (Default: info)\n" +
-    "                         Valid values: quiet, info, verbose, debug.\n" +
-    "    -o, --out-dir DIR    Sets the directory in which to output the .rs file(s).\n" +
-    "    --features FEATURES  Comma separated list of features for conditional compilation.\n" +
-    "    -f, --force          Force execution, even if the .lalrpop file is older than the .rs file.\n" +
-    "    -c, --color          Force colorful output, even if this is not a TTY.\n" +
-    "    --no-whitespace      Removes redundant whitespace from the generated file. (Default: false)\n" +
-    "    --comments           Enable comments in the generated code.\n" +
-    "    --report             Generate report files."
+internal const val USAGE: String =
+    "" +
+        "Usage: lalrpop [options] <inputs>...\n" +
+        "       lalrpop --help\n" +
+        "       lalrpop (-V | --version)\n" +
+        "\n" +
+        "Options:\n" +
+        "    -h, --help           Print help.\n" +
+        "    -V, --version        Print version.\n" +
+        "    -l, --level LEVEL    Set the debug level. (Default: info)\n" +
+        "                         Valid values: quiet, info, verbose, debug.\n" +
+        "    -o, --out-dir DIR    Sets the directory in which to output the .rs file(s).\n" +
+        "    --features FEATURES  Comma separated list of features for conditional compilation.\n" +
+        "    -f, --force          Force execution, even if the .lalrpop file is older than the .rs file.\n" +
+        "    -c, --color          Force colorful output, even if this is not a TTY.\n" +
+        "    --no-whitespace      Removes redundant whitespace from the generated file. (Default: false)\n" +
+        "    --comments           Enable comments in the generated code.\n" +
+        "    --report             Generate report files."
 
 internal data class Args(
     val argInputs: List<String>,
@@ -41,22 +42,26 @@ internal enum class LevelFlag {
     Quiet,
     Info,
     Verbose,
-    Debug;
+    Debug,
+    ;
 
     companion object {
         typealias Err = String
 
-        fun fromStr(s: String): Result<LevelFlag> = when (s) {
-            "quiet" -> Result.success(Quiet)
-            "info" -> Result.success(Info)
-            "verbose" -> Result.success(Verbose)
-            "debug" -> Result.success(Debug)
-            else -> Result.failure(IllegalArgumentException("Unknown level: $s"))
-        }
+        fun fromStr(s: String): Result<LevelFlag> =
+            when (s) {
+                "quiet" -> Result.success(Quiet)
+                "info" -> Result.success(Info)
+                "verbose" -> Result.success(Verbose)
+                "debug" -> Result.success(Debug)
+                else -> Result.failure(IllegalArgumentException("Unknown level: $s"))
+            }
     }
 }
 
-internal class Arguments(args: List<String>) {
+internal class Arguments(
+    args: List<String>,
+) {
     private val args: MutableList<String> = args.toMutableList()
 
     fun contains(keys: Array<String>): Boolean {
@@ -93,17 +98,24 @@ internal class Arguments(args: List<String>) {
 
     companion object {
         fun fromEnv(args: Array<String>): Arguments = Arguments(args.toList())
+
         fun fromVec(args: List<String>): Arguments = Arguments(args)
     }
 }
 
 internal fun parseArgs(args: Arguments): Result<Args> {
-    val flagOutDir = args.optValueFromFn(arrayOf("-o", "--out-dir")) { Result.success(it) }
-        .getOrElse { return Result.failure(it) }
-    val flagFeatures = args.optValueFromStr("--features")
-        .getOrElse { return Result.failure(it) }
-    val flagLevel = args.optValueFromFn(arrayOf("-l", "--level")) { LevelFlag.fromStr(it) }
-        .getOrElse { return Result.failure(it) }
+    val flagOutDir =
+        args
+            .optValueFromFn(arrayOf("-o", "--out-dir")) { Result.success(it) }
+            .getOrElse { return Result.failure(it) }
+    val flagFeatures =
+        args
+            .optValueFromStr("--features")
+            .getOrElse { return Result.failure(it) }
+    val flagLevel =
+        args
+            .optValueFromFn(arrayOf("-l", "--level")) { LevelFlag.fromStr(it) }
+            .getOrElse { return Result.failure(it) }
     val flagHelp = args.contains(arrayOf("-h", "--help"))
     val flagForce = args.contains(arrayOf("-f", "--force"))
     val flagColor = args.contains(arrayOf("-c", "--color"))
@@ -125,16 +137,17 @@ internal fun parseArgs(args: Arguments): Result<Args> {
             flagNoWhitespace = flagNoWhitespace,
             flagReport = flagReport,
             flagVersion = flagVersion,
-        )
+        ),
     )
 }
 
 internal fun main(args: Array<String>): Int {
     val parsed = parseArgs(Arguments.fromEnv(args))
-    val parsedArgs = parsed.getOrElse { err ->
-        println(err.message ?: err.toString())
-        return 1
-    }
+    val parsedArgs =
+        parsed.getOrElse { err ->
+            println(err.message ?: err.toString())
+            return 1
+        }
 
     if (parsedArgs.flagHelp) {
         println(USAGE)

@@ -18,12 +18,12 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
 import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros
-import io.github.kotlinmania.lalrpop.normalize.tokencheck.validate as tokenCheckValidate
 import io.github.kotlinmania.lalrpop.parser.parseGrammar
 import io.github.kotlinmania.lalrpop.parser.parseTypeRef
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import io.github.kotlinmania.lalrpop.normalize.tokencheck.validate as tokenCheckValidate
 
 private fun typeRepr(s: String): TypeRepr {
     val typeRef = parseTypeRef(s).getOrThrow()
@@ -63,8 +63,9 @@ grammar;
 
     @Test
     fun testCycleDirect() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     extern { enum Tok { "Hi" => Hi(..), "Ho" => Ho(..) } }
     X = {
@@ -73,7 +74,7 @@ grammar;
     };
     Y = "Hi";
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val actual = expandMacros(grammar, 20)
         try {
@@ -86,8 +87,9 @@ grammar;
 
     @Test
     fun testCycleIndirect() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     extern { enum Tok { } }
     A = B;
@@ -95,7 +97,7 @@ grammar;
     C = D;
     D = A;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val actual = expandMacros(grammar, 20)
         try {
@@ -212,8 +214,9 @@ grammar;
 
     @Test
     fun testInconsistentAction() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     extern { enum Tok { "+" => .., "foo" => .., "bar" => .. } }
 
@@ -227,7 +230,7 @@ grammar;
 
     Z: u32 = "bar" => 22;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val actual = expandMacros(grammar, 20)
         try {
@@ -276,8 +279,9 @@ grammar;
 
     @Test
     fun testTupleMismatch() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     extern { enum Tok { "a" => .., "b" => .., "c" => .. } }
     Foo: String = {
@@ -287,7 +291,7 @@ grammar;
     Bar = "a" "b" "c";
     Bam = "b" Bar;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val actual = expandMacros(grammar, 20)
         try {

@@ -39,18 +39,19 @@ package io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.map
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.Action
 import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.ConflictIndex
 
 internal class ContextSet(
     private val values: MutableList<TokenSet>,
 ) {
     companion object {
-        fun new(numConflicts: Int): ContextSet = ContextSet(
-            values = MutableList(numConflicts) { TokenSet.new() },
-        )
+        fun new(numConflicts: Int): ContextSet =
+            ContextSet(
+                values = MutableList(numConflicts) { TokenSet.new() },
+            )
 
         /**
          * Attempts to union `set1` with `set2`, producing a new set.
@@ -66,9 +67,10 @@ internal class ContextSet(
         }
     }
 
-    fun clone(): ContextSet = ContextSet(
-        values = values.map { it.clone() }.toMutableList(),
-    )
+    fun clone(): ContextSet =
+        ContextSet(
+            values = values.map { it.clone() }.toMutableList(),
+        )
 
     /**
      * Attempts to merge the values `conflict: set` into this

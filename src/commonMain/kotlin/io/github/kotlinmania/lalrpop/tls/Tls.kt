@@ -19,7 +19,6 @@ internal expect object TlsStorage {
 }
 
 internal class Tls private constructor() : AutoCloseable {
-
     fun drop() {
         TlsStorage.current = null
     }
@@ -27,16 +26,13 @@ internal class Tls private constructor() : AutoCloseable {
     override fun close() = drop()
 
     companion object {
-        fun test(): Tls {
-            return install(Session.test(), FileText.test())
-        }
+        fun test(): Tls = install(Session.test(), FileText.test())
 
-        fun testString(text: String): Tls {
-            return install(
+        fun testString(text: String): Tls =
+            install(
                 Session.test(),
                 FileText.new("tmp.txt", text),
             )
-        }
 
         /**
          * Installs `Tls` and returns a guard value.  When this
@@ -53,16 +49,10 @@ internal class Tls private constructor() : AutoCloseable {
             return Tls()
         }
 
-        private fun fields(): TlsFields {
-            return TlsStorage.current ?: error("TLS is not installed")
-        }
+        private fun fields(): TlsFields = TlsStorage.current ?: error("TLS is not installed")
 
-        fun session(): Session {
-            return fields().session
-        }
+        fun session(): Session = fields().session
 
-        fun fileText(): FileText {
-            return fields().fileText
-        }
+        fun fileText(): FileText = fields().fileText
     }
 }

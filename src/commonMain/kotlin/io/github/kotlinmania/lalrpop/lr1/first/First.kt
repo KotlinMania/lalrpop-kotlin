@@ -7,9 +7,9 @@ import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 
 internal data class FirstSets(
     val map: Map<NonterminalString, TokenSet>,
@@ -65,6 +65,7 @@ internal data class FirstSets(
                                     Token.Eof -> {
                                         emptyProd = true
                                     }
+
                                     Token.Error, is Token.Terminal -> {
                                         result.insertWith(lookahead, terminals)
                                     }

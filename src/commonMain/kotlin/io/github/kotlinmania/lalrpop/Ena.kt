@@ -46,14 +46,21 @@ internal class InPlaceUnificationTable<K : UnifyKey<V>, V>(
 
         val merged = unifyValues(values[ra], values[rb]) ?: return false
 
-        val (winner, loser) = when {
-            rank[ra] < rank[rb] -> Pair(rb, ra)
-            rank[ra] > rank[rb] -> Pair(ra, rb)
-            else -> {
-                rank[ra] = rank[ra] + 1
-                Pair(ra, rb)
+        val (winner, loser) =
+            when {
+                rank[ra] < rank[rb] -> {
+                    Pair(rb, ra)
+                }
+
+                rank[ra] > rank[rb] -> {
+                    Pair(ra, rb)
+                }
+
+                else -> {
+                    rank[ra] = rank[ra] + 1
+                    Pair(ra, rb)
+                }
             }
-        }
         parent[loser] = winner
         values[winner] = merged
         return true

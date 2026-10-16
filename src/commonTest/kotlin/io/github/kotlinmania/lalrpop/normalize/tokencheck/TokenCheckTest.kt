@@ -31,12 +31,13 @@ private fun validateGrammar(grammar: String): Grammar {
 }
 
 private fun checkErr(expectedErr: String, grammar: String, span: String) {
-    val err = try {
-        validateGrammar(grammar)
-        fail("expected error for grammar")
-    } catch (e: NormErrorException) {
-        e.err
-    }
+    val err =
+        try {
+            validateGrammar(grammar)
+            fail("expected error for grammar")
+        } catch (e: NormErrorException) {
+            e.err
+        }
     checkNormErr(expectedErr, span, err)
 }
 
@@ -45,10 +46,11 @@ private fun checkInternToken(grammar: String, expectedTokens: List<Pair<String, 
     val internToken = parsedGrammar.internToken() ?: error("intern_token")
     println("intern_token: $internToken")
     for ((input, expectedUserName) in expectedTokens) {
-        val actualUserName = interpret(internToken.dfa, input)?.let { (index, text) ->
-            val userName = internToken.matchEntries[index.index()].userName
-            userName to text
-        }
+        val actualUserName =
+            interpret(internToken.dfa, input)?.let { (index, text) ->
+                val userName = internToken.matchEntries[index.index()].userName
+                userName to text
+            }
         val actualUserNameStr = formatRustDebug(actualUserName)
         if (expectedUserName != actualUserNameStr) {
             error(

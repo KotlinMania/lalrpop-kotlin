@@ -34,7 +34,6 @@ internal class KotlinSymbolEmit(
     private val symbolClassName: String,
     private val typeBook: KotlinTypeBook = KotlinTypeBook(),
 ) {
-
     /**
      * Map from grammar symbol (terminal or nonterminal) to the variant class name it
      * pushes onto the parse stack. Populated as a side-effect of [emitInto] — the
@@ -155,5 +154,4 @@ internal class KotlinSymbolEmit(
         variantByKind[kind] = name
         return name
     }
-
 }

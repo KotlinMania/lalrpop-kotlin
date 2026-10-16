@@ -28,10 +28,9 @@ import kotlin.test.assertTrue
  * are left to a follow-up once we know the front end's output is sane.
  */
 class StarlarkGrammarComparisonTest {
-
     @Test
     fun frontEndCanIngestStarlarkGrammar() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             val grammar = normalizedGrammar(STARLARK_GRAMMAR_LALRPOP)
 
             val productionCount = grammar.nonterminals.values.sumOf { it.productions.size }
@@ -41,7 +40,7 @@ class StarlarkGrammarComparisonTest {
             println(
                 "starlark grammar — front-end normalized counts: " +
                     "terminals=$terminalCount, nonterminals=$nonterminalCount, " +
-                    "productions=$productionCount"
+                    "productions=$productionCount",
             )
 
             // Sanity: a 509-line LALRPOP grammar should not normalize to zero.
@@ -56,14 +55,14 @@ class StarlarkGrammarComparisonTest {
             assertTrue(
                 terminalCount >= 50,
                 "terminal count $terminalCount looks too low for the starlark grammar — " +
-                "extern token block alone declares ~60",
+                    "extern token block alone declares ~60",
             )
         }
     }
 
     @Test
     fun lr1StateMachineBuildsForStarlarkGrammar() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             val grammar = normalizedGrammar(STARLARK_GRAMMAR_LALRPOP)
 
             Lr1Tls.install(grammar.terminals).also { lr1Tls ->
@@ -92,7 +91,7 @@ class StarlarkGrammarComparisonTest {
 
     @Test
     fun tablesBuilderProducesNonEmptyTablesForStarlarkGrammar() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             val grammar = normalizedGrammar(STARLARK_GRAMMAR_LALRPOP)
 
             Lr1Tls.install(grammar.terminals).also { lr1Tls ->
@@ -100,22 +99,25 @@ class StarlarkGrammarComparisonTest {
                     val states = buildLalrStates(grammar, NonterminalString(Atom.from("Starlark")))
                     val productionCount = grammar.nonterminals.values.sumOf { it.productions.size }
 
-                    val productions = Array(productionCount) {
-                        io.github.kotlinmania.lalrpop.runtime.Production<Unit, Int>(
-                            nonterminalId = 0,
-                            rhsLength = 0,
-                            action = io.github.kotlinmania.lalrpop.runtime.ProductionAction { _, _ ->
-                                error("starlark comparison test — action not invoked")
-                            },
-                        )
-                    }
+                    val productions =
+                        Array(productionCount) {
+                            io.github.kotlinmania.lalrpoputil.tabledriven.Production<Unit, Int>(
+                                nonterminalId = 0,
+                                rhsLength = 0,
+                                action =
+                                    io.github.kotlinmania.lalrpoputil.tabledriven.ProductionAction { _, _ ->
+                                        error("starlark comparison test — action not invoked")
+                                    },
+                            )
+                        }
 
-                    val tables = tablesFromLr1States(
-                        grammar = grammar,
-                        states = states,
-                        productions = productions,
-                        acceptProductionId = 0,
-                    )
+                    val tables =
+                        tablesFromLr1States(
+                            grammar = grammar,
+                            states = states,
+                            productions = productions,
+                            acceptProductionId = 0,
+                        )
 
                     val nonZeroAction = tables.action.count { it != 0.toShort() }
                     val nonZeroEofAction = tables.eofAction.count { it != 0.toShort() }
@@ -125,7 +127,7 @@ class StarlarkGrammarComparisonTest {
                         "starlark grammar — packed table cells: " +
                             "action=${tables.action.size} (non-zero $nonZeroAction), " +
                             "eofAction=${tables.eofAction.size} (non-zero $nonZeroEofAction), " +
-                            "goto=${tables.goto.size} (non-zero $nonZeroGoto)"
+                            "goto=${tables.goto.size} (non-zero $nonZeroGoto)",
                     )
 
                     assertTrue(

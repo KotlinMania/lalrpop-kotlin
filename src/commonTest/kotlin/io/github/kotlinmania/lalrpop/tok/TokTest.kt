@@ -7,8 +7,13 @@ import kotlin.test.assertFails
 import kotlin.test.assertNull
 
 private sealed class Expectation {
-    data class ExpectTok(val tok: Tok) : Expectation()
-    data class ExpectErr(val code: ErrorCode) : Expectation()
+    data class ExpectTok(
+        val tok: Tok,
+    ) : Expectation()
+
+    data class ExpectErr(
+        val code: ErrorCode,
+    ) : Expectation()
 }
 
 private fun genTest(rawInput: String, expected: List<Pair<String, Expectation>>) {
@@ -17,21 +22,24 @@ private fun genTest(rawInput: String, expected: List<Pair<String, Expectation>>)
     val tokenizer = Tokenizer(input, 0)
     val len = expected.size
     for ((expectedSpan, expectation) in expected) {
-        val token = tokenizer.nextResult()
-            ?: throw AssertionError("tokenizer ran out before expectations")
+        val token =
+            tokenizer.nextResult()
+                ?: throw AssertionError("tokenizer ran out before expectations")
         val expectedStart = expectedSpan.indexOf('~')
         val expectedEnd = expectedSpan.lastIndexOf('~') + 1
         when (expectation) {
             is Expectation.ExpectTok -> {
-                val actual = token.getOrElse { ex ->
-                    val err = (ex as TokError).err
-                    throw AssertionError("unexpected tokenizer error at ${err.location}: ${err.code}")
-                }
+                val actual =
+                    token.getOrElse { ex ->
+                        val err = (ex as TokError).err
+                        throw AssertionError("unexpected tokenizer error at ${err.location}: ${err.code}")
+                    }
                 assertEquals(
                     Spanned(expectedStart, expectation.tok, expectedEnd),
                     actual,
                 )
             }
+
             is Expectation.ExpectErr -> {
                 val err = (token.exceptionOrNull() as TokError).err
                 assertEquals(Error(location = expectedStart, code = expectation.code), err)

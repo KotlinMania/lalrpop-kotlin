@@ -2,12 +2,13 @@
 /** Base helper routines for a code generator. */
 package io.github.kotlinmania.lalrpop.lr1.codegen
 
+import io.github.kotlinmania.btree.BTreeSet
 import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.set
+import io.github.kotlinmania.lalrpop.grammar.freeVariables
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
-import io.github.kotlinmania.lalrpop.grammar.freeVariables
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.Types
@@ -17,7 +18,6 @@ import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
 import io.github.kotlinmania.lalrpop.tls.Tls
-import io.github.kotlinmania.btree.BTreeSet
 
 /**
  * Base struct for various kinds of code generator. The flavor of
@@ -27,34 +27,25 @@ import io.github.kotlinmania.btree.BTreeSet
 internal class CodeGenerator<C>(
     /** the complete grammar */
     val grammar: Grammar,
-
     /** some suitable prefix to separate our identifiers from the user */
     val prefix: String,
-
     /** types from the grammar */
     val types: Types,
-
     /** the start symbol S the user specified */
     val userStartSymbol: NonterminalString,
-
     /** the synthetic start symbol S' that we specified */
     val startSymbol: NonterminalString,
-
     /** the vector of states */
     val states: List<State<TokenSet>>,
-
     /** where we write output */
     val out: RustWrite,
-
     /** where to find the action routines (typically `super`) */
     val actionModule: String,
-
     /**
      * custom fields for the specific kind of codegenerator
      * (recursive ascent, table-driven, etc)
      */
     val custom: C,
-
     val repeatable: Boolean,
 ) {
     companion object {
@@ -67,18 +58,19 @@ internal class CodeGenerator<C>(
             repeatable: Boolean,
             actionModule: String,
             custom: C,
-        ): CodeGenerator<C> = CodeGenerator(
-            grammar = grammar,
-            prefix = grammar.prefix,
-            types = grammar.types,
-            states = states,
-            userStartSymbol = userStartSymbol,
-            startSymbol = startSymbol,
-            out = out,
-            custom = custom,
-            repeatable = repeatable,
-            actionModule = actionModule,
-        )
+        ): CodeGenerator<C> =
+            CodeGenerator(
+                grammar = grammar,
+                prefix = grammar.prefix,
+                types = grammar.types,
+                states = states,
+                userStartSymbol = userStartSymbol,
+                startSymbol = startSymbol,
+                out = out,
+                custom = custom,
+                repeatable = repeatable,
+                actionModule = actionModule,
+            )
 
         /**
          * We often create meta types that pull together a bunch of
@@ -118,15 +110,17 @@ internal class CodeGenerator<C>(
             grammar: Grammar,
             tys: Iterable<TypeRepr>,
         ): Pair<List<TypeParameter>, List<WhereClause>> {
-            val referencedTyParams: BTreeSet<TypeParameter> = tys
-                .asSequence()
-                .flatMap { t -> t.freeVariables(grammar.typeParameters).asSequence() }
-                .toCollection(set())
+            val referencedTyParams: BTreeSet<TypeParameter> =
+                tys
+                    .asSequence()
+                    .flatMap { t -> t.freeVariables(grammar.typeParameters).asSequence() }
+                    .toCollection(set())
 
-            val filteredTypeParams: List<TypeParameter> = grammar
-                .typeParameters
-                .filter { t -> referencedTyParams.contains(t) }
-                .toList()
+            val filteredTypeParams: List<TypeParameter> =
+                grammar
+                    .typeParameters
+                    .filter { t -> referencedTyParams.contains(t) }
+                    .toList()
 
             // If `T` is referenced in the types we need to keep, then
             // include any bounds like `T: Foo`. This may be needed for
@@ -141,16 +135,17 @@ internal class CodeGenerator<C>(
             Tls.session().log.log(Level.Debug) {
                 "filtered_type_params = $filteredTypeParams"
             }
-            val filteredWhereClauses: List<WhereClause> = grammar
-                .whereClauses
-                .filter { wc ->
-                    Tls.session().log.log(Level.Debug) {
-                        "wc = $wc free_variables = ${wc.freeVariables(grammar.typeParameters)}"
-                    }
-                    wc.freeVariables(grammar.typeParameters)
-                        .all { p -> referencedTyParams.contains(p) }
-                }
-                .toList()
+            val filteredWhereClauses: List<WhereClause> =
+                grammar
+                    .whereClauses
+                    .filter { wc ->
+                        Tls.session().log.log(Level.Debug) {
+                            "wc = $wc free_variables = ${wc.freeVariables(grammar.typeParameters)}"
+                        }
+                        wc
+                            .freeVariables(grammar.typeParameters)
+                            .all { p -> referencedTyParams.contains(p) }
+                    }.toList()
             Tls.session().log.log(Level.Debug) {
                 "filtered_where_clauses = $filteredWhereClauses"
             }
@@ -212,10 +207,11 @@ internal class CodeGenerator<C>(
             for (typeParameter in this.grammar.typeParameters) {
                 userTypeParameters.append("$typeParameter, ")
             }
-            typeParameters = listOf(
-                "${this.prefix}TOKEN: ${this.prefix}ToTriple<$userTypeParameters>",
-                "${this.prefix}TOKENS: IntoIterator<Item=${this.prefix}TOKEN>${if (this.repeatable) " + Clone" else ""}",
-            )
+            typeParameters =
+                listOf(
+                    "${this.prefix}TOKEN: ${this.prefix}ToTriple<$userTypeParameters>",
+                    "${this.prefix}TOKENS: IntoIterator<Item=${this.prefix}TOKEN>${if (this.repeatable) " + Clone" else ""}",
+                )
             parameters = listOf("${this.prefix}tokens0: ${this.prefix}TOKENS")
         }
 
@@ -263,17 +259,17 @@ internal class CodeGenerator<C>(
         rust(this.out, "#[allow(dead_code)]")
         this.out
             .fnHeader(
-                this.grammar.nonterminals.getValue(this.startSymbol).visibility,
+                this.grammar.nonterminals
+                    .getValue(this.startSymbol)
+                    .visibility,
                 "parse",
-            )
-            .withParameters(listOf("&self"))
+            ).withParameters(listOf("&self"))
             .withGrammar(this.grammar)
             .withTypeParameters(typeParameters)
             .withParameters(parameters)
             .withReturnType(
                 "Result<${this.types.nonterminalType(this.startSymbol)}, $parseErrorType>",
-            )
-            .emit()
+            ).emit()
         rust(this.out, "{")
     }
 
@@ -313,15 +309,16 @@ internal class CodeGenerator<C>(
      * used.
      */
     fun phantomDataType(): String {
-        val phantomBits: List<String> = this
-            .grammar
-            .typeParameters
-            .map { tp ->
-                when (tp) {
-                    is TypeParameter.LifetimeTp -> "&${tp.lifetime} ()"
-                    is TypeParameter.Id -> tp.atom.toString()
+        val phantomBits: List<String> =
+            this
+                .grammar
+                .typeParameters
+                .map { tp ->
+                    when (tp) {
+                        is TypeParameter.LifetimeTp -> "&${tp.lifetime} ()"
+                        is TypeParameter.Id -> tp.atom.toString()
+                    }
                 }
-            }
         return "core::marker::PhantomData<(${Sep(", ", phantomBits)})>"
     }
 
@@ -332,15 +329,16 @@ internal class CodeGenerator<C>(
      * used.
      */
     fun phantomDataExpr(): String {
-        val phantomBits: List<String> = this
-            .grammar
-            .typeParameters
-            .map { tp ->
-                when (tp) {
-                    is TypeParameter.LifetimeTp -> "&()"
-                    is TypeParameter.Id -> tp.atom.toString()
+        val phantomBits: List<String> =
+            this
+                .grammar
+                .typeParameters
+                .map { tp ->
+                    when (tp) {
+                        is TypeParameter.LifetimeTp -> "&()"
+                        is TypeParameter.Id -> tp.atom.toString()
+                    }
                 }
-            }
         return "core::marker::PhantomData::<(${Sep(", ", phantomBits)})>"
     }
 }

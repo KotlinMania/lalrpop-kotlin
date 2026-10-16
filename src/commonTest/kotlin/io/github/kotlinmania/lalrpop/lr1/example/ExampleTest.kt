@@ -16,15 +16,12 @@ package io.github.kotlinmania.lalrpop.lr1.example
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.expectDebug
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
-import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
-
-private fun term(t: String): TerminalString = TerminalString.quoted(Atom.from(t))
 
 private fun symNt(name: String): ExampleSymbol =
     ExampleSymbol.SymbolValue(Symbol.Nonterminal(nt(name)))
@@ -37,22 +34,24 @@ private val EPSILON: ExampleSymbol = ExampleSymbol.Epsilon
 //  +-LongLabel22-+     |
 //  |                   |
 //  +-Label-------------+
-private fun longLabel1Example(): Example = Example(
-    symbols = mutableListOf(symNt("A1"), symNt("B2"), symNt("C3"), symNt("D4"), symNt("E5"), symNt("F6")),
-    cursor = 5,
-    reductions = mutableListOf(
-        Reduction(
-            start = 0,
-            end = 4,
-            nonterminal = nt("LongLabel22"),
-        ),
-        Reduction(
-            start = 0,
-            end = 6,
-            nonterminal = nt("Label"),
-        ),
-    ),
-)
+private fun longLabel1Example(): Example =
+    Example(
+        symbols = mutableListOf(symNt("A1"), symNt("B2"), symNt("C3"), symNt("D4"), symNt("E5"), symNt("F6")),
+        cursor = 5,
+        reductions =
+            mutableListOf(
+                Reduction(
+                    start = 0,
+                    end = 4,
+                    nonterminal = nt("LongLabel22"),
+                ),
+                Reduction(
+                    start = 0,
+                    end = 6,
+                    nonterminal = nt("Label"),
+                ),
+            ),
+    )
 
 class ExampleTest {
     @Test
@@ -95,33 +94,35 @@ class ExampleTest {
     //                          +-Y-+ |   |
     //                                |   |
     //                                +-Z-+
-    private fun emptyLabelsExample(): Example = Example(
-        //                       0    1            2            3            4            5            6        7
-        symbols = mutableListOf(EPSILON, symNt("A1"), symNt("B2"), symNt("C3"), symNt("D4"), symNt("E5"), EPSILON, symNt("F6")),
-        cursor = 5,
-        reductions = mutableListOf(
-            Reduction(
-                start = 0,
-                end = 1,
-                nonterminal = nt("X"),
-            ),
-            Reduction(
-                start = 0,
-                end = 4,
-                nonterminal = nt("MegaLongLabel"),
-            ),
-            Reduction(
-                start = 6,
-                end = 7,
-                nonterminal = nt("Y"),
-            ),
-            Reduction(
-                start = 7,
-                end = 8,
-                nonterminal = nt("Z"),
-            ),
-        ),
-    )
+    private fun emptyLabelsExample(): Example =
+        Example(
+            //                       0    1            2            3            4            5            6        7
+            symbols = mutableListOf(EPSILON, symNt("A1"), symNt("B2"), symNt("C3"), symNt("D4"), symNt("E5"), EPSILON, symNt("F6")),
+            cursor = 5,
+            reductions =
+                mutableListOf(
+                    Reduction(
+                        start = 0,
+                        end = 1,
+                        nonterminal = nt("X"),
+                    ),
+                    Reduction(
+                        start = 0,
+                        end = 4,
+                        nonterminal = nt("MegaLongLabel"),
+                    ),
+                    Reduction(
+                        start = 6,
+                        end = 7,
+                        nonterminal = nt("Y"),
+                    ),
+                    Reduction(
+                        start = 7,
+                        end = 8,
+                        nonterminal = nt("Z"),
+                    ),
+                ),
+        )
 
     @Test
     fun emptyLabelsPositions() {
@@ -160,28 +161,30 @@ class ExampleTest {
     // +-ExprSuffix-+                  |
     // |                               |
     // +-ExprSuffix--------------------+
-    private fun singleTokenExample(): Example = Example(
-        //                       0           1          2                 3
-        symbols = mutableListOf(symNt("_return_"), symNt("_A_"), symNt("Expression"), symNt("_B_")),
-        cursor = 5,
-        reductions = mutableListOf(
-            Reduction(
-                start = 0,
-                end = 1,
-                nonterminal = nt("ExprAtom"),
-            ),
-            Reduction(
-                start = 0,
-                end = 1,
-                nonterminal = nt("ExprSuffix"),
-            ),
-            Reduction(
-                start = 0,
-                end = 4,
-                nonterminal = nt("ExprSuffix"),
-            ),
-        ),
-    )
+    private fun singleTokenExample(): Example =
+        Example(
+            //                       0           1          2                 3
+            symbols = mutableListOf(symNt("_return_"), symNt("_A_"), symNt("Expression"), symNt("_B_")),
+            cursor = 5,
+            reductions =
+                mutableListOf(
+                    Reduction(
+                        start = 0,
+                        end = 1,
+                        nonterminal = nt("ExprAtom"),
+                    ),
+                    Reduction(
+                        start = 0,
+                        end = 1,
+                        nonterminal = nt("ExprSuffix"),
+                    ),
+                    Reduction(
+                        start = 0,
+                        end = 4,
+                        nonterminal = nt("ExprSuffix"),
+                    ),
+                ),
+        )
 
     @Test
     fun singleTokenStrings() {

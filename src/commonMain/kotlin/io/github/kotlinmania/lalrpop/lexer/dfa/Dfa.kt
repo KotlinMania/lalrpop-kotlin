@@ -13,17 +13,20 @@ import io.github.kotlinmania.lalrpop.lexer.nfa.Nfa
 import io.github.kotlinmania.lalrpop.lexer.nfa.NfaConstructionError
 import io.github.kotlinmania.lalrpop.lexer.nfa.NfaConstructionException
 import io.github.kotlinmania.lalrpop.lexer.nfa.NfaStateIndex
-import io.github.kotlinmania.lalrpop.lexer.nfa.Other as NfaOther
-import io.github.kotlinmania.lalrpop.lexer.nfa.START as NFA_START
 import io.github.kotlinmania.lalrpop.lexer.nfa.Test
-import io.github.kotlinmania.lalrpop.regexsyntax.Hir
+import io.github.kotlinmania.regexsyntax.hir.Hir
+import io.github.kotlinmania.lalrpop.lexer.nfa.START as NFA_START
 
-internal data class Dfa(val states: List<State>)
+internal data class Dfa(
+    val states: List<State>,
+)
 
 @Deprecated("use `Dfa` instead", ReplaceWith("Dfa"))
 internal typealias DFA = Dfa
 
-internal data class Precedence(val value: Int) : Comparable<Precedence> {
+internal data class Precedence(
+    val value: Int,
+) : Comparable<Precedence> {
     override fun compareTo(other: Precedence): Int = value.compareTo(other.value)
 }
 
@@ -34,29 +37,36 @@ internal sealed class DfaConstructionError {
     ) : DfaConstructionError()
 
     /** Either of the two regexs listed could match, and they have equal priority. */
-    data class Ambiguity(val match0: NfaIndex, val match1: NfaIndex) : DfaConstructionError()
+    data class Ambiguity(
+        val match0: NfaIndex,
+        val match1: NfaIndex,
+    ) : DfaConstructionError()
 }
 
 @Deprecated("use `DfaConstructionError` instead", ReplaceWith("DfaConstructionError"))
 internal typealias DFAConstructionError = DfaConstructionError
 
-internal class DfaConstructionException(val error: DfaConstructionError) : RuntimeException(error.toString())
+internal class DfaConstructionException(
+    val error: DfaConstructionError,
+) : RuntimeException(error.toString())
 
-internal fun buildDfa(regexs: List<Hir>, precedences: List<Precedence>): Result<Dfa> = runCatching {
-    check(regexs.size == precedences.size)
-    val nfas: List<Nfa> = regexs.mapIndexed { i, r ->
-        try {
-            Nfa.fromRe(r).getOrThrow()
-        } catch (e: NfaConstructionException) {
-            throw DfaConstructionException(
-                DfaConstructionError.NfaConstructionErr(NfaIndex(i), e.error)
-            )
-        }
+internal fun buildDfa(regexs: List<Hir>, precedences: List<Precedence>): Result<Dfa> =
+    runCatching {
+        check(regexs.size == precedences.size)
+        val nfas: List<Nfa> =
+            regexs.mapIndexed { i, r ->
+                try {
+                    Nfa.fromRe(r).getOrThrow()
+                } catch (e: NfaConstructionException) {
+                    throw DfaConstructionException(
+                        DfaConstructionError.NfaConstructionErr(NfaIndex(i), e.error),
+                    )
+                }
+            }
+
+        val builder = DfaBuilder(nfas = nfas, precedences = precedences.toList())
+        builder.build()
     }
-
-    val builder = DfaBuilder(nfas = nfas, precedences = precedences.toList())
-    builder.build()
-}
 
 private class DfaBuilder(
     val nfas: List<Nfa>,
@@ -93,26 +103,37 @@ private class DfaBuilder(
 
             // if all NFAs are in a rejecting state, that makes this
             // Dfa a rejecting state
-            val allRejects: Boolean = itemSet.items.all { item ->
-                nfa(item).isRejectingState(item.nfaState)
-            }
-
-            val kind: Kind = when {
-                allRejects || itemSet.items.isEmpty() -> Kind.Reject
-                allAccepts.isEmpty() -> Kind.Neither
-                allAccepts.size == 1 -> Kind.Accepts(allAccepts[0].second)
-                else -> {
-                    allAccepts.sortWith(compareBy({ it.first }, { it.second }))
-                    val (bestPriority, bestNfa) = allAccepts[allAccepts.size - 1]
-                    val (nextPriority, nextNfa) = allAccepts[allAccepts.size - 2]
-                    if (bestPriority == nextPriority) {
-                        throw DfaConstructionException(
-                            DfaConstructionError.Ambiguity(match0 = bestNfa, match1 = nextNfa)
-                        )
-                    }
-                    Kind.Accepts(bestNfa)
+            val allRejects: Boolean =
+                itemSet.items.all { item ->
+                    nfa(item).isRejectingState(item.nfaState)
                 }
-            }
+
+            val kind: Kind =
+                when {
+                    allRejects || itemSet.items.isEmpty() -> {
+                        Kind.Reject
+                    }
+
+                    allAccepts.isEmpty() -> {
+                        Kind.Neither
+                    }
+
+                    allAccepts.size == 1 -> {
+                        Kind.Accepts(allAccepts[0].second)
+                    }
+
+                    else -> {
+                        allAccepts.sortWith(compareBy({ it.first }, { it.second }))
+                        val (bestPriority, bestNfa) = allAccepts[allAccepts.size - 1]
+                        val (nextPriority, nextNfa) = allAccepts[allAccepts.size - 2]
+                        if (bestPriority == nextPriority) {
+                            throw DfaConstructionException(
+                                DfaConstructionError.Ambiguity(match0 = bestNfa, match1 = nextNfa),
+                            )
+                        }
+                        Kind.Accepts(bestNfa)
+                    }
+                }
 
             // for each specific test, find what happens if we see a
             // character matching that test
@@ -148,12 +169,13 @@ private class DfaBuilder(
 
             val otherEdge = kernelSet.addState(transitiveClosure(otherTransitions))
 
-            val state = State(
-                itemSet = itemSet,
-                kind = kind,
-                testEdges = testEdges,
-                otherEdge = otherEdge,
-            )
+            val state =
+                State(
+                    itemSet = itemSet,
+                    kind = kind,
+                    testEdges = testEdges,
+                    otherEdge = otherEdge,
+                )
 
             states.add(state)
         }
@@ -163,9 +185,10 @@ private class DfaBuilder(
 
     fun startState(kernelSet: KernelSet<DfaItemSet, DfaStateIndex>): DfaStateIndex {
         // starting state is at the beginning of all regular expressions
-        val items: List<Item> = (0 until nfas.size).map { i ->
-            Item(nfaIndex = NfaIndex(i), nfaState = NFA_START)
-        }
+        val items: List<Item> =
+            (0 until nfas.size).map { i ->
+                Item(nfaIndex = NfaIndex(i), nfaState = NFA_START)
+            }
         val itemSet = transitiveClosure(items.toMutableList())
         return kernelSet.addState(itemSet)
     }
@@ -173,19 +196,24 @@ private class DfaBuilder(
     fun acceptTest(item: Item, test: Test): Item? {
         val nfa = nfa(item)
 
-        val matchingTest = nfa.testEdges(item.nfaState)
-            .filter { edge -> edge.label.intersects(test) }
-            .map { edge -> item.to(edge.to) }
+        val matchingTest =
+            nfa
+                .testEdges(item.nfaState)
+                .filter { edge -> edge.label.intersects(test) }
+                .map { edge -> item.to(edge.to) }
 
-        val matchingOther = nfa.otherEdges(item.nfaState)
-            .map { edge -> item.to(edge.to) }
+        val matchingOther =
+            nfa
+                .otherEdges(item.nfaState)
+                .map { edge -> item.to(edge.to) }
 
         return (matchingTest + matchingOther).firstOrNull()
     }
 
     fun acceptOther(item: Item): Item? {
         val nfa = nfa(item)
-        return nfa.otherEdges(item.nfaState)
+        return nfa
+            .otherEdges(item.nfaState)
             .map { edge -> item.to(edge.to) }
             .firstOrNull()
     }
@@ -198,10 +226,12 @@ private class DfaBuilder(
         while (counter < items.size) {
             val item = items[counter]
             val nfa = nfa(item)
-            val derived = nfa.noopEdges(item.nfaState)
-                .map { edge -> item.to(edge.to) }
-                .filter { observed.add(it) }
-                .toList()
+            val derived =
+                nfa
+                    .noopEdges(item.nfaState)
+                    .map { edge -> item.to(edge.to) }
+                    .filter { observed.add(it) }
+                    .toList()
             items.addAll(derived)
             counter += 1
         }
@@ -227,23 +257,35 @@ internal data class State(
 )
 
 internal sealed class Kind {
-    data class Accepts(val nfa: NfaIndex) : Kind()
+    data class Accepts(
+        val nfa: NfaIndex,
+    ) : Kind()
+
     object Reject : Kind()
+
     object Neither : Kind()
 }
 
-internal data class NfaIndex(val value: Int) : Comparable<NfaIndex> {
+internal data class NfaIndex(
+    val value: Int,
+) : Comparable<NfaIndex> {
     override fun compareTo(other: NfaIndex): Int = value.compareTo(other.value)
+
     fun index(): Int = value
+
     override fun toString(): String = "NfaIndex($value)"
 }
 
 @Deprecated("use `NfaIndex` instead", ReplaceWith("NfaIndex"))
 internal typealias NFAIndex = NfaIndex
 
-internal data class DfaStateIndex(val value: Int) : Comparable<DfaStateIndex> {
+internal data class DfaStateIndex(
+    val value: Int,
+) : Comparable<DfaStateIndex> {
     override fun compareTo(other: DfaStateIndex): Int = value.compareTo(other.value)
+
     fun index(): Int = value
+
     override fun toString(): String = "Dfa$value"
 }
 
@@ -254,7 +296,10 @@ internal typealias DfaKernelSet = KernelSet<DfaItemSet, DfaStateIndex>
 
 internal typealias Index = DfaStateIndex
 
-internal data class DfaItemSet(val items: List<Item>) : Kernel<DfaItemSet, DfaStateIndex>, Comparable<DfaItemSet> {
+internal data class DfaItemSet(
+    val items: List<Item>,
+) : Kernel<DfaItemSet, DfaStateIndex>,
+    Comparable<DfaItemSet> {
     override fun index(c: Int): DfaStateIndex = DfaStateIndex(c)
 
     override fun compareTo(other: DfaItemSet): Int {

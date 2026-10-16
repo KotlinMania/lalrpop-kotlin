@@ -9,7 +9,6 @@ import io.github.kotlinmania.lalrpop.lr1.StateIndex
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
 import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraph
 import io.github.kotlinmania.lalrpop.lr1.trace.tracegraph.TraceGraphNode
-import io.github.kotlinmania.lalrpop.lr1.Token
 
 /**
  * A backtrace explaining how a particular shift:
@@ -76,8 +75,7 @@ internal fun Tracer.backtraceShift(
 //     Z = ...p (*) Y ...
 //
 // So search for items like Z.
-private fun Tracer.traceEpsilonEdges(itemState: StateIndex, nonterminal: NonterminalString) // "Y"
-{
+private fun Tracer.traceEpsilonEdges(itemState: StateIndex, nonterminal: NonterminalString) { // "Y"
     if (this.visitedSet.add(ComparablePair(itemState, nonterminal))) {
         for (predItem in this.states[itemState.value].items.vec) {
             if (predItem.canShiftNonterminal(nonterminal)) {

@@ -46,8 +46,8 @@ import io.github.kotlinmania.lalrpop.build.parseAndNormalizeGrammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.buildStates
-import io.github.kotlinmania.lalrpop.runtime.Production
-import io.github.kotlinmania.lalrpop.runtime.ProductionAction
+import io.github.kotlinmania.lalrpoputil.tabledriven.Production
+import io.github.kotlinmania.lalrpoputil.tabledriven.ProductionAction
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
 import kotlin.test.assertEquals
