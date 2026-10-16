@@ -405,7 +405,20 @@ val jvmToolchainVersion = providers.gradleProperty("jvm.toolchain").getOrElse("2
 kotlin {
     jvmToolchain(jvmToolchainVersion)
 
-    applyDefaultHierarchyTemplate()
+    // Default hierarchy plus a named posix group: shared POSIX code for every
+    // native target except mingw (Apple, Linux, Android Native) lives in
+    // src/posixMain and src/posixTest as real shared source sets.
+    applyDefaultHierarchyTemplate {
+        common {
+            group("native") {
+                group("posix") {
+                    withApple()
+                    withLinux()
+                    withAndroidNative()
+                }
+            }
+        }
+    }
 
     compilerOptions {
         languageVersion.set(KotlinVersion.KOTLIN_2_4)
@@ -812,49 +825,6 @@ kotlin {
     }
 
     sourceSets {
-        // Optional intermediate source sets. Each is wired only when the repo
-        // has the directory, so repos without them are unaffected.
-        if (file("src/jvmAndAndroidMain").exists()) {
-            val jvmAndAndroidMain =
-                create("jvmAndAndroidMain") {
-                    dependsOn(commonMain.get())
-                }
-            jvmMain.get().dependsOn(jvmAndAndroidMain)
-            androidMain.get().dependsOn(jvmAndAndroidMain)
-        }
-        // posixMain: shared POSIX code for every native target except mingw.
-        // Added as a source directory per target rather than a dependsOn edge,
-        // which would switch off the default hierarchy template.
-        if (file("src/posixMain/kotlin").exists()) {
-            listOf(
-                "linuxX64Main",
-                "linuxArm64Main",
-                "macosArm64Main",
-                "iosArm64Main",
-                "iosSimulatorArm64Main",
-                "tvosArm64Main",
-                "tvosSimulatorArm64Main",
-                "watchosDeviceArm64Main",
-                "watchosSimulatorArm64Main",
-                "androidNativeArm64Main",
-                "androidNativeX64Main",
-            ).forEach { name -> findByName(name)?.kotlin?.srcDir("src/posixMain/kotlin") }
-        }
-        if (file("src/posixTest/kotlin").exists()) {
-            listOf(
-                "linuxX64Test",
-                "linuxArm64Test",
-                "macosArm64Test",
-                "iosArm64Test",
-                "iosSimulatorArm64Test",
-                "tvosArm64Test",
-                "tvosSimulatorArm64Test",
-                "watchosDeviceArm64Test",
-                "watchosSimulatorArm64Test",
-                "androidNativeArm64Test",
-                "androidNativeX64Test",
-            ).forEach { name -> findByName(name)?.kotlin?.srcDir("src/posixTest/kotlin") }
-        }
         commonMain.dependencies {
             implementation(commonMainDependencyBundle)
         }
