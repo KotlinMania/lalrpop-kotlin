@@ -14,10 +14,12 @@ import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.toKString
+import io.github.kotlinmania.lalrpop.posixFileType
+import io.github.kotlinmania.lalrpop.posixListDirectory
+import io.github.kotlinmania.lalrpop.posixMakeDirectory
 import platform.posix.S_IFDIR
 import platform.posix.S_IFLNK
 import platform.posix.S_IFMT
-import platform.posix.closedir
 import platform.posix.fclose
 import platform.posix.fopen
 import platform.posix.fprintf
@@ -25,8 +27,6 @@ import platform.posix.fread
 import platform.posix.fwrite
 import platform.posix.lstat
 import platform.posix.mkdir
-import platform.posix.opendir
-import platform.posix.readdir
 import platform.posix.remove
 import platform.posix.stat
 import platform.posix.stderr
@@ -104,7 +104,7 @@ internal actual fun apiBuildWriteFileBytes(path: String, content: String) {
 internal actual fun apiBuildCreateDirAll(path: String) {
     if (path.isEmpty() || isDirectory(path)) return
     pathParent(path)?.let { apiBuildCreateDirAll(it) }
-    mkdir(path, "0755".toUInt(8).convert())
+    posixMakeDirectory(path)
 }
 
 @OptIn(ExperimentalForeignApi::class)
@@ -151,11 +151,7 @@ internal actual fun apiBuildReadFirstTwoLines(path: String): Pair<String, String
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal actual fun apiBuildPathIsSymlink(path: String): Boolean = memScoped {
-    val st = alloc<stat>()
-    if (lstat(path, st.ptr) != 0) return@memScoped false
-    (st.st_mode.toInt() and S_IFMT) == S_IFLNK
-}
+internal actual fun apiBuildPathIsSymlink(path: String): Boolean = posixFileType(path, followLinks = false) == S_IFLNK
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiBuildWalkDir(root: String): Sequence<WalkEntry> {
@@ -179,19 +175,7 @@ internal actual fun apiBuildWalkDir(root: String): Sequence<WalkEntry> {
 private fun walkDirInto(root: String, out: MutableList<WalkEntry>) {
     if (isDirectory(root)) {
         out.add(WalkEntry.Ok(path = root, isFile = false))
-        val dir = opendir(root) ?: return
-        val children = mutableListOf<String>()
-        try {
-            while (true) {
-                val ent = readdir(dir) ?: break
-                val name = ent.pointed.d_name.reinterpret<ByteVar>().toKString()
-                if (name == "." || name == "..") continue
-                children.add(name)
-            }
-        } finally {
-            closedir(dir)
-        }
-        children.sort()
+        val children = posixListDirectory(root)?.sorted() ?: return
         for (name in children) {
             val full = if (root.endsWith('/')) root + name else "$root/$name"
             walkDirInto(full, out)
@@ -234,11 +218,7 @@ internal actual fun apiBuildOpenAnsiStdout(): Appendable? {
 // ---------------------------------------------------------------------------
 
 @OptIn(ExperimentalForeignApi::class)
-private fun isDirectory(path: String): Boolean = memScoped {
-    val st = alloc<stat>()
-    if (stat(path, st.ptr) != 0) return@memScoped false
-    (st.st_mode.toInt() and S_IFMT) == S_IFDIR
-}
+private fun isDirectory(path: String): Boolean = posixFileType(path, followLinks = true) == S_IFDIR
 
 @OptIn(ExperimentalForeignApi::class)
 private fun exists(path: String): Boolean = memScoped {

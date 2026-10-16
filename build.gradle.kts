@@ -412,9 +412,9 @@ kotlin {
         common {
             group("native") {
                 group("posix") {
-                    withApple()
-                    withLinux()
-                    withAndroidNative()
+                    group("apple")
+                    group("linux")
+                    group("androidNative")
                 }
             }
         }
