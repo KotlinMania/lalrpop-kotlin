@@ -51,3 +51,5 @@ tools/ast_distance/build/
 src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/*.tmp
 src/commonMain/kotlin/io/github/kotlinmania/lalrpop/message/**/*.tmp
 .DS_Store
+node_modules/
+package-lock.json
