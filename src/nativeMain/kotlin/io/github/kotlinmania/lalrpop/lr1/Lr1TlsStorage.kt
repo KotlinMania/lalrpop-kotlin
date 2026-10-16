@@ -8,4 +8,3 @@ import kotlin.native.concurrent.ThreadLocal
 internal actual object Lr1TlsStorage {
     actual var terminals: TerminalSet? = null
 }
-

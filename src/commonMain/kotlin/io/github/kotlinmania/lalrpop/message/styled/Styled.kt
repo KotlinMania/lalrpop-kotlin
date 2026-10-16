@@ -3,9 +3,9 @@ package io.github.kotlinmania.lalrpop.message.styled
 
 import io.github.kotlinmania.lalrpop.Style
 import io.github.kotlinmania.lalrpop.message.AsciiView
-import io.github.kotlinmania.lalrpop.message.styled
 import io.github.kotlinmania.lalrpop.message.message.Content
 import io.github.kotlinmania.lalrpop.message.message.intoWrapItemsMap
+import io.github.kotlinmania.lalrpop.message.styled
 
 internal class Styled private constructor(
     private val style: Style,

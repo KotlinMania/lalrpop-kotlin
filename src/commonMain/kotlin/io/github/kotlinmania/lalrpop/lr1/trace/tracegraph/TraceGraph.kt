@@ -8,11 +8,11 @@ import io.github.kotlinmania.lalrpop.NodeIndex
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
 import io.github.kotlinmania.lalrpop.lr1.Nil
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
-import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.SymbolSets
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.example.Example
 import io.github.kotlinmania.lalrpop.lr1.example.ExampleSymbol
 import io.github.kotlinmania.lalrpop.lr1.example.Reduction
@@ -61,10 +61,11 @@ internal class TraceGraph(
     internal val indices: Map<TraceGraphNode, NodeIndex>,
 ) {
     companion object {
-        fun new(): TraceGraph = TraceGraph(
-            graph = Graph(),
-            indices = map(),
-        )
+        fun new(): TraceGraph =
+            TraceGraph(
+                graph = Graph(),
+                indices = map(),
+            )
     }
 
     fun addNode(node: TraceGraphNode): NodeIndex {
@@ -75,7 +76,8 @@ internal class TraceGraph(
     fun addEdge(from: TraceGraphNode, to: TraceGraphNode, labels: SymbolSets) {
         val fromIdx = this.addNode(from)
         val toIdx = this.addNode(to)
-        if (!this.graph.edgesDirected(fromIdx, EdgeDirection.Outgoing)
+        if (!this.graph
+                .edgesDirected(fromIdx, EdgeDirection.Outgoing)
                 .any { edge -> edge.target == toIdx && edge.weight == labels }
         ) {
             this.graph.addEdge(fromIdx, toIdx, labels)
@@ -98,7 +100,7 @@ internal class TraceGraph(
                         from = node,
                         to = this.graph[edge.target],
                         label = Triple(label.prefix, label.cursor, label.suffix),
-                    )
+                    ),
                 )
             }
         }
@@ -116,10 +118,15 @@ internal class TraceGraph(
 }
 
 internal sealed class TraceGraphNode : Comparable<TraceGraphNode> {
-    data class Nonterminal(val nonterminal: NonterminalString) : TraceGraphNode() {
+    data class Nonterminal(
+        val nonterminal: NonterminalString,
+    ) : TraceGraphNode() {
         override fun toString(): String = "Nonterminal($nonterminal)"
     }
-    data class ItemNode(val item: Item<Nil>) : TraceGraphNode() {
+
+    data class ItemNode(
+        val item: Item<Nil>,
+    ) : TraceGraphNode() {
         override fun toString(): String = "Item($item)"
     }
 
@@ -133,13 +140,15 @@ internal sealed class TraceGraphNode : Comparable<TraceGraphNode> {
         }
     }
 
-    private fun ordinal(): Int = when (this) {
-        is Nonterminal -> 0
-        is ItemNode -> 1
-    }
+    private fun ordinal(): Int =
+        when (this) {
+            is Nonterminal -> 0
+            is ItemNode -> 1
+        }
 
     companion object {
         fun from(value: NonterminalString): TraceGraphNode = Nonterminal(value)
+
         fun <L : Lookahead<L>> from(value: Item<L>): TraceGraphNode = ItemNode(value.toLr0())
     }
 }
@@ -148,9 +157,11 @@ internal sealed class TraceGraphNode : Comparable<TraceGraphNode> {
 private data class TraceGraphEdge(
     val from: TraceGraphNode,
     val to: TraceGraphNode,
-    val label: Triple<List<io.github.kotlinmania.lalrpop.grammar.repr.Symbol>,
+    val label: Triple<
+        List<io.github.kotlinmania.lalrpop.grammar.repr.Symbol>,
         io.github.kotlinmania.lalrpop.grammar.repr.Symbol?,
-        List<io.github.kotlinmania.lalrpop.grammar.repr.Symbol>>,
+        List<io.github.kotlinmania.lalrpop.grammar.repr.Symbol>,
+    >,
 ) {
     override fun toString(): String =
         "($from -(${label.first}, ${formatOption(label.second)}, ${label.third})-> $to)"
@@ -181,7 +192,7 @@ internal class PathEnumerator internal constructor(
                     index = startState,
                     symbolSets = SymbolSets.new(),
                     edges = edges,
-                )
+                ),
             )
             enumerator.findNextTrace()
             return enumerator
@@ -216,15 +227,14 @@ internal class PathEnumerator internal constructor(
      * whatever is on the top of the stack. It simply withdraws
      * that next child (if any) and hands it to `pushNext`.
      */
-    private fun findNextTrace(): Boolean {
-        return if (this.stack.isNotEmpty()) {
+    private fun findNextTrace(): Boolean =
+        if (this.stack.isNotEmpty()) {
             val topOfStack = this.stack.last()
             val nextEdge = if (topOfStack.edges.hasNext()) topOfStack.edges.next() else null
             pushNextChildIfAny(nextEdge)
         } else {
             false
         }
-    }
 
     /**
      * Invoked with the next child (if any) of the node on the top of
@@ -237,8 +247,8 @@ internal class PathEnumerator internal constructor(
      * we call `findNextTrace` again to start with the next child
      * of the new top of the stack.
      */
-    private fun pushNextChildIfAny(next: EdgeRef<SymbolSets>?): Boolean {
-        return if (next != null) {
+    private fun pushNextChildIfAny(next: EdgeRef<SymbolSets>?): Boolean =
+        if (next != null) {
             val index = next.source
             val symbolSets = next.weight
             pushNextChild(index, symbolSets)
@@ -246,7 +256,6 @@ internal class PathEnumerator internal constructor(
             this.stack.removeLast()
             findNextTrace()
         }
-    }
 
     /**
      * Push the next child of the top of the stack onto the stack,
@@ -265,8 +274,8 @@ internal class PathEnumerator internal constructor(
      * push it onto the stack so that it becomes the new top, and
      * call `findNextTrace` to start searching its children.
      */
-    private fun pushNextChild(index: NodeIndex, symbolSets: SymbolSets): Boolean {
-        return when (this.graph.graph[index]) {
+    private fun pushNextChild(index: NodeIndex, symbolSets: SymbolSets): Boolean =
+        when (this.graph.graph[index]) {
             is TraceGraphNode.ItemNode -> {
                 // If we reached an item like
                 //
@@ -280,10 +289,11 @@ internal class PathEnumerator internal constructor(
                         index = index,
                         symbolSets = symbolSets,
                         edges = edges,
-                    )
+                    ),
                 )
                 true
             }
+
             is TraceGraphNode.Nonterminal -> {
                 // If this node already appears on the stack, do not
                 // visit its children.
@@ -294,13 +304,12 @@ internal class PathEnumerator internal constructor(
                             index = index,
                             symbolSets = symbolSets,
                             edges = edges,
-                        )
+                        ),
                     )
                 }
                 findNextTrace()
             }
         }
-    }
 
     fun foundTrace(): Boolean = this.stack.isNotEmpty()
 
@@ -316,7 +325,9 @@ internal class PathEnumerator internal constructor(
         check(foundTrace())
         val syms: MutableList<io.github.kotlinmania.lalrpop.grammar.repr.Symbol> =
             mutableListOf()
-        this.stack[1].symbolSets.cursor?.let { syms.add(it) }
+        this.stack[1]
+            .symbolSets.cursor
+            ?.let { syms.add(it) }
         for (s in this.stack) {
             syms.addAll(s.symbolSets.suffix)
         }
@@ -340,7 +351,10 @@ internal class PathEnumerator internal constructor(
         if (cursorSym != null) {
             symbols.add(ExampleSymbol.SymbolValue(cursorSym))
         } else {
-            if (this.stack[1].symbolSets.prefix.isEmpty()) {
+            if (this.stack[1]
+                    .symbolSets.prefix
+                    .isEmpty()
+            ) {
                 symbols.add(ExampleSymbol.Epsilon)
             }
         }
@@ -356,15 +370,17 @@ internal class PathEnumerator internal constructor(
 
         val reductions: MutableList<Reduction> = mutableListOf()
         for (state in this.stack.subList(1, this.stack.size).asReversed()) {
-            val nonterminal = when (val node = this.graph.graph[state.index]) {
-                is TraceGraphNode.Nonterminal -> node.nonterminal
-                is TraceGraphNode.ItemNode -> node.item.production.nonterminal
-            }
-            val reduction = Reduction(
-                start = cursorStart,
-                end = cursorEnd,
-                nonterminal = nonterminal,
-            )
+            val nonterminal =
+                when (val node = this.graph.graph[state.index]) {
+                    is TraceGraphNode.Nonterminal -> node.nonterminal
+                    is TraceGraphNode.ItemNode -> node.item.production.nonterminal
+                }
+            val reduction =
+                Reduction(
+                    start = cursorStart,
+                    end = cursorEnd,
+                    nonterminal = nonterminal,
+                )
             cursorStart += state.symbolSets.prefix.size
             cursorEnd -= state.symbolSets.suffix.size
             reductions.add(reduction)
@@ -414,11 +430,12 @@ internal class FilteredPathEnumerator internal constructor(
             graph: TraceGraph,
             lr0Item: Item<Nil>,
             lookahead: TokenSet,
-        ): FilteredPathEnumerator = FilteredPathEnumerator(
-            base = PathEnumerator.new(graph, lr0Item),
-            firstSets = firstSets,
-            lookahead = lookahead,
-        )
+        ): FilteredPathEnumerator =
+            FilteredPathEnumerator(
+                base = PathEnumerator.new(graph, lr0Item),
+                firstSets = firstSets,
+                lookahead = lookahead,
+            )
     }
 
     private var cached: Example? = null

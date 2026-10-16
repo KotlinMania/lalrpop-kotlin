@@ -2,7 +2,6 @@
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
 import io.github.kotlinmania.lalrpop.lexer.parseRegex
-import io.github.kotlinmania.lalrpop.lexer.nfa.Test as NfaTestEdge
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

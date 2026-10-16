@@ -5,9 +5,6 @@ import io.github.kotlinmania.lalrpop.EdgeDirection
 import io.github.kotlinmania.lalrpop.Graph
 import io.github.kotlinmania.lalrpop.NodeIndex
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.State
-import io.github.kotlinmania.lalrpop.lr1.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.Lookahead
 
 // Each state `s` corresponds to the node in the graph with index
 // `s`. The edges are the shift transitions.
@@ -31,15 +28,18 @@ internal class StateGraph(
                 // Successors of a node arise from:
                 // - shifts (found in the `conflicts` and `tokens` maps)
                 // - gotos (found in the `gotos` map)
-                val shifts = state.shifts.entries.map { (terminal, s) ->
-                    Pair(Symbol.Terminal(terminal), s)
-                }
-                val gotos = state.gotos.entries.map { (nt, s) ->
-                    Pair(Symbol.Nonterminal(nt), s)
-                }
-                val it = (shifts + gotos).map { (symbol, successor) ->
-                    Triple(NodeIndex.new(i), NodeIndex.new(successor.value), symbol)
-                }
+                val shifts =
+                    state.shifts.entries.map { (terminal, s) ->
+                        Pair(Symbol.Terminal(terminal), s)
+                    }
+                val gotos =
+                    state.gotos.entries.map { (nt, s) ->
+                        Pair(Symbol.Nonterminal(nt), s)
+                    }
+                val it =
+                    (shifts + gotos).map { (symbol, successor) ->
+                        Triple(NodeIndex.new(i), NodeIndex.new(successor.value), symbol)
+                    }
                 graph.extendWithEdges(it)
             }
 
@@ -57,9 +57,10 @@ internal class StateGraph(
         initialStateIndex: StateIndex,
         initialSymbols: List<Symbol>,
     ): MutableList<StateIndex> {
-        val stack: MutableList<Pair<StateIndex, List<Symbol>>> = mutableListOf(
-            Pair(initialStateIndex, initialSymbols),
-        )
+        val stack: MutableList<Pair<StateIndex, List<Symbol>>> =
+            mutableListOf(
+                Pair(initialStateIndex, initialSymbols),
+            )
         val result: MutableList<StateIndex> = mutableListOf()
         while (stack.isNotEmpty()) {
             val (stateIndex, symbols) = stack.removeLast()
@@ -67,7 +68,8 @@ internal class StateGraph(
                 val head = symbols.last()
                 val tail = symbols.subList(0, symbols.size - 1)
                 stack.addAll(
-                    graph.edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Incoming)
+                    graph
+                        .edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Incoming)
                         .filter { edge -> edge.weight == head }
                         .map { edge -> Pair(StateIndex(edge.source.index()), tail) },
                 )
@@ -85,12 +87,14 @@ internal class StateGraph(
     }
 
     fun successors(stateIndex: StateIndex): Sequence<StateIndex> =
-        graph.edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Outgoing)
+        graph
+            .edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Outgoing)
             .asSequence()
             .map { edge -> StateIndex(edge.target.index()) }
 
     fun predecessors(stateIndex: StateIndex, symbol: Symbol): Sequence<StateIndex> =
-        graph.edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Incoming)
+        graph
+            .edgesDirected(NodeIndex.new(stateIndex.value), EdgeDirection.Incoming)
             .asSequence()
             .filter { edge -> edge.weight == symbol }
             .map { edge -> StateIndex(edge.source.index()) }

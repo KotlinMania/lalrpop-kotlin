@@ -1,10 +1,6 @@
 // port-lint: source collections/multimap.rs
 package io.github.kotlinmania.lalrpop.collections
 
-import io.github.kotlinmania.lalrpop.collections.Map
-import io.github.kotlinmania.lalrpop.collections.map
-import io.github.kotlinmania.btree.BTreeSet
-import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.set
 
 internal class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
@@ -33,16 +29,22 @@ internal class Multimap<K : Comparable<K>, C : Collection<Item>, Item>(
      */
     fun push(key: K, value: Item): Boolean {
         var inserted = false
-        val pushed = map.getOrPut(key) {
-            inserted = true
-            collectionFactory()
-        }.push(value)
+        val pushed =
+            map
+                .getOrPut(key) {
+                    inserted = true
+                    collectionFactory()
+                }.push(value)
         return inserted || pushed
     }
 
     fun get(key: K): C? = map[key]
 
-    fun iter(): Iterator<Pair<K, C>> = map.entries.asSequence().map { it.key to it.value }.iterator()
+    fun iter(): Iterator<Pair<K, C>> =
+        map.entries
+            .asSequence()
+            .map { it.key to it.value }
+            .iterator()
 
     fun intoIter(): Iterator<Pair<K, C>> = iter()
 

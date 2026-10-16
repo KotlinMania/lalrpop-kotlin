@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class IndentedWriterTest {
-
     @Test
     fun lineWritesAtCurrentDepth() {
         val out = IndentedWriter()
@@ -39,10 +38,10 @@ class IndentedWriterTest {
 
         val expected =
             "class Foo {\n" +
-            "    fun greet() {\n" +
-            "        println(\"hi\")\n" +
-            "    }\n" +
-            "}\n"
+                "    fun greet() {\n" +
+                "        println(\"hi\")\n" +
+                "    }\n" +
+                "}\n"
         assertEquals(expected, out.toString())
     }
 

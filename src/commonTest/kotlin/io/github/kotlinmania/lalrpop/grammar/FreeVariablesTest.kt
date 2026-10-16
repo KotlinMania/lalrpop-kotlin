@@ -23,13 +23,14 @@ class FreeVariablesTest {
     fun otherNames() {
         // Check that `Foo` does not end up in the list of free variables.
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar<'a, T>(x: &'a mut Foo, y: Vec<T>);
 
 pub Foo: () = ();
 """,
-            )
+                )
 
             val p0 = grammar.parameters[0]
             expectDebug(

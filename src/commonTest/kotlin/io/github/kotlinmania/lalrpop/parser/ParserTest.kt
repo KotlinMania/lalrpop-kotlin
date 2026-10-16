@@ -11,21 +11,23 @@ import kotlin.test.fail
 class ParserTest {
     @Test
     fun matchBlock() {
-        val blocks = listOf(
-            """grammar; match { _ }""",                     // Minimal
-            """grammar; match { _ } else { _ }""",          // Doesn't really make sense, but should be allowed
-            """grammar; match { "abc" }""",                 // Single token
-            """grammar; match { "abc" => "QUOTED" }""",     // Single token with quoted alias
-            """grammar; match { "abc" => UNQUOTED }""",     // Single token with unquoted alias
-            """grammar; match { r"(?i)begin" => BEGIN }""", // Hir
-            """grammar; match { "abc", "def" => "DEF", _ } else { "foo" => BAR, r"(?i)begin" => BEGIN, _ }""", // Complex
-            """grammar; match { "abc" } else { "def" } else { _ }""", // Multi-chain
-        )
+        val blocks =
+            listOf(
+                """grammar; match { _ }""", // Minimal
+                """grammar; match { _ } else { _ }""", // Doesn't really make sense, but should be allowed
+                """grammar; match { "abc" }""", // Single token
+                """grammar; match { "abc" => "QUOTED" }""", // Single token with quoted alias
+                """grammar; match { "abc" => UNQUOTED }""", // Single token with unquoted alias
+                """grammar; match { r"(?i)begin" => BEGIN }""", // Hir
+                """grammar; match { "abc", "def" => "DEF", _ } else { "foo" => BAR, r"(?i)begin" => BEGIN, _ }""", // Complex
+                """grammar; match { "abc" } else { "def" } else { _ }""", // Multi-chain
+            )
 
         for (block in blocks) {
-            val parsed = parseGrammar(block).getOrElse {
-                fail("Invalid grammar; grammar=$block")
-            }
+            val parsed =
+                parseGrammar(block).getOrElse {
+                    fail("Invalid grammar; grammar=$block")
+                }
             val firstItem = parsed.items.first()
             if (firstItem !is GrammarItem.MatchToken) {
                 fail("expected MatchToken, but was $firstItem")
@@ -35,8 +37,9 @@ class ParserTest {
 
     @Test
     fun matchComplex() {
-        val parsed = parseGrammar(
-            """
+        val parsed =
+            parseGrammar(
+                """
         grammar;
         match {
             r"(?i)begin" => "BEGIN",
@@ -48,11 +51,12 @@ class ParserTest {
             _
         }
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val firstItem = parsed.items.first()
-        val data = (firstItem as? GrammarItem.MatchToken)
-            ?: fail("expected MatchToken, but was: $firstItem")
+        val data =
+            (firstItem as? GrammarItem.MatchToken)
+                ?: fail("expected MatchToken, but was: $firstItem")
         val matchData = data.inner
 
         // first match-block contents
@@ -95,21 +99,22 @@ class ParserTest {
 
     @Test
     fun whereClauses() {
-        val clauses = listOf(
-            "where T: Debug",
-            "where T: Debug + Display",
-            "where T: std::ops::Add<usize>",
-            "where T: IntoIterator<Item = usize>",
-            "where T: 'a",
-            "where 'a: 'b",
-            "where for<'a> &'a T: Debug",
-            "where T: for<'a> Flobbles<'a>",
-            "where T: FnMut(usize)",
-            "where T: FnMut(usize, bool)",
-            "where T: FnMut() -> bool",
-            "where T: for<'a> FnMut(&'a usize)",
-            "where T: Debug, U: Display",
-        )
+        val clauses =
+            listOf(
+                "where T: Debug",
+                "where T: Debug + Display",
+                "where T: std::ops::Add<usize>",
+                "where T: IntoIterator<Item = usize>",
+                "where T: 'a",
+                "where 'a: 'b",
+                "where for<'a> &'a T: Debug",
+                "where T: for<'a> Flobbles<'a>",
+                "where T: FnMut(usize)",
+                "where T: FnMut(usize, bool)",
+                "where T: FnMut() -> bool",
+                "where T: for<'a> FnMut(&'a usize)",
+                "where T: Debug, U: Display",
+            )
 
         for (santa in clauses) {
             assertTrue(
@@ -121,23 +126,24 @@ class ParserTest {
 
     @Test
     fun grammarsWithWhereClauses() {
-        val grammars = listOf(
-            """
+        val grammars =
+            listOf(
+                """
 grammar<T> where T: StaticMethods;
 """,
-            """
+                """
 grammar<T>(methods: &mut T) where T: MutMethods;
 """,
-            """
+                """
 grammar<'input, T>(methods: &mut T) where T: 'input + Debug + MutMethods;
 """,
-            """
+                """
 grammar<F>(methods: &mut F) where F: for<'a> FnMut(&'a usize) -> bool;
 """,
-            """
+                """
 grammar<F>(logger: &mut F) where F: for<'a> FnMut(&'a str);
 """,
-        )
+            )
 
         for (g in grammars) {
             assertTrue(parseGrammar(g).isSuccess)

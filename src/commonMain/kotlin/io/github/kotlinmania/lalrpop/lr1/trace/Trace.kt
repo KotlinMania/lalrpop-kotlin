@@ -20,12 +20,13 @@ internal class Tracer(
     internal val visitedSet: Set<ComparablePair<StateIndex, NonterminalString>>,
 ) {
     companion object {
-        fun new(firstSets: FirstSets, states: List<State<TokenSet>>): Tracer = Tracer(
-            states = states,
-            firstSets = firstSets,
-            stateGraph = StateGraph.new(states),
-            traceGraph = TraceGraph.new(),
-            visitedSet = set(),
-        )
+        fun new(firstSets: FirstSets, states: List<State<TokenSet>>): Tracer =
+            Tracer(
+                states = states,
+                firstSets = firstSets,
+                stateGraph = StateGraph.new(states),
+                traceGraph = TraceGraph.new(),
+                visitedSet = set(),
+            )
     }
 }

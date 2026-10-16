@@ -19,31 +19,33 @@ import io.github.kotlinmania.lalrpop.message.builder.MessageBuilder
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
 
-private fun installTls(): Tls = Tls.testString(
-    """foo
+private fun installTls(): Tls =
+    Tls.testString(
+        """foo
 bar
 baz
 """,
-)
+    )
 
 class MessageTest {
     @Test
     fun helloWorld() {
         installTls().use {
-            val msg = MessageBuilder.new(Span(0, 2))
-                .heading()
-                .text("Hello, world!")
-                .end()
-                .body()
-                .beginWrap()
-                .text(
-                    "This is a very, very, very, very long sentence. " +
-                        "OK, not THAT long!",
-                )
-                .end()
-                .indentedBy(4)
-                .end()
-                .end()
+            val msg =
+                MessageBuilder
+                    .new(Span(0, 2))
+                    .heading()
+                    .text("Hello, world!")
+                    .end()
+                    .body()
+                    .beginWrap()
+                    .text(
+                        "This is a very, very, very, very long sentence. " +
+                            "OK, not THAT long!",
+                    ).end()
+                    .indentedBy(4)
+                    .end()
+                    .end()
             val minWidth = msg.minWidth()
             val canvas = AsciiCanvas.new(0, minWidth)
             msg.emit(canvas)
@@ -69,17 +71,18 @@ class MessageTest {
     @Test
     fun longBody() {
         installTls().use {
-            val msg = MessageBuilder.new(Span(0, 2))
-                .heading()
-                .text("Hello, world!")
-                .end()
-                .body()
-                .text(
-                    "This is a very, very, very, very long sentence. " +
-                        "OK, not THAT long!",
-                )
-                .end()
-                .end()
+            val msg =
+                MessageBuilder
+                    .new(Span(0, 2))
+                    .heading()
+                    .text("Hello, world!")
+                    .end()
+                    .body()
+                    .text(
+                        "This is a very, very, very, very long sentence. " +
+                            "OK, not THAT long!",
+                    ).end()
+                    .end()
             val minWidth = msg.minWidth()
             val canvas = AsciiCanvas.new(0, minWidth)
             msg.emit(canvas)

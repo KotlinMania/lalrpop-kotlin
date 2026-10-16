@@ -33,16 +33,17 @@ private fun inlineNt(grammar: Grammar, inlineNt: NonterminalString) {
                 continue
             }
 
-            val inliner = Inliner(
-                actionFnDefns = grammar.actionFnDefns,
-                inlineNonterminal = inlineNt,
-                intoProduction = intoProduction,
-                inlineFallible = 0u,
-                inlineProductions = inlineProductions,
-                newSymbols = mutableListOf(),
-                newProductions = newProductions,
-                newActionFnDefns = newActionFnDefns,
-            )
+            val inliner =
+                Inliner(
+                    actionFnDefns = grammar.actionFnDefns,
+                    inlineNonterminal = inlineNt,
+                    intoProduction = intoProduction,
+                    inlineFallible = 0u,
+                    inlineProductions = inlineProductions,
+                    newSymbols = mutableListOf(),
+                    newProductions = newProductions,
+                    newActionFnDefns = newActionFnDefns,
+                )
 
             inliner.inline(intoProduction.symbols)
         }
@@ -55,16 +56,13 @@ private fun inlineNt(grammar: Grammar, inlineNt: NonterminalString) {
 private class Inliner(
     /** Action function defns */
     val actionFnDefns: List<ActionFnDefn>,
-
     /** The nonterminal `A` being inlined */
     val inlineNonterminal: NonterminalString,
-
     /**
      * The full set of productions `A = B C D | E F G` for the
      * nonterminal `A` being inlined
      */
     val inlineProductions: List<Production>,
-
     /**
      * Number of actions that we have inlined for `A` so far which
      * have been fallible. IOW, if we are inlining `A` into `X = Y A
@@ -73,20 +71,16 @@ private class Inliner(
      * be 1.
      */
     var inlineFallible: UInt,
-
     /** The `X = Y A Z` being inlined into */
     val intoProduction: Production,
-
     /**
      * The list of symbols we building up for the new production.
      * For example, this would (eventually) contain `Y B C D Z`,
      * given our running example.
      */
     val newSymbols: MutableList<InlinedSymbol>,
-
     /** The output vector of all productions for `X` that we have created */
     val newProductions: MutableList<Production>,
-
     /** Vector of all action function defns from the grammar. */
     val newActionFnDefns: MutableList<ActionFnDefn>,
 )
@@ -100,10 +94,11 @@ private fun Inliner.inline(intoSymbols: List<Symbol>) {
         val inlineFallible = this.inlineFallible != 0u
         val index = this.actionFnDefns.size + this.newActionFnDefns.size
         val actionFn = ActionFn.new(index)
-        val inlineDefn = InlineActionFnDefn(
-            action = intoAction,
-            symbols = this.newSymbols.toMutableList(),
-        )
+        val inlineDefn =
+            InlineActionFnDefn(
+                action = intoAction,
+                symbols = this.newSymbols.toMutableList(),
+            )
         this.newActionFnDefns.add(
             ActionFnDefn(
                 fallible = intoFallible || inlineFallible,
@@ -111,15 +106,15 @@ private fun Inliner.inline(intoSymbols: List<Symbol>) {
                 kind = ActionFnDefnKind.Inline(inlineDefn),
             ),
         )
-        val prodSymbols: MutableList<Symbol> = this
-            .newSymbols
-            .flatMap { sym ->
-                when (sym) {
-                    is InlinedSymbol.Original -> listOf(sym.sym)
-                    is InlinedSymbol.Inlined -> sym.syms.toList()
-                }
-            }
-            .toMutableList()
+        val prodSymbols: MutableList<Symbol> =
+            this
+                .newSymbols
+                .flatMap { sym ->
+                    when (sym) {
+                        is InlinedSymbol.Original -> listOf(sym.sym)
+                        is InlinedSymbol.Inlined -> sym.syms.toList()
+                    }
+                }.toMutableList()
         this.newProductions.add(
             Production(
                 nonterminal = this.intoProduction.nonterminal,
@@ -157,6 +152,7 @@ private fun Inliner.inline(intoSymbols: List<Symbol>) {
                     this.inlineFallible -= (if (fallible) 1u else 0u)
                 }
             }
+
             else -> {
                 this.newSymbols.add(InlinedSymbol.Original(nextSymbol))
                 this.inline(intoSymbols.subList(1, intoSymbols.size))

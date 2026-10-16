@@ -22,8 +22,9 @@ import kotlin.test.Test
 class CondCompTest {
     @Test
     fun cfgAttr() {
-        val grammar = parseGrammar(
-            """grammar;
+        val grammar =
+            parseGrammar(
+                """grammar;
 A = ();
 #[cfg(feature = "feat1")]
 B = ();
@@ -53,10 +54,11 @@ I = ();
 ))]
 J = ();
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
-        val expected = parseGrammar(
-            """grammar;
+        val expected =
+            parseGrammar(
+                """grammar;
 A = ();
 B = ();
 C = ();
@@ -64,9 +66,11 @@ D = ();
 E = ();
 F = ();
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
-        val features = io.github.kotlinmania.btree.BTreeSet.of("feat1", "feat2")
+        val features =
+            io.github.kotlinmania.btree.BTreeSet
+                .of("feat1", "feat2")
         val session = Session.new().also { it.features = features }
 
         val actual = removeDisabledDecls(session, grammar)

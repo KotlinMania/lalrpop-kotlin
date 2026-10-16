@@ -6,17 +6,17 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Parameter
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
-import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
@@ -45,29 +45,38 @@ internal fun compileParseTable(
     actionModule: String,
     out: RustWrite,
 ) {
-    val tableDriven = newTableDriven(
-        grammar,
-        userStartSymbol,
-        startSymbol,
-        states,
-        actionModule,
-        out,
-    )
+    val tableDriven =
+        newTableDriven(
+            grammar,
+            userStartSymbol,
+            startSymbol,
+            states,
+            actionModule,
+            out,
+        )
     tableDriven.write()
 }
 
 internal sealed class Comment<T> {
     abstract override fun toString(): String
 
-    data class Goto<T>(val token: T, val newState: Int) : Comment<T>() {
+    data class Goto<T>(
+        val token: T,
+        val newState: Int,
+    ) : Comment<T>() {
         override fun toString(): String = " // on $token, goto $newState"
     }
 
-    data class Error<T>(val token: T) : Comment<T>() {
+    data class Error<T>(
+        val token: T,
+    ) : Comment<T>() {
         override fun toString(): String = " // on $token, error"
     }
 
-    data class Reduce<T>(val token: T, val production: Production) : Comment<T>() {
+    data class Reduce<T>(
+        val token: T,
+        val production: Production,
+    ) : Comment<T>() {
         override fun toString(): String = " // on $token, reduce `$production`"
     }
 }
@@ -75,18 +84,12 @@ internal sealed class Comment<T> {
 internal class TableDriven(
     /** type parameters for the `Nonterminal` type */
     val symbolTypeParams: List<TypeParameter>,
-
     val symbolWhereClauses: List<WhereClause>,
-
     val machine: MachineParameters,
-
     /** a list of each nonterminal in some specific order */
     val allNonterminals: List<NonterminalString>,
-
     val reduceIndices: MutableMap<Production, Int>,
-
     val stateType: String,
-
     val variantNames: MutableMap<Symbol, String> = map(),
     val variants: MutableMap<TypeRepr, String> = map(),
     val reduceFunctions: MutableSet<Int> = set(),
@@ -103,7 +106,8 @@ private fun newTableDriven(
     val (symbolTypeParams, symbolWhereClauses) =
         CodeGenerator.filterTypeParametersAndWhereClauses(
             grammar,
-            grammar.types.nonterminalTypes()
+            grammar.types
+                .nonterminalTypes()
                 .asSequence()
                 .plus(grammar.types.terminalTypes().asSequence())
                 .asIterable(),
@@ -122,18 +126,19 @@ private fun newTableDriven(
         }
     }
 
-    val stateType: String = run {
-        // [reduceIndices] are allowed to be +1 since the negative maximum of any integer type
-        // is one larger than the positive maximum
-        val maxValue = maxOf(states.size, reduceIndices.size)
-        if (maxValue <= Byte.MAX_VALUE.toInt()) {
-            "i8"
-        } else if (maxValue <= Short.MAX_VALUE.toInt()) {
-            "i16"
-        } else {
-            "i32"
+    val stateType: String =
+        run {
+            // [reduceIndices] are allowed to be +1 since the negative maximum of any integer type
+            // is one larger than the positive maximum
+            val maxValue = maxOf(states.size, reduceIndices.size)
+            if (maxValue <= Byte.MAX_VALUE.toInt()) {
+                "i8"
+            } else if (maxValue <= Short.MAX_VALUE.toInt()) {
+                "i16"
+            } else {
+                "i32"
+            }
         }
-    }
 
     return CodeGenerator.new(
         grammar,
@@ -243,11 +248,12 @@ private fun CodeGenerator<TableDriven>.writeMachineDefinition() {
         "fn error_action(&self, state: $stateType) -> $stateType {",
     )
     // Avoid needless 1 subtract by 1
-    val errorActionArg: String = if (this.grammar.terminals.all.size == 1) {
-        "0"
-    } else {
-        "${this.grammar.terminals.all.size} - 1"
-    }
+    val errorActionArg: String =
+        if (this.grammar.terminals.all.size == 1) {
+            "0"
+        } else {
+            "${this.grammar.terminals.all.size} - 1"
+        }
     rust(this.out, "${this.prefix}action(state, $errorActionArg)")
     rust(this.out, "}")
 
@@ -369,12 +375,13 @@ private fun CodeGenerator<TableDriven>.writeValueTypeDefn() {
     for (term in this.grammar.terminals.all) {
         val ty = this.types.terminalType(term)
         val len = this.custom.variants.size
-        val name = this.custom.variants[ty] ?: run {
-            val newName = "Variant$len"
-            rust(this.out, "$newName($ty),")
-            this.custom.variants[ty] = newName
-            newName
-        }
+        val name =
+            this.custom.variants[ty] ?: run {
+                val newName = "Variant$len"
+                rust(this.out, "$newName($ty),")
+                this.custom.variants[ty] = newName
+                newName
+            }
 
         this.custom.variantNames[Symbol.Terminal(term)] = name
     }
@@ -383,12 +390,13 @@ private fun CodeGenerator<TableDriven>.writeValueTypeDefn() {
     for (nt in this.grammar.nonterminals.keys) {
         val ty = this.types.nonterminalType(nt)
         val len = this.custom.variants.size
-        val name = this.custom.variants[ty] ?: run {
-            val newName = "Variant$len"
-            rust(this.out, "$newName($ty),")
-            this.custom.variants[ty] = newName
-            newName
-        }
+        val name =
+            this.custom.variants[ty] ?: run {
+                val newName = "Variant$len"
+                rust(this.out, "$newName($ty),")
+                this.custom.variants[ty] = newName
+                newName
+            }
 
         this.custom.variantNames[Symbol.Nonterminal(nt)] = name
     }
@@ -414,17 +422,18 @@ private fun CodeGenerator<TableDriven>.writeParseTable() {
 
         // Write an action for each terminal (either shift, reduce, or error).
         val custom = this.custom
-        val iterator: List<Pair<Int, Comment<Token>>> = this.grammar.terminals.all.map { terminal ->
-            val newState = state.shifts[terminal]
-            if (newState != null) {
-                Pair(
-                    newState.value + 1,
-                    Comment.Goto(Token.Terminal(terminal), newState.value),
-                )
-            } else {
-                writeReduction(custom, state, Token.Terminal(terminal))
+        val iterator: List<Pair<Int, Comment<Token>>> =
+            this.grammar.terminals.all.map { terminal ->
+                val newState = state.shifts[terminal]
+                if (newState != null) {
+                    Pair(
+                        newState.value + 1,
+                        Comment.Goto(Token.Terminal(terminal), newState.value),
+                    )
+                } else {
+                    writeReduction(custom, state, Token.Terminal(terminal))
+                }
             }
-        }
         this.out.writeTableRow(iterator)
     }
 
@@ -436,11 +445,12 @@ private fun CodeGenerator<TableDriven>.writeParseTable() {
     )
 
     // Leads to multliplication by 1
-    val multiplier: String = if (this.grammar.terminals.all.size == 1) {
-        ""
-    } else {
-        "* ${this.grammar.terminals.all.size}"
-    }
+    val multiplier: String =
+        if (this.grammar.terminals.all.size == 1) {
+            ""
+        } else {
+            "* ${this.grammar.terminals.all.size}"
+        }
     rust(this.out, "${this.prefix}ACTION[(state as usize) $multiplier + integer]")
 
     rust(this.out, "}")
@@ -528,56 +538,58 @@ private fun <K, K2, T> emitGotoMatch(
         var largestVariant = 0
 
         // Group by nextState
-        val filtered: List<Pair<Int, MutableList<Pair<Int, Pair<Int?, Comment<T>>>>>> = row
-            // We always emit a catch-all for 0 error states (which will never be hit)
-            .mapNotNull { (opt, group) -> opt?.let { Pair(it, group) } }
-            .let { flat ->
-                // chunkBy nextState
-                val chunks: MutableList<Pair<Int, MutableList<Pair<Int, Pair<Int?, Comment<T>>>>>> =
-                    mutableListOf()
-                for ((ns, group) in flat) {
-                    val last = chunks.lastOrNull()
-                    if (last != null && last.first == ns) {
-                        last.second.addAll(group)
-                    } else {
-                        chunks.add(Pair(ns, group.toMutableList()))
+        val filtered: List<Pair<Int, MutableList<Pair<Int, Pair<Int?, Comment<T>>>>>> =
+            row
+                // We always emit a catch-all for 0 error states (which will never be hit)
+                .mapNotNull { (opt, group) -> opt?.let { Pair(it, group) } }
+                .let { flat ->
+                    // chunkBy nextState
+                    val chunks: MutableList<Pair<Int, MutableList<Pair<Int, Pair<Int?, Comment<T>>>>>> =
+                        mutableListOf()
+                    for ((ns, group) in flat) {
+                        val last = chunks.lastOrNull()
+                        if (last != null && last.first == ns) {
+                            last.second.addAll(group)
+                        } else {
+                            chunks.add(Pair(ns, group.toMutableList()))
+                        }
                     }
+                    chunks
                 }
-                chunks
-            }
 
-        val variants: List<Triple<Int, List<Pair<Int, Int?>>, Comment<T>?>> = filtered
-            .mapIndexed { i, (nextState, groupGroup) ->
-                var comment: Comment<T>? = null
-                val vec: MutableList<Pair<Int, Int?>> = mutableListOf()
-                // groupGroup is already flat list of (index, (nextState, comment)); but the rust
-                // code treats it as an iterator of (index, group) pairs from chunkBy; since our
-                // earlier chunking already flattened, each consecutive-index run from the original
-                // row is preserved in order. Re-group consecutive indices here:
-                val runs: MutableList<MutableList<Pair<Int, Pair<Int?, Comment<T>>>>> =
-                    mutableListOf()
-                for (entry in groupGroup) {
-                    val last = runs.lastOrNull()
-                    if (last != null && last.last().first + 1 == entry.first) {
-                        last.add(entry)
-                    } else {
-                        runs.add(mutableListOf(entry))
+        val variants: List<Triple<Int, List<Pair<Int, Int?>>, Comment<T>?>> =
+            filtered
+                .mapIndexed { i, (nextState, groupGroup) ->
+                    var comment: Comment<T>? = null
+                    val vec: MutableList<Pair<Int, Int?>> = mutableListOf()
+                    // groupGroup is already flat list of (index, (nextState, comment)); but the rust
+                    // code treats it as an iterator of (index, group) pairs from chunkBy; since our
+                    // earlier chunking already flattened, each consecutive-index run from the original
+                    // row is preserved in order. Re-group consecutive indices here:
+                    val runs: MutableList<MutableList<Pair<Int, Pair<Int?, Comment<T>>>>> =
+                        mutableListOf()
+                    for (entry in groupGroup) {
+                        val last = runs.lastOrNull()
+                        if (last != null && last.last().first + 1 == entry.first) {
+                            last.add(entry)
+                        } else {
+                            runs.add(mutableListOf(entry))
+                        }
                     }
+                    for (run in runs) {
+                        val first = run.first()
+                        val start = first.first
+                        val (_, c) = first.second
+                        comment = c
+                        val end: Int? = if (run.size > 1) run.last().first else null
+                        vec.add(Pair(start, end))
+                    }
+                    if (vec.size > largestVariant) {
+                        largestVariantIndex = i
+                        largestVariant = vec.size
+                    }
+                    Triple(nextState, vec.toList(), comment)
                 }
-                for (run in runs) {
-                    val first = run.first()
-                    val start = first.first
-                    val (_, c) = first.second
-                    comment = c
-                    val end: Int? = if (run.size > 1) run.last().first else null
-                    vec.add(Pair(start, end))
-                }
-                if (vec.size > largestVariant) {
-                    largestVariantIndex = i
-                    largestVariant = vec.size
-                }
-                Triple(nextState, vec.toList(), comment)
-            }
 
         if (variants.size == 1) {
             rust(out, "$kIndex => ${variants[0].first},")
@@ -594,9 +606,10 @@ private fun <K, K2, T> emitGotoMatch(
                         rust(out, "$comment")
                     }
                 }
-                val rangeStr = ranges.joinToString(" | ") { (start, end) ->
-                    if (end == null) "$start" else "$start..=$end"
-                }
+                val rangeStr =
+                    ranges.joinToString(" | ") { (start, end) ->
+                        if (end == null) "$start" else "$start..=$end"
+                    }
                 rust(out, "$rangeStr => $nextState,")
             }
 
@@ -614,12 +627,13 @@ private fun writeReduction(
     state: State<TokenSet>,
     token: Token,
 ): Pair<Int, Comment<Token>> {
-    val reduction = state
-        .reductions
-        .asSequence()
-        .filter { (t, _) -> t.contains(token) }
-        .map { (_, p) -> p }
-        .firstOrNull()
+    val reduction =
+        state
+            .reductions
+            .asSequence()
+            .filter { (t, _) -> t.contains(token) }
+            .map { (_, p) -> p }
+            .firstOrNull()
     return if (reduction != null) {
         val action = custom.reduceIndices.getValue(reduction)
         Pair(
@@ -655,17 +669,17 @@ private fun CodeGenerator<TableDriven>.writeParserFn() {
 private fun CodeGenerator<TableDriven>.writeTokenToIntegerFn() {
     val tokenType = this.types.terminalTokenType()
 
-    val parameters = listOf(
-        "${this.prefix}token: &$tokenType",
-        "_: ${this.phantomDataType()}",
-    )
+    val parameters =
+        listOf(
+            "${this.prefix}token: &$tokenType",
+            "_: ${this.phantomDataType()}",
+        )
 
     this.out
         .fnHeader(
             Visibility.Priv,
             "${this.prefix}token_to_integer",
-        )
-        .withTypeParameters(this.grammar.typeParameters)
+        ).withTypeParameters(this.grammar.typeParameters)
         .withWhereClauses(this.grammar.whereClauses)
         .withParameters(parameters)
         .withReturnType("Option<usize>")
@@ -677,7 +691,8 @@ private fun CodeGenerator<TableDriven>.writeTokenToIntegerFn() {
     rust(this.out, "#[warn(unused_variables)]")
     rust(this.out, "match ${this.prefix}token {")
 
-    for ((index, terminal) in this.grammar.terminals.all.withIndex()) {
+    for ((index, terminal) in this.grammar.terminals.all
+        .withIndex()) {
         if (terminal == TerminalString.Error) {
             continue
         }
@@ -695,18 +710,18 @@ private fun CodeGenerator<TableDriven>.writeTokenToSymbolFn() {
     val symbolType = this.symbolType()
     val tokenType = this.types.terminalTokenType()
 
-    val parameters = listOf(
-        "${this.prefix}token_index: usize",
-        "${this.prefix}token: $tokenType",
-        "_: ${this.phantomDataType()}",
-    )
+    val parameters =
+        listOf(
+            "${this.prefix}token_index: usize",
+            "${this.prefix}token: $tokenType",
+            "_: ${this.phantomDataType()}",
+        )
 
     this.out
         .fnHeader(
             Visibility.Priv,
             "${this.prefix}token_to_symbol",
-        )
-        .withTypeParameters(this.grammar.typeParameters)
+        ).withTypeParameters(this.grammar.typeParameters)
         .withWhereClauses(this.grammar.whereClauses)
         .withParameters(parameters)
         .withReturnType(symbolType)
@@ -721,7 +736,8 @@ private fun CodeGenerator<TableDriven>.writeTokenToSymbolFn() {
     val tokenToSymbolMapping: MutableList<Pair<String, MutableList<Pair<Int, io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRepr>>>>> =
         mutableListOf()
 
-    for ((index, terminal) in this.grammar.terminals.all.withIndex()) {
+    for ((index, terminal) in this.grammar.terminals.all
+        .withIndex()) {
         if (terminal == TerminalString.Error) {
             continue
         }
@@ -739,19 +755,21 @@ private fun CodeGenerator<TableDriven>.writeTokenToSymbolFn() {
     for ((variantName, indices) in tokenToSymbolMapping) {
         val patternNames: MutableList<String> = mutableListOf()
         var first = true
-        val patterns: List<String> = indices.map { (_, pattern) ->
-            var nameIndex = 0
-            val mapped = pattern.map {
-                val name = "${this.prefix}tok$nameIndex"
-                nameIndex += 1
-                if (first) {
-                    patternNames.add(name)
-                }
-                name
+        val patterns: List<String> =
+            indices.map { (_, pattern) ->
+                var nameIndex = 0
+                val mapped =
+                    pattern.map {
+                        val name = "${this.prefix}tok$nameIndex"
+                        nameIndex += 1
+                        if (first) {
+                            patternNames.add(name)
+                        }
+                        name
+                    }
+                first = false
+                "$mapped"
             }
-            first = false
-            "$mapped"
-        }
 
         if (patternNames.isNotEmpty()) {
             val indexStr = indices.joinToString(" | ") { (i, _) -> "$i" }
@@ -786,13 +804,14 @@ private fun CodeGenerator<TableDriven>.emitReduceActions() {
     val locType = this.types.terminalLocType()
     val spannedSymbolType = this.spannedSymbolType()
 
-    val parameters = listOf(
-        "${this.prefix}action: ${this.custom.stateType}",
-        "${this.prefix}lookahead_start: Option<&$locType>",
-        "${this.prefix}states: &mut alloc::vec::Vec<${this.custom.stateType}>",
-        "${this.prefix}symbols: &mut alloc::vec::Vec<$spannedSymbolType>",
-        "_: ${this.phantomDataType()}",
-    )
+    val parameters =
+        listOf(
+            "${this.prefix}action: ${this.custom.stateType}",
+            "${this.prefix}lookahead_start: Option<&$locType>",
+            "${this.prefix}states: &mut alloc::vec::Vec<${this.custom.stateType}>",
+            "${this.prefix}symbols: &mut alloc::vec::Vec<$spannedSymbolType>",
+            "_: ${this.phantomDataType()}",
+        )
 
     this.out
         .fnHeader(Visibility.Priv, "${this.prefix}reduce")
@@ -880,11 +899,12 @@ private fun CodeGenerator<TableDriven>.emitReduceAlternativeFnHeader(index: Int)
     val locType = this.types.terminalLocType()
     val spannedSymbolType = this.spannedSymbolType()
 
-    val parameters = listOf(
-        "${this.prefix}lookahead_start: Option<&$locType>",
-        "${this.prefix}symbols: &mut alloc::vec::Vec<$spannedSymbolType>",
-        "_: ${this.phantomDataType()}",
-    )
+    val parameters =
+        listOf(
+            "${this.prefix}lookahead_start: Option<&$locType>",
+            "${this.prefix}symbols: &mut alloc::vec::Vec<$spannedSymbolType>",
+            "_: ${this.phantomDataType()}",
+        )
 
     this.out
         .fnHeader(Visibility.Priv, "${this.prefix}reduce$index")
@@ -915,8 +935,9 @@ private fun CodeGenerator<TableDriven>.emitReduceAction(production: Production) 
             "let ${this.prefix}sym$idx = ${this.prefix}pop_$name(${this.prefix}symbols);",
         )
     }
-    val transferSyms: List<String> = (0 until production.symbols.size)
-        .map { i -> "${this.prefix}sym$i" }
+    val transferSyms: List<String> =
+        (0 until production.symbols.size)
+            .map { i -> "${this.prefix}sym$i" }
 
     // Execute the action function     // identify the "start" and "end" location for this production; this
     // is typically the start of the first symbol and end of the last symbol we are
@@ -1033,10 +1054,11 @@ private fun CodeGenerator<TableDriven>.emitDowncastFn(variantName: String, varia
 private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
     val stateType = this.custom.stateType
 
-    val parameters = listOf(
-        "${this.prefix}reduce_index: $stateType",
-        "_: ${this.phantomDataType()}",
-    )
+    val parameters =
+        listOf(
+            "${this.prefix}reduce_index: $stateType",
+            "_: ${this.phantomDataType()}",
+        )
 
     this.out
         .fnHeader(Visibility.Priv, "${this.prefix}simulate_reduce")
@@ -1045,8 +1067,7 @@ private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
         .withParameters(parameters)
         .withReturnType(
             "${this.prefix}state_machine::SimulatedReduce<${this.prefix}StateMachine<${Sep(", ", this.custom.machine.typeParameters)}>>",
-        )
-        .emit()
+        ).emit()
     rust(this.out, "{")
 
     rust(this.out, "match ${this.prefix}reduce_index {")
@@ -1065,8 +1086,9 @@ private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
                 )
             } else {
                 val numSymbols = production.symbols.size
-                val nonterminalIdx = this.custom.allNonterminals
-                    .indexOfFirst { x -> x == production.nonterminal }
+                val nonterminalIdx =
+                    this.custom.allNonterminals
+                        .indexOfFirst { x -> x == production.nonterminal }
                 rust(this.out, "$index => {")
                 if (ParseTable.DEBUG_PRINT) {
                     rust(this.out, "println!(r##\"accepts: simulating $production\"##);")
@@ -1112,12 +1134,13 @@ private fun CodeGenerator<TableDriven>.writeSimulateReduceFn() {
  */
 private fun CodeGenerator<TableDriven>.writeAcceptsFn() {
     val phantomDataExpr = this.phantomDataExpr()
-    val parameters = listOf(
-        "${this.prefix}error_state: Option<${this.custom.stateType}>",
-        "${this.prefix}states: &[${this.custom.stateType}]",
-        "${this.prefix}opt_integer: Option<usize>",
-        "_: ${this.phantomDataType()}",
-    )
+    val parameters =
+        listOf(
+            "${this.prefix}error_state: Option<${this.custom.stateType}>",
+            "${this.prefix}states: &[${this.custom.stateType}]",
+            "${this.prefix}opt_integer: Option<usize>",
+            "_: ${this.phantomDataType()}",
+        )
 
     this.out
         .fnHeader(Visibility.Priv, "${this.prefix}accepts")
@@ -1215,12 +1238,14 @@ private fun CodeGenerator<TableDriven>.spannedSymbolType(): String {
 private fun CodeGenerator<TableDriven>.emitTerminalReprList() {
     rust(this.out, "#[allow(clippy::needless_raw_string_hashes)]")
     rust(this.out, "const ${this.prefix}TERMINAL: &[&str] = &[")
-    val allTerminals = if (this.grammar.usesErrorRecovery) {
-        // Subtract one to exclude the error terminal
-        this.grammar.terminals.all.subList(0, this.grammar.terminals.all.size - 1)
-    } else {
-        this.grammar.terminals.all
-    }
+    val allTerminals =
+        if (this.grammar.usesErrorRecovery) {
+            // Subtract one to exclude the error terminal
+            this.grammar.terminals.all
+                .subList(0, this.grammar.terminals.all.size - 1)
+        } else {
+            this.grammar.terminals.all
+        }
     for (terminal in allTerminals) {
         // Three # should hopefully be enough to prevent any
         // reasonable terminal from escaping the literal
@@ -1251,17 +1276,17 @@ private fun CodeGenerator<TableDriven>.emitExpectedTokensFn() {
 }
 
 private fun CodeGenerator<TableDriven>.emitExpectedTokensFromStatesFn() {
-    val parameters = listOf(
-        "${this.prefix}states: &[${this.custom.stateType}]",
-        "_: ${this.phantomDataType()}",
-    )
+    val parameters =
+        listOf(
+            "${this.prefix}states: &[${this.custom.stateType}]",
+            "_: ${this.phantomDataType()}",
+        )
 
     this.out
         .fnHeader(
             Visibility.Priv,
             "${this.prefix}expected_tokens_from_states",
-        )
-        .withTypeParameters(this.custom.machine.typeParameters)
+        ).withTypeParameters(this.custom.machine.typeParameters)
         .withWhereClauses(this.custom.machine.whereClauses)
         .withParameters(parameters)
         .withReturnType("alloc::vec::Vec<alloc::string::String>")
@@ -1297,17 +1322,19 @@ internal class MachineParameters(
             val typeParameters: MutableList<TypeParameter> = grammar.typeParameters.toMutableList()
             val whereClauses: MutableList<WhereClause> = grammar.whereClauses.toMutableList()
 
-            val fields: List<Parameter> = grammar.parameters.map { param ->
-                val namedTy = param.ty.nameAnonymousLifetimesAndComputeImpliedOutlives(
-                    grammar.prefix,
-                    typeParameters,
-                    whereClauses,
-                )
-                Parameter(
-                    name = param.name,
-                    ty = namedTy,
-                )
-            }
+            val fields: List<Parameter> =
+                grammar.parameters.map { param ->
+                    val namedTy =
+                        param.ty.nameAnonymousLifetimesAndComputeImpliedOutlives(
+                            grammar.prefix,
+                            typeParameters,
+                            whereClauses,
+                        )
+                    Parameter(
+                        name = param.name,
+                        ty = namedTy,
+                    )
+                }
 
             // Put the `LifetimeTp` variant first (this is stable, mind, so order remains
             // largely unperturbed):

@@ -4,8 +4,11 @@
 // from LALRPOP `stateGraph` are provided.
 package io.github.kotlinmania.lalrpop
 
-internal data class NodeIndex(private val value: Int) : Comparable<NodeIndex> {
+internal data class NodeIndex(
+    private val value: Int,
+) : Comparable<NodeIndex> {
     fun index(): Int = value
+
     override fun compareTo(other: NodeIndex): Int = value.compareTo(other.value)
 
     companion object {

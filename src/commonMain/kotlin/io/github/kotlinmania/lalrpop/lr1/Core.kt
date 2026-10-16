@@ -9,10 +9,6 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.Lookahead
-import io.github.kotlinmania.lalrpop.lr1.Nil
-import io.github.kotlinmania.lalrpop.lr1.Token
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
 
 internal data class Item<L : Lookahead<L>>(
     val production: Production,
@@ -20,15 +16,14 @@ internal data class Item<L : Lookahead<L>>(
     val index: Int,
     val lookahead: L,
 ) : Comparable<Item<L>> {
-    fun <L1 : Lookahead<L1>> withLookahead(l: L1): Item<L1> = Item(
-        production = this.production,
-        index = this.index,
-        lookahead = l,
-    )
+    fun <L1 : Lookahead<L1>> withLookahead(l: L1): Item<L1> =
+        Item(
+            production = this.production,
+            index = this.index,
+            lookahead = l,
+        )
 
-    fun prefix(): List<Symbol> {
-        return production.symbols.subList(0, index)
-    }
+    fun prefix(): List<Symbol> = production.symbols.subList(0, index)
 
     fun symbolSets(): SymbolSets {
         val symbols = production.symbols
@@ -47,29 +42,28 @@ internal data class Item<L : Lookahead<L>>(
         }
     }
 
-    fun toLr0(): Item<Nil> = Item(
-        production = production,
-        index = index,
-        lookahead = Nil(),
-    )
+    fun toLr0(): Item<Nil> =
+        Item(
+            production = production,
+            index = index,
+            lookahead = Nil(),
+        )
 
-    fun canShift(): Boolean {
-        return index < production.symbols.size
-    }
+    fun canShift(): Boolean = index < production.symbols.size
 
-    fun canShiftNonterminal(nt: NonterminalString): Boolean {
-        return when (val pair = shiftSymbol()) {
-            null -> false
+    fun canShiftNonterminal(nt: NonterminalString): Boolean =
+        when (val pair = shiftSymbol()) {
+            null -> {
+                false
+            }
+
             else -> {
                 val shifted = pair.first
                 shifted is Symbol.Nonterminal && shifted.nt == nt
             }
         }
-    }
 
-    fun canReduce(): Boolean {
-        return index == production.symbols.size
-    }
+    fun canReduce(): Boolean = index == production.symbols.size
 
     fun shiftedItem(): Pair<Symbol, Item<L>>? =
         if (canShift()) {
@@ -109,11 +103,12 @@ internal data class Item<L : Lookahead<L>>(
     }
 
     companion object {
-        fun lr0(production: Production, index: Int): Item<Nil> = Item(
-            production = production,
-            index = index,
-            lookahead = Nil(),
-        )
+        fun lr0(production: Production, index: Int): Item<Nil> =
+            Item(
+                production = production,
+                index = index,
+                lookahead = Nil(),
+            )
     }
 }
 
@@ -121,9 +116,13 @@ internal typealias Lr0Item = Item<Nil>
 
 internal typealias Lr1Item = Item<TokenSet>
 
-internal data class StateIndex(val value: Int) : Comparable<StateIndex> {
+internal data class StateIndex(
+    val value: Int,
+) : Comparable<StateIndex> {
     override fun toString(): String = "S$value"
+
     fun display(): String = "$value"
+
     override fun compareTo(other: StateIndex): Int = value.compareTo(other.value)
 }
 
@@ -148,9 +147,10 @@ internal data class State<L : Lookahead<L>>(
      * basically.
      */
     fun maxPrefix(): List<Symbol> {
-        val prefix = items.vec
-            .map { it.prefix() }
-            .maxByOrNull { it.size }!!
+        val prefix =
+            items.vec
+                .map { it.prefix() }
+                .maxByOrNull { it.size }!!
 
         check(items.vec.all { item -> endsWith(prefix, item.production.symbols.subList(0, item.index)) })
 
@@ -162,11 +162,12 @@ internal data class State<L : Lookahead<L>>(
      * for this state to return.
      */
     fun willPop(): List<Symbol> {
-        val prefix = items.vec
-            .filter { it.index > 0 }
-            .map { it.prefix() }
-            .minByOrNull { it.size }
-            ?: emptyList()
+        val prefix =
+            items.vec
+                .filter { it.index > 0 }
+                .map { it.prefix() }
+                .minByOrNull { it.size }
+                ?: emptyList()
 
         check(items.vec.filter { it.index > 0 }.all { item -> endsWith(item.prefix(), prefix) })
 
@@ -189,11 +190,12 @@ internal data class State<L : Lookahead<L>>(
      * the goal symbol.
      */
     fun willProduce(): NonterminalString? {
-        val returnableNonterminals: MutableList<NonterminalString> = items.vec
-            .filter { it.index > 0 }
-            .map { it.production.nonterminal }
-            .dedup()
-            .toMutableList()
+        val returnableNonterminals: MutableList<NonterminalString> =
+            items.vec
+                .filter { it.index > 0 }
+                .map { it.production.nonterminal }
+                .dedup()
+                .toMutableList()
         return if (returnableNonterminals.size == 1) {
             returnableNonterminals.removeLast()
         } else {
@@ -224,8 +226,14 @@ private fun <T> Iterable<T>.dedup(): List<T> {
 }
 
 internal sealed class Action : Comparable<Action> {
-    data class Shift(val terminal: TerminalString, val state: StateIndex) : Action()
-    data class Reduce(val production: Production) : Action()
+    data class Shift(
+        val terminal: TerminalString,
+        val state: StateIndex,
+    ) : Action()
+
+    data class Reduce(
+        val production: Production,
+    ) : Action()
 
     override fun compareTo(other: Action): Int {
         val o1 = ordinal()
@@ -237,14 +245,18 @@ internal sealed class Action : Comparable<Action> {
                 val c = terminal.compareTo(that.terminal)
                 if (c != 0) c else state.compareTo(that.state)
             }
-            is Reduce -> production.compareTo((other as Reduce).production)
+
+            is Reduce -> {
+                production.compareTo((other as Reduce).production)
+            }
         }
     }
 
-    private fun ordinal(): Int = when (this) {
-        is Shift -> 0
-        is Reduce -> 1
-    }
+    private fun ordinal(): Int =
+        when (this) {
+            is Shift -> 0
+            is Reduce -> 1
+        }
 }
 
 internal data class Conflict<L>(
@@ -280,15 +292,16 @@ internal typealias Lr1Result = LrResult<TokenSet>
 
 /** `A = B C (*) D E F` or `A = B C (*)` */
 internal data class SymbolSets(
-    val prefix: List<Symbol>,       // both cases, [B, C]
-    val cursor: Symbol?,            // first [D], second []
-    val suffix: List<Symbol>,       // first [E, F], second []
+    val prefix: List<Symbol>, // both cases, [B, C]
+    val cursor: Symbol?, // first [D], second []
+    val suffix: List<Symbol>, // first [E, F], second []
 ) {
     companion object {
-        fun new(): SymbolSets = SymbolSets(
-            prefix = emptyList(),
-            cursor = null,
-            suffix = emptyList(),
-        )
+        fun new(): SymbolSets =
+            SymbolSets(
+                prefix = emptyList(),
+                cursor = null,
+                suffix = emptyList(),
+            )
     }
 }

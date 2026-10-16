@@ -18,11 +18,12 @@ internal class MessageBuilder(
     private var body: Content? = null,
 ) {
     companion object {
-        fun new(span: Span): MessageBuilder = MessageBuilder(
-            span = span,
-            heading = null,
-            body = null,
-        )
+        fun new(span: Span): MessageBuilder =
+            MessageBuilder(
+                span = span,
+                heading = null,
+                body = null,
+            )
     }
 
     fun heading(): Builder<MessageBuilder> =
@@ -31,11 +32,12 @@ internal class MessageBuilder(
     fun body(): Builder<MessageBuilder> =
         Builder.new(BodyCharacter(message = this))
 
-    fun end(): Message = Message.new(
-        this.span,
-        checkNotNull(this.heading) { "never defined a heading" },
-        checkNotNull(this.body) { "never defined a body" },
-    )
+    fun end(): Message =
+        Message.new(
+            this.span,
+            checkNotNull(this.heading) { "never defined a heading" },
+            checkNotNull(this.body) { "never defined a body" },
+        )
 
     internal fun setHeading(content: Content) {
         check(this.heading == null) { "already defined a heading for this message" }
@@ -48,14 +50,18 @@ internal class MessageBuilder(
     }
 }
 
-internal class HeadingCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
+internal class HeadingCharacter(
+    internal val message: MessageBuilder,
+) : Character<MessageBuilder> {
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setHeading(Vert.new(items, 1))
         return this.message
     }
 }
 
-internal class BodyCharacter(internal val message: MessageBuilder) : Character<MessageBuilder> {
+internal class BodyCharacter(
+    internal val message: MessageBuilder,
+) : Character<MessageBuilder> {
     override fun end(items: MutableList<Content>): MessageBuilder {
         this.message.setBody(Vert.new(items, 2))
         return this.message
@@ -116,10 +122,11 @@ internal class Builder<End>(
     private val character: Character<End>,
 ) {
     companion object {
-        internal fun <End> new(character: Character<End>): Builder<End> = Builder(
-            items = mutableListOf(),
-            character = character,
-        )
+        internal fun <End> new(character: Character<End>): Builder<End> =
+            Builder(
+                items = mutableListOf(),
+                character = character,
+            )
     }
 
     fun push(item: Content): Builder<End> {

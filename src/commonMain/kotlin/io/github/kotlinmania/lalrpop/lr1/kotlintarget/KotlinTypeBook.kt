@@ -14,7 +14,6 @@ package io.github.kotlinmania.lalrpop.lr1.kotlintarget
  * interpreter and the IR don't change.
  */
 internal class KotlinTypeBook {
-
     /**
      * The wrappers this book has requested across [render] calls. Caller emits each
      * one once at the top of the generated file, then references them by name.
@@ -30,16 +29,17 @@ internal class KotlinTypeBook {
      * [wrappersNeeded] if the rendering depends on a wrapper sealed class the
      * generated file must also declare.
      */
-    fun render(kind: GrammarTypeKind): RenderedKotlinType = when (kind) {
-        is GrammarTypeKind.Optional -> renderOptional(kind)
-        is GrammarTypeKind.ZeroOrMore -> renderZeroOrMore(kind)
-        is GrammarTypeKind.Tuple -> renderTuple(kind)
-        is GrammarTypeKind.Primitive -> renderPrimitive(kind.kind)
-        is GrammarTypeKind.UserDefined -> renderUserDefined(kind)
-        is GrammarTypeKind.FunctionOf -> renderFunction(kind)
-        is GrammarTypeKind.Erased -> render(kind.inner)
-        GrammarTypeKind.Unit -> RenderedKotlinType("Unit")
-    }
+    fun render(kind: GrammarTypeKind): RenderedKotlinType =
+        when (kind) {
+            is GrammarTypeKind.Optional -> renderOptional(kind)
+            is GrammarTypeKind.ZeroOrMore -> renderZeroOrMore(kind)
+            is GrammarTypeKind.Tuple -> renderTuple(kind)
+            is GrammarTypeKind.Primitive -> renderPrimitive(kind.kind)
+            is GrammarTypeKind.UserDefined -> renderUserDefined(kind)
+            is GrammarTypeKind.FunctionOf -> renderFunction(kind)
+            is GrammarTypeKind.Erased -> render(kind.inner)
+            GrammarTypeKind.Unit -> RenderedKotlinType("Unit")
+        }
 
     // -------- per-kind renderers --------
 
@@ -79,16 +79,28 @@ internal class KotlinTypeBook {
      */
     private fun renderTuple(kind: GrammarTypeKind.Tuple): RenderedKotlinType =
         when (kind.parts.size) {
-            0 -> RenderedKotlinType("Unit")
-            1 -> render(kind.parts[0])
-            2 -> RenderedKotlinType(
-                "Pair<${render(kind.parts[0]).expression}, ${render(kind.parts[1]).expression}>",
-            )
-            3 -> RenderedKotlinType(
-                "Triple<${render(kind.parts[0]).expression}, " +
-                    "${render(kind.parts[1]).expression}, " +
-                    "${render(kind.parts[2]).expression}>",
-            )
+            0 -> {
+                RenderedKotlinType("Unit")
+            }
+
+            1 -> {
+                render(kind.parts[0])
+            }
+
+            2 -> {
+                RenderedKotlinType(
+                    "Pair<${render(kind.parts[0]).expression}, ${render(kind.parts[1]).expression}>",
+                )
+            }
+
+            3 -> {
+                RenderedKotlinType(
+                    "Triple<${render(kind.parts[0]).expression}, " +
+                        "${render(kind.parts[1]).expression}, " +
+                        "${render(kind.parts[2]).expression}>",
+                )
+            }
+
             else -> {
                 _tupleAritiesNeeded.add(kind.parts.size)
                 val parts = kind.parts.joinToString(", ") { render(it).expression }
@@ -128,12 +140,13 @@ internal class KotlinTypeBook {
      */
     private fun renderUserDefined(kind: GrammarTypeKind.UserDefined): RenderedKotlinType {
         val basePath = kind.pathSegments.joinToString(".")
-        val expression = if (kind.typeArgs.isEmpty()) {
-            basePath
-        } else {
-            val args = kind.typeArgs.joinToString(", ") { render(it).expression }
-            "$basePath<$args>"
-        }
+        val expression =
+            if (kind.typeArgs.isEmpty()) {
+                basePath
+            } else {
+                val args = kind.typeArgs.joinToString(", ") { render(it).expression }
+                "$basePath<$args>"
+            }
         return RenderedKotlinType(expression)
     }
 

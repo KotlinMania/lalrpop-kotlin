@@ -18,13 +18,13 @@ import io.github.kotlinmania.lalrpop.expectDebug
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
-import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.interpretPartial
 import io.github.kotlinmania.lalrpop.lr1.trace.Tracer
@@ -39,8 +39,9 @@ private fun term(t: String): TerminalString = TerminalString.quoted(Atom.from(t)
 private fun terms(vararg t: String): MutableList<TerminalString> =
     t.map { term(it) }.toMutableList()
 
-private fun testGrammar1(): Grammar = normalizedGrammar(
-    """
+private fun testGrammar1(): Grammar =
+    normalizedGrammar(
+        """
     grammar;
 
     pub Start: () = Stmt;
@@ -60,12 +61,12 @@ private fun testGrammar1(): Grammar = normalizedGrammar(
         Expr "+" "Int",
     };
 """,
-)
+    )
 
 class ReduceTest {
     @Test
     fun backtrace1() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             val grammar = testGrammar1()
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
@@ -84,17 +85,22 @@ class ReduceTest {
                 //
                 // Select the ";" one.
                 val semi: Token = Token.Terminal(term(";"))
-                val semiItem = states[topState.value]
-                    .items
-                    .vec
-                    .first { item -> item.lookahead.contains(semi) }
+                val semiItem =
+                    states[topState.value]
+                        .items
+                        .vec
+                        .first { item -> item.lookahead.contains(semi) }
 
                 val backtrace = tracer.backtraceReduce(topState, semiItem.toLr0())
 
                 println("$backtrace")
 
-                val pictures = backtrace.lr0Examples(semiItem.toLr0()).asSequence()
-                    .map { it.paintUnstyled() }.toList()
+                val pictures =
+                    backtrace
+                        .lr0Examples(semiItem.toLr0())
+                        .asSequence()
+                        .map { it.paintUnstyled() }
+                        .toList()
                 expectDebug(
                     pictures,
                     """
@@ -139,11 +145,12 @@ class ReduceTest {
 
     @Test
     fun backtrace2() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             // This grammar yields a S/R conflict. Is it (int -> int) -> int
             // or int -> (int -> int)?
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 pub Ty: () = {
     "int" => (),
@@ -151,24 +158,26 @@ pub Ty: () = {
     <t1:Ty> "->" <t2:Ty> => (),
 };
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val firstSets = FirstSets.new(grammar)
-                val err: TableConstructionError<TokenSet> = try {
-                    buildStates(grammar, nt("Ty"))
-                    error("expected build_states to fail")
-                } catch (e: TableConstructionErrorException) {
-                    e.lr1Inner ?: error("expected TokenSet table construction error")
-                }
+                val err: TableConstructionError<TokenSet> =
+                    try {
+                        buildStates(grammar, nt("Ty"))
+                        error("expected build_states to fail")
+                    } catch (e: TableConstructionErrorException) {
+                        e.lr1Inner ?: error("expected TokenSet table construction error")
+                    }
                 val tracer = Tracer.new(firstSets, err.states)
                 val conflict = err.conflicts[0]
                 println("conflict=$conflict")
-                val item = Item(
-                    production = conflict.production,
-                    index = conflict.production.symbols.size,
-                    lookahead = conflict.lookahead,
-                )
+                val item =
+                    Item(
+                        production = conflict.production,
+                        index = conflict.production.symbols.size,
+                        lookahead = conflict.lookahead,
+                    )
                 println("item=$item")
                 val backtrace = tracer.backtraceReduce(conflict.state, item.toLr0())
                 println("$backtrace")
@@ -186,8 +195,12 @@ pub Ty: () = {
 
                 // Check that we can successfully enumerate and paint the examples
                 // here.
-                val pictures = backtrace.lr1Examples(firstSets, item).asSequence()
-                    .map { it.paintUnstyled() }.toList()
+                val pictures =
+                    backtrace
+                        .lr1Examples(firstSets, item)
+                        .asSequence()
+                        .map { it.paintUnstyled() }
+                        .toList()
                 expectDebug(
                     pictures,
                     """
@@ -210,9 +223,10 @@ pub Ty: () = {
     fun reduceBacktrace3Graph() {
         // This grammar yields a S/R conflict. Is it `(int -> int) -> int`
         // or `int -> (int -> int)`?
-        Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+        Tls.test().use { _ ->
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 pub Ty: () = {
     "int" => (),
@@ -220,23 +234,25 @@ pub Ty: () = {
     <t1:Ty> "->" <t2:Ty> => (),
 };
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val firstSets = FirstSets.new(grammar)
-                val err: TableConstructionError<TokenSet> = try {
-                    buildStates(grammar, nt("Ty"))
-                    error("expected build_states to fail")
-                } catch (e: TableConstructionErrorException) {
-                    e.lr1Inner ?: error("expected TokenSet table construction error")
-                }
+                val err: TableConstructionError<TokenSet> =
+                    try {
+                        buildStates(grammar, nt("Ty"))
+                        error("expected build_states to fail")
+                    } catch (e: TableConstructionErrorException) {
+                        e.lr1Inner ?: error("expected TokenSet table construction error")
+                    }
                 val conflict = err.conflicts[0]
                 println("conflict=$conflict")
-                val item = Item(
-                    production = conflict.production,
-                    index = conflict.production.symbols.size,
-                    lookahead = conflict.lookahead,
-                )
+                val item =
+                    Item(
+                        production = conflict.production,
+                        index = conflict.production.symbols.size,
+                        lookahead = conflict.lookahead,
+                    )
                 println("item=$item")
                 val tracer = Tracer.new(firstSets, err.states)
                 val graph = tracer.backtraceReduce(conflict.state, item.toLr0())
@@ -252,8 +268,12 @@ pub Ty: () = {
 """.trim(),
                 )
 
-                val list = graph.lr1Examples(firstSets, item).asSequence()
-                    .map { it.paintUnstyled() }.toList()
+                val list =
+                    graph
+                        .lr1Examples(firstSets, item)
+                        .asSequence()
+                        .map { it.paintUnstyled() }
+                        .toList()
                 expectDebug(
                     list,
                     """
@@ -274,9 +294,10 @@ pub Ty: () = {
 
     @Test
     fun backtraceFilter() {
-        Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+        Tls.test().use { _ ->
+            val grammar =
+                normalizedGrammar(
+                    """
     grammar;
 
     pub Start: () = Stmt;
@@ -303,7 +324,7 @@ pub Ty: () = {
         "Int",
     };
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val states = buildStates(grammar, nt("Start"))
@@ -316,10 +337,11 @@ pub Ty: () = {
                 //
                 // Expr = "Int" (*) [",", ";"],
                 val semi: Token = Token.Terminal(term(";"))
-                val lr1Item = states[topState.value]
-                    .items
-                    .vec
-                    .first { item -> item.lookahead.contains(semi) }
+                val lr1Item =
+                    states[topState.value]
+                        .items
+                        .vec
+                        .first { item -> item.lookahead.contains(semi) }
 
                 val backtrace = tracer.backtraceReduce(topState, lr1Item.toLr0())
 
@@ -327,8 +349,12 @@ pub Ty: () = {
 
                 // With no filtering, we get examples with both `;` and `,` as
                 // lookahead (though `ExprSuffix` is in the way).
-                val pictures = backtrace.lr0Examples(lr1Item.toLr0()).asSequence()
-                    .map { it.paintUnstyled() }.toList()
+                val pictures =
+                    backtrace
+                        .lr0Examples(lr1Item.toLr0())
+                        .asSequence()
+                        .map { it.paintUnstyled() }
+                        .toList()
                 expectDebug(
                     pictures,
                     """
@@ -367,8 +393,12 @@ pub Ty: () = {
 
                 // Select those with `;` as lookahead
                 val semiItem = lr1Item.withLookahead(TokenSet.from(semi))
-                val pictures2 = backtrace.lr1Examples(firstSets, semiItem).asSequence()
-                    .map { it.paintUnstyled() }.toList()
+                val pictures2 =
+                    backtrace
+                        .lr1Examples(firstSets, semiItem)
+                        .asSequence()
+                        .map { it.paintUnstyled() }
+                        .toList()
                 expectDebug(
                     pictures2,
                     """

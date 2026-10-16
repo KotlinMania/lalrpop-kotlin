@@ -17,7 +17,9 @@ import io.github.kotlinmania.lalrpop.Style
  */
 internal interface AsciiView {
     fun columns(): Int
+
     fun readChar(row: Int, column: Int): Char
+
     fun writeChar(row: Int, column: Int, ch: Char, style: Style)
 }
 
@@ -31,11 +33,12 @@ private fun AsciiView.addBoxDirs(row: Int, column: Int, dirs: Int) {
 internal fun AsciiView.drawVerticalLine(rows: IntRange, column: Int) {
     val len = rows.count()
     for ((index, r) in rows.withIndex()) {
-        val newDirs = when {
-            index == 0 -> DOWN
-            index == len - 1 -> UP
-            else -> UP or DOWN
-        }
+        val newDirs =
+            when {
+                index == 0 -> DOWN
+                index == len - 1 -> UP
+                else -> UP or DOWN
+            }
         this.addBoxDirs(r, column, newDirs)
     }
 }
@@ -47,11 +50,12 @@ internal fun AsciiView.drawVerticalLine(rows: IntRange, column: Int) {
 internal fun AsciiView.drawHorizontalLine(row: Int, columns: IntRange) {
     val len = columns.count()
     for ((index, c) in columns.withIndex()) {
-        val newDirs = when {
-            index == 0 -> RIGHT
-            index == len - 1 -> LEFT
-            else -> LEFT or RIGHT
-        }
+        val newDirs =
+            when {
+                index == 0 -> RIGHT
+                index == len - 1 -> LEFT
+                else -> LEFT or RIGHT
+            }
         this.addBoxDirs(row, c, newDirs)
     }
 }
@@ -87,12 +91,13 @@ internal class AsciiCanvas(
          * Create a canvas of the given size. We will automatically add
          * rows as needed, but the columns are fixed at creation.
          */
-        fun new(rows: Int, columns: Int): AsciiCanvas = AsciiCanvas(
-            rowsCount = rows,
-            columnsCount = columns,
-            characters = MutableList(columns * rows) { ' ' },
-            styles = MutableList(columns * rows) { Style.new() },
-        )
+        fun new(rows: Int, columns: Int): AsciiCanvas =
+            AsciiCanvas(
+                rowsCount = rows,
+                columnsCount = columns,
+                characters = MutableList(columns * rows) { ' ' },
+                styles = MutableList(columns * rows) { Style.new() },
+            )
     }
 
     private fun growRowsIfNeeded(newRows: Int) {
@@ -153,7 +158,10 @@ internal class AsciiCanvas(
     }
 }
 
-private data class Point(val row: Int, val column: Int)
+private data class Point(
+    val row: Int,
+    val column: Int,
+)
 
 /**
  * Gives a view onto an AsciiCanvas that has a fixed upper-left
@@ -195,10 +203,11 @@ internal class ShiftedView private constructor(
     fun close(): Pair<Int, Int> = Pair(this.lowerRight.row, this.lowerRight.column)
 
     private fun trackMax(row: Int, column: Int) {
-        this.lowerRight = Point(
-            row = maxOf(this.lowerRight.row, row),
-            column = maxOf(this.lowerRight.column, column),
-        )
+        this.lowerRight =
+            Point(
+                row = maxOf(this.lowerRight.row, row),
+                column = maxOf(this.lowerRight.column, column),
+            )
     }
 
     override fun columns(): Int = this.base.columns() - this.upperLeft.column
@@ -227,10 +236,11 @@ internal class StyleView private constructor(
     private val style: Style,
 ) : AsciiView {
     companion object {
-        internal fun new(base: AsciiView, style: Style): StyleView = StyleView(
-            base = base,
-            style = style,
-        )
+        internal fun new(base: AsciiView, style: Style): StyleView =
+            StyleView(
+                base = base,
+                style = style,
+            )
     }
 
     override fun columns(): Int = this.base.columns()
@@ -249,28 +259,29 @@ private const val DOWN: Int = 0b0010
 private const val LEFT: Int = 0b0100
 private const val RIGHT: Int = 0b1000
 
-private val BOX_CHARS: List<Pair<Char, Int>> = listOf(
-    '\u2575' to UP,
-    '\u2502' to (UP or DOWN),
-    '\u2524' to (UP or DOWN or LEFT),
-    '\u251C' to (UP or DOWN or RIGHT),
-    '\u253C' to (UP or DOWN or LEFT or RIGHT),
-    '\u2518' to (UP or LEFT),
-    '\u2514' to (UP or RIGHT),
-    '\u2534' to (UP or LEFT or RIGHT),
-    // No UP:
-    '\u2577' to DOWN,
-    '\u2510' to (DOWN or LEFT),
-    '\u250C' to (DOWN or RIGHT),
-    '\u252C' to (DOWN or LEFT or RIGHT),
-    // No UP|DOWN:
-    '\u2576' to LEFT,
-    '\u2500' to (LEFT or RIGHT),
-    // No LEFT:
-    '\u2574' to RIGHT,
-    // No RIGHT:
-    ' ' to 0,
-)
+private val BOX_CHARS: List<Pair<Char, Int>> =
+    listOf(
+        '\u2575' to UP,
+        '\u2502' to (UP or DOWN),
+        '\u2524' to (UP or DOWN or LEFT),
+        '\u251C' to (UP or DOWN or RIGHT),
+        '\u253C' to (UP or DOWN or LEFT or RIGHT),
+        '\u2518' to (UP or LEFT),
+        '\u2514' to (UP or RIGHT),
+        '\u2534' to (UP or LEFT or RIGHT),
+        // No UP:
+        '\u2577' to DOWN,
+        '\u2510' to (DOWN or LEFT),
+        '\u250C' to (DOWN or RIGHT),
+        '\u252C' to (DOWN or LEFT or RIGHT),
+        // No UP|DOWN:
+        '\u2576' to LEFT,
+        '\u2500' to (LEFT or RIGHT),
+        // No LEFT:
+        '\u2574' to RIGHT,
+        // No RIGHT:
+        ' ' to 0,
+    )
 
 private fun boxCharForDirs(dirs: Int): Char {
     for ((c, d) in BOX_CHARS) {

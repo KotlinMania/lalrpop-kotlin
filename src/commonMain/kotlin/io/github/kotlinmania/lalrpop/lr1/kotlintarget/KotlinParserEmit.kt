@@ -4,8 +4,9 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.kotlintarget.IndentedWriter
 import io.github.kotlinmania.lalrpop.lr1.Lr1State
-import io.github.kotlinmania.lalrpop.runtime.Production
-import io.github.kotlinmania.lalrpop.runtime.ProductionAction
+import io.github.kotlinmania.lalrpoputil.tabledriven.ParseTables
+import io.github.kotlinmania.lalrpoputil.tabledriven.Production
+import io.github.kotlinmania.lalrpoputil.tabledriven.ProductionAction
 
 internal data class KotlinParserEmitConfig(
     val packageName: String?,
@@ -40,32 +41,34 @@ internal fun emitTableDrivenKotlinParser(
     config: KotlinParserEmitConfig,
 ): String {
     val productionRows = productionRows(grammar, actionBodies)
-    val placeholderProductions = Array(productionRows.size) {
-        Production<Unit, Int>(
-            nonterminalId = productionRows[it].nonterminalId.toShort(),
-            rhsLength = productionRows[it].rhsLength,
-            action = ProductionAction { _, _ -> Result.success(Unit) },
+    val placeholderProductions =
+        Array(productionRows.size) {
+            Production<Unit, Int>(
+                nonterminalId = productionRows[it].nonterminalId.toShort(),
+                rhsLength = productionRows[it].rhsLength,
+                action = ProductionAction { _, _ -> Result.success(Unit) },
+            )
+        }
+    val tables =
+        tablesFromLr1States(
+            grammar = grammar,
+            states = states,
+            productions = placeholderProductions,
+            acceptProductionId = acceptProductionId,
         )
-    }
-    val tables = tablesFromLr1States(
-        grammar = grammar,
-        states = states,
-        productions = placeholderProductions,
-        acceptProductionId = acceptProductionId,
-    )
 
     val out = IndentedWriter()
     if (config.packageName != null) {
         out.line("package ${config.packageName}")
         out.line()
     }
-    out.line("import io.github.kotlinmania.lalrpop.runtime.ParseResult")
-    out.line("import io.github.kotlinmania.lalrpop.runtime.ParseTables")
-    out.line("import io.github.kotlinmania.lalrpop.runtime.Parser")
-    out.line("import io.github.kotlinmania.lalrpop.runtime.Production")
-    out.line("import io.github.kotlinmania.lalrpop.runtime.ProductionAction")
-    out.line("import io.github.kotlinmania.lalrpop.runtime.TableDrivenParserDefinition")
-    out.line("import io.github.kotlinmania.lalrpop.runtime.TokResult")
+    out.line("import io.github.kotlinmania.lalrpoputil.statemachine.ParseResult")
+    out.line("import io.github.kotlinmania.lalrpoputil.tabledriven.ParseTables")
+    out.line("import io.github.kotlinmania.lalrpoputil.statemachine.Parser")
+    out.line("import io.github.kotlinmania.lalrpoputil.tabledriven.Production")
+    out.line("import io.github.kotlinmania.lalrpoputil.tabledriven.ProductionAction")
+    out.line("import io.github.kotlinmania.lalrpoputil.tabledriven.TableDrivenParserDefinition")
+    out.line("import io.github.kotlinmania.lalrpoputil.statemachine.TokResult")
     out.line()
 
     KotlinSymbolEmit(grammar, config.symbolClassName).emitInto(out)
@@ -87,12 +90,15 @@ private fun productionRows(
     actionBodies: List<KotlinProductionBody>,
 ): List<ProductionRow> {
     val nonterminalIds: Map<NonterminalString, Int> =
-        grammar.nonterminals.keys.withIndex().associate { (index, nt) -> nt to index }
+        grammar.nonterminals.keys
+            .withIndex()
+            .associate { (index, nt) -> nt to index }
     val rows = mutableListOf<ProductionRow>()
     for (nt in grammar.nonterminals.values) {
         for (production in nt.productions) {
-            val body = actionBodies.getOrNull(rows.size)
-                ?: error("missing Kotlin action body for production ${rows.size}")
+            val body =
+                actionBodies.getOrNull(rows.size)
+                    ?: error("missing Kotlin action body for production ${rows.size}")
             rows.add(
                 ProductionRow(
                     nonterminalId = nonterminalIds.getValue(production.nonterminal),
@@ -111,7 +117,7 @@ private fun productionRows(
 private fun emitTablesObject(
     out: IndentedWriter,
     config: KotlinParserEmitConfig,
-    tables: io.github.kotlinmania.lalrpop.runtime.ParseTables<Unit, Int>,
+    tables: ParseTables<Unit, Int>,
     rows: List<ProductionRow>,
 ) {
     out.block("object ${config.tablesObjectName} {") {

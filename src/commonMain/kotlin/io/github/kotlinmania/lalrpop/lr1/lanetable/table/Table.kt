@@ -13,20 +13,22 @@
  */
 package io.github.kotlinmania.lalrpop.lr1.lanetable.table
 
+import io.github.kotlinmania.lalrpop.collections.ComparablePair
 import io.github.kotlinmania.lalrpop.collections.Map
 import io.github.kotlinmania.lalrpop.collections.Multimap
 import io.github.kotlinmania.lalrpop.collections.Set
 import io.github.kotlinmania.lalrpop.collections.SetCollection
-import io.github.kotlinmania.lalrpop.collections.ComparablePair
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.collections.set
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.ContextSet
 import io.github.kotlinmania.lalrpop.lr1.lanetable.table.contextset.OverlappingLookahead
 
-internal data class ConflictIndex(val index: Int) : Comparable<ConflictIndex> {
+internal data class ConflictIndex(
+    val index: Int,
+) : Comparable<ConflictIndex> {
     override fun compareTo(other: ConflictIndex): Int = index.compareTo(other.index)
 
     companion object {
@@ -42,10 +44,11 @@ internal class LaneTable(
         Multimap(collectionFactory = { SetCollection() }),
 ) {
     companion object {
-        fun new(grammar: Grammar, conflicts: Int): LaneTable = LaneTable(
-            grammar = grammar,
-            conflicts = conflicts,
-        )
+        fun new(grammar: Grammar, conflicts: Int): LaneTable =
+            LaneTable(
+                grammar = grammar,
+                conflicts = conflicts,
+            )
     }
 
     fun addLookahead(state: StateIndex, conflict: ConflictIndex, tokens: TokenSet) {
@@ -148,32 +151,35 @@ internal class LaneTable(
             indices.add(key)
         }
 
-        val header: List<String> = buildList {
-            add("State")
-            for (i in 0 until conflicts) add("C$i")
-            add("Successors")
-        }
-
-        val rows: List<List<String>> = indices.map { index ->
+        val header: List<String> =
             buildList {
-                add(index.toString())
-                for (i in 0 until conflicts) {
-                    val ts = lookaheads[ComparablePair(index, ConflictIndex.new(i))]
-                    add(ts?.toString() ?: "")
-                }
-                val succ = successors.get(index)
-                add(succ?.asSet()?.toString() ?: "")
+                add("State")
+                for (i in 0 until conflicts) add("C$i")
+                add("Successors")
             }
-        }
+
+        val rows: List<List<String>> =
+            indices.map { index ->
+                buildList {
+                    add(index.toString())
+                    for (i in 0 until conflicts) {
+                        val ts = lookaheads[ComparablePair(index, ConflictIndex.new(i))]
+                        add(ts?.toString() ?: "")
+                    }
+                    val succ = successors.get(index)
+                    add(succ?.asSet()?.toString() ?: "")
+                }
+            }
 
         val table: List<List<String>> = listOf(header) + rows
 
         val columns = 2 + conflicts
 
-        val widths: List<Int> = (0 until columns).map { c ->
-            // find the max width of any row at this column
-            table.maxOf { r -> r[c].length }
-        }
+        val widths: List<Int> =
+            (0 until columns).map { c ->
+                // find the max width of any row at this column
+                table.maxOf { r -> r[c].length }
+            }
 
         val sb = StringBuilder()
         for (row in table) {
@@ -190,4 +196,6 @@ internal class LaneTable(
     }
 }
 
-internal class RowConflictException(val state: StateIndex) : RuntimeException()
+internal class RowConflictException(
+    val state: StateIndex,
+) : RuntimeException()

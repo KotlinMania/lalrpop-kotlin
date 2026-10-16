@@ -1,16 +1,14 @@
 // transliterated from upstream module root
 package io.github.kotlinmania.lalrpop.parser
 
+import io.github.kotlinmania.lalrpop.grammar.Pattern
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeRef
 import io.github.kotlinmania.lalrpop.grammar.parsetree.WhereClause
-import io.github.kotlinmania.lalrpop.grammar.Pattern
-import io.github.kotlinmania.lalrpop.runtime.ParseError
-import io.github.kotlinmania.lalrpop.runtime.ParseResult
 import io.github.kotlinmania.lalrpop.tok.Tok
 import io.github.kotlinmania.lalrpop.tok.Tokenizer
-import io.github.kotlinmania.lalrpop.tok.Error as TokError
+import io.github.kotlinmania.lalrpoputil.statemachine.ParseResult
 
 // The TypeRef and GrammarWhereClauses variants have data that is only read by
 // the parseTypeRef() and parseWhereClauses() functions lower in this file.
@@ -20,11 +18,25 @@ import io.github.kotlinmania.lalrpop.tok.Error as TokError
 // points across several files to define both a test variant and a non-test
 // variant, reducing readability.
 internal sealed class Top {
-    data class Grammar(val grammar: io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar) : Top()
-    data class Pattern(val pattern: io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRef>) : Top()
-    data class MatchMapping(val matchMapping: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping) : Top()
-    data class TypeRefTop(val typeRef: TypeRef) : Top()
-    data class GrammarWhereClauses(val whereClauses: List<WhereClause<TypeRef>>) : Top()
+    data class Grammar(
+        val grammar: io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar,
+    ) : Top()
+
+    data class Pattern(
+        val pattern: io.github.kotlinmania.lalrpop.grammar.Pattern<TypeRef>,
+    ) : Top()
+
+    data class MatchMapping(
+        val matchMapping: io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping,
+    ) : Top()
+
+    data class TypeRefTop(
+        val typeRef: TypeRef,
+    ) : Top()
+
+    data class GrammarWhereClauses(
+        val whereClauses: List<WhereClause<TypeRef>>,
+    ) : Top()
 }
 
 private fun startPrefixed(start: Tok, offset: Int, input: String): Iterator<Result<Triple<Int, Tok, Int>>> {
@@ -35,6 +47,7 @@ private fun startPrefixed(start: Tok, offset: Int, input: String): Iterator<Resu
         override fun hasNext(): Boolean = !emittedStart || tokenizer.hasNext()
 
         override fun next(): Result<Triple<Int, Tok, Int>> {
+            if (!hasNext()) throw NoSuchElementException()
             if (!emittedStart) {
                 emittedStart = true
                 return Result.success(Triple(0, start, 0))
@@ -50,10 +63,11 @@ internal fun parseGrammar(
     input: String,
 ): Result<io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar> {
     val tokens = startPrefixed(Tok.StartGrammar, 0, input)
-    val grammar = when (val r = TopParser.new().parse(input, tokens)) {
-        is ParseResult.Success -> (r.value as Top.Grammar).grammar
-        is ParseResult.Failure -> return Result.failure(LrParseErrorException(r.error))
-    }
+    val grammar =
+        when (val r = TopParser.new().parse(input, tokens)) {
+            is ParseResult.Success -> (r.value as Top.Grammar).grammar
+            is ParseResult.Failure -> return Result.failure(LrParseErrorException(r.error))
+        }
     // find a unique prefix that does not appear anywhere in the input
     while (input.contains(grammar.prefix)) {
         grammar.prefix += "_"

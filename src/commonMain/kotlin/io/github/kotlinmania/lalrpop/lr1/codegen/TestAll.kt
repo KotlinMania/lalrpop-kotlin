@@ -53,16 +53,17 @@ private fun newTestAll(
     startSymbol: NonterminalString,
     states: List<State<TokenSet>>,
     out: RustWrite,
-): CodeGenerator<TestAll> = CodeGenerator.new(
-    grammar,
-    userStartSymbol,
-    startSymbol,
-    states,
-    out,
-    true,
-    "super",
-    TestAll,
-)
+): CodeGenerator<TestAll> =
+    CodeGenerator.new(
+        grammar,
+        userStartSymbol,
+        startSymbol,
+        states,
+        out,
+        true,
+        "super",
+        TestAll,
+    )
 
 private fun CodeGenerator<TestAll>.write() {
     this.writeParseMod { this1 ->
@@ -78,8 +79,9 @@ private fun CodeGenerator<TestAll>.write() {
             "super::super::super",
             this1.out,
         )
-        val pubUse = "${this1.grammar.nonterminals.getValue(this1.userStartSymbol).visibility}" +
-            "use self::${this1.prefix}parse${this1.startSymbol}::${this1.userStartSymbol}Parser;"
+        val pubUse =
+            "${this1.grammar.nonterminals.getValue(this1.userStartSymbol).visibility}" +
+                "use self::${this1.prefix}parse${this1.startSymbol}::${this1.userStartSymbol}Parser;"
         rust(this1.out, pubUse)
         rust(this1.out, "}")
 
@@ -120,23 +122,24 @@ private fun CodeGenerator<TestAll>.writeParserFn() {
 }
 
 private fun CodeGenerator<TestAll>.callDelegate(delegate: String) {
-    val nonLifetimes: List<TypeParameter> = this
-        .grammar
-        .typeParameters
-        .filter { tp ->
-            when (tp) {
-                is TypeParameter.LifetimeTp -> false
-                is TypeParameter.Id -> true
-            }
+    val nonLifetimes: List<TypeParameter> =
+        this
+            .grammar
+            .typeParameters
+            .filter { tp ->
+                when (tp) {
+                    is TypeParameter.LifetimeTp -> false
+                    is TypeParameter.Id -> true
+                }
+            }.toList()
+    val parameters =
+        if (nonLifetimes.isEmpty()) {
+            ""
+        } else if (this.grammar.internToken != null) {
+            "::<${Sep(", ", nonLifetimes)}>"
+        } else {
+            "::<${Sep(", ", nonLifetimes)}, _, _>"
         }
-        .toList()
-    val parameters = if (nonLifetimes.isEmpty()) {
-        ""
-    } else if (this.grammar.internToken != null) {
-        "::<${Sep(", ", nonLifetimes)}>"
-    } else {
-        "::<${Sep(", ", nonLifetimes)}, _, _>"
-    }
     rust(
         this.out,
         "let ${this.prefix}$delegate = ${this.prefix}$delegate::${this.userStartSymbol}Parser::new().parse$parameters(",

@@ -26,13 +26,14 @@ import kotlin.test.fail
 class GraphTest {
     @Test
     fun testInlineSelfCycle() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
     grammar;
     extern { }
     #[inline] A: () = A;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
         val lowered = lowerHelper(Session.test(), grammar, true)
         try {
             inlineOrder(lowered)
@@ -44,15 +45,16 @@ class GraphTest {
 
     @Test
     fun testInlineCycle3() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
     grammar;
     extern { }
     #[inline] A: () = B;
     #[inline] B: () = C;
     #[inline] C: () = A;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
         val lowered = lowerHelper(Session.test(), grammar, true)
         try {
             inlineOrder(lowered)
@@ -65,15 +67,16 @@ class GraphTest {
     @Test
     fun testInlineOrder() {
         // because C references A, we inline A first.
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
     grammar;
     extern { }
     #[inline] A: () = B;
     B: () = C;
     #[inline] C: () = A;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
         val lowered = lowerHelper(Session.test(), grammar, true)
         val a = NonterminalString(Atom.from("A"))
         val c = NonterminalString(Atom.from("C"))

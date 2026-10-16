@@ -2,20 +2,18 @@
 package io.github.kotlinmania.lalrpop.normalize.tyinfer
 
 import io.github.kotlinmania.lalrpop.Atom
+import io.github.kotlinmania.lalrpop.grammar.ERROR
+import io.github.kotlinmania.lalrpop.grammar.LOCATION
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ArgPattern
-import io.github.kotlinmania.lalrpop.grammar.ERROR
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
-import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.LOCATION
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Lifetime
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchMapping
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalData
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
-import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Tuple
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
@@ -27,12 +25,11 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.internToken
 import io.github.kotlinmania.lalrpop.grammar.repr.NominalTypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.Types
-import io.github.kotlinmania.lalrpop.normalize.normutil.AlternativeAction
 import io.github.kotlinmania.lalrpop.normalize.NormErrorException
+import io.github.kotlinmania.lalrpop.normalize.normutil.AlternativeAction
 import io.github.kotlinmania.lalrpop.normalize.normutil.Symbols
 import io.github.kotlinmania.lalrpop.normalize.normutil.analyzeAction
 import io.github.kotlinmania.lalrpop.normalize.returnErr
-import io.github.kotlinmania.lalrpop.lr1.Token
 
 internal fun inferTypes(grammar: Grammar): Types {
     val inferencer = TypeInferencer.new(grammar)
@@ -49,25 +46,25 @@ private class TypeInferencer(
         fun new(grammar: Grammar): TypeInferencer {
             val types = makeTypes(grammar)
 
-            val nonterminals: MutableMap<NonterminalString, Nt> = grammar
-                .items
-                .mapNotNull { it.asNonterminal() }
-                .map { data ->
-                    check(!data.isMacroDef()) // normalized away by now
-                    data.name to Nt.new(data)
-                }
-                .toMap()
-                .toMutableMap()
+            val nonterminals: MutableMap<NonterminalString, Nt> =
+                grammar
+                    .items
+                    .mapNotNull { it.asNonterminal() }
+                    .map { data ->
+                        check(!data.isMacroDef()) // normalized away by now
+                        data.name to Nt.new(data)
+                    }.toMap()
+                    .toMutableMap()
 
-            val typeParameters: MutableSet<Atom> = grammar
-                .typeParameters
-                .mapNotNull { p ->
-                    when (p) {
-                        is TypeParameter.LifetimeTp -> null
-                        is TypeParameter.Id -> p.atom
-                    }
-                }
-                .toMutableSet()
+            val typeParameters: MutableSet<Atom> =
+                grammar
+                    .typeParameters
+                    .mapNotNull { p ->
+                        when (p) {
+                            is TypeParameter.LifetimeTp -> null
+                            is TypeParameter.Id -> p.atom
+                        }
+                    }.toMutableSet()
 
             return TypeInferencer(
                 stack = mutableListOf(),
@@ -85,11 +82,12 @@ private data class Nt(
     val alternatives: List<Alternative>,
 ) {
     companion object {
-        fun new(data: NonterminalData): Nt = Nt(
-            span = data.span,
-            typeDecl = data.typeDecl,
-            alternatives = data.alternatives,
-        )
+        fun new(data: NonterminalData): Nt =
+            Nt(
+                span = data.span,
+                typeDecl = data.typeDecl,
+                alternatives = data.alternatives,
+            )
     }
 }
 
@@ -97,8 +95,11 @@ private fun makeTypes(grammar: Grammar): Types {
     val optExternToken = grammar.externToken()
 
     // Determine error type (if any).
-    val errorType: TypeRepr? = optExternToken?.associatedType(Atom.from(ERROR))
-        ?.typeRef?.typeRepr()
+    val errorType: TypeRepr? =
+        optExternToken
+            ?.associatedType(Atom.from(ERROR))
+            ?.typeRef
+            ?.typeRepr()
 
     // Determine location type and enum type. If using an internal
     // token, that specified by us, not user.
@@ -113,13 +114,16 @@ private fun makeTypes(grammar: Grammar): Types {
                 referent = TypeRepr.str(),
             )
         val enumType =
-            TypeRepr.Nominal(NominalTypeRepr(
-                path = Path(
-                    absolute = false,
-                    ids = mutableListOf(Atom.from("Token")),
+            TypeRepr.Nominal(
+                NominalTypeRepr(
+                    path =
+                        Path(
+                            absolute = false,
+                            ids = mutableListOf(Atom.from("Token")),
+                        ),
+                    types = mutableListOf(TypeRepr.LifetimeRepr(Lifetime.input())),
                 ),
-                types = mutableListOf(TypeRepr.LifetimeRepr(Lifetime.input())),
-            ))
+            )
 
         val types = Types(grammar.prefix, locType, errorType, enumType)
 
@@ -133,13 +137,16 @@ private fun makeTypes(grammar: Grammar): Types {
         types
     } else {
         val externToken = optExternToken!!
-        val locType = externToken
-            .associatedType(Atom.from(LOCATION))
-            ?.typeRef?.typeRepr()
-        val enumType = externToken
-            .enumToken!!
-            .typeName
-            .typeRepr()
+        val locType =
+            externToken
+                .associatedType(Atom.from(LOCATION))
+                ?.typeRef
+                ?.typeRepr()
+        val enumType =
+            externToken
+                .enumToken!!
+                .typeName
+                .typeRepr()
         val types = Types(grammar.prefix, locType, errorType, enumType)
 
         // For each defined conversion, figure out the type of the
@@ -187,67 +194,74 @@ private fun TypeInferencer.nonterminalType(id: NonterminalString): TypeRepr {
         )
     }
 
-    val ty = this.push(id) { self ->
-        if (nt.typeDecl != null) {
-            return@push self.typeRef(nt.typeDecl)
-        }
-
-        // Try to compute the types of all alternatives; note that
-        // some may result in an error. Don't report these errors
-        // (yet).
-        val alternativeTypes: MutableList<TypeRepr> = mutableListOf()
-        val alternativeErrors: MutableList<NormErrorException> = mutableListOf()
-        for (alt in nt.alternatives) {
-            try {
-                alternativeTypes.add(self.alternativeType(alt))
-            } catch (e: NormErrorException) {
-                alternativeErrors.add(e)
+    val ty =
+        this.push(id) { self ->
+            if (nt.typeDecl != null) {
+                return@push self.typeRef(nt.typeDecl)
             }
-        }
 
-        // if it never succeeded, report first error
-        if (alternativeTypes.isEmpty()) {
-            val firstErr = alternativeErrors.firstOrNull()
-            if (firstErr != null) {
-                throw firstErr
-            } else {
-                // if nothing succeeded, and nothing errored,
-                // must have been nothing to start with
-                returnErr(
-                    nt.span,
-                    "nonterminal `$id` has no alternatives and hence parse cannot succeed",
-                )
+            // Try to compute the types of all alternatives; note that
+            // some may result in an error. Don't report these errors
+            // (yet).
+            val alternativeTypes: MutableList<TypeRepr> = mutableListOf()
+            val alternativeErrors: MutableList<NormErrorException> = mutableListOf()
+            for (alt in nt.alternatives) {
+                try {
+                    alternativeTypes.add(self.alternativeType(alt))
+                } catch (e: NormErrorException) {
+                    alternativeErrors.add(e)
+                }
             }
-        }
 
-        // otherwise, check that all the cases where we had success agree
-        val tail = alternativeTypes.subList(1, alternativeTypes.size)
-        val altTail = nt.alternatives.subList(1, nt.alternatives.size)
-        for ((i, pair) in tail.zip(altTail).withIndex()) {
-            val (t, alt) = pair
-            if (alternativeTypes[0] != t) {
-                returnErr(
-                    alt.span,
-                    "type of alternative #${i + 1 + 1} is `$t`, " +
-                        "but type of first alternative is `${alternativeTypes[0]}`",
-                )
+            // if it never succeeded, report first error
+            if (alternativeTypes.isEmpty()) {
+                val firstErr = alternativeErrors.firstOrNull()
+                if (firstErr != null) {
+                    throw firstErr
+                } else {
+                    // if nothing succeeded, and nothing errored,
+                    // must have been nothing to start with
+                    returnErr(
+                        nt.span,
+                        "nonterminal `$id` has no alternatives and hence parse cannot succeed",
+                    )
+                }
             }
-        }
 
-        // and import that type
-        alternativeTypes.removeAt(alternativeTypes.size - 1)
-    }
+            // otherwise, check that all the cases where we had success agree
+            val tail = alternativeTypes.subList(1, alternativeTypes.size)
+            val altTail = nt.alternatives.subList(1, nt.alternatives.size)
+            for ((i, pair) in tail.zip(altTail).withIndex()) {
+                val (t, alt) = pair
+                if (alternativeTypes[0] != t) {
+                    returnErr(
+                        alt.span,
+                        "type of alternative #${i + 1 + 1} is `$t`, " +
+                            "but type of first alternative is `${alternativeTypes[0]}`",
+                    )
+                }
+            }
+
+            // and import that type
+            alternativeTypes.removeAt(alternativeTypes.size - 1)
+        }
 
     for (alt in nt.alternatives) {
         val symbols = alt.expr.symbols
         for ((t, s) in symbols.mapNotNull { it.asTuple() }) {
-            val ty2 = when (val k = s.kind) {
-                is SymbolKind.Nonterminal -> this.nonterminalType(k.nt)
-                else -> returnErr(
-                    s.span,
-                    "expected a nonterminal in tuple, but found `${s.kind}`",
-                )
-            }
+            val ty2 =
+                when (val k = s.kind) {
+                    is SymbolKind.Nonterminal -> {
+                        this.nonterminalType(k.nt)
+                    }
+
+                    else -> {
+                        returnErr(
+                            s.span,
+                            "expected a nonterminal in tuple, but found `${s.kind}`",
+                        )
+                    }
+                }
 
             validateTuple(s.span, t, ty2)
         }
@@ -267,12 +281,17 @@ private inline fun <R> TypeInferencer.push(id: NonterminalString, f: (TypeInfere
 private fun TypeInferencer.typeRef(typeRef: TypeRef): TypeRepr {
     return when (typeRef) {
         is TypeRef.Tuple -> {
-            val types = typeRef.types
-                .map { t -> this.typeRef(t) }
-                .toMutableList()
+            val types =
+                typeRef.types
+                    .map { t -> this.typeRef(t) }
+                    .toMutableList()
             TypeRepr.Tuple(types)
         }
-        is TypeRef.Slice -> TypeRepr.Slice(this.typeRef(typeRef.ty))
+
+        is TypeRef.Slice -> {
+            TypeRepr.Slice(this.typeRef(typeRef.ty))
+        }
+
         is TypeRef.Nominal -> {
             if (typeRef.path.ids.size == 2 && this.typeParameters.contains(typeRef.path.ids[0])) {
                 return TypeRepr.Associated(
@@ -281,105 +300,151 @@ private fun TypeInferencer.typeRef(typeRef: TypeRef): TypeRepr {
                 )
             }
 
-            val types = typeRef.types
-                .map { t -> this.typeRef(t) }
-                .toMutableList()
-            TypeRepr.Nominal(NominalTypeRepr(
-                path = typeRef.path,
-                types = types,
-            ))
-        }
-        is TypeRef.LifetimeRef -> TypeRepr.LifetimeRepr(typeRef.lifetime)
-        is TypeRef.Id -> TypeRepr.Nominal(NominalTypeRepr(
-            path = Path.fromId(typeRef.atom),
-            types = mutableListOf(),
-        ))
-        is TypeRef.Ref -> TypeRepr.Ref(
-            lifetime = typeRef.lifetime,
-            mutable = typeRef.mutable,
-            referent = this.typeRef(typeRef.referent),
-        )
-        is TypeRef.OfSymbol -> this.symbolType(typeRef.kind)
-        is TypeRef.TraitObject -> {
-            val types = typeRef.types
-                .map { t -> this.typeRef(t) }
-                .toMutableList()
-            TypeRepr.TraitObject(NominalTypeRepr(
-                path = typeRef.path,
-                types = types,
-            ))
-        }
-        is TypeRef.Fn -> TypeRepr.Fn(
-            forall = typeRef.forall.toMutableList(),
-            path = typeRef.path,
-            parameters = typeRef.parameters
-                .map { t -> this.typeRef(t) }
-                .toMutableList(),
-            ret = typeRef.ret?.let { this.typeRef(it) },
-        )
-    }
-}
-
-private fun TypeInferencer.alternativeType(alt: Alternative): TypeRepr {
-    return when (val action = analyzeAction(alt)) {
-        is AlternativeAction.User -> when (action.code) {
-            is ActionKind.User, is ActionKind.Fallible -> {
-                returnErr(
-                    alt.span,
-                    "cannot infer types if there is custom action code",
-                )
-            }
-            is ActionKind.Lookahead, is ActionKind.Lookbehind -> {
-                this.types.optTerminalLocType()!!
-            }
-        }
-
-        is AlternativeAction.Default -> when (val syms = action.symbols) {
-            is Symbols.Named -> {
-                returnErr(
-                    alt.span,
-                    "cannot infer types in the presence of named symbols like " +
-                        "`${syms.list[0].second}:${syms.list[0].third}`",
-                )
-            }
-
-            is Symbols.Anon -> {
-                val symbolTypes: MutableList<TypeRepr> = syms.list
-                    .map { (_, sym) -> this.symbolType(sym.kind) }
+            val types =
+                typeRef.types
+                    .map { t -> this.typeRef(t) }
                     .toMutableList()
-                maybeTuple(symbolTypes)
-            }
+            TypeRepr.Nominal(
+                NominalTypeRepr(
+                    path = typeRef.path,
+                    types = types,
+                ),
+            )
+        }
+
+        is TypeRef.LifetimeRef -> {
+            TypeRepr.LifetimeRepr(typeRef.lifetime)
+        }
+
+        is TypeRef.Id -> {
+            TypeRepr.Nominal(
+                NominalTypeRepr(
+                    path = Path.fromId(typeRef.atom),
+                    types = mutableListOf(),
+                ),
+            )
+        }
+
+        is TypeRef.Ref -> {
+            TypeRepr.Ref(
+                lifetime = typeRef.lifetime,
+                mutable = typeRef.mutable,
+                referent = this.typeRef(typeRef.referent),
+            )
+        }
+
+        is TypeRef.OfSymbol -> {
+            this.symbolType(typeRef.kind)
+        }
+
+        is TypeRef.TraitObject -> {
+            val types =
+                typeRef.types
+                    .map { t -> this.typeRef(t) }
+                    .toMutableList()
+            TypeRepr.TraitObject(
+                NominalTypeRepr(
+                    path = typeRef.path,
+                    types = types,
+                ),
+            )
+        }
+
+        is TypeRef.Fn -> {
+            TypeRepr.Fn(
+                forall = typeRef.forall.toMutableList(),
+                path = typeRef.path,
+                parameters =
+                    typeRef.parameters
+                        .map { t -> this.typeRef(t) }
+                        .toMutableList(),
+                ret = typeRef.ret?.let { this.typeRef(it) },
+            )
         }
     }
 }
 
-private fun TypeInferencer.symbolType(symbol: SymbolKind): TypeRepr {
-    return when (symbol) {
-        is SymbolKind.Terminal -> this.types.terminalType(symbol.terminal)
-        is SymbolKind.Nonterminal -> this.nonterminalType(symbol.nt)
-        is SymbolKind.Choose -> this.symbolType(symbol.sym.kind)
-        is SymbolKind.Name -> this.symbolType(symbol.sym.kind)
-        is SymbolKind.TupleKind -> this.symbolType(symbol.sym.kind)
-        SymbolKind.Error -> this.types.errorRecoveryType()
+private fun TypeInferencer.alternativeType(alt: Alternative): TypeRepr =
+    when (val action = analyzeAction(alt)) {
+        is AlternativeAction.User -> {
+            when (action.code) {
+                is ActionKind.User, is ActionKind.Fallible -> {
+                    returnErr(
+                        alt.span,
+                        "cannot infer types if there is custom action code",
+                    )
+                }
+
+                is ActionKind.Lookahead, is ActionKind.Lookbehind -> {
+                    this.types.optTerminalLocType()!!
+                }
+            }
+        }
+
+        is AlternativeAction.Default -> {
+            when (val syms = action.symbols) {
+                is Symbols.Named -> {
+                    returnErr(
+                        alt.span,
+                        "cannot infer types in the presence of named symbols like " +
+                            "`${syms.list[0].second}:${syms.list[0].third}`",
+                    )
+                }
+
+                is Symbols.Anon -> {
+                    val symbolTypes: MutableList<TypeRepr> =
+                        syms.list
+                            .map { (_, sym) -> this.symbolType(sym.kind) }
+                            .toMutableList()
+                    maybeTuple(symbolTypes)
+                }
+            }
+        }
+    }
+
+private fun TypeInferencer.symbolType(symbol: SymbolKind): TypeRepr =
+    when (symbol) {
+        is SymbolKind.Terminal -> {
+            this.types.terminalType(symbol.terminal)
+        }
+
+        is SymbolKind.Nonterminal -> {
+            this.nonterminalType(symbol.nt)
+        }
+
+        is SymbolKind.Choose -> {
+            this.symbolType(symbol.sym.kind)
+        }
+
+        is SymbolKind.Name -> {
+            this.symbolType(symbol.sym.kind)
+        }
+
+        is SymbolKind.TupleKind -> {
+            this.symbolType(symbol.sym.kind)
+        }
+
+        SymbolKind.Error -> {
+            this.types.errorRecoveryType()
+        }
 
         is SymbolKind.Repeat,
         is SymbolKind.Expr,
         is SymbolKind.Macro,
         is SymbolKind.AmbiguousId,
         SymbolKind.Lookahead,
-        SymbolKind.Lookbehind -> {
+        SymbolKind.Lookbehind,
+        -> {
             error("symbol `$symbol` should have been expanded away")
         }
     }
-}
 
-private fun maybeTuple(v: MutableList<TypeRepr>): TypeRepr {
-    return if (v.size == 1) {
+private fun maybeTuple(v: MutableList<TypeRepr>): TypeRepr =
+    if (v.size == 1) {
         v.first()
     } else {
         TypeRepr.Tuple(v)
     }
-}
 
 private fun validateTuple(span: Span, tuple: Tuple, nt: TypeRepr) {
     when (nt) {
@@ -399,6 +464,9 @@ private fun validateTuple(span: Span, tuple: Tuple, nt: TypeRepr) {
                 }
             }
         }
-        else -> error("expected a tuple type, but found `$nt`")
+
+        else -> {
+            error("expected a tuple type, but found `$nt`")
+        }
     }
 }

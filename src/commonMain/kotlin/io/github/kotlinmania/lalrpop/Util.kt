@@ -1,7 +1,10 @@
 // port-lint: source util.rs
 package io.github.kotlinmania.lalrpop
 
-internal class Sep<S>(val sep: String, val vec: Iterable<S>) {
+internal class Sep<S>(
+    val sep: String,
+    val vec: Iterable<S>,
+) {
     fun fmt(fmt: StringBuilder) {
         val elems = vec.iterator()
         if (elems.hasNext()) {
@@ -17,13 +20,21 @@ internal class Sep<S>(val sep: String, val vec: Iterable<S>) {
     override fun toString(): String = buildString { fmt(this) }
 }
 
-internal class Escape<S : Any>(val value: S) {
+internal class Escape<S : Any>(
+    val value: S,
+) {
     fun fmt(fmt: StringBuilder) {
         val tmp = value.toString()
         for (c in tmp) {
             when (c) {
-                in 'a'..'z', in '0'..'9', in 'A'..'Z' -> fmt.append(c)
-                '_' -> fmt.append("__")
+                in 'a'..'z', in '0'..'9', in 'A'..'Z' -> {
+                    fmt.append(c)
+                }
+
+                '_' -> {
+                    fmt.append("__")
+                }
+
                 else -> {
                     fmt.append('_')
                     fmt.append(c.code.toString(16))
@@ -35,7 +46,10 @@ internal class Escape<S : Any>(val value: S) {
     override fun toString(): String = buildString { fmt(this) }
 }
 
-internal class Prefix<S>(val prefix: String, val vec: Iterable<S>) {
+internal class Prefix<S>(
+    val prefix: String,
+    val vec: Iterable<S>,
+) {
     fun fmt(fmt: StringBuilder) {
         for (elem in vec) {
             fmt.append(prefix)
@@ -47,6 +61,4 @@ internal class Prefix<S>(val prefix: String, val vec: Iterable<S>) {
 }
 
 /** Strip leading and trailing whitespace. */
-internal fun strip(s: String): String {
-    return s.trim { it.isWhitespace() }
-}
+internal fun strip(s: String): String = s.trim { it.isWhitespace() }

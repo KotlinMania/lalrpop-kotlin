@@ -11,7 +11,9 @@ import io.github.kotlinmania.lalrpop.parser.parseGrammar
 
 private val SPAN: Regex = Regex("Span\\((?:start=[0-9]+, end=[0-9]+|[0-9 ,\\n]*)\\)")
 
-private class ExpectedDebug(private val s: String) {
+private class ExpectedDebug(
+    private val s: String,
+) {
     // Ignore trailing commas in multiline Debug representation.
     // Needed to work around rust-lang/rust#59076.
     override fun toString(): String = s.replace(",\n", "\n")
@@ -29,13 +31,14 @@ private class ExpectedDebug(private val s: String) {
  * `{:?}` single-line Debug output, which is also what `{:#?}` emits
  * for tuple/enum variants without sub-fields.
  */
-private fun rustDebugFormat(value: Any?): String = when (value) {
-    null -> "null"
-    is List<*> -> rustPrettyDebug(value)
-    is TypeParameter.LifetimeTp -> "Lifetime(\n    ${value.lifetime}\n)"
-    is TypeParameter.Id -> "Id(\n    Atom('${value.atom}' type=inline)\n)"
-    else -> value.toString()
-}
+private fun rustDebugFormat(value: Any?): String =
+    when (value) {
+        null -> "null"
+        is List<*> -> rustPrettyDebug(value)
+        is TypeParameter.LifetimeTp -> "Lifetime(\n    ${value.lifetime}\n)"
+        is TypeParameter.Id -> "Id(\n    Atom('${value.atom}' type=inline)\n)"
+        else -> value.toString()
+    }
 
 private fun rustPrettyDebug(value: Any): String {
     if (value is List<*>) {
@@ -79,11 +82,11 @@ internal fun <D : Any, E : Any> compare(actual: D, expected: E) {
         val prettyActualS = actual.toString()
         val prettyExpectedS = expected.toString()
 
-        for (diff in diff.lines(normalize(prettyActualS), normalize(prettyExpectedS))) {
-            when (diff) {
-                is diff.Result.Right -> println("- ${diff.value}")
-                is diff.Result.Left -> println("+ ${diff.value}")
-                is diff.Result.Both -> println("  ${diff.left}")
+        for (d in Diff.lines(normalize(prettyActualS), normalize(prettyExpectedS))) {
+            when (d) {
+                is Diff.Result.Right -> println("- ${d.value}")
+                is Diff.Result.Left -> println("+ ${d.value}")
+                is Diff.Result.Both -> println("  ${d.left}")
             }
         }
 
@@ -112,11 +115,20 @@ internal fun checkNormErr(expectedErr: String, span: String, err: NormError) {
     check(err.span == Span(startIndex, endIndex))
 }
 
-private object diff {
+private object Diff {
     sealed class Result {
-        data class Left(val value: String) : Result()
-        data class Right(val value: String) : Result()
-        data class Both(val left: String, val right: String) : Result()
+        data class Left(
+            val value: String,
+        ) : Result()
+
+        data class Right(
+            val value: String,
+        ) : Result()
+
+        data class Both(
+            val left: String,
+            val right: String,
+        ) : Result()
     }
 
     fun lines(a: String, b: String): List<Result> {

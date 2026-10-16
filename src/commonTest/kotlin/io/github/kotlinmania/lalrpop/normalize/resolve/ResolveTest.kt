@@ -55,12 +55,13 @@ private fun checkErr(expectedErr: String, grammar: String) {
     val endIndex = endMarkerIndex - 3
 
     val parsedGrammar = parseGrammar(grammar2).getOrThrow()
-    val err = try {
-        resolve(parsedGrammar)
-        fail("expected error for grammar")
-    } catch (e: NormErrorException) {
-        e.err
-    }
+    val err =
+        try {
+            resolve(parsedGrammar)
+            fail("expected error for grammar")
+        } catch (e: NormErrorException) {
+            e.err
+        }
     assertEquals(Span(startIndex, endIndex), err.span)
     check(expectedErrRegex.containsMatchIn(err.message)) {
         "unexpected error text `${err.message}`, did not match `$expectedErrRegex`"

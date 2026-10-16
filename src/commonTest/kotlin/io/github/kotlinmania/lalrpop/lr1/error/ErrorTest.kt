@@ -17,11 +17,11 @@ import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.lr1.buildStates
-import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
+import io.github.kotlinmania.lalrpop.lr1.TableConstructionErrorException
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
+import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.message.AsciiCanvas
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.tls.Tls
@@ -47,8 +47,9 @@ class ErrorTest {
     @Test
     fun priorityConflict() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 pub Ty: () = {
     "int" => (),
@@ -56,7 +57,7 @@ pub Ty: () = {
     <t1:Ty> "->" <t2:Ty> => (),
 };
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val err = buildStatesError(grammar, nt("Ty"))
@@ -75,7 +76,10 @@ pub Ty: () = {
                         assertEquals(r.shift.cursor, r.reduce.cursor)
                         assertEquals(nt("Ty"), r.nonterminal)
                     }
-                    else -> fail("wrong classification $r")
+
+                    else -> {
+                        fail("wrong classification $r")
+                    }
                 }
             } finally {
                 lr1Tls.drop()
@@ -86,8 +90,9 @@ pub Ty: () = {
     @Test
     fun exprBracedConflict() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 pub Expr: () = {
     "Id" => (),
@@ -96,7 +101,7 @@ pub Expr: () = {
     "if" Expr "{" "}" => (),
 };
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val err = buildStatesError(grammar, nt("Expr"))
@@ -108,7 +113,10 @@ pub Expr: () = {
 
                 when (val r = cx.classify(conflict)) {
                     is ConflictClassification.InsufficientLookahead -> {}
-                    else -> fail("wrong classification $r")
+
+                    else -> {
+                        fail("wrong classification $r")
+                    }
                 }
             } finally {
                 lr1Tls.drop()
@@ -119,8 +127,9 @@ pub Expr: () = {
     @Test
     fun suggestQuestionConflict() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
         grammar;
 
         pub E: () = {
@@ -133,7 +142,7 @@ pub Expr: () = {
             "L"
         };
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val err = buildStatesError(grammar, nt("E"))
@@ -151,7 +160,10 @@ pub Expr: () = {
                             r.symbol,
                         )
                     }
-                    else -> fail("wrong classification $r")
+
+                    else -> {
+                        fail("wrong classification $r")
+                    }
                 }
             } finally {
                 lr1Tls.drop()
@@ -162,8 +174,9 @@ pub Expr: () = {
     @Test
     fun suggestInlineConflict() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 
 pub ImportDecl: () = {
@@ -177,7 +190,7 @@ Path: () = {
 
 Ident = r#"[a-zA-Z][a-zA-Z0-9]*"#;
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val err = buildStatesError(grammar, nt("ImportDecl"))
@@ -191,7 +204,10 @@ Ident = r#"[a-zA-Z][a-zA-Z0-9]*"#;
                     is ConflictClassification.SuggestInline -> {
                         assertEquals(nt("Path"), r.nonterminal)
                     }
-                    else -> fail("wrong classification $r")
+
+                    else -> {
+                        fail("wrong classification $r")
+                    }
                 }
             } finally {
                 lr1Tls.drop()
@@ -203,8 +219,9 @@ Ident = r#"[a-zA-Z][a-zA-Z0-9]*"#;
     @Test
     fun issue249() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
+            val grammar =
+                normalizedGrammar(
+                    """
 grammar;
 
 pub Func = StructDecl* VarDecl*;
@@ -212,7 +229,7 @@ StructDecl = "<" StructParameter* ">";
 StructParameter = "may_dangle"?;
 VarDecl = "let";
 """,
-            )
+                )
             val lr1Tls = Lr1Tls.install(grammar.terminals)
             try {
                 val err = buildStatesError(grammar, nt("Func"))
@@ -252,7 +269,8 @@ VarDecl = "let";
                     val canvas = AsciiCanvas.new(0, message.minWidth())
                     message.emit(canvas)
                     assertTrue(
-                        canvas.toStrings()
+                        canvas
+                            .toStrings()
                             .map { it.toString() }
                             .joinToString("\n")
                             .contains(text),

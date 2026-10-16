@@ -5,9 +5,9 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.buildLalrStates
 import io.github.kotlinmania.lalrpop.normalizedGrammar
-import io.github.kotlinmania.lalrpop.runtime.Production
-import io.github.kotlinmania.lalrpop.runtime.ProductionAction
 import io.github.kotlinmania.lalrpop.tls.Tls
+import io.github.kotlinmania.lalrpoputil.tabledriven.Production
+import io.github.kotlinmania.lalrpoputil.tabledriven.ProductionAction
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -26,7 +26,6 @@ private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
  * a follow-up test once the action emitter exists.
  */
 class TablesBuilderTest {
-
     /**
      * Stub action lambda: throws with a clear message if the driver ever invokes it.
      * The table-builder test does not run the driver, so the lambda is only here to
@@ -40,13 +39,14 @@ class TablesBuilderTest {
     @Test
     fun buildsTablesForSAToB() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
-                grammar;
-                extern { enum Tok { "a" => .., "b" => .. } }
-                pub S: () = "a" "b" => ();
-                """.trimIndent(),
-            )
+            val grammar =
+                normalizedGrammar(
+                    """
+                    grammar;
+                    extern { enum Tok { "a" => .., "b" => .. } }
+                    pub S: () = "a" "b" => ();
+                    """.trimIndent(),
+                )
 
             Lr1Tls.install(grammar.terminals).also { lr1Tls ->
                 try {
@@ -65,12 +65,13 @@ class TablesBuilderTest {
                             )
                         }
 
-                    val tables = tablesFromLr1States(
-                        grammar = grammar,
-                        states = states,
-                        productions = productions,
-                        acceptProductionId = 0,
-                    )
+                    val tables =
+                        tablesFromLr1States(
+                            grammar = grammar,
+                            states = states,
+                            productions = productions,
+                            acceptProductionId = 0,
+                        )
 
                     // Number of states / terminals / nonterminals comes from the front
                     // end. Cross-check that the builder set these consistently.
@@ -116,27 +117,30 @@ class TablesBuilderTest {
     @Test
     fun rejectsProductionArraySizeMismatch() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
-                grammar;
-                extern { enum Tok { "a" => .. } }
-                pub S: () = "a" => ();
-                """.trimIndent(),
-            )
+            val grammar =
+                normalizedGrammar(
+                    """
+                    grammar;
+                    extern { enum Tok { "a" => .. } }
+                    pub S: () = "a" => ();
+                    """.trimIndent(),
+                )
 
             Lr1Tls.install(grammar.terminals).also { lr1Tls ->
                 try {
                     val states = buildLalrStates(grammar, nt("S"))
                     val wrongSizeProductions: Array<Production<Unit, Int>> = arrayOf()
 
-                    val ex = kotlin.runCatching {
-                        tablesFromLr1States(
-                            grammar = grammar,
-                            states = states,
-                            productions = wrongSizeProductions,
-                            acceptProductionId = 0,
-                        )
-                    }.exceptionOrNull()
+                    val ex =
+                        kotlin
+                            .runCatching {
+                                tablesFromLr1States(
+                                    grammar = grammar,
+                                    states = states,
+                                    productions = wrongSizeProductions,
+                                    acceptProductionId = 0,
+                                )
+                            }.exceptionOrNull()
 
                     assertTrue(
                         ex is IllegalArgumentException,

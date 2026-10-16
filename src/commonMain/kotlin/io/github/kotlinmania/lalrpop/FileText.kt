@@ -22,20 +22,22 @@ internal class FileText(
     private val newlines: List<Int>,
 ) {
     companion object {
-        fun fromPath(path: String): Result<FileText> = runCatching {
-            val inputStr = apiBuildReadFileToString(path)
-            new(path, inputStr)
-        }
+        fun fromPath(path: String): Result<FileText> =
+            runCatching {
+                val inputStr = apiBuildReadFileToString(path)
+                new(path, inputStr)
+            }
 
         fun new(path: String, inputStr: String): FileText {
-            val newlineIndices: List<Int> = buildList {
-                add(0)
-                for ((i, ch) in inputStr.withIndex()) {
-                    if (ch == '\n') {
-                        add(i + 1) // index of first char in the line
+            val newlineIndices: List<Int> =
+                buildList {
+                    add(0)
+                    for ((i, ch) in inputStr.withIndex()) {
+                        if (ch == '\n') {
+                            add(i + 1) // index of first char in the line
+                        }
                     }
                 }
-            }
 
             return FileText(
                 path = path,

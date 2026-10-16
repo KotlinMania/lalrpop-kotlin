@@ -13,53 +13,58 @@ package io.github.kotlinmania.lalrpop.api
  * at your option.
  */
 
-@JsModule("node:fs")
-@JsNonModule
-private external object NodeFs {
-    fun existsSync(path: String): Boolean
-    fun mkdirSync(path: String, options: dynamic = definedExternally)
-    fun rmSync(path: String, options: dynamic = definedExternally)
-    fun unlinkSync(path: String)
-}
+// Hiding require('fs'), require('os'), and require('process') from webpack via (new Function('return require'))()
+// per AGENTS.md §10 to prevent webpack bundling failures in jsBrowserTest.
+private fun nodeFs(): dynamic =
+    js(
+        "(function(){ try { var rq = (new Function('return typeof require === \"function\" ? require : null'))(); return rq ? rq('fs') : null; } catch (e) { return null; } })()",
+    )
 
-@JsModule("node:os")
-@JsNonModule
-private external object NodeOs {
-    fun tmpdir(): String
-}
+private fun nodeOs(): dynamic =
+    js(
+        "(function(){ try { var rq = (new Function('return typeof require === \"function\" ? require : null'))(); return rq ? rq('os') : null; } catch (e) { return null; } })()",
+    )
 
-@JsModule("node:process")
-@JsNonModule
-private external object NodeTestProcess {
-    val env: dynamic
-    fun chdir(path: String)
-}
+private fun nodeProcess(): dynamic =
+    js(
+        "(function(){ try { var rq = (new Function('return typeof require === \"function\" ? require : null'))(); if (rq) return rq('process'); if (typeof process !== 'undefined') return process; return null; } catch (e) { return null; } })()",
+    )
 
-internal actual fun apiTempDir(): String = NodeOs.tmpdir().trimEnd('/').ifEmpty { "/" }
+internal actual fun apiTempDir(): String {
+    val os = nodeOs()
+    return if (os != null) (os.tmpdir() as String).trimEnd('/').ifEmpty { "/" } else "/tmp"
+}
 
 internal actual fun apiSetCurrentDir(path: String) {
-    NodeTestProcess.chdir(path)
+    nodeProcess()?.chdir(path)
 }
 
 internal actual fun apiSetEnvVar(
     name: String,
     value: String,
 ) {
-    NodeTestProcess.env[name] = value
+    val proc = nodeProcess() ?: return
+    if (proc.env != null) {
+        proc.env[name] = value
+    }
 }
 
-internal actual fun apiPathExists(path: String): Boolean = NodeFs.existsSync(path)
+internal actual fun apiPathExists(path: String): Boolean {
+    val fs = nodeFs() ?: return false
+    return fs.existsSync(path) as Boolean
+}
 
 internal actual fun apiCreateDir(path: String) {
-    NodeFs.mkdirSync(path)
+    nodeFs()?.mkdirSync(path)
 }
 
 internal actual fun apiRemoveDirAll(path: String) {
-    if (NodeFs.existsSync(path)) {
-        NodeFs.rmSync(path, js("({ recursive: true, force: true })"))
+    val fs = nodeFs() ?: return
+    if (fs.existsSync(path) as Boolean) {
+        fs.rmSync(path, js("({ recursive: true, force: true })"))
     }
 }
 
 internal actual fun apiRemoveFile(path: String) {
-    NodeFs.unlinkSync(path)
+    nodeFs()?.unlinkSync(path)
 }

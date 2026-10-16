@@ -13,11 +13,15 @@ internal fun interpret(nfa: Nfa, text: String): String? {
     while (stack.isNotEmpty()) {
         val (state, offset) = stack.removeAt(stack.size - 1)
         when (nfa.kind(state)) {
-            StateKind.Accept -> longest = if (longest == null) offset else maxOf(longest, offset)
+            StateKind.Accept -> {
+                longest = if (longest == null) offset else maxOf(longest, offset)
+            }
+
             StateKind.Reject -> {
                 // the rejection state is a dead-end
                 continue
             }
+
             StateKind.Neither -> {}
         }
 

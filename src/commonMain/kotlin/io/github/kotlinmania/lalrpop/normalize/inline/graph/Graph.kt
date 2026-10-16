@@ -33,11 +33,12 @@ private class NonterminalGraph(
     val nonterminalMap: Map<NonterminalString, NodeIndex>,
 ) {
     companion object {
-        fun new(grammar: Grammar): NonterminalGraph = NonterminalGraph(
-            grammar = grammar,
-            graph = Graph(),
-            nonterminalMap = map(),
-        )
+        fun new(grammar: Grammar): NonterminalGraph =
+            NonterminalGraph(
+                grammar = grammar,
+                graph = Graph(),
+                nonterminalMap = map(),
+            )
     }
 }
 
@@ -58,9 +59,11 @@ private fun NonterminalGraph.createNodes() {
 }
 
 private fun NonterminalGraph.addEdges() {
-    for (production in this.grammar.nonterminals.values.flatMap { d -> d.productions }) {
-        val fromIndex = this.nonterminalMap[production.nonterminal]
-            ?: continue // this is not an inlined nonterminal
+    for (production in this.grammar.nonterminals.values
+        .flatMap { d -> d.productions }) {
+        val fromIndex =
+            this.nonterminalMap[production.nonterminal]
+                ?: continue // this is not an inlined nonterminal
 
         for (symbol in production.symbols) {
             when (symbol) {
@@ -70,6 +73,7 @@ private fun NonterminalGraph.addEdges() {
                         this.graph.addEdge(fromIndex, toIndex, Unit)
                     }
                 }
+
                 is Symbol.Terminal -> {}
             }
         }
@@ -101,10 +105,14 @@ private fun NonterminalGraph.walk(
             states[source.index()] = WalkState.Visited
             result.add(nt)
         }
+
         WalkState.Visited -> {}
+
         WalkState.Visiting -> {
             returnErr(
-                this.grammar.nonterminals.getValue(nt).span,
+                this.grammar.nonterminals
+                    .getValue(nt)
+                    .span,
                 "cyclic inline directive: `$nt` would have to be inlined into itself",
             )
         }

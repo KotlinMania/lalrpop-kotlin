@@ -9,18 +9,18 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.Multimap
 import io.github.kotlinmania.lalrpop.collections.VecCollection
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
+import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TypeParameter
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Visibility
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
-import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
-import io.github.kotlinmania.lalrpop.lr1.StateGraph
-import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.State
+import io.github.kotlinmania.lalrpop.lr1.StateGraph
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
+import io.github.kotlinmania.lalrpop.lr1.Token
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
@@ -48,30 +48,28 @@ internal fun compileAscent(
     out: RustWrite,
 ) {
     val graph = StateGraph.new(states)
-    val ascent = newAscent(
-        grammar,
-        userStartSymbol,
-        startSymbol,
-        graph,
-        states,
-        actionModule,
-        out,
-    )
+    val ascent =
+        newAscent(
+            grammar,
+            userStartSymbol,
+            startSymbol,
+            graph,
+            states,
+            actionModule,
+            out,
+        )
     ascent.write()
 }
 
 internal class RecursiveAscent(
     val graph: StateGraph,
-
     /**
      * for each state, the set of symbols that it will require for
      * input
      */
     val stateInputs: List<StackSuffix>,
-
     /** type parameters for the `Nonterminal` type */
     val nonterminalTypeParams: List<TypeParameter>,
-
     val nonterminalWhereClauses: List<WhereClause>,
 )
 
@@ -107,7 +105,6 @@ internal class RecursiveAscent(
 internal data class StackSuffix(
     /** all symbols that are known to be on the stack (optional + fixed). */
     val all: List<Symbol>,
-
     /**
      * optional symbols will be consumed by *some* reductions in this
      * state, but not all
@@ -207,8 +204,9 @@ private fun CodeGenerator<RecursiveAscent>.writeReturnTypeDefn() {
     // have to unwrap and rewrap as we pass up the stack, which
     // seems silly
     for (nt in this.grammar.nonterminals.keys) {
-        val ty = this.types
-            .spannedType(this.types.nonterminalType(nt))
+        val ty =
+            this.types
+                .spannedType(this.types.nonterminalType(nt))
         rust(this.out, "${Escape(nt)}($ty),")
     }
 
@@ -334,12 +332,20 @@ private fun CodeGenerator<RecursiveAscent>.writeStateFn(thisIndex: StateIndex) {
     for ((production, tokenColl) in reductions) {
         val tokens = tokenColl.asList()
         for ((index, token) in tokens.withIndex()) {
-            val pattern = when (token) {
-                is Token.Terminal -> "Some(${this.matchTerminalPattern(token.terminalString)})"
-                Token.Error ->
-                    error("Error recovery is not implemented for recursive ascent parsers")
-                Token.Eof -> "None"
-            }
+            val pattern =
+                when (token) {
+                    is Token.Terminal -> {
+                        "Some(${this.matchTerminalPattern(token.terminalString)})"
+                    }
+
+                    Token.Error -> {
+                        error("Error recovery is not implemented for recursive ascent parsers")
+                    }
+
+                    Token.Eof -> {
+                        "None"
+                    }
+                }
             if (index < tokens.size - 1) {
                 rust(this.out, "$pattern |")
             } else {
@@ -362,10 +368,11 @@ private fun CodeGenerator<RecursiveAscent>.writeStateFn(thisIndex: StateIndex) {
     // if we hit this, the next token is not recognized, so generate an error
     rust(this.out, "_ => {")
     // The terminals which would have resulted in a successful parse in this state
-    val successfulTerminals = this.grammar.terminals.all.filter { terminal ->
-        thisState.shifts.containsKey(terminal) ||
-            thisState.reductions.any { (t, _) -> t.contains(Token.Terminal(terminal)) }
-    }
+    val successfulTerminals =
+        this.grammar.terminals.all.filter { terminal ->
+            thisState.shifts.containsKey(terminal) ||
+                thisState.reductions.any { (t, _) -> t.contains(Token.Terminal(terminal)) }
+        }
 
     rust(this.out, "#[allow(clippy::needless_raw_string_hashes)]")
     rust(this.out, "let ${this.prefix}expected = alloc::vec![")
@@ -528,18 +535,15 @@ private fun CodeGenerator<RecursiveAscent>.emitStateFnHeader(
         .fnHeader(
             Visibility.Priv,
             "${this.prefix}$fnKind$fnIndex",
-        )
-        .withGrammar(this.grammar)
+        ).withGrammar(this.grammar)
         .withTypeParameters(
             listOf(
                 "${this.prefix}TOKENS: Iterator<Item=Result<$tripleType,$parseErrorType>>",
             ),
-        )
-        .withParameters(fnArgs)
+        ).withParameters(fnArgs)
         .withReturnType(
             "Result<(Option<$tripleType>, ${this.prefix}Nonterminal<${Sep(", ", this.custom.nonterminalTypeParams)}>), $parseErrorType>",
-        )
-        .emit()
+        ).emit()
 
     rust(this.out, "{")
 
@@ -581,29 +585,33 @@ private fun CodeGenerator<RecursiveAscent>.fnArgs(
     // there are more edges than there are states in the graph.
     val startsWithTerminal = fixedPrefix.lastOrNull()?.isTerminal() ?: false
 
-    val baseArgs: MutableList<String> = mutableListOf(
-        "${this.prefix}tokens: &mut ${this.prefix}TOKENS",
-    )
+    val baseArgs: MutableList<String> =
+        mutableListOf(
+            "${this.prefix}tokens: &mut ${this.prefix}TOKENS",
+        )
     if (!startsWithTerminal) {
         baseArgs.add("${this.prefix}lookahead: Option<$tripleType>")
     }
 
     // "Optional symbols" may or may not be consumed, so take an
     // `&mut Option`
-    val optionalArgs = (0 until optionalPrefix.size).asSequence().map { i ->
-        "${this.prefix}sym$i: &mut Option<${this.types.spannedType(optionalPrefix[i].ty(this.types))}>"
-    }
+    val optionalArgs =
+        (0 until optionalPrefix.size).asSequence().map { i ->
+            "${this.prefix}sym$i: &mut Option<${this.types.spannedType(optionalPrefix[i].ty(this.types))}>"
+        }
 
     // "Fixed symbols" will be consumed before we return, so take the value itself
-    val fixedArgs = (0 until fixedPrefix.size).asSequence().map { i ->
-        "${this.prefix}sym${optionalPrefix.size + i}: ${this.types.spannedType(fixedPrefix[i].ty(this.types))}"
-    }
+    val fixedArgs =
+        (0 until fixedPrefix.size).asSequence().map { i ->
+            "${this.prefix}sym${optionalPrefix.size + i}: ${this.types.spannedType(fixedPrefix[i].ty(this.types))}"
+        }
 
-    val allArgs: List<String> = (
-        baseArgs.asSequence() +
-            optionalArgs +
-            fixedArgs +
-            sequenceOf("_: ${this.phantomDataType()}")
+    val allArgs: List<String> =
+        (
+            baseArgs.asSequence() +
+                optionalArgs +
+                fixedArgs +
+                sequenceOf("_: ${this.phantomDataType()}")
         ).toList()
 
     return Pair(allArgs, startsWithTerminal)
@@ -626,22 +634,23 @@ private fun CodeGenerator<RecursiveAscent>.adjustInputs(
 ): StackSuffix {
     val result = inputs.copy()
 
-    val topOpt = this.custom.graph.successors(stateIndex).any { succState ->
-        val succInputs = this.custom.stateInputs[succState.value]
+    val topOpt =
+        this.custom.graph.successors(stateIndex).any { succState ->
+            val succInputs = this.custom.stateInputs[succState.value]
 
-        // Check for a successor state with a suffix like:
-        //
-        //     ... OPT_1 ... OPT_N FIXED_1
-        //
-        // (Remember that *every* successor state will have
-        // at least one fixed input.)
-        //
-        // So basically we are looking for states
-        // that, when they return, may *optionally* have consumed
-        // the top of our stack.
-        check(succInputs.fixed().isNotEmpty())
-        succInputs.fixed().size == 1 && succInputs.optional().isNotEmpty()
-    }
+            // Check for a successor state with a suffix like:
+            //
+            //     ... OPT_1 ... OPT_N FIXED_1
+            //
+            // (Remember that *every* successor state will have
+            // at least one fixed input.)
+            //
+            // So basically we are looking for states
+            // that, when they return, may *optionally* have consumed
+            // the top of our stack.
+            check(succInputs.fixed().isNotEmpty())
+            succInputs.fixed().size == 1 && succInputs.optional().isNotEmpty()
+        }
 
     // If we find a successor that may optionally consume the top
     // of our stack, convert our fixed inputs into optional ones.
@@ -734,9 +743,10 @@ private fun CodeGenerator<RecursiveAscent>.transition(
 
     val transferSyms = this.popSyms(optional, fixed, nextInputs)
 
-    val otherArgs: List<String> = otherArgsIn
-        .map { s -> "${this.prefix}$s" }
-        .toList()
+    val otherArgs: List<String> =
+        otherArgsIn
+            .map { s -> "${this.prefix}$s" }
+            .toList()
 
     val fnName = "${this.prefix}state${nextIndex.value}"
 
@@ -771,10 +781,11 @@ private fun CodeGenerator<RecursiveAscent>.emitReduceAction(
     val locType = this.types.terminalLocType()
 
     val (optional, fixed) = stackSuffix.optionalFixedLens()
-    val productionInputs = StackSuffix(
-        all = production.symbols,
-        lenOptional = 0,
-    )
+    val productionInputs =
+        StackSuffix(
+            all = production.symbols,
+            lenOptional = 0,
+        )
     val transferSyms = this.popSyms(optional, fixed, productionInputs)
 
     // identify the "start" and "end" location for this production; this
@@ -865,11 +876,12 @@ private fun CodeGenerator<RecursiveAscent>.matchTerminalPattern(id: TerminalStri
  */
 private fun CodeGenerator<RecursiveAscent>.consumeTerminal(id: TerminalString, letName: String) {
     val patternNames: MutableList<String> = mutableListOf()
-    val pattern = this.grammar.pattern(id).map {
-        val index = patternNames.size
-        patternNames.add("${this.prefix}tok$index")
-        patternNames.last()
-    }
+    val pattern =
+        this.grammar.pattern(id).map {
+            val index = patternNames.size
+            patternNames.add("${this.prefix}tok$index")
+            patternNames.last()
+        }
 
     var patternStr = "$pattern"
     if (patternNames.isEmpty()) {

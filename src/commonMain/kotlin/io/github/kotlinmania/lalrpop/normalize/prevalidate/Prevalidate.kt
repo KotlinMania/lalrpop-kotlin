@@ -7,25 +7,25 @@ import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.Multimap
 import io.github.kotlinmania.lalrpop.collections.VecCollection
 import io.github.kotlinmania.lalrpop.collections.set
+import io.github.kotlinmania.lalrpop.grammar.CFG
+import io.github.kotlinmania.lalrpop.grammar.ERROR
+import io.github.kotlinmania.lalrpop.grammar.INLINE
+import io.github.kotlinmania.lalrpop.grammar.LALR
+import io.github.kotlinmania.lalrpop.grammar.LOCATION
+import io.github.kotlinmania.lalrpop.grammar.RECURSIVE_ASCENT
+import io.github.kotlinmania.lalrpop.grammar.TABLE_DRIVEN
+import io.github.kotlinmania.lalrpop.grammar.TEST_ALL
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ActionKind
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Alternative
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Attribute
 import io.github.kotlinmania.lalrpop.grammar.parsetree.AttributeArg
-import io.github.kotlinmania.lalrpop.grammar.CFG
-import io.github.kotlinmania.lalrpop.grammar.ERROR
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ExprSymbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.ExternToken
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.GrammarItem
-import io.github.kotlinmania.lalrpop.grammar.INLINE
-import io.github.kotlinmania.lalrpop.grammar.LALR
-import io.github.kotlinmania.lalrpop.grammar.LOCATION
 import io.github.kotlinmania.lalrpop.grammar.parsetree.MatchToken
-import io.github.kotlinmania.lalrpop.grammar.RECURSIVE_ASCENT
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Symbol
 import io.github.kotlinmania.lalrpop.grammar.parsetree.SymbolKind
-import io.github.kotlinmania.lalrpop.grammar.TABLE_DRIVEN
-import io.github.kotlinmania.lalrpop.grammar.TEST_ALL
 import io.github.kotlinmania.lalrpop.grammar.parsetree.readAlgorithm
 import io.github.kotlinmania.lalrpop.grammar.repr.Algorithm
 import io.github.kotlinmania.lalrpop.grammar.repr.LrCodeGeneration
@@ -40,23 +40,26 @@ import io.github.kotlinmania.lalrpop.normalize.precedence.SIDE_ARG
 import io.github.kotlinmania.lalrpop.normalize.returnErr
 
 internal fun validate(grammar: Grammar) {
-    val matchToken: MatchToken? = grammar
-        .items
-        .asSequence()
-        .mapNotNull { if (it is GrammarItem.MatchToken) it.inner else null }
-        .firstOrNull()
+    val matchToken: MatchToken? =
+        grammar
+            .items
+            .asSequence()
+            .mapNotNull { if (it is GrammarItem.MatchToken) it.inner else null }
+            .firstOrNull()
 
-    val externToken: ExternToken? = grammar
-        .items
-        .asSequence()
-        .mapNotNull { if (it is GrammarItem.ExternToken) it.inner else null }
-        .firstOrNull()
+    val externToken: ExternToken? =
+        grammar
+            .items
+            .asSequence()
+            .mapNotNull { if (it is GrammarItem.ExternToken) it.inner else null }
+            .firstOrNull()
 
-    val validator = Validator(
-        grammar = grammar,
-        matchToken = matchToken,
-        externToken = externToken,
-    )
+    val validator =
+        Validator(
+            grammar = grammar,
+            matchToken = matchToken,
+            externToken = externToken,
+        )
 
     validator.validate()
 }
@@ -68,12 +71,13 @@ private class Validator(
 )
 
 private fun Validator.validate() {
-    val allowedNames = listOf(
-        Atom.from(LALR),
-        Atom.from(TABLE_DRIVEN),
-        Atom.from(RECURSIVE_ASCENT),
-        Atom.from(TEST_ALL),
-    )
+    val allowedNames =
+        listOf(
+            Atom.from(LALR),
+            Atom.from(TABLE_DRIVEN),
+            Atom.from(RECURSIVE_ASCENT),
+            Atom.from(TEST_ALL),
+        )
     for (attribute in this.grammar.attributes) {
         if (!allowedNames.contains(attribute.id)) {
             returnErr(attribute.idSpan, "unrecognized attribute `${attribute.id}`")
@@ -136,6 +140,7 @@ private fun Validator.validate() {
                     }
                 }
             }
+
             is GrammarItem.Nonterminal -> {
                 val data = item.data
                 if (data.visibility.isPub() && data.args.isNotEmpty()) {
@@ -163,17 +168,19 @@ private fun Validator.validate() {
                     this.validateAlternative(alternative)
                 }
             }
+
             is GrammarItem.InternToken -> {}
         }
     }
 }
 
 private fun Validator.validatePrecedence(alternatives: List<Alternative>) {
-    val withPrecedence = alternatives.any { alt ->
-        alt.attributes.any { attr ->
-            attr.id == Atom.from(PREC_ATTR) || attr.id == Atom.from(ASSOC_ATTR)
+    val withPrecedence =
+        alternatives.any { alt ->
+            alt.attributes.any { attr ->
+                attr.id == Atom.from(PREC_ATTR) || attr.id == Atom.from(ASSOC_ATTR)
+            }
         }
-    }
 
     if (alternatives.isEmpty() || !withPrecedence) {
         return
@@ -214,14 +221,20 @@ private fun Validator.validatePrecedence(alternatives: List<Alternative>) {
                         )
                     }
                 }
-                argEq != null -> returnErr(
-                    attrPrecOpt.idSpan,
-                    "invalid argument `${argEq.first}` for precedence attribute, expected `$LVL_ARG`",
-                )
-                else -> returnErr(
-                    attrPrecOpt.idSpan,
-                    "missing argument for precedence attribute, expected `$LVL_ARG`",
-                )
+
+                argEq != null -> {
+                    returnErr(
+                        attrPrecOpt.idSpan,
+                        "invalid argument `${argEq.first}` for precedence attribute, expected `$LVL_ARG`",
+                    )
+                }
+
+                else -> {
+                    returnErr(
+                        attrPrecOpt.idSpan,
+                        "missing argument for precedence attribute, expected `$LVL_ARG`",
+                    )
+                }
             }
         }
 
@@ -236,14 +249,20 @@ private fun Validator.validatePrecedence(alternatives: List<Alternative>) {
                         )
                     }
                 }
-                argEq != null -> returnErr(
-                    attrAssocOpt.idSpan,
-                    "invalid argument `${argEq.first}` for associativity attribute, expected `$SIDE_ARG`",
-                )
-                else -> returnErr(
-                    attrAssocOpt.idSpan,
-                    "missing argument for associativity attribute, expected `$SIDE_ARG`",
-                )
+
+                argEq != null -> {
+                    returnErr(
+                        attrAssocOpt.idSpan,
+                        "invalid argument `${argEq.first}` for associativity attribute, expected `$SIDE_ARG`",
+                    )
+                }
+
+                else -> {
+                    returnErr(
+                        attrAssocOpt.idSpan,
+                        "missing argument for associativity attribute, expected `$SIDE_ARG`",
+                    )
+                }
             }
         }
     }
@@ -260,11 +279,12 @@ private fun Validator.validatePrecedence(alternatives: List<Alternative>) {
 private fun Validator.validateAlternative(alternative: Alternative) {
     this.validateExpr(alternative.expr)
 
-    val allowedNames = listOf(
-        Atom.from(PREC_ATTR),
-        Atom.from(ASSOC_ATTR),
-        Atom.from(CFG),
-    )
+    val allowedNames =
+        listOf(
+            Atom.from(PREC_ATTR),
+            Atom.from(ASSOC_ATTR),
+            Atom.from(CFG),
+        )
 
     for (attribute in alternative.attributes) {
         if (!allowedNames.contains(attribute.id)) {
@@ -282,13 +302,15 @@ private fun Validator.validateAlternative(alternative: Alternative) {
                 )
             }
         }
+
         is Symbols.Anon -> {
             val emptyString = ""
-            val action = when (val a = alternative.action) {
-                is ActionKind.User -> a.code
-                is ActionKind.Fallible -> a.code
-                else -> emptyString
-            }
+            val action =
+                when (val a = alternative.action) {
+                    is ActionKind.User -> a.code
+                    is ActionKind.Fallible -> a.code
+                    else -> emptyString
+                }
             if (checkBetweenBraces(action).isInCurlyBrackets()) {
                 returnErr(
                     alternative.span,
@@ -304,9 +326,10 @@ private fun Validator.validateExpr(expr: ExprSymbol) {
         this.validateSymbol(symbol)
     }
 
-    val chosen: List<Symbol> = expr
-        .symbols
-        .filter { sym -> sym.kind is SymbolKind.Choose }
+    val chosen: List<Symbol> =
+        expr
+            .symbols
+            .filter { sym -> sym.kind is SymbolKind.Choose }
 
     val named: Multimap<Atom, VecCollection<Symbol>, Symbol> =
         Multimap { VecCollection<Symbol>() }
@@ -318,7 +341,12 @@ private fun Validator.validateExpr(expr: ExprSymbol) {
     }
 
     if (chosen.isNotEmpty() && !named.isEmpty()) {
-        val firstNamed = named.iterator().next().second.asList()[0]
+        val firstNamed =
+            named
+                .iterator()
+                .next()
+                .second
+                .asList()[0]
         returnErr(
             chosen[0].span,
             "anonymous symbols like this one cannot be combined with " +
@@ -342,9 +370,13 @@ private fun Validator.validateSymbol(symbol: Symbol) {
         is SymbolKind.Expr -> {
             this.validateExpr(kind.expr)
         }
+
         is SymbolKind.AmbiguousId -> { /* see resolve */ }
+
         is SymbolKind.Terminal -> { /* see postvalidate! */ }
+
         is SymbolKind.Nonterminal -> { /* see resolve */ }
+
         is SymbolKind.Error -> {
             val algorithm = Algorithm.default()
             readAlgorithm(this.grammar.attributes, algorithm)
@@ -357,6 +389,7 @@ private fun Validator.validateSymbol(symbol: Symbol) {
                 )
             }
         }
+
         is SymbolKind.Macro -> {
             val msym = kind.sym
             if (msym.args.isEmpty()) {
@@ -366,12 +399,23 @@ private fun Validator.validateSymbol(symbol: Symbol) {
                 this.validateSymbol(arg)
             }
         }
+
         is SymbolKind.Repeat -> {
             this.validateSymbol(kind.sym.symbol)
         }
-        is SymbolKind.Choose -> this.validateSymbol(kind.sym)
-        is SymbolKind.Name -> this.validateSymbol(kind.sym)
-        is SymbolKind.TupleKind -> this.validateSymbol(kind.sym)
+
+        is SymbolKind.Choose -> {
+            this.validateSymbol(kind.sym)
+        }
+
+        is SymbolKind.Name -> {
+            this.validateSymbol(kind.sym)
+        }
+
+        is SymbolKind.TupleKind -> {
+            this.validateSymbol(kind.sym)
+        }
+
         SymbolKind.Lookahead, SymbolKind.Lookbehind -> {
             // if using an internal tokenizer, lookahead/lookbehind are ok.
             val externToken = this.externToken
@@ -400,12 +444,16 @@ private fun Validator.validateCfgAttr(attr: Attribute) {
             attr.id == Atom.from("feature") -> {
                 when (attr.arg) {
                     is AttributeArg.Equal -> { /* Ok */ }
-                    else -> returnErr(
-                        attr.idSpan,
-                        "expected a `not()`, `any()`, `all()` or `feature = \"my_feature\" argument",
-                    )
+
+                    else -> {
+                        returnErr(
+                            attr.idSpan,
+                            "expected a `not()`, `any()`, `all()` or `feature = \"my_feature\" argument",
+                        )
+                    }
                 }
             }
+
             attr.id == Atom.from("not") -> {
                 when (val a = attr.arg) {
                     is AttributeArg.Paren -> {
@@ -416,34 +464,52 @@ private fun Validator.validateCfgAttr(attr: Attribute) {
                             returnErr(attr.idSpan, "`not` takes one argument")
                         }
                     }
-                    else -> returnErr(attr.idSpan, "`not` takes one argument")
+
+                    else -> {
+                        returnErr(attr.idSpan, "`not` takes one argument")
+                    }
                 }
             }
+
             attr.id == Atom.from("any") -> {
                 when (val a = attr.arg) {
-                    is AttributeArg.Paren -> if (a.attrs.isNotEmpty()) {
-                        for (inner in a.attrs) {
-                            validateCfgArg(inner)
+                    is AttributeArg.Paren -> {
+                        if (a.attrs.isNotEmpty()) {
+                            for (inner in a.attrs) {
+                                validateCfgArg(inner)
+                            }
+                        } else {
+                            returnErr(attr.idSpan, "`any` takes at least one argument")
                         }
-                    } else {
+                    }
+
+                    else -> {
                         returnErr(attr.idSpan, "`any` takes at least one argument")
                     }
-                    else -> returnErr(attr.idSpan, "`any` takes at least one argument")
                 }
             }
+
             attr.id == Atom.from("all") -> {
                 when (val a = attr.arg) {
-                    is AttributeArg.Paren -> if (a.attrs.isNotEmpty()) {
-                        for (inner in a.attrs) {
-                            validateCfgArg(inner)
+                    is AttributeArg.Paren -> {
+                        if (a.attrs.isNotEmpty()) {
+                            for (inner in a.attrs) {
+                                validateCfgArg(inner)
+                            }
+                        } else {
+                            returnErr(attr.idSpan, "`all` takes at least one argument")
                         }
-                    } else {
+                    }
+
+                    else -> {
                         returnErr(attr.idSpan, "`all` takes at least one argument")
                     }
-                    else -> returnErr(attr.idSpan, "`all` takes at least one argument")
                 }
             }
-            else -> returnErr(attr.idSpan, "unexpected `cfg` argument `${attr.id}`")
+
+            else -> {
+                returnErr(attr.idSpan, "unexpected `cfg` argument `${attr.id}`")
+            }
         }
     }
     when (val a = attr.arg) {
@@ -455,6 +521,9 @@ private fun Validator.validateCfgAttr(attr: Attribute) {
                 returnErr(attr.idSpan, "`cfg` attributes take one argument")
             }
         }
-        else -> returnErr(attr.idSpan, "`cfg` attributes take one argument")
+
+        else -> {
+            returnErr(attr.idSpan, "`cfg` attributes take one argument")
+        }
     }
 }

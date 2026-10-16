@@ -1,8 +1,8 @@
 // port-lint: source message/indent.rs
 package io.github.kotlinmania.lalrpop.message.indent
 import io.github.kotlinmania.lalrpop.message.AsciiView
-import io.github.kotlinmania.lalrpop.message.shift
 import io.github.kotlinmania.lalrpop.message.message.Content
+import io.github.kotlinmania.lalrpop.message.shift
 
 internal class Indent private constructor(
     private val amount: Int,

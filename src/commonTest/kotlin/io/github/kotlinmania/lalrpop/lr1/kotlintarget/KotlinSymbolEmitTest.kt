@@ -8,17 +8,17 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class KotlinSymbolEmitTest {
-
     @Test
     fun emitsSealedClassForTinyGrammar() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
-                grammar;
-                extern { enum Tok { "a" => .., "b" => .. } }
-                pub S: () = "a" "b" => ();
-                """.trimIndent(),
-            )
+            val grammar =
+                normalizedGrammar(
+                    """
+                    grammar;
+                    extern { enum Tok { "a" => .., "b" => .. } }
+                    pub S: () = "a" "b" => ();
+                    """.trimIndent(),
+                )
 
             val out = IndentedWriter()
             val emit = KotlinSymbolEmit(grammar, symbolClassName = "TinySym")
@@ -74,7 +74,7 @@ class KotlinSymbolEmitTest {
             assertTrue(
                 KotlinWrapper.NULLABLE_OPTION in book.wrappersNeeded,
                 "starlark grammar uses an Optional<Optional<…>> recipe but the Kotlin " +
-                "type book didn't request the NullableOption wrapper",
+                    "type book didn't request the NullableOption wrapper",
             )
             assertTrue(
                 source.contains("sealed class NullableOption"),
@@ -98,13 +98,14 @@ class KotlinSymbolEmitTest {
     @Test
     fun wideTupleVariantsEmitGeneratedTupleHelper() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
-                grammar;
-                extern { enum Tok { "a" => .. } }
-                pub S: (i32, String, bool, i64) = "a" => (0, "", true, 0);
-                """.trimIndent(),
-            )
+            val grammar =
+                normalizedGrammar(
+                    """
+                    grammar;
+                    extern { enum Tok { "a" => .. } }
+                    pub S: (i32, String, bool, i64) = "a" => (0, "", true, 0);
+                    """.trimIndent(),
+                )
 
             val out = IndentedWriter()
             val emit = KotlinSymbolEmit(grammar, "TupleSymbol")
@@ -158,7 +159,7 @@ class KotlinSymbolEmitTest {
 
     @Test
     fun starlarkGrammarVariantTypesMatchUpstream() {
-        Tls.test().use {
+        Tls.test().use { _ ->
             // Print the Rust types behind every variant. Cross-checking against
             // the upstream Rust enum confirms the type analysis is consistent —
             // including whether the front end produces an Option<Option<T>> for the
@@ -194,9 +195,10 @@ class KotlinSymbolEmitTest {
 
             // Surface any variant whose Rust type contains `Option<` twice — the
             // nested-Option pattern that needs a wrapper in Kotlin.
-            val nestedOption = rustTypesByVariant.filter { (_, ty) ->
-                Regex("Option<.*Option<").containsMatchIn(ty)
-            }
+            val nestedOption =
+                rustTypesByVariant.filter { (_, ty) ->
+                    Regex("Option<.*Option<").containsMatchIn(ty)
+                }
             println("starlark grammar — nested-Option variants: $nestedOption")
 
             // Also dump the actual TypeRepr.Nominal path strings the front end uses,
@@ -205,7 +207,7 @@ class KotlinSymbolEmitTest {
                 val ty = grammar.types.nonterminalType(nt)
                 if (ty.toString().contains("Option<")) {
                     println(
-                        "starlark grammar — nonterminal $nt: TypeRepr=${ty::class.simpleName} value='$ty'"
+                        "starlark grammar — nonterminal $nt: TypeRepr=${ty::class.simpleName} value='$ty'",
                     )
                     if (ty is io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr.Nominal) {
                         println("  path='${ty.data.path}' args=${ty.data.types.map { it::class.simpleName }}")
@@ -217,23 +219,26 @@ class KotlinSymbolEmitTest {
 
     @Test
     fun variantNamesAreSequentialFromZero() {
-        Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
-                grammar;
-                extern { enum Tok { "a" => .., "b" => .., "c" => .. } }
-                pub S: () = "a" "b" "c" => ();
-                """.trimIndent(),
-            )
+        Tls.test().use { _ ->
+            val grammar =
+                normalizedGrammar(
+                    """
+                    grammar;
+                    extern { enum Tok { "a" => .., "b" => .., "c" => .. } }
+                    pub S: () = "a" "b" "c" => ();
+                    """.trimIndent(),
+                )
 
             val out = IndentedWriter()
             val emit = KotlinSymbolEmit(grammar, symbolClassName = "Sym")
             emit.emitInto(out)
 
             val source = out.toString()
-            val variantNames = Regex("data class (Variant[0-9]+)").findAll(source)
-                .map { it.groupValues[1] }
-                .toList()
+            val variantNames =
+                Regex("data class (Variant[0-9]+)")
+                    .findAll(source)
+                    .map { it.groupValues[1] }
+                    .toList()
             assertEquals(variantNames.size, variantNames.toSet().size, "duplicate variant names")
             for ((i, name) in variantNames.withIndex()) {
                 assertEquals("Variant$i", name, "variant at position $i is $name, expected Variant$i")

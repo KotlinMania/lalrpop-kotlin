@@ -6,11 +6,11 @@
  */
 package io.github.kotlinmania.lalrpop.lexer.nfa
 
-import io.github.kotlinmania.lalrpop.regexsyntax.Hir
-import io.github.kotlinmania.lalrpop.regexsyntax.ClassBytesRange
-import io.github.kotlinmania.lalrpop.regexsyntax.ClassUnicodeRange
-import io.github.kotlinmania.lalrpop.regexsyntax.HirKind
-import io.github.kotlinmania.lalrpop.regexsyntax.RegexClass
+import io.github.kotlinmania.regexsyntax.hir.Class
+import io.github.kotlinmania.regexsyntax.hir.ClassBytesRange
+import io.github.kotlinmania.regexsyntax.hir.ClassUnicodeRange
+import io.github.kotlinmania.regexsyntax.hir.Hir
+import io.github.kotlinmania.regexsyntax.hir.HirKind
 
 // Mirrors the upstream `public const ACCEPT/REJECT/START: NfaStateIndex = ...`
 // (mod.rs lines 110-112). Kotlin compile-time `const val` is limited
@@ -27,12 +27,13 @@ internal class Nfa private constructor(
     internal val edges: Edges,
 ) {
     companion object {
-        fun fromRe(regex: Hir): Result<Nfa> = runCatching {
-            val nfa = new()
-            val s0 = nfa.expr(regex.kind(), ACCEPT, REJECT)
-            nfa.pushEdge(START, EdgeLabel.Noop, s0)
-            nfa
-        }
+        fun fromRe(regex: Hir): Result<Nfa> =
+            runCatching {
+                val nfa = new()
+                val s0 = nfa.expr(regex.kind(), ACCEPT, REJECT)
+                nfa.pushEdge(START, EdgeLabel.Noop, s0)
+                nfa
+            }
 
         internal fun new(): Nfa {
             val nfa = Nfa(states = mutableListOf(), edges = Edges())
@@ -52,7 +53,7 @@ internal class Nfa private constructor(
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
     // Public methods for querying an Nfa
 
     /**
@@ -73,11 +74,13 @@ internal class Nfa private constructor(
         val first = Noop.first(states[from.value])
         return EdgeIterator(vec, from, first).asSequence()
     }
+
     fun testEdges(from: NfaStateIndex): Sequence<Edge<Test>> {
         val vec = Test.vec(edges)
         val first = Test.first(states[from.value])
         return EdgeIterator(vec, from, first).asSequence()
     }
+
     fun otherEdges(from: NfaStateIndex): Sequence<Edge<Other>> {
         val vec = Other.vec(edges)
         val first = Other.first(states[from.value])
@@ -92,19 +95,21 @@ internal class Nfa private constructor(
     fun isRejectingState(from: NfaStateIndex): Boolean =
         states[from.value].kind == StateKind.Reject
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
     // Private methods for building an Nfa
 
     internal fun newState(kind: StateKind): NfaStateIndex {
         val index = states.size
 
         // these edge indices will be patched later by patchEdges()
-        states.add(NfaState(
-            kind = kind,
-            firstNoopEdge = UNSET,
-            firstTestEdge = UNSET,
-            firstOtherEdge = UNSET,
-        ))
+        states.add(
+            NfaState(
+                kind = kind,
+                firstNoopEdge = UNSET,
+                firstTestEdge = UNSET,
+                firstOtherEdge = UNSET,
+            ),
+        )
 
         return NfaStateIndex(index)
     }
@@ -158,143 +163,162 @@ internal class Nfa private constructor(
         expr: HirKind,
         accept: NfaStateIndex,
         reject: NfaStateIndex,
-    ): NfaStateIndex = when (expr) {
-        HirKind.Empty -> accept
-
-        is HirKind.Literal -> {
-            var acc = accept
-            for (i in expr.literal.bytes.indices.reversed()) {
-                val b = expr.literal.bytes[i]
-                val s0 = newState(StateKind.Neither)
-                pushEdge(s0, Test.byte(b.toUByte()), acc)
-                pushEdge(s0, EdgeLabel.Other, reject)
-                acc = s0
+    ): NfaStateIndex =
+        when (expr) {
+            HirKind.Empty -> {
+                accept
             }
-            acc
-        }
 
-        is HirKind.Class -> {
-            when (val cls = expr.cls) {
-                is RegexClass.Unicode -> {
-                    // [s0] --c0--> [accept]
-                    //  | |            ^
-                    //  | |   ...      |
-                    //  | |            |
-                    //  | +---cn-------+
-                    //  +---------------> [reject]
+            is HirKind.Literal -> {
+                var acc = accept
+                val bytes = expr.value.bytes
+                for (i in bytes.indices.reversed()) {
+                    val b = bytes[i].toUByte()
                     val s0 = newState(StateKind.Neither)
-                    for (range in cls.ranges) {
-                        val test: Test = Test.from(range)
-                        pushEdge(s0, test, accept)
-                    }
+                    pushEdge(s0, Test.byte(b), acc)
                     pushEdge(s0, EdgeLabel.Other, reject)
-                    s0
+                    acc = s0
                 }
-                // Bytes are not supported upstream; LALRPOP treats them the
-                // same as Unicode ranges because its Nfa edges are byte-aware.
-                is RegexClass.Bytes -> {
-                    val s0 = newState(StateKind.Neither)
-                    for (range in cls.ranges) {
-                        val test: Test = Test.from(range)
-                        pushEdge(s0, test, accept)
-                    }
-                    pushEdge(s0, EdgeLabel.Other, reject)
-                    s0
-                }
+                acc
             }
-        }
 
-        // currently we do not support any boundaries because
-        // I was too lazy to code them up or think about them
-        // Akin to anchors or wordboundaries
-        is HirKind.Look -> throw NfaConstructionException(NfaConstructionError.LookAround)
-
-        // currently we treat all capture groups the same, whether they
-        // capture or not; but we do not permit named groups,
-        // in case we want to give them significance in the future
-        is HirKind.Capture -> {
-            val c = expr.capture
-            if (c.name != null) {
-                throw NfaConstructionException(NfaConstructionError.NamedCaptures)
-            } else {
-                this.expr(c.sub.kind(), accept, reject)
-            }
-        }
-
-        is HirKind.Repetition -> {
-            val rep = expr.repetition
-            val min = rep.min
-            val max = rep.max
-            val greedy = rep.greedy
-            val sub = rep.sub
-            if (!greedy) {
-                // currently we always report the longest match possible
-                throw NfaConstructionException(NfaConstructionError.NonGreedy)
-            } else {
-                when {
-                    min == 0u && max == 1u -> optionalExpr(sub.kind(), accept, reject)
-                    min == 0u && max == null -> starExpr(sub.kind(), accept, reject)
-                    min == 1u && max == null -> plusExpr(sub.kind(), accept, reject)
-                    max != null && min == max -> {
-                        var s = accept
-                        repeat(max.toInt()) { s = this.expr(sub.kind(), s, reject) }
-                        s
-                    }
-                    max != null -> {
-                        var s = accept
-                        val optionalCount = max - min
-                        repeat(optionalCount.toInt()) {
-                            s = optionalExpr(sub.kind(), s, reject)
+            is HirKind.Class -> {
+                when (val cls = expr.value) {
+                    is Class.Unicode -> {
+                        // [s0] --c0--> [accept]
+                        //  | |            ^
+                        //  | |   ...      |
+                        //  | |            |
+                        //  | +---cn-------+
+                        //  +---------------> [reject]
+                        val s0 = newState(StateKind.Neither)
+                        for (range in cls.value.ranges()) {
+                            val test: Test = Test.from(range)
+                            pushEdge(s0, test, accept)
                         }
-                        repeat(min.toInt()) { s = this.expr(sub.kind(), s, reject) }
-                        s
+                        pushEdge(s0, EdgeLabel.Other, reject)
+                        s0
                     }
-                    else -> {
-                        // +---min times----+
-                        // |                |
-                        //
-                        // [s0] --..e..-- [s1] --..e*..--> [accept]
-                        //          |      |
-                        //          |      v
-                        //          +-> [reject]
-                        var s = starExpr(sub.kind(), accept, reject)
-                        repeat(min.toInt()) { s = this.expr(sub.kind(), s, reject) }
-                        s
+
+                    // Bytes are not supported upstream; LALRPOP treats them the
+                    // same as Unicode ranges because its Nfa edges are byte-aware.
+                    is Class.Bytes -> {
+                        val s0 = newState(StateKind.Neither)
+                        for (range in cls.value.ranges()) {
+                            val test: Test = Test.from(range)
+                            pushEdge(s0, test, accept)
+                        }
+                        pushEdge(s0, EdgeLabel.Other, reject)
+                        s0
                     }
                 }
             }
-        }
 
-        is HirKind.Concat -> {
-            var s = accept
-            for (i in expr.exprs.indices.reversed()) {
-                s = this.expr(expr.exprs[i].kind(), s, reject)
-            }
-            s
-        }
-
-        is HirKind.Alternation -> {
-            // [s0] --exprs[0]--> [accept/reject]
-            //   |                   ^
-            //   |                   |
-            //   +----exprs[..]------+
-            //   |                   |
-            //   |                   |
-            //   +----exprs[n-1]-----+
-
-            val s0 = newState(StateKind.Neither)
-            val targets: List<NfaStateIndex> = expr.exprs.map { subHir ->
-                this.expr(subHir.kind(), accept, reject)
+            // currently we do not support any boundaries because
+            // I was too lazy to code them up or think about them
+            // Akin to anchors or wordboundaries
+            is HirKind.Look -> {
+                throw NfaConstructionException(NfaConstructionError.LookAround)
             }
 
-            // push edges from s0 all together so they are
-            // adjacent in the edge array
-            for (target in targets) {
-                pushEdge(s0, EdgeLabel.Noop, target)
+            // currently we treat all capture groups the same, whether they
+            // capture or not; but we do not permit named groups,
+            // in case we want to give them significance in the future
+            is HirKind.Capture -> {
+                val c = expr.value
+                if (c.name != null) {
+                    throw NfaConstructionException(NfaConstructionError.NamedCaptures)
+                } else {
+                    this.expr(c.sub.kind(), accept, reject)
+                }
             }
-            s0
+
+            is HirKind.Repetition -> {
+                val rep = expr.value
+                val min = rep.min
+                val max = rep.max
+                val greedy = rep.greedy
+                val sub = rep.sub
+                if (!greedy) {
+                    // currently we always report the longest match possible
+                    throw NfaConstructionException(NfaConstructionError.NonGreedy)
+                } else {
+                    when {
+                        min == 0u && max == 1u -> {
+                            optionalExpr(sub.kind(), accept, reject)
+                        }
+
+                        min == 0u && max == null -> {
+                            starExpr(sub.kind(), accept, reject)
+                        }
+
+                        min == 1u && max == null -> {
+                            plusExpr(sub.kind(), accept, reject)
+                        }
+
+                        max != null && min == max -> {
+                            var s = accept
+                            repeat(max.toInt()) { s = this.expr(sub.kind(), s, reject) }
+                            s
+                        }
+
+                        max != null -> {
+                            var s = accept
+                            val optionalCount = max - min
+                            repeat(optionalCount.toInt()) {
+                                s = optionalExpr(sub.kind(), s, reject)
+                            }
+                            repeat(min.toInt()) { s = this.expr(sub.kind(), s, reject) }
+                            s
+                        }
+
+                        else -> {
+                            // +---min times----+
+                            // |                |
+                            //
+                            // [s0] --..e..-- [s1] --..e*..--> [accept]
+                            //          |      |
+                            //          |      v
+                            //          +-> [reject]
+                            var s = starExpr(sub.kind(), accept, reject)
+                            repeat(min.toInt()) { s = this.expr(sub.kind(), s, reject) }
+                            s
+                        }
+                    }
+                }
+            }
+
+            is HirKind.Concat -> {
+                var s = accept
+                for (i in expr.items.indices.reversed()) {
+                    s = this.expr(expr.items[i].kind(), s, reject)
+                }
+                s
+            }
+
+            is HirKind.Alternation -> {
+                // [s0] --exprs[0]--> [accept/reject]
+                //   |                   ^
+                //   |                   |
+                //   +----exprs[..]------+
+                //   |                   |
+                //   |                   |
+                //   +----exprs[n-1]-----+
+
+                val s0 = newState(StateKind.Neither)
+                val targets: List<NfaStateIndex> =
+                    expr.items.map { subHir ->
+                        this.expr(subHir.kind(), accept, reject)
+                    }
+
+                // push edges from s0 all together so they are
+                // adjacent in the edge array
+                for (target in targets) {
+                    pushEdge(s0, EdgeLabel.Noop, target)
+                }
+                s0
+            }
         }
-    }
 
     private fun optionalExpr(
         expr: HirKind,
@@ -379,10 +403,15 @@ internal class Nfa private constructor(
      */
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("Nfa(states=").append(states.size)
-            .append(", noop=").append(edges.noopEdges.size)
-            .append(", test=").append(edges.testEdges.size)
-            .append(", other=").append(edges.otherEdges.size)
+        sb
+            .append("Nfa(states=")
+            .append(states.size)
+            .append(", noop=")
+            .append(edges.noopEdges.size)
+            .append(", test=")
+            .append(edges.testEdges.size)
+            .append(", other=")
+            .append(edges.otherEdges.size)
             .append(")")
         return sb.toString()
     }
@@ -395,8 +424,12 @@ private const val UNSET: Int = Int.MAX_VALUE
  * that this range may contain some endpoints that are not valid
  * unicode, hence we store u32.
  */
-internal data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<Test> {
+internal data class Test(
+    val rangeStart: UInt,
+    val rangeEnd: UInt,
+) : Comparable<Test> {
     fun start(): UInt = rangeStart
+
     fun end(): UInt = rangeEnd
 
     override fun compareTo(other: Test): Int {
@@ -449,21 +482,24 @@ internal data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<
             Test(s.code.toUInt(), e.code.toUInt() - 1u)
 
         fun from(range: ClassUnicodeRange): Test =
-            inclusiveRange(range.start(), range.end())
+            Test(range.start().toUInt(), range.end().toUInt())
 
         fun from(range: ClassBytesRange): Test =
-            inclusiveByteRange(range.start(), range.end())
+            Test(range.start().toUByte().toUInt(), range.end().toUByte().toUInt())
 
         // `implementation EdgeLabel for Test` — four associated trait fns.
         // Kotlin has no trait dispatch on a type parameter, so these
         // are companion-object methods called directly by `Nfa`.
         fun vecMut(nfa: Edges): MutableList<Edge<Test>> = nfa.testEdges
+
         fun vec(nfa: Edges): List<Edge<Test>> = nfa.testEdges
+
         // Note: upstream returns a mutable reference to the index;
         // Kotlin returns the value and the mutation is performed via
         // `state.copy(firstTestEdge=...)` in the caller. Keeping the
         // symbol so symbol-parity passes.
         fun firstMut(state: NfaState): Int = state.firstTestEdge
+
         fun first(state: NfaState): Int = state.firstTestEdge
     }
 
@@ -479,7 +515,7 @@ internal data class Test(val rangeStart: UInt, val rangeEnd: UInt) : Comparable<
                 "[${debugChar(startChar)}..=${debugChar(endChar)}]"
             }
         }
-        return "[${start}..]${end}]"
+        return "[$start..]$end]"
     }
 
     private fun debugChar(c: Char): String =
@@ -492,8 +528,11 @@ internal object Noop {
 
     // `implementation EdgeLabel for Noop`
     fun vecMut(nfa: Edges): MutableList<Edge<Noop>> = nfa.noopEdges
+
     fun vec(nfa: Edges): List<Edge<Noop>> = nfa.noopEdges
+
     fun firstMut(state: NfaState): Int = state.firstNoopEdge
+
     fun first(state: NfaState): Int = state.firstNoopEdge
 }
 
@@ -503,8 +542,11 @@ internal object Other {
 
     // `implementation EdgeLabel for Other`
     fun vecMut(nfa: Edges): MutableList<Edge<Other>> = nfa.otherEdges
+
     fun vec(nfa: Edges): List<Edge<Other>> = nfa.otherEdges
+
     fun firstMut(state: NfaState): Int = state.firstOtherEdge
+
     fun first(state: NfaState): Int = state.firstOtherEdge
 }
 
@@ -522,33 +564,40 @@ internal sealed class EdgeLabel<L : Any> {
     abstract fun first(state: NfaState): Int
 
     /** Wrapper for a [io.github.kotlinmania.lalrpop.lexer.nfa.Test] edge label. */
-    data class Test(val test: io.github.kotlinmania.lalrpop.lexer.nfa.Test) :
-        EdgeLabel<io.github.kotlinmania.lalrpop.lexer.nfa.Test>() {
+    data class Test(
+        val test: io.github.kotlinmania.lalrpop.lexer.nfa.Test,
+    ) : EdgeLabel<io.github.kotlinmania.lalrpop.lexer.nfa.Test>() {
         override fun vec(nfa: Edges): List<Edge<io.github.kotlinmania.lalrpop.lexer.nfa.Test>> =
-            io.github.kotlinmania.lalrpop.lexer.nfa.Test.vec(nfa)
+            io.github.kotlinmania.lalrpop.lexer.nfa.Test
+                .vec(nfa)
 
         override fun first(state: NfaState): Int =
-            io.github.kotlinmania.lalrpop.lexer.nfa.Test.first(state)
+            io.github.kotlinmania.lalrpop.lexer.nfa.Test
+                .first(state)
 
         override fun toString(): String = test.toString()
     }
 
     object Other : EdgeLabel<io.github.kotlinmania.lalrpop.lexer.nfa.Other>() {
         override fun vec(nfa: Edges): List<Edge<io.github.kotlinmania.lalrpop.lexer.nfa.Other>> =
-            io.github.kotlinmania.lalrpop.lexer.nfa.Other.vec(nfa)
+            io.github.kotlinmania.lalrpop.lexer.nfa.Other
+                .vec(nfa)
 
         override fun first(state: NfaState): Int =
-            io.github.kotlinmania.lalrpop.lexer.nfa.Other.first(state)
+            io.github.kotlinmania.lalrpop.lexer.nfa.Other
+                .first(state)
 
         override fun toString(): String = "Other"
     }
 
     object Noop : EdgeLabel<io.github.kotlinmania.lalrpop.lexer.nfa.Noop>() {
         override fun vec(nfa: Edges): List<Edge<io.github.kotlinmania.lalrpop.lexer.nfa.Noop>> =
-            io.github.kotlinmania.lalrpop.lexer.nfa.Noop.vec(nfa)
+            io.github.kotlinmania.lalrpop.lexer.nfa.Noop
+                .vec(nfa)
 
         override fun first(state: NfaState): Int =
-            io.github.kotlinmania.lalrpop.lexer.nfa.Noop.first(state)
+            io.github.kotlinmania.lalrpop.lexer.nfa.Noop
+                .first(state)
 
         override fun toString(): String = "Noop"
     }
@@ -573,7 +622,9 @@ internal enum class StateKind : Comparable<StateKind> {
     Neither,
 }
 
-internal data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
+internal data class NfaStateIndex(
+    val value: Int,
+) : Comparable<NfaStateIndex> {
     override fun compareTo(other: NfaStateIndex): Int = value.compareTo(other.value)
 
     /**
@@ -590,7 +641,6 @@ internal data class NfaStateIndex(val value: Int) : Comparable<NfaStateIndex> {
 
     override fun toString(): String = fmt(StringBuilder()).toString()
 }
-
 
 /**
  * A set of edges for the state machine. Edges are kept sorted by the
@@ -627,16 +677,23 @@ internal class Edge<L>(
         if (other !is Edge<*>) return false
         return from == other.from && label == other.label && to == other.to
     }
+
     override fun hashCode(): Int {
         var h = from.hashCode()
         h = 31 * h + (label?.hashCode() ?: 0)
         h = 31 * h + to.hashCode()
         return h
     }
+
     /** `implementation<L: Debug> Debug for Edge<L>`: `"{:?} -{:?}-> {:?}"`. */
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append(from).append(" -").append(label).append("-> ").append(to)
+        sb
+            .append(from)
+            .append(" -")
+            .append(label)
+            .append("-> ")
+            .append(to)
         return sb.toString()
     }
 }
@@ -661,11 +718,12 @@ internal class EdgeIterator<L>(
         }
 
         val nextIndex = current + 1
-        index = if (nextIndex >= edges.size || edges[nextIndex].from != from) {
-            UNSET
-        } else {
-            nextIndex
-        }
+        index =
+            if (nextIndex >= edges.size || edges[nextIndex].from != from) {
+                UNSET
+            } else {
+                nextIndex
+            }
 
         return edges[current]
     }
@@ -688,9 +746,10 @@ internal class EdgeIterator<L>(
         return out
     }
 
-    fun asSequence(): Sequence<Edge<L>> = sequence {
-        while (this@EdgeIterator.hasNext()) yield(this@EdgeIterator.next())
-    }
+    fun asSequence(): Sequence<Edge<L>> =
+        sequence {
+            while (this@EdgeIterator.hasNext()) yield(this@EdgeIterator.next())
+        }
 }
 
 /**
@@ -704,9 +763,10 @@ internal enum class NfaConstructionError {
     ByteRegex,
 }
 
-
 /** Exception carrier for [NfaConstructionError] — thrown across the expr walk. */
-internal class NfaConstructionException(val error: NfaConstructionError) : RuntimeException(error.name)
+internal class NfaConstructionException(
+    val error: NfaConstructionError,
+) : RuntimeException(error.name)
 
 // Mirrors upstream `pub type NFA = Nfa;` (lexer/nfa/mod.rs:27),
 // `pub type NFAStateIndex = NfaStateIndex;` (line 83), and

@@ -22,8 +22,9 @@ import kotlin.test.fail
 class MacroExpandTest {
     @Test
     fun testComma() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     Comma<E>: Vec<E> =
        <v:(<E> ",")*> <e:E?> =>
@@ -31,12 +32,13 @@ grammar;
 
     Ids = Comma<"Id">;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val actual = expandMacros(grammar, 20)
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
 grammar;
     Ids = `Comma<"Id">`;
 
@@ -65,15 +67,16 @@ grammar;
         <v:`(<"Id"> ",")+`> <e:`(<"Id"> ",")`> => { let mut v = v; v.push(e); v },
     };
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(actual, expected)
     }
 
     @Test
     fun testIfMatch() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     Expr<E> = {
        "A" if E == "A*C",
@@ -86,12 +89,13 @@ grammar;
     Expr2 = Expr<"AAC">;
     Expr3 = Expr<"ABC">;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val actual = expandMacros(grammar, 20)
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
 grammar;
     Expr1 = `Expr<"A*C">`;
     Expr2 = `Expr<"AAC">`;
@@ -101,42 +105,45 @@ grammar;
     `Expr<"AAC">` = { "B", "C" };
     `Expr<"A*C">` = { "A", "D" };
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(actual, expected)
     }
 
     @Test
     fun testLookahead() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
         grammar;
         Expr = @L;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         val actual = expandMacros(grammar, 20)
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
         grammar;
         Expr = `@L`;
         #[inline] `@L` = =>@L;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(actual, expected)
     }
 
     @Test
     fun testExcessiveRecursion() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
         grammar;
         A<I> = { "x" I "y" I "z", A<("." I)> }
         pub P = A<()>;
         """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         try {
             expandMacros(grammar, 20)

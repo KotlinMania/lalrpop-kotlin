@@ -72,7 +72,7 @@ internal actual fun pathStripPrefix(path: String, base: String): String? {
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiSha3Hex(file: String): String? {
     val bytes = readFileBytes(file) ?: return null
-    val digest = Sha3_256().digest(bytes)
+    val digest = Sha3256().digest(bytes)
     return digest.joinToString("") { (it.toInt() and 0xff).toString(16).padStart(2, '0') }
 }
 
@@ -270,7 +270,7 @@ private fun readFileBytes(path: String): ByteArray? {
 // Keccak-f[1600] with a 256-bit output.
 // ---------------------------------------------------------------------------
 
-private class Sha3_256 {
+private class Sha3256 {
     private val state = LongArray(25)
 
     fun digest(input: ByteArray): ByteArray {

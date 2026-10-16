@@ -27,7 +27,11 @@ internal actual fun apiEnvVar(name: String): String? =
     System.getProperty(name) ?: System.getenv(name)
 
 internal actual fun apiEnvVars(): Sequence<Pair<String, String>> =
-    System.getenv().entries.asSequence().map { (k, v) -> k to v }
+    System
+        .getenv()
+        .entries
+        .asSequence()
+        .map { (k, v) -> k to v }
 
 internal actual fun apiEPrintln(message: String) {
     System.err.println(message)

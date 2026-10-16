@@ -1,11 +1,11 @@
 package io.github.kotlinmania.lalrpop.lr1.kotlintarget
 
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
-import io.github.kotlinmania.lalrpop.grammar.repr.Production as ReprProduction
 import io.github.kotlinmania.lalrpop.lr1.Lr1State
 import io.github.kotlinmania.lalrpop.lr1.Token
-import io.github.kotlinmania.lalrpop.runtime.ParseTables
-import io.github.kotlinmania.lalrpop.runtime.Production
+import io.github.kotlinmania.lalrpoputil.tabledriven.ParseTables
+import io.github.kotlinmania.lalrpoputil.tabledriven.Production
+import io.github.kotlinmania.lalrpop.grammar.repr.Production as ReprProduction
 
 /**
  * Build packed [ParseTables] from an LR(1) state machine plus a grammar.
@@ -43,20 +43,21 @@ internal fun <S, L> tablesFromLr1States(
     // nonterminal-by-nonterminal in declaration order, assigning a sequential id to
     // each production. The same order is used by the Rust-output backend, so the
     // Kotlin and Rust paths agree on production ids when they share a grammar.
-    val reduceIndices: Map<ReprProduction, Int> = buildMap {
-        var idx = 0
-        for (nt in grammar.nonterminals.values) {
-            for (p in nt.productions) {
-                put(p, idx)
-                idx += 1
+    val reduceIndices: Map<ReprProduction, Int> =
+        buildMap {
+            var idx = 0
+            for (nt in grammar.nonterminals.values) {
+                for (p in nt.productions) {
+                    put(p, idx)
+                    idx += 1
+                }
             }
         }
-    }
 
     require(productions.size == reduceIndices.size) {
         "productions array size ${productions.size} does not match grammar's " +
-        "production count ${reduceIndices.size} — caller must supply one " +
-        "Production<S, L> per grammar production, in the same order"
+            "production count ${reduceIndices.size} — caller must supply one " +
+            "Production<S, L> per grammar production, in the same order"
     }
 
     val action = ShortArray(numStates * numTerminals)
@@ -66,23 +67,25 @@ internal fun <S, L> tablesFromLr1States(
     for ((stateIdx, state) in states.withIndex()) {
         for ((tIdx, terminal) in grammar.terminals.all.withIndex()) {
             val shiftTarget = state.shifts[terminal]
-            action[stateIdx * numTerminals + tIdx] = if (shiftTarget != null) {
-                encodeShift(shiftTarget.value)
-            } else {
-                encodeReduction(state, Token.Terminal(terminal), reduceIndices)
-            }
+            action[stateIdx * numTerminals + tIdx] =
+                if (shiftTarget != null) {
+                    encodeShift(shiftTarget.value)
+                } else {
+                    encodeReduction(state, Token.Terminal(terminal), reduceIndices)
+                }
         }
 
         eofAction[stateIdx] = encodeReduction(state, Token.Eof, reduceIndices)
 
         for ((ntIdx, nt) in nonterminalKeys.withIndex()) {
             val gotoTarget = state.gotos[nt]
-            goto[stateIdx * numNonterminals + ntIdx] = if (gotoTarget != null) {
-                // [ParseTables] stores GOTO as 1-based with 0 = "no transition".
-                (gotoTarget.value + 1).toShort()
-            } else {
-                0
-            }
+            goto[stateIdx * numNonterminals + ntIdx] =
+                if (gotoTarget != null) {
+                    // [ParseTables] stores GOTO as 1-based with 0 = "no transition".
+                    (gotoTarget.value + 1).toShort()
+                } else {
+                    0
+                }
         }
     }
 
@@ -122,12 +125,13 @@ private fun encodeReduction(
     token: Token,
     reduceIndices: Map<ReprProduction, Int>,
 ): Short {
-    val reduction = state.reductions
-        .asSequence()
-        .filter { (lookahead, _) -> lookahead.contains(token) }
-        .map { (_, production) -> production }
-        .firstOrNull()
-        ?: return 0
+    val reduction =
+        state.reductions
+            .asSequence()
+            .filter { (lookahead, _) -> lookahead.contains(token) }
+            .map { (_, production) -> production }
+            .firstOrNull()
+            ?: return 0
 
     val reduceId = reduceIndices.getValue(reduction)
     val encoded = -(reduceId + 1)

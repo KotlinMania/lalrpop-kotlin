@@ -21,8 +21,9 @@ import kotlin.test.Test
 class PrecedenceTest {
     @Test
     fun multilevel() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     Expr: u32 = {
        #[precedence(level="1")]
@@ -39,10 +40,11 @@ grammar;
 
     Ext: u32 = Expr;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
 grammar;
     Expr1: u32 = {
        <left:Expr1> "*" <right:Expr1> => 0,
@@ -62,7 +64,7 @@ grammar;
 
     Ext: u32 = Expr;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(
             runCatching { expandPrecedence(grammar) },
@@ -72,8 +74,9 @@ grammar;
 
     @Test
     fun withAssoc() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     Expr: u32 = {
        #[precedence(level="1")]
@@ -105,10 +108,11 @@ grammar;
        <left:Expr> "[" <middle:Expr> ";" <right:Expr> => 0,
    }
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
 grammar;
     Expr1: u32 = {
         "const" => 0,
@@ -131,7 +135,7 @@ grammar;
        Expr2,
     }
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(
             runCatching { expandPrecedence(grammar) },
@@ -141,8 +145,9 @@ grammar;
 
     @Test
     fun nonConsecutiveLevels() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     Expr: u32 = {
        #[precedence(level="5")] #[assoc(side="left")]
@@ -174,10 +179,11 @@ grammar;
 
           }
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
 grammar;
     Expr0: u32 = {
         "const" => 0,
@@ -200,7 +206,7 @@ grammar;
        Expr3,
     }
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(
             runCatching { expandPrecedence(grammar) },
@@ -210,8 +216,9 @@ grammar;
 
     @Test
     fun macros() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
     Expr: u32 = {
       #[precedence(level="1")]
@@ -231,10 +238,11 @@ grammar;
 
     Ext: u32 = Expr;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
 grammar;
     Expr1: u32 = {
       "const" => 0,
@@ -257,7 +265,7 @@ grammar;
 
     Ext: u32 = Expr;
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(
             runCatching { expandPrecedence(grammar) },
@@ -267,8 +275,9 @@ grammar;
 
     @Test
     fun calculator() {
-        val grammar = parseGrammar(
-            """
+        val grammar =
+            parseGrammar(
+                """
 grammar;
 
 Expr: i32 = {
@@ -289,10 +298,11 @@ Num: i32 = {
     r"[0-9]+" => i32::from_str(<>).unwrap(),
 };
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
-        val expected = parseGrammar(
-            """
+        val expected =
+            parseGrammar(
+                """
 grammar;
 
     Expr0: i32 = {
@@ -316,7 +326,7 @@ grammar;
         r"[0-9]+" => i32::from_str(<>).unwrap(),
     };
 """,
-        ).getOrThrow()
+            ).getOrThrow()
 
         compare(
             runCatching { expandPrecedence(grammar) },

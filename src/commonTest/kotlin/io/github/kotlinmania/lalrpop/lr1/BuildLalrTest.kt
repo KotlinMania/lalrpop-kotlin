@@ -30,21 +30,22 @@ class BuildLalrTest {
     @Test
     fun figure923() {
         Tls.test().use {
-            val grammar = normalizedGrammar(
-                """
-                grammar;
-                extern { enum Tok { "-" => .., "N" => .., "(" => .., ")" => .. } }
-                S: () = E       => ();
-                E: () = {
-                    E "-" T     => (),
-                    T           => ()
-                };
-                T: () = {
-                    "N"         => (),
-                    "(" E ")"   => ()
-                };
-                """.trimIndent(),
-            )
+            val grammar =
+                normalizedGrammar(
+                    """
+                    grammar;
+                    extern { enum Tok { "-" => .., "N" => .., "(" => .., ")" => .. } }
+                    S: () = E       => ();
+                    E: () = {
+                        E "-" T     => (),
+                        T           => ()
+                    };
+                    T: () = {
+                        "N"         => (),
+                        "(" E ")"   => ()
+                    };
+                    """.trimIndent(),
+                )
 
             Lr1Tls.install(grammar.terminals).also { lr1Tls ->
                 try {

@@ -15,9 +15,9 @@ package io.github.kotlinmania.lalrpop.lr1.report
 
 import io.github.kotlinmania.lalrpop.FileText
 import io.github.kotlinmania.lalrpop.Session
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.buildStates
 import io.github.kotlinmania.lalrpop.lr1.generateReport
-import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test

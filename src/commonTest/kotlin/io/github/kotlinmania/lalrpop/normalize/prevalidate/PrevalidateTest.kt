@@ -21,12 +21,13 @@ import kotlin.test.fail
 
 private fun checkErr(expectedErr: String, grammar: String, span: String) {
     val parsedGrammar = parseGrammar(grammar).getOrThrow()
-    val err = try {
-        validate(parsedGrammar)
-        fail("expected error for grammar")
-    } catch (e: NormErrorException) {
-        e.err
-    }
+    val err =
+        try {
+            validate(parsedGrammar)
+            fail("expected error for grammar")
+        } catch (e: NormErrorException) {
+            e.err
+        }
     checkNormErr(expectedErr, span, err)
 }
 

@@ -32,12 +32,14 @@ import platform.posix.popen
 import platform.posix.stderr
 
 @OptIn(ExperimentalForeignApi::class)
-internal actual fun apiCurrentDir(): String = memScoped {
-    val buf = allocArray<ByteVar>(PATH_MAX + 1)
-    val res = getcwd(buf, (PATH_MAX + 1).toUInt().convert())
-        ?: error("getcwd failed")
-    res.toKString()
-}
+internal actual fun apiCurrentDir(): String =
+    memScoped {
+        val buf = allocArray<ByteVar>(PATH_MAX + 1)
+        val res =
+            getcwd(buf, (PATH_MAX + 1).toUInt().convert())
+                ?: error("getcwd failed")
+        res.toKString()
+    }
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun apiEnvVar(name: String): String? {

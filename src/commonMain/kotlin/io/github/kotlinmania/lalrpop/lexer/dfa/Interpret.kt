@@ -9,9 +9,12 @@ internal fun interpret(dfa: Dfa, input: String): Pair<NfaIndex, String>? {
         val ch = input[offset]
         val state = dfa.states[stateIndex.value]
 
-        val target = dfa.state(stateIndex).testEdges
-            .firstOrNull { (test, _) -> test.containsChar(ch) }
-            ?.second
+        val target =
+            dfa
+                .state(stateIndex)
+                .testEdges
+                .firstOrNull { (test, _) -> test.containsChar(ch) }
+                ?.second
 
         stateIndex = target ?: state.otherEdge
 
@@ -19,7 +22,11 @@ internal fun interpret(dfa: Dfa, input: String): Pair<NfaIndex, String>? {
             is Kind.Accepts -> {
                 longest = k.nfa to (offset + 1)
             }
-            Kind.Reject -> break
+
+            Kind.Reject -> {
+                break
+            }
+
             Kind.Neither -> {}
         }
     }

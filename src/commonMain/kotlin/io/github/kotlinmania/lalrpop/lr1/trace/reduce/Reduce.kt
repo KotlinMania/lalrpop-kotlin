@@ -65,12 +65,13 @@ private fun Tracer.traceReduceItem(itemState: StateIndex, item: Item<Nil>) {
 private fun Tracer.traceReduceFromState(
     itemState: StateIndex,
     nonterminal: NonterminalString,
-) // "Y"
-{
+) { // "Y"
     if (!this.visitedSet.add(ComparablePair(itemState, nonterminal))) {
         return
     }
-    for (predItem in this.states[itemState.value].items.vec.filter { it.canShiftNonterminal(nonterminal) }) {
+    for (predItem in this.states[itemState.value]
+        .items.vec
+        .filter { it.canShiftNonterminal(nonterminal) }) {
         // Found a state:
         //
         //     Z = ...p (*) Y ...s
