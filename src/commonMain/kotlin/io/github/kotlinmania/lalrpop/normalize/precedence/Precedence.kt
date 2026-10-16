@@ -232,7 +232,7 @@ private fun expandNonterm(nonterm: NonterminalData): List<GrammarItem> {
 
     val lvlMax: UInt = sortedLvls.last()
     // Iterate on pairs (lvls[i], lvls[i+1])
-    val lvlPrecOpts: List<UInt?> = listOf<UInt?>(null) + sortedLvls.dropLast(1).map<UInt, UInt?> { it }
+    val lvlPrecOpts: List<UInt?> = listOf<UInt?>(null) + sortedLvls.dropLast(1)
     val result: List<GrammarItem> =
         lvlPrecOpts.zip(sortedLvls).map { (lvlPrecOpt, lvl) ->
             // The generated non terminal corresponding to the last level keeps the same name as the

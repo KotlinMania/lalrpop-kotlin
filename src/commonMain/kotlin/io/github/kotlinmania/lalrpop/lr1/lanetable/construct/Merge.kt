@@ -175,13 +175,13 @@ internal class ContextSets(
     private val unify: InPlaceUnificationTable<StateSet, ContextSet>,
 ) {
     fun contextSet(state: StateIndex): ContextSet {
-        val stateSet = this.stateSets[state]!!
+        val stateSet = this.stateSets.getValue(state)
         return this.unify.probeValue(stateSet)
     }
 
     fun union(source: StateIndex, target: StateIndex): Boolean {
-        val set1 = this.stateSets[source]!!
-        val set2 = this.stateSets[target]!!
+        val set1 = this.stateSets.getValue(source)
+        val set2 = this.stateSets.getValue(target)
         return this.unify.unifyVarVar(set1, set2)
     }
 

@@ -76,14 +76,14 @@ internal fun TypeRepr.freeVariables(typeParameters: List<TypeParameter>): List<T
         }
 
         is TypeRepr.Ref -> {
-            val fromLifetime = this.lifetime?.let { listOf(TypeParameter.LifetimeTp(it)) } ?: listOf()
+            val fromLifetime = this.lifetime?.let { listOf(TypeParameter.LifetimeTp(it)) }.orEmpty()
             fromLifetime + this.referent.freeVariables(typeParameters)
         }
 
         is TypeRepr.Fn -> {
             val pathVars = this.path.freeVariables(typeParameters)
             val paramVars = this.parameters.flatMap { param -> param.freeVariables(typeParameters) }
-            val retVars = this.ret?.freeVariables(typeParameters) ?: listOf()
+            val retVars = this.ret?.freeVariables(typeParameters).orEmpty()
             (pathVars + paramVars + retVars).filter { tp -> !this.forall.contains(tp) }
         }
     }
@@ -162,7 +162,7 @@ internal fun <T> TypeBound<T>.freeVariables(
 
         is TypeBound.Fn<T> -> {
             val paramVars = this.parameters.flatMap { p -> freeVars(p, typeParameters) }
-            val retVars = this.ret?.let { freeVars(it, typeParameters) } ?: listOf()
+            val retVars = this.ret?.let { freeVars(it, typeParameters) }.orEmpty()
             (paramVars + retVars).filter { tp -> !this.forall.contains(tp) }
         }
 

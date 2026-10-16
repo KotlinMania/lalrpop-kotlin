@@ -177,7 +177,7 @@ private fun TypeInferencer.inferTypes(): Types {
 
     for (id in ids) {
         this.nonterminalType(id)
-        check(this.types.lookupNonterminalType(id) != null)
+        checkNotNull(this.types.lookupNonterminalType(id))
     }
 
     return this.types

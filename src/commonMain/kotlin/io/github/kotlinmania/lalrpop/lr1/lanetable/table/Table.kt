@@ -164,10 +164,10 @@ internal class LaneTable(
                     add(index.toString())
                     for (i in 0 until conflicts) {
                         val ts = lookaheads[ComparablePair(index, ConflictIndex.new(i))]
-                        add(ts?.toString() ?: "")
+                        add(ts?.toString().orEmpty())
                     }
                     val succ = successors.get(index)
-                    add(succ?.asSet()?.toString() ?: "")
+                    add(succ?.asSet()?.toString().orEmpty())
                 }
             }
 

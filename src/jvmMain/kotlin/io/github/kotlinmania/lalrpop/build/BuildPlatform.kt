@@ -121,7 +121,7 @@ internal actual fun apiBuildWalkDir(root: String): Sequence<WalkEntry> = sequenc
         val cur = stack.removeLast()
         if (cur.isDirectory) {
             yield(WalkEntry.Ok(path = cur.path, isFile = false))
-            val children = cur.listFiles()?.sortedBy { it.name } ?: emptyList()
+            val children = cur.listFiles()?.sortedBy { it.name }.orEmpty()
             // Push in reverse so traversal yields in sorted order.
             for (c in children.asReversed()) stack.addLast(c)
         } else {
