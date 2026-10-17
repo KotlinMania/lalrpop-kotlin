@@ -365,7 +365,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
                 parsed.fold(
                     onSuccess = { regex -> regexs.add(regex) },
                     onFailure = { error ->
-                        val literalSpan = spans[matchEntry.matchLiteral]!!
+                        val literalSpan = spans.getValue(matchEntry.matchLiteral)
                         // FIXME -- take offset into account for
                         // span; this requires knowing how many #
                         // the user used, which we do not track
@@ -391,7 +391,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
                             NfaConstructionError.ByteRegex -> "byte-based matches"
                         }
                     val literal = matchEntries[err.index.index()].matchLiteral
-                    returnErr(spans[literal]!!, "$feature are not supported in regular expressions")
+                    returnErr(spans.getValue(literal), "$feature are not supported in regular expressions")
                 }
 
                 is DfaConstructionError.Ambiguity -> {
@@ -399,7 +399,7 @@ private fun construct(grammar: Grammar, matchBlock: MatchBlock) {
                     val literal1 = matchEntries[err.match1.index()].matchLiteral
                     // FIXME(#88) -- it'd be nice to give an example here
                     returnErr(
-                        spans[literal0]!!,
+                        spans.getValue(literal0),
                         "ambiguity detected between the terminal `$literal0` and the terminal `$literal1`",
                     )
                 }

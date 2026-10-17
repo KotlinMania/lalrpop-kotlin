@@ -59,7 +59,7 @@ internal data class Grammar(
     fun pattern(t: TerminalString): Pattern<TypeRepr> = conversions.getValue(t)
 
     fun productionsFor(nonterminal: NonterminalString): List<Production> =
-        nonterminals[nonterminal]?.productions ?: emptyList()
+        nonterminals[nonterminal]?.productions.orEmpty()
 
     fun userParameterRefs(): String {
         val result = StringBuilder()
@@ -638,8 +638,8 @@ internal class Types(
     private var errorType: TypeRepr?,
     private var terminalTokenType: TypeRepr,
 ) {
-    private var terminalTypes: Map<TerminalString, TypeRepr> = map()
-    private var nonterminalTypes: Map<NonterminalString, TypeRepr> = map()
+    private val terminalTypes: Map<TerminalString, TypeRepr> = map()
+    private val nonterminalTypes: Map<NonterminalString, TypeRepr> = map()
 
     // the following two will be overwritten later
     private var parseErrorType: TypeRepr = TypeRepr.Tuple(mutableListOf())

@@ -184,7 +184,7 @@ internal class PathEnumerator internal constructor(
 ) : Iterator<Example> {
     companion object {
         internal fun new(graph: TraceGraph, lr0Item: Item<Nil>): PathEnumerator {
-            val startState = graph.indices[TraceGraphNode.ItemNode(lr0Item)]!!
+            val startState = graph.indices.getValue(TraceGraphNode.ItemNode(lr0Item))
             val enumerator = PathEnumerator(graph = graph, stack = mutableListOf())
             val edges = enumerator.incomingEdges(startState).iterator()
             enumerator.stack.add(

@@ -167,7 +167,7 @@ internal data class State<L : Lookahead<L>>(
                 .filter { it.index > 0 }
                 .map { it.prefix() }
                 .minByOrNull { it.size }
-                ?: emptyList()
+                .orEmpty()
 
         check(items.vec.filter { it.index > 0 }.all { item -> endsWith(item.prefix(), prefix) })
 
@@ -179,7 +179,7 @@ internal data class State<L : Lookahead<L>>(
             .filter { it.index > 0 }
             .map { it.production.symbols.subList(it.index, it.production.symbols.size) }
             .minByOrNull { it.size }
-            ?: emptyList()
+            .orEmpty()
 
     /**
      * Returns the type of nonterminal that this state will produce;

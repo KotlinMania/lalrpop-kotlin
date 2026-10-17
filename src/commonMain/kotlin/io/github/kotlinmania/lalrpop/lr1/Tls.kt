@@ -20,7 +20,7 @@ internal class Lr1Tls private constructor(
 
         fun <RET> with(op: (TerminalSet) -> RET): RET {
             val terminals = Lr1TlsStorage.terminals
-            check(terminals != null) { "LR1 TLS not installed" }
+            checkNotNull(terminals) { "LR1 TLS not installed" }
             return op(terminals)
         }
     }

@@ -114,13 +114,13 @@ private class Machine<L : LookaheadInterpret<L>>(
 
         // remove the top N items from the data stack
         val popped: MutableList<ParseTree> = mutableListOf()
-        for (i in 0 until args) {
+        repeat(args) {
             popped.add(dataStack.removeLast())
         }
         popped.reverse()
 
         // remove the top N states
-        for (i in 0 until args) {
+        repeat(args) {
             stateStack.removeLast()
         }
 

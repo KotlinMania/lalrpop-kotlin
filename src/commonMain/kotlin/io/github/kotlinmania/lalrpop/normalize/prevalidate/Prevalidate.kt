@@ -439,76 +439,76 @@ private fun Validator.validateSymbol(symbol: Symbol) {
 
 private fun Validator.validateCfgAttr(attr: Attribute) {
     // example of valid formats:
-    fun validateCfgArg(attr: Attribute) {
+    fun validateCfgArg(cfgAttr: Attribute) {
         when {
-            attr.id == Atom.from("feature") -> {
-                when (attr.arg) {
+            cfgAttr.id == Atom.from("feature") -> {
+                when (cfgAttr.arg) {
                     is AttributeArg.Equal -> { /* Ok */ }
 
                     else -> {
                         returnErr(
-                            attr.idSpan,
+                            cfgAttr.idSpan,
                             "expected a `not()`, `any()`, `all()` or `feature = \"my_feature\" argument",
                         )
                     }
                 }
             }
 
-            attr.id == Atom.from("not") -> {
-                when (val a = attr.arg) {
+            cfgAttr.id == Atom.from("not") -> {
+                when (val a = cfgAttr.arg) {
                     is AttributeArg.Paren -> {
                         val firstAttr = a.attrs.firstOrNull()
                         if (firstAttr != null) {
                             validateCfgArg(firstAttr)
                         } else {
-                            returnErr(attr.idSpan, "`not` takes one argument")
+                            returnErr(cfgAttr.idSpan, "`not` takes one argument")
                         }
                     }
 
                     else -> {
-                        returnErr(attr.idSpan, "`not` takes one argument")
+                        returnErr(cfgAttr.idSpan, "`not` takes one argument")
                     }
                 }
             }
 
-            attr.id == Atom.from("any") -> {
-                when (val a = attr.arg) {
+            cfgAttr.id == Atom.from("any") -> {
+                when (val a = cfgAttr.arg) {
                     is AttributeArg.Paren -> {
                         if (a.attrs.isNotEmpty()) {
                             for (inner in a.attrs) {
                                 validateCfgArg(inner)
                             }
                         } else {
-                            returnErr(attr.idSpan, "`any` takes at least one argument")
+                            returnErr(cfgAttr.idSpan, "`any` takes at least one argument")
                         }
                     }
 
                     else -> {
-                        returnErr(attr.idSpan, "`any` takes at least one argument")
+                        returnErr(cfgAttr.idSpan, "`any` takes at least one argument")
                     }
                 }
             }
 
-            attr.id == Atom.from("all") -> {
-                when (val a = attr.arg) {
+            cfgAttr.id == Atom.from("all") -> {
+                when (val a = cfgAttr.arg) {
                     is AttributeArg.Paren -> {
                         if (a.attrs.isNotEmpty()) {
                             for (inner in a.attrs) {
                                 validateCfgArg(inner)
                             }
                         } else {
-                            returnErr(attr.idSpan, "`all` takes at least one argument")
+                            returnErr(cfgAttr.idSpan, "`all` takes at least one argument")
                         }
                     }
 
                     else -> {
-                        returnErr(attr.idSpan, "`all` takes at least one argument")
+                        returnErr(cfgAttr.idSpan, "`all` takes at least one argument")
                     }
                 }
             }
 
             else -> {
-                returnErr(attr.idSpan, "unexpected `cfg` argument `${attr.id}`")
+                returnErr(cfgAttr.idSpan, "unexpected `cfg` argument `${cfgAttr.id}`")
             }
         }
     }

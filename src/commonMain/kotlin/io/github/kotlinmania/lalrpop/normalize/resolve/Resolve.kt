@@ -41,7 +41,7 @@ private fun resolveInPlace(grammar: Grammar) {
                     .items
                     .asSequence()
                     .mapNotNull { it.asExternTokenItem() }
-                    .flatMap { externToken -> externToken.enumToken?.let { sequenceOf(it) } ?: emptySequence() }
+                    .flatMap { externToken -> externToken.enumToken?.let { sequenceOf(it) }.orEmpty() }
                     .flatMap { enumToken -> enumToken.conversions.asSequence() }
                     .mapNotNull { conversion ->
                         when (val from = conversion.from) {

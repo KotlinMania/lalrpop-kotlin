@@ -199,7 +199,7 @@ internal fun main(args: Array<String>): Int {
 
     val flagFeatures = parsedArgs.flagFeatures
     if (flagFeatures != null) {
-        config.setFeatures(flagFeatures.split(',').map { it })
+        config.setFeatures(flagFeatures.split(','))
     }
 
     for (arg in parsedArgs.argInputs) {

@@ -57,7 +57,7 @@ internal fun buildLr0StatesOrError(
 internal fun useLaneTable(): Boolean = true
 
 internal fun buildLr1States(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
-    val (methodName: String, methodFn: ConstructionFunction) =
+    val (_, methodFn: ConstructionFunction) =
         if (useLaneTable()) {
             Pair("lane", ::buildLaneTableStates)
         } else {

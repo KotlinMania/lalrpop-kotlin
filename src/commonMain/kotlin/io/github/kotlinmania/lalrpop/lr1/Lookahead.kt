@@ -238,7 +238,7 @@ internal class TokenSet :
         when (lookahead) {
             Token.Eof -> terminals.all.size
             Token.Error -> terminals.all.size + 1
-            is Token.Terminal -> terminals.bits[lookahead.terminalString]!!
+            is Token.Terminal -> terminals.bits.getValue(lookahead.terminalString)
         }
 
     fun reserve(len: Int) {

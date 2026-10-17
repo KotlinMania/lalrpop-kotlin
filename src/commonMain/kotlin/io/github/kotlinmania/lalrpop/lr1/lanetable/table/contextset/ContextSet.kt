@@ -105,7 +105,7 @@ internal class ContextSet(
         for ((i, reduction) in state.reductions.withIndex()) {
             val (_, production) = reduction
             val action: Action = Action.Reduce(production)
-            state.reductions[i] = Pair(lookaheads[action]!!.clone(), production)
+            state.reductions[i] = Pair(lookaheads.getValue(action).clone(), production)
         }
     }
 }

@@ -256,7 +256,7 @@ internal fun <E> reportParseError(
 
         is ParseError.UnrecognizedToken -> {
             val (lo, _, hi) = error.token
-            val expected = error.expected // did not implement this yet :)
+            // error.expected is ignored: didn't implement this yet :)
             val text = fileText.text().substring(lo, hi)
             reporter(
                 fileText,

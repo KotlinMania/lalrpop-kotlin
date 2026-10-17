@@ -45642,9 +45642,9 @@ internal fun action6(
         Grammar(
             prefix = "__", // adjusted by `parseGrammar`
             span = Span(lo.second, hi.second),
-            typeParameters = (tps.second ?: emptyList()).toMutableList(),
-            parameters = (parameters.second ?: emptyList()).toMutableList(),
-            whereClauses = (whereClauses.second ?: emptyList()).toMutableList(),
+            typeParameters = (tps.second.orEmpty()).toMutableList(),
+            parameters = (parameters.second.orEmpty()).toMutableList(),
+            whereClauses = (whereClauses.second.orEmpty()).toMutableList(),
             items = (uses.second + items.second).toMutableList(),
             attributes = attributes.second.toMutableList(),
             moduleAttributes = moduleAttributes.second.toMutableList(),
@@ -45746,7 +45746,7 @@ internal fun action18(
     TypeBound.Trait(
         forall = f.second.toMutableList(),
         path = p.second,
-        parameters = (params.second ?: emptyList()).toMutableList(),
+        parameters = (params.second.orEmpty()).toMutableList(),
     )
 
 internal fun action19(
