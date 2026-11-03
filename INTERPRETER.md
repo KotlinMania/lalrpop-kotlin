@@ -10,7 +10,7 @@ direction.
 
 ## What's already there
 
-`src/commonMain/kotlin/io/github/kotlinmania/lalrpop/runtime/StateMachine.kt`
+`src/common/commonMain/kotlin/io/github/kotlinmania/lalrpop/runtime/StateMachine.kt`
 already contains a generic LR(1) driver, `Parser<Location, Error,
 Token, …>`, that walks any `ParserDefinition` implementation. We do
 not need to write a new interpreter — the driver loop is solved.
@@ -21,7 +21,7 @@ place of today's 38k-line hand-translated `LrGrammar.kt`.
 
 ## The problem
 
-`src/commonMain/kotlin/io/github/kotlinmania/lalrpop/parser/LrGrammar.kt`
+`src/common/commonMain/kotlin/io/github/kotlinmania/lalrpop/parser/LrGrammar.kt`
 is 38,626 lines. It is the bootstrapped LALRPOP-grammar parser. Of
 those lines:
 
@@ -175,7 +175,7 @@ construction) still works while we build out the new Kotlin path.
 
 ### 1. Build `Production`, `ParseStack`, and `TableDrivenParserDefinition`
 
-- Create `src/commonMain/kotlin/io/github/kotlinmania/lalrpop/runtime/Production.kt`
+- Create `src/common/commonMain/kotlin/io/github/kotlinmania/lalrpop/runtime/Production.kt`
   and `…/runtime/ParseStack.kt` and
   `…/runtime/TableDrivenParserDefinition.kt`.
 - `Production<S>` carries `(nonterminalId: Short, rhsLength: Int,
@@ -187,7 +187,7 @@ construction) still works while we build out the new Kotlin path.
   `ParserDefinition` interface using packed tables + the productions
   array. Action decoding follows the upstream convention (positive =
   shift target, negative = reduce index, zero = error).
-- Tests live in `src/commonTest/kotlin/.../runtime/` and exercise a
+- Tests live in `src/common/commonTest/kotlin/.../runtime/` and exercise a
   toy grammar: `S → A B`, two terminals `a` and `b`, three
   productions. Hand-write the `ACTION` / `GOTO` / `PRODUCTIONS`
   constants. Confirm parse trees come out right.

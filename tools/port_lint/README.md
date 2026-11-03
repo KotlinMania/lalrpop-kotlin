@@ -8,7 +8,7 @@ rule either matches a given line or does not.
 ## Usage
 
 ```bash
-python tools/port_lint/port_lint.py [<root>]
+tools/port_lint/port_lint.sh [<root>]
 ```
 
 Defaults to `src` if no root given. Walks `.kt` files (skipping `build/`,
@@ -52,8 +52,8 @@ sidecar that flags specific drift patterns observed to cause real bugs.
 
 ## Adding a rule
 
-A rule is a `def check_<rule_name>(path: str, lines: list[str]) -> Iterable[Finding]`
-function added to the `ALL_RULES` list in `port_lint.py`. Findings carry
+A rule is a deterministic check in `LalrpopPortLint.java` under
+`buildSrc/src/main/java/io/github/kotlinmania/build/`. Findings carry
 `(file, line, col, rule_id, severity, message)`. Keep rules deterministic
 (no scores, no fuzzy thresholds).
 
