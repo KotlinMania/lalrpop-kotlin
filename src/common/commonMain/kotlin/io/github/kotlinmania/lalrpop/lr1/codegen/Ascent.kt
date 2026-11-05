@@ -339,7 +339,7 @@ private fun CodeGenerator<RecursiveAscent>.writeStateFn(thisIndex: StateIndex) {
                     }
 
                     Token.Error -> {
-                        error("Error recovery is not implemented for recursive ascent parsers")
+                        throw IllegalStateException("Error recovery is unsupported for recursive ascent parsers")
                     }
 
                     Token.Eof -> {

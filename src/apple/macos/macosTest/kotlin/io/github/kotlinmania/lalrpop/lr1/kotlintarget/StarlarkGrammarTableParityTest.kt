@@ -1,39 +1,15 @@
-// port-lint: ignore
 package io.github.kotlinmania.lalrpop.lr1.kotlintarget
 
 /*
  * Data-only parity comparator between the lalrpop-kotlin Kotlin pipeline
- * and the upstream lalrpop Rust oracle on the starlark grammar.
- *
- * No source-syntax conversion is involved. Both sides produce the same
- * three pieces of integer data — terminal index list, action table,
- * EOF-action table — and the test asserts those data are identical
- * cell-for-cell.
+ * and the upstream lalrpop oracle on an external starlark grammar.
  *
  * Driven by environment variables so the test runs only when the
  * operator has staged an oracle:
- *   LALRPOP_STARLARK_GRAMMAR_PATH — the .lalrpop source from which the
- *                                  oracle was generated. Default:
- *                                  /tmp/lalrpop_oracle_nocomments/grammar.lalrpop
- *   LALRPOP_STARLARK_ORACLE_RS    — absolute path to a no-comments
- *                                  grammar.rs produced by upstream
- *                                  lalrpop. Default:
- *                                  /tmp/lalrpop_oracle_nocomments/grammar.rs
+ *   LALRPOP_STARLARK_GRAMMAR_PATH — path to the .lalrpop source file
+ *   LALRPOP_STARLARK_ORACLE_RS    — path to a no-comments grammar.rs oracle
  *
- * Important: the test reads the .lalrpop FROM DISK (not from the
- * embedded StarlarkGrammarFixture constant) and runs lalrpop-kotlin's
- * pipeline against that exact source. Both pipelines therefore consume
- * the same input bytes, so any state-count or table-cell divergence is
- * a real codegen bug, not a stale fixture.
- *
- * Generate the oracle once with:
- *   mkdir -p /tmp/lalrpop_oracle_nocomments
- *   cp .../tmp/starlark_syntax/src/syntax/grammar.lalrpop /tmp/lalrpop_oracle_nocomments/
- *   lalrpop -f -o /tmp/lalrpop_oracle_nocomments \
- *           /tmp/lalrpop_oracle_nocomments/grammar.lalrpop
- *
- * The test skips silently if either file is absent so the regular
- * hostNative run is unaffected.
+ * Skips silently if either environment variable or file is absent.
  */
 
 import io.github.kotlinmania.lalrpop.Atom
@@ -46,9 +22,9 @@ import io.github.kotlinmania.lalrpop.build.parseAndNormalizeGrammar
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.buildStates
+import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.lalrpoputil.tabledriven.Production
 import io.github.kotlinmania.lalrpoputil.tabledriven.ProductionAction
-import io.github.kotlinmania.lalrpop.tls.Tls
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -56,10 +32,8 @@ import kotlin.test.fail
 class StarlarkGrammarTableParityTest {
     @Test
     fun kotlinTablesMatchUpstreamOracle() {
-        val grammarPath = apiEnvVar("LALRPOP_STARLARK_GRAMMAR_PATH")
-            ?: "/tmp/lalrpop_oracle_nocomments/grammar.lalrpop"
-        val oraclePath = apiEnvVar("LALRPOP_STARLARK_ORACLE_RS")
-            ?: "/tmp/lalrpop_oracle_nocomments/grammar.rs"
+        val grammarPath = apiEnvVar("LALRPOP_STARLARK_GRAMMAR_PATH") ?: return
+        val oraclePath = apiEnvVar("LALRPOP_STARLARK_ORACLE_RS") ?: return
 
         if (!apiPathExists(grammarPath)) {
             println("skip: starlark grammar not at $grammarPath")
@@ -119,28 +93,31 @@ class StarlarkGrammarTableParityTest {
             //     TokenSet lookaheads, which delegate to the thread-local
             //     terminal-bit mapping installed here.
             val userNt = NonterminalString(Atom.from("Starlark"))
-            val syntheticStart = grammar.startNonterminals[userNt]
-                ?: error("grammar has no public `Starlark` nonterminal")
+            val syntheticStart =
+                grammar.startNonterminals[userNt]
+                    ?: error("grammar has no public `Starlark` nonterminal")
             val tls = Lr1Tls.install(grammar.terminals)
-            val tables = try {
-                val states = buildStates(grammar, syntheticStart)
-                val productionCount = grammar.nonterminals.values.sumOf { it.productions.size }
-                val productions = Array(productionCount) {
-                    Production<Unit, Int>(
-                        nonterminalId = 0,
-                        rhsLength = 0,
-                        action = ProductionAction { _, _ -> error("not invoked in parity test") },
+            val tables =
+                try {
+                    val states = buildStates(grammar, syntheticStart)
+                    val productionCount = grammar.nonterminals.values.sumOf { it.productions.size }
+                    val productions =
+                        Array(productionCount) {
+                            Production<Unit, Int>(
+                                nonterminalId = 0,
+                                rhsLength = 0,
+                                action = ProductionAction { _, _ -> error("not invoked in parity test") },
+                            )
+                        }
+                    tablesFromLr1States(
+                        grammar = grammar,
+                        states = states,
+                        productions = productions,
+                        acceptProductionId = 0,
                     )
+                } finally {
+                    tls.drop()
                 }
-                tablesFromLr1States(
-                    grammar = grammar,
-                    states = states,
-                    productions = productions,
-                    acceptProductionId = 0,
-                )
-            } finally {
-                tls.drop()
-            }
 
             // Step 3: dimensions.
             assertEquals(

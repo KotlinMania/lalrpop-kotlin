@@ -104,17 +104,18 @@ dependencies {
 
 ### Targets
 
-- macOS arm64
-- Linux x64
-- Windows mingw-x64
-- iOS arm64 / simulator-arm64 (Swift export + XCFramework)
+- JVM (JDK 21)
+- Android (API 24+) & Android Native (arm64-v8a, x86_64)
+- macOS arm64 (Swift 6 Export + XCFramework + shared library)
+- iOS, tvOS, watchOS (arm64 device + simulator arm64 XCFramework)
+- Linux (x64, arm64)
+- Windows (mingwX64)
 - JS (browser + Node.js)
-- Wasm-JS (browser + Node.js)
-- Android (API 24+)
+- Wasm-JS (browser + Node.js) & Wasm-WASI (Node.js)
 
 ### Porting guidelines
 
-See [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md) for translator discipline, port-lint header convention, and Rust → Kotlin idiom mapping.
+See [AGENTS.md](AGENTS.md) and [SWIFT.md](SWIFT.md) for translator discipline, port-lint header convention, and Rust → Kotlin idiom mapping.
 
 ### License
 

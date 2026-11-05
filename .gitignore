@@ -1,5 +1,10 @@
 # Kotlin/Gradle build artifacts
-build/
+/build/
+buildSrc/build/
+verification/*/build/
+verification/*/buildSrc/build/
+src/js/node-ffi/dist/build/
+tools/**/build/
 .gradle/
 .kotlin/
 *.class

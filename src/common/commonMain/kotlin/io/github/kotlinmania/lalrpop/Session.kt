@@ -1,8 +1,8 @@
 // port-lint: source session.rs
 /**
  * Internal configuration and session-specific settings. This is similar
- * to `configuration::Configuration`, but it is not exported outside the
- * crate. Note that all fields are public and so forth for convenience.
+ * to `Configuration`, but it is not exported outside the
+ * module. Note that all fields are accessible within the module for convenience.
  */
 package io.github.kotlinmania.lalrpop
 

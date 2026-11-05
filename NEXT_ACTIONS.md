@@ -4,16 +4,16 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Files Present:** 63/106 (59.4%)
-- **Function parity:** 2117/2157 matched (target 2337) — 98.1%
-- **Class/type parity:** 139/147 matched (target 375) — 94.6%
-- **Combined symbol parity:** 2256/2304 matched (target 2712) — 97.9%
-- **Average inline-code cosine:** 0.33 (function body across 62 matched files)
-- **Average documentation cosine:** 0.45 (doc text across 62 matched files)
-- **Cheat-zeroed Files:** 2
+- **Files Present:** 64/106 (60.4%)
+- **Function parity:** 2127/2157 matched (target 2363) — 98.6%
+- **Class/type parity:** 142/147 matched (target 381) — 96.6%
+- **Combined symbol parity:** 2269/2304 matched (target 2744) — 98.5%
+- **Average inline-code cosine:** 0.35 (function body across 64 matched files)
+- **Average documentation cosine:** 0.44 (doc text across 64 matched files)
+- **Cheat-zeroed Files:** 0
 - **Critical Issues:** 61 files with <0.60 function similarity
 - **Needs Review:** 1 files with 0.60-0.84 function similarity
-- **Excellent:** 1 files with >=0.85 function similarity
+- **Excellent:** 2 files with >=0.85 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
 
@@ -93,19 +93,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 3/3 matched (target 4)
 - **Missing types:** _none_
 
-### 6. file_text
-
-- **Target:** `lalrpop.FileText`
-- **Similarity:** 0.20
-- **Dependents:** 2
-- **Priority Score:** 2031208.0
-- **Functions:** 8/10 matched (target 9)
-- **Missing functions:** `test`, `fmt`
-- **Types:** 1/2 matched (target 1)
-- **Missing types:** `Repeat`
-- **Tests:** 0/1 matched
-
-### 7. lr1.lookahead
+### 6. lr1.lookahead
 
 - **Target:** `lr1.Lookahead`
 - **Similarity:** 0.33
@@ -116,18 +104,19 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 5/7 matched (target 8)
 - **Missing types:** `Item`, `IntoIter`
 
-### 8. test_util
+### 7. file_text
 
-- **Target:** `lalrpop.TestUtil [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `lalrpop.FileText`
+- **Similarity:** 0.20
 - **Dependents:** 2
-- **Priority Score:** 2010710.0
-- **Functions:** 5/6 matched (target 9)
-- **Missing functions:** `fmt`
-- **Types:** 1/1 matched (target 6)
+- **Priority Score:** 2021208.0
+- **Functions:** 8/10 matched
+- **Missing functions:** `test`, `fmt`
+- **Types:** 2/2 matched
 - **Missing types:** _none_
+- **Tests:** 0/1 matched
 
-### 9. construct.state_set
+### 8. construct.state_set
 
 - **Target:** `stateset.StateSet`
 - **Similarity:** 0.20
@@ -137,6 +126,17 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing functions:** _none_
 - **Types:** 2/3 matched (target 2)
 - **Missing types:** `Value`
+
+### 9. test_util
+
+- **Target:** `lalrpop.TestUtil`
+- **Similarity:** 0.30
+- **Dependents:** 2
+- **Priority Score:** 2010707.0
+- **Functions:** 5/6 matched (target 9)
+- **Missing functions:** `fmt`
+- **Types:** 1/1 matched (target 6)
+- **Missing types:** _none_
 
 ### 10. grammar.pattern
 
@@ -160,19 +160,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 12. api.test
-
-- **Target:** `api.ApiTestSupport`
-- **Similarity:** 0.00
-- **Dependents:** 1
-- **Priority Score:** 1121210.0
-- **Functions:** 0/10 matched (target 1)
-- **Missing functions:** `new`, `drop`, `setup`, `remove_local_generated_files`, `verify_file`, `test_process_root`, `test_process_src`, `test_process_file`, `test_explicit_in_out`, `test_cargo_dir_conventions`
-- **Types:** 0/2 matched (target 0)
-- **Missing types:** `GenFileLoc`, `TestState`
-- **Tests:** 0/5 matched
-
-### 13. grammar.parse_tree
+### 12. grammar.parse_tree
 
 - **Target:** `parsetree.ParseTree`
 - **Similarity:** 0.18
@@ -183,7 +171,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 42/42 matched (target 88)
 - **Missing types:** _none_
 
-### 14. grammar.repr
+### 13. grammar.repr
 
 - **Target:** `repr.Repr`
 - **Similarity:** 0.18
@@ -194,7 +182,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Types:** 19/19 matched (target 38)
 - **Missing types:** _none_
 
-### 15. collections.multimap
+### 14. collections.multimap
 
 - **Target:** `collections.Multimap`
 - **Similarity:** 0.26
@@ -206,7 +194,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing types:** `Item`
 - **Tests:** 2/2 matched
 
-### 16. construct.merge
+### 15. construct.merge
 
 - **Target:** `construct.Merge`
 - **Similarity:** 0.29
@@ -216,6 +204,18 @@ Every matched file is listed below with function and type symbol parity.
 - **Missing functions:** _none_
 - **Types:** 2/2 matched
 - **Missing types:** _none_
+
+### 16. api.test
+
+- **Target:** `api.ApiTest`
+- **Similarity:** 0.44
+- **Dependents:** 1
+- **Priority Score:** 1001205.6
+- **Functions:** 10/10 matched (target 17)
+- **Missing functions:** _none_
+- **Types:** 2/2 matched (target 5)
+- **Missing types:** _none_
+- **Tests:** 5/5 matched
 
 ### 17. message.horiz
 
@@ -402,10 +402,10 @@ Every matched file is listed below with function and type symbol parity.
 
 ### 33. codegen.ascent
 
-- **Target:** `codegen.Ascent [STUB]`
-- **Similarity:** 0.00
+- **Target:** `codegen.Ascent`
+- **Similarity:** 0.30
 - **Dependents:** 0
-- **Priority Score:** 2410.0
+- **Priority Score:** 2407.0
 - **Functions:** 22/22 matched (target 23)
 - **Missing functions:** _none_
 - **Types:** 2/2 matched (target 3)
@@ -523,7 +523,7 @@ Every matched file is listed below with function and type symbol parity.
 - **Similarity:** 0.34
 - **Dependents:** 0
 - **Priority Score:** 706.6
-- **Functions:** 5/5 matched (target 7)
+- **Functions:** 5/5 matched (target 16)
 - **Missing functions:** _none_
 - **Types:** 2/2 matched (target 5)
 - **Missing types:** _none_
@@ -754,6 +754,17 @@ Every matched file is listed below with function and type symbol parity.
 ### 63. grammar.consts
 
 - **Target:** `grammar.Consts`
+- **Similarity:** 1.00
+- **Dependents:** 0
+- **Priority Score:** 0.0
+- **Functions:** 0/0 matched
+- **Missing functions:** _none_
+- **Types:** 0/0 matched
+- **Missing types:** _none_
+
+### 64. context_set.test
+
+- **Target:** `contextset.ContextSetTest`
 - **Similarity:** 1.00
 - **Dependents:** 0
 - **Priority Score:** 0.0

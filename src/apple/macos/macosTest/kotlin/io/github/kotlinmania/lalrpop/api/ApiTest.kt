@@ -74,13 +74,16 @@ private fun setup(): TestState {
     // lock() can return an error if another thread panicked while holding the mutex.  In our case,
     // that represents a test failure.  If another test failed, state was already cleaned up on
     // drop.  So we check that and clear the mutex poison to resume processing
-    val lock = API_TEST_MUTEX.lock(onPoisoned = {
-        if (apiPathExists(outDir)) {
-            // Uh oh, we did not clean up after all
-            error("This test was started in an unclean state because another test failed but didn't manage to clean up test state")
-        }
-        API_TEST_MUTEX.clearPoison()
-    })
+    val lock =
+        API_TEST_MUTEX.lock(
+            onPoisoned = {
+                if (apiPathExists(outDir)) {
+                    // Uh oh, we did not clean up after all
+                    error("This test was started in an unclean state because another test failed but didn't manage to clean up test state")
+                }
+                API_TEST_MUTEX.clearPoison()
+            },
+        )
     val origDir = apiCurrentDir()
     val testRoot = apiEnvVar("LALRPOP_TEST_ROOT") ?: origDir
     apiSetCurrentDir(apiPathJoin(testRoot, "src/api/test_files"))
@@ -117,14 +120,15 @@ private fun setup(): TestState {
 
 // Assumes CWD is testFiles
 private fun removeLocalGeneratedFiles() {
-    val generatedFiles = listOf(
-        "src.rs",
-        "src.report",
-        "other.rs",
-        "other.report",
-        "outer.rs",
-        "outer.report",
-    )
+    val generatedFiles =
+        listOf(
+            "src.rs",
+            "src.report",
+            "other.rs",
+            "other.report",
+            "outer.rs",
+            "outer.report",
+        )
     for (f in generatedFiles) {
         for (loc in listOf(".", "src", "other")) {
             val filePath = apiPathJoin(loc, f)
@@ -140,7 +144,7 @@ private fun removeLocalGeneratedFiles() {
 }
 
 // This is maybe a little nonintuitive at first.  We verify that the file exists where we expect
-// it, and nowhere else.  So fs::exists().unwrap() for a given location must be equal to our
+// it, and nowhere else.  So apiPathExists for a given location must be equal to our
 // expectation that it is in that location.
 private fun verifyFile(filename: String, expectedLocation: GenFileLoc) {
     println("Checking the location of $filename")
@@ -180,7 +184,7 @@ private fun verifyFile(filename: String, expectedLocation: GenFileLoc) {
             ),
         ),
     )
-    // For GenFileLoc::DoesntExist, we should have returned false for all others.  There is nothing
+    // For GenFileLoc.DoesntExist, we should have returned false for all others.  There is nothing
     // to positive test
 }
 
@@ -243,7 +247,8 @@ class ApiTest {
     fun testProcessFileFullOutputMatchesUpstream() {
         val state = setup()
         try {
-            Configuration.new()
+            Configuration
+                .new()
                 .forceBuild(true)
                 .emitComments(true)
                 .emitReport(true)
@@ -266,7 +271,8 @@ class ApiTest {
             // will work, but prepending "../testFiles" does not as it is an unexpected
             // file prefix.
             assertFails {
-                Configuration.new()
+                Configuration
+                    .new()
                     .useCargoDirConventions()
                     .processFile("../test_files/src/src.lalrpop")
             }
@@ -286,7 +292,8 @@ class ApiTest {
             val customDir = apiPathJoin(apiTempDir(), CUSTOM_TEST_DIR)
             apiCreateDir(customDir)
 
-            Configuration.new()
+            Configuration
+                .new()
                 .setInDir("other")
                 .setOutDir(customDir)
                 .process()
@@ -305,7 +312,8 @@ class ApiTest {
     fun testCargoDirConventions() {
         val state = setup()
         try {
-            Configuration.new()
+            Configuration
+                .new()
                 .useCargoDirConventions()
                 .process()
 
@@ -319,7 +327,7 @@ class ApiTest {
 }
 
 // ---------------------------------------------------------------------------
-// Mutex transliteration. the upstream `std::sync::Mutex<i32>` carries a "poison"
+// Mutex transliteration. The upstream mutex carries a "poison"
 // flag that is set when the holder of the lock panics. The Kotlin port
 // uses a simple recursion-tolerant lock built on a top-level mutable
 // flag. These host-native API tests mutate process-global state (current
@@ -355,7 +363,9 @@ private class ApiTestMutex {
     }
 }
 
-private class ApiTestMutexGuard(internal val owner: ApiTestMutex) {
+private class ApiTestMutexGuard(
+    internal val owner: ApiTestMutex,
+) {
     fun unlock() {
         owner.unlock(this)
     }

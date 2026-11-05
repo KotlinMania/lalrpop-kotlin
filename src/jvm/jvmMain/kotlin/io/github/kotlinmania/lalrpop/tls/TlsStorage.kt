@@ -1,11 +1,8 @@
-// port-lint: source tls/mod.rs (threadLocal! definition, JVM target)
 package io.github.kotlinmania.lalrpop.tls
 
 /**
- * Android (JVM) actual for [TlsStorage]. Backed by a
- * [java.lang.ThreadLocal] so each JVM thread has its own slot, matching
- * the semantics of the upstream
- * `threadLocal! { static THE_TLS_FIELDS: ... }`.
+ * JVM actual for [TlsStorage]. Backed by a [ThreadLocal] so each thread
+ * owns its own slot, matching the upstream thread-local semantics.
  */
 internal actual object TlsStorage {
     private val tl: ThreadLocal<TlsFields?> = ThreadLocal()

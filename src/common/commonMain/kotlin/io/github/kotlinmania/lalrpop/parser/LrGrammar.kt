@@ -40366,18 +40366,7 @@ internal typealias NonterminalIndex = Int
 
 internal class StateMachine(
     internal val text: String,
-) : ParserDefinition<
-        Int,
-        io.github.kotlinmania.lalrpop.tok.Error,
-        Tok,
-        Int,
-        Symbol,
-        Top,
-        Short,
-        ShortAction,
-        Short,
-        Int,
-    > {
+) : ParserDefinition<Int, io.github.kotlinmania.lalrpop.tok.Error, Tok, Int, Symbol, Top, Short, ShortAction, Short, Int> {
     override fun startLocation(): Int = 0
 
     override fun startState(): Short = 0
@@ -40411,12 +40400,7 @@ internal class StateMachine(
         startLocation: Int?,
         states: MutableList<Short>,
         symbols: MutableList<Triple<Int, Symbol, Int>>,
-    ): ParseResult<
-        Top,
-        Int,
-        Tok,
-        io.github.kotlinmania.lalrpop.tok.Error,
-    >? =
+    ): ParseResult<Top, Int, Tok, io.github.kotlinmania.lalrpop.tok.Error>? =
         reduce(
             text,
             reduceIndex,
@@ -61465,9 +61449,7 @@ internal fun Result<Triple<Int, Tok, Int>>.toTriple(): Result<Triple<Int, Tok, I
 internal fun reduce0(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // "::"? = "::" => ActionFn(143);
     val sym0 = popVariant0(symbols)
@@ -61481,9 +61463,7 @@ internal fun reduce0(
 internal fun reduce1(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // "::"? =  => ActionFn(144);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61496,9 +61476,7 @@ internal fun reduce1(
 internal fun reduce2(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ";"? = ";" => ActionFn(165);
     val sym0 = popVariant0(symbols)
@@ -61512,9 +61490,7 @@ internal fun reduce2(
 internal fun reduce3(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ";"? =  => ActionFn(166);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61527,9 +61503,7 @@ internal fun reduce3(
 internal fun reduce4(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // "mut"? = "mut" => ActionFn(154);
     val sym0 = popVariant0(symbols)
@@ -61543,9 +61517,7 @@ internal fun reduce4(
 internal fun reduce5(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // "mut"? =  => ActionFn(155);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61558,9 +61530,7 @@ internal fun reduce5(
 internal fun reduce6(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("->" <TypeRef>) = "->", TypeRef => ActionFn(182);
     check(
@@ -61578,9 +61548,7 @@ internal fun reduce6(
 internal fun reduce7(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("->" <TypeRef>)? = "->", TypeRef => ActionFn(332);
     check(
@@ -61598,9 +61566,7 @@ internal fun reduce7(
 internal fun reduce8(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("->" <TypeRef>)? =  => ActionFn(181);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61613,9 +61579,7 @@ internal fun reduce8(
 internal fun reduce9(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (":" <TypeRef>) = ":", TypeRef => ActionFn(174);
     check(
@@ -61633,9 +61597,7 @@ internal fun reduce9(
 internal fun reduce10(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (":" <TypeRef>)? = ":", TypeRef => ActionFn(337);
     check(
@@ -61653,9 +61615,7 @@ internal fun reduce10(
 internal fun reduce11(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (":" <TypeRef>)? =  => ActionFn(173);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61668,9 +61628,7 @@ internal fun reduce11(
 internal fun reduce12(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("<" <Comma<TypeBoundParameter>> ">") = "<", Comma<TypeBoundParameter>, ">" => ActionFn(178);
     check(
@@ -61689,9 +61647,7 @@ internal fun reduce12(
 internal fun reduce13(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("<" <Comma<TypeBoundParameter>> ">")? = "<", Comma<TypeBoundParameter>, ">" => ActionFn(340);
     check(
@@ -61710,9 +61666,7 @@ internal fun reduce13(
 internal fun reduce14(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("<" <Comma<TypeBoundParameter>> ">")? =  => ActionFn(177);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61725,9 +61679,7 @@ internal fun reduce14(
 internal fun reduce15(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("if" <Cond>) = "if", Cond => ActionFn(162);
     check(
@@ -61745,9 +61697,7 @@ internal fun reduce15(
 internal fun reduce16(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("if" <Cond>)? = "if", Cond => ActionFn(343);
     check(
@@ -61765,9 +61715,7 @@ internal fun reduce16(
 internal fun reduce17(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ("if" <Cond>)? =  => ActionFn(161);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61780,9 +61728,7 @@ internal fun reduce17(
 internal fun reduce18(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // () =  => ActionFn(185);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61795,9 +61741,7 @@ internal fun reduce18(
 internal fun reduce19(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Alternative> ",") = Alternative, "," => ActionFn(260);
     check(
@@ -61815,9 +61759,7 @@ internal fun reduce19(
 internal fun reduce20(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Alternative> ",")* =  => ActionFn(258);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61830,9 +61772,7 @@ internal fun reduce20(
 internal fun reduce21(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Alternative> ",")* = (<Alternative> ",")+ => ActionFn(259);
     val sym0 = popVariant11(symbols)
@@ -61846,9 +61786,7 @@ internal fun reduce21(
 internal fun reduce22(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Alternative> ",")+ = Alternative, "," => ActionFn(350);
     check(
@@ -61866,9 +61804,7 @@ internal fun reduce22(
 internal fun reduce23(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Alternative> ",")+ = (<Alternative> ",")+, Alternative, "," => ActionFn(351);
     check(
@@ -61887,9 +61823,7 @@ internal fun reduce23(
 internal fun reduce24(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",") = AttributeInner, "," => ActionFn(250);
     check(
@@ -61907,9 +61841,7 @@ internal fun reduce24(
 internal fun reduce25(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")* =  => ActionFn(248);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -61922,9 +61854,7 @@ internal fun reduce25(
 internal fun reduce26(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")* = (<AttributeInner> ",")+ => ActionFn(249);
     val sym0 = popVariant13(symbols)
@@ -61938,9 +61868,7 @@ internal fun reduce26(
 internal fun reduce27(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")+ = AttributeInner, "," => ActionFn(354);
     check(
@@ -61958,9 +61886,7 @@ internal fun reduce27(
 internal fun reduce28(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<AttributeInner> ",")+ = (<AttributeInner> ",")+, AttributeInner, "," => ActionFn(355);
     check(
@@ -61979,9 +61905,7 @@ internal fun reduce28(
 internal fun reduce29(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Conversion> ",") = Conversion, "," => ActionFn(284);
     check(
@@ -61999,9 +61923,7 @@ internal fun reduce29(
 internal fun reduce30(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Conversion> ",")* =  => ActionFn(282);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62014,9 +61936,7 @@ internal fun reduce30(
 internal fun reduce31(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Conversion> ",")* = (<Conversion> ",")+ => ActionFn(283);
     val sym0 = popVariant15(symbols)
@@ -62030,9 +61950,7 @@ internal fun reduce31(
 internal fun reduce32(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Conversion> ",")+ = Conversion, "," => ActionFn(358);
     check(
@@ -62050,9 +61968,7 @@ internal fun reduce32(
 internal fun reduce33(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Conversion> ",")+ = (<Conversion> ",")+, Conversion, "," => ActionFn(359);
     check(
@@ -62071,9 +61987,7 @@ internal fun reduce33(
 internal fun reduce34(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",") = FieldPattern, "," => ActionFn(134);
     check(
@@ -62091,9 +62005,7 @@ internal fun reduce34(
 internal fun reduce35(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")* =  => ActionFn(132);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62106,9 +62018,7 @@ internal fun reduce35(
 internal fun reduce36(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")* = (<FieldPattern> ",")+ => ActionFn(133);
     val sym0 = popVariant17(symbols)
@@ -62122,9 +62032,7 @@ internal fun reduce36(
 internal fun reduce37(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")+ = FieldPattern, "," => ActionFn(362);
     check(
@@ -62142,9 +62050,7 @@ internal fun reduce37(
 internal fun reduce38(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<FieldPattern> ",")+ = (<FieldPattern> ",")+, FieldPattern, "," => ActionFn(363);
     check(
@@ -62163,9 +62069,7 @@ internal fun reduce38(
 internal fun reduce39(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",") = GrammarParameter, "," => ActionFn(245);
     check(
@@ -62183,9 +62087,7 @@ internal fun reduce39(
 internal fun reduce40(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")* =  => ActionFn(243);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62198,9 +62100,7 @@ internal fun reduce40(
 internal fun reduce41(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")* = (<GrammarParameter> ",")+ => ActionFn(244);
     val sym0 = popVariant19(symbols)
@@ -62214,9 +62114,7 @@ internal fun reduce41(
 internal fun reduce42(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")+ = GrammarParameter, "," => ActionFn(368);
     check(
@@ -62234,9 +62132,7 @@ internal fun reduce42(
 internal fun reduce43(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarParameter> ",")+ = (<GrammarParameter> ",")+, GrammarParameter, "," => ActionFn(369);
     check(
@@ -62255,9 +62151,7 @@ internal fun reduce43(
 internal fun reduce44(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",") = GrammarWhereClause, "," => ActionFn(222);
     check(
@@ -62275,9 +62169,7 @@ internal fun reduce44(
 internal fun reduce45(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")* =  => ActionFn(220);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62290,9 +62182,7 @@ internal fun reduce45(
 internal fun reduce46(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")* = (<GrammarWhereClause> ",")+ => ActionFn(221);
     val sym0 = popVariant21(symbols)
@@ -62306,9 +62196,7 @@ internal fun reduce46(
 internal fun reduce47(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")+ = GrammarWhereClause, "," => ActionFn(372);
     check(
@@ -62326,9 +62214,7 @@ internal fun reduce47(
 internal fun reduce48(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<GrammarWhereClause> ",")+ = (<GrammarWhereClause> ",")+, GrammarWhereClause, "," => ActionFn(373);
     check(
@@ -62347,9 +62233,7 @@ internal fun reduce48(
 internal fun reduce49(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Id> "::") = Id, "::" => ActionFn(142);
     check(
@@ -62367,9 +62251,7 @@ internal fun reduce49(
 internal fun reduce50(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Id> "::")* =  => ActionFn(140);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62382,9 +62264,7 @@ internal fun reduce50(
 internal fun reduce51(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Id> "::")* = (<Id> "::")+ => ActionFn(141);
     val sym0 = popVariant23(symbols)
@@ -62398,9 +62278,7 @@ internal fun reduce51(
 internal fun reduce52(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Id> "::")+ = Id, "::" => ActionFn(376);
     check(
@@ -62418,9 +62296,7 @@ internal fun reduce52(
 internal fun reduce53(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Id> "::")+ = (<Id> "::")+, Id, "::" => ActionFn(377);
     check(
@@ -62439,9 +62315,7 @@ internal fun reduce53(
 internal fun reduce54(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 2,
@@ -62458,9 +62332,7 @@ internal fun reduce54(
 internal fun reduce55(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
@@ -62472,9 +62344,7 @@ internal fun reduce55(
 internal fun reduce56(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant25(symbols)
     val start = sym0.first
@@ -62487,9 +62357,7 @@ internal fun reduce56(
 internal fun reduce57(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 2,
@@ -62506,9 +62374,7 @@ internal fun reduce57(
 internal fun reduce58(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 3,
@@ -62526,9 +62392,7 @@ internal fun reduce58(
 internal fun reduce59(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<MatchItem> ",") = MatchItem, "," => ActionFn(279);
     check(
@@ -62546,9 +62410,7 @@ internal fun reduce59(
 internal fun reduce60(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")* =  => ActionFn(277);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62561,9 +62423,7 @@ internal fun reduce60(
 internal fun reduce61(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")* = (<MatchItem> ",")+ => ActionFn(278);
     val sym0 = popVariant27(symbols)
@@ -62577,9 +62437,7 @@ internal fun reduce61(
 internal fun reduce62(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")+ = MatchItem, "," => ActionFn(386);
     check(
@@ -62597,9 +62455,7 @@ internal fun reduce62(
 internal fun reduce63(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<MatchItem> ",")+ = (<MatchItem> ",")+, MatchItem, "," => ActionFn(387);
     check(
@@ -62618,9 +62474,7 @@ internal fun reduce63(
 internal fun reduce64(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",") = NotMacroId, "," => ActionFn(255);
     check(
@@ -62638,9 +62492,7 @@ internal fun reduce64(
 internal fun reduce65(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")* =  => ActionFn(253);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62653,9 +62505,7 @@ internal fun reduce65(
 internal fun reduce66(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")* = (<NotMacroId> ",")+ => ActionFn(254);
     val sym0 = popVariant29(symbols)
@@ -62669,9 +62519,7 @@ internal fun reduce66(
 internal fun reduce67(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")+ = NotMacroId, "," => ActionFn(390);
     check(
@@ -62689,9 +62537,7 @@ internal fun reduce67(
 internal fun reduce68(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<NotMacroId> ",")+ = (<NotMacroId> ",")+, NotMacroId, "," => ActionFn(391);
     check(
@@ -62710,9 +62556,7 @@ internal fun reduce68(
 internal fun reduce69(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Pattern> ",") = Pattern, "," => ActionFn(289);
     check(
@@ -62730,9 +62574,7 @@ internal fun reduce69(
 internal fun reduce70(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Pattern> ",")* =  => ActionFn(287);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62745,9 +62587,7 @@ internal fun reduce70(
 internal fun reduce71(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Pattern> ",")* = (<Pattern> ",")+ => ActionFn(288);
     val sym0 = popVariant31(symbols)
@@ -62761,9 +62601,7 @@ internal fun reduce71(
 internal fun reduce72(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Pattern> ",")+ = Pattern, "," => ActionFn(394);
     check(
@@ -62781,9 +62619,7 @@ internal fun reduce72(
 internal fun reduce73(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Pattern> ",")+ = (<Pattern> ",")+, Pattern, "," => ActionFn(395);
     check(
@@ -62802,9 +62638,7 @@ internal fun reduce73(
 internal fun reduce74(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Symbol> ",") = Symbol, "," => ActionFn(265);
     check(
@@ -62822,9 +62656,7 @@ internal fun reduce74(
 internal fun reduce75(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Symbol> ",")* =  => ActionFn(263);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62837,9 +62669,7 @@ internal fun reduce75(
 internal fun reduce76(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Symbol> ",")* = (<Symbol> ",")+ => ActionFn(264);
     val sym0 = popVariant33(symbols)
@@ -62853,9 +62683,7 @@ internal fun reduce76(
 internal fun reduce77(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Symbol> ",")+ = Symbol, "," => ActionFn(398);
     check(
@@ -62873,9 +62701,7 @@ internal fun reduce77(
 internal fun reduce78(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<Symbol> ",")+ = (<Symbol> ",")+, Symbol, "," => ActionFn(399);
     check(
@@ -62894,9 +62720,7 @@ internal fun reduce78(
 internal fun reduce79(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TupleItem> ",") = TupleItem, "," => ActionFn(152);
     check(
@@ -62914,9 +62738,7 @@ internal fun reduce79(
 internal fun reduce80(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TupleItem> ",")+ = TupleItem, "," => ActionFn(402);
     check(
@@ -62934,9 +62756,7 @@ internal fun reduce80(
 internal fun reduce81(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TupleItem> ",")+ = (<TupleItem> ",")+, TupleItem, "," => ActionFn(403);
     check(
@@ -62955,9 +62775,7 @@ internal fun reduce81(
 internal fun reduce82(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBound> "+") = TypeBound, "+" => ActionFn(230);
     check(
@@ -62975,9 +62793,7 @@ internal fun reduce82(
 internal fun reduce83(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")* =  => ActionFn(228);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -62990,9 +62806,7 @@ internal fun reduce83(
 internal fun reduce84(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")* = (<TypeBound> "+")+ => ActionFn(229);
     val sym0 = popVariant37(symbols)
@@ -63006,9 +62820,7 @@ internal fun reduce84(
 internal fun reduce85(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")+ = TypeBound, "+" => ActionFn(404);
     check(
@@ -63026,9 +62838,7 @@ internal fun reduce85(
 internal fun reduce86(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBound> "+")+ = (<TypeBound> "+")+, TypeBound, "+" => ActionFn(405);
     check(
@@ -63047,9 +62857,7 @@ internal fun reduce86(
 internal fun reduce87(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",") = TypeBoundParameter, "," => ActionFn(240);
     check(
@@ -63067,9 +62875,7 @@ internal fun reduce87(
 internal fun reduce88(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")* =  => ActionFn(238);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63082,9 +62888,7 @@ internal fun reduce88(
 internal fun reduce89(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")* = (<TypeBoundParameter> ",")+ => ActionFn(239);
     val sym0 = popVariant39(symbols)
@@ -63098,9 +62902,7 @@ internal fun reduce89(
 internal fun reduce90(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")+ = TypeBoundParameter, "," => ActionFn(408);
     check(
@@ -63118,9 +62920,7 @@ internal fun reduce90(
 internal fun reduce91(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeBoundParameter> ",")+ = (<TypeBoundParameter> ",")+, TypeBoundParameter, "," => ActionFn(409);
     check(
@@ -63139,9 +62939,7 @@ internal fun reduce91(
 internal fun reduce92(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",") = TypeParameter, "," => ActionFn(217);
     check(
@@ -63159,9 +62957,7 @@ internal fun reduce92(
 internal fun reduce93(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")* =  => ActionFn(215);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63174,9 +62970,7 @@ internal fun reduce93(
 internal fun reduce94(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")* = (<TypeParameter> ",")+ => ActionFn(216);
     val sym0 = popVariant41(symbols)
@@ -63190,9 +62984,7 @@ internal fun reduce94(
 internal fun reduce95(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")+ = TypeParameter, "," => ActionFn(412);
     check(
@@ -63210,9 +63002,7 @@ internal fun reduce95(
 internal fun reduce96(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeParameter> ",")+ = (<TypeParameter> ",")+, TypeParameter, "," => ActionFn(413);
     check(
@@ -63231,9 +63021,7 @@ internal fun reduce96(
 internal fun reduce97(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRef> ",") = TypeRef, "," => ActionFn(235);
     check(
@@ -63251,9 +63039,7 @@ internal fun reduce97(
 internal fun reduce98(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")* =  => ActionFn(233);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63266,9 +63052,7 @@ internal fun reduce98(
 internal fun reduce99(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")* = (<TypeRef> ",")+ => ActionFn(234);
     val sym0 = popVariant42(symbols)
@@ -63282,9 +63066,7 @@ internal fun reduce99(
 internal fun reduce100(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")+ = TypeRef, "," => ActionFn(416);
     check(
@@ -63302,9 +63084,7 @@ internal fun reduce100(
 internal fun reduce101(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRef> ",")+ = (<TypeRef> ",")+, TypeRef, "," => ActionFn(417);
     check(
@@ -63323,9 +63103,7 @@ internal fun reduce101(
 internal fun reduce102(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",") = TypeRefOrLifetime, "," => ActionFn(270);
     check(
@@ -63343,9 +63121,7 @@ internal fun reduce102(
 internal fun reduce103(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")* =  => ActionFn(268);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63358,9 +63134,7 @@ internal fun reduce103(
 internal fun reduce104(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")* = (<TypeRefOrLifetime> ",")+ => ActionFn(269);
     val sym0 = popVariant42(symbols)
@@ -63374,9 +63148,7 @@ internal fun reduce104(
 internal fun reduce105(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")+ = TypeRefOrLifetime, "," => ActionFn(420);
     check(
@@ -63394,9 +63166,7 @@ internal fun reduce105(
 internal fun reduce106(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // (<TypeRefOrLifetime> ",")+ = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime, "," => ActionFn(421);
     check(
@@ -63415,9 +63185,7 @@ internal fun reduce106(
 internal fun reduce107(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // @L =  => ActionFn(198);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63430,9 +63198,7 @@ internal fun reduce107(
 internal fun reduce108(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // @R =  => ActionFn(197);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63445,9 +63211,7 @@ internal fun reduce108(
 internal fun reduce109(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Short = "=>@L" => ActionFn(45);
     val sym0 = popVariant0(symbols)
@@ -63461,9 +63225,7 @@ internal fun reduce109(
 internal fun reduce110(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Short = "=>@R" => ActionFn(46);
     val sym0 = popVariant0(symbols)
@@ -63477,9 +63239,7 @@ internal fun reduce110(
 internal fun reduce111(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Short = "=>" => ActionFn(47);
     val sym0 = popVariant1(symbols)
@@ -63493,9 +63253,7 @@ internal fun reduce111(
 internal fun reduce112(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Short = "=>?" => ActionFn(48);
     val sym0 = popVariant1(symbols)
@@ -63509,9 +63267,7 @@ internal fun reduce112(
 internal fun reduce113(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Short? = Short => ActionFn(158);
     val sym0 = popVariant44(symbols)
@@ -63525,9 +63281,7 @@ internal fun reduce113(
 internal fun reduce114(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Short? =  => ActionFn(159);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63540,9 +63294,7 @@ internal fun reduce114(
 internal fun reduce115(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Symbol+, "if", Cond, Short => ActionFn(493);
     check(
@@ -63562,9 +63314,7 @@ internal fun reduce115(
 internal fun reduce116(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, Symbol+, "if", Cond, Short => ActionFn(494);
     check(
@@ -63585,9 +63335,7 @@ internal fun reduce116(
 internal fun reduce117(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Symbol+, "if", Cond => ActionFn(495);
     check(
@@ -63606,9 +63354,7 @@ internal fun reduce117(
 internal fun reduce118(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, Symbol+, "if", Cond => ActionFn(496);
     check(
@@ -63628,9 +63374,7 @@ internal fun reduce118(
 internal fun reduce119(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Symbol+, Short => ActionFn(497);
     check(
@@ -63648,9 +63392,7 @@ internal fun reduce119(
 internal fun reduce120(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, Symbol+, Short => ActionFn(498);
     check(
@@ -63669,9 +63411,7 @@ internal fun reduce120(
 internal fun reduce121(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Symbol+ => ActionFn(499);
     val sym0 = popVariant33(symbols)
@@ -63685,9 +63425,7 @@ internal fun reduce121(
 internal fun reduce122(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Attribute+, Symbol+ => ActionFn(500);
     check(
@@ -63705,9 +63443,7 @@ internal fun reduce122(
 internal fun reduce123(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = "if", Cond, Short => ActionFn(454);
     check(
@@ -63726,9 +63462,7 @@ internal fun reduce123(
 internal fun reduce124(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative = Short => ActionFn(455);
     val sym0 = popVariant44(symbols)
@@ -63742,9 +63476,7 @@ internal fun reduce124(
 internal fun reduce125(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative? = Alternative => ActionFn(256);
     val sym0 = popVariant10(symbols)
@@ -63758,9 +63490,7 @@ internal fun reduce125(
 internal fun reduce126(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternative? =  => ActionFn(257);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63773,9 +63503,7 @@ internal fun reduce126(
 internal fun reduce127(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternatives = Alternative, ";" => ActionFn(41);
     check(
@@ -63793,9 +63521,7 @@ internal fun reduce127(
 internal fun reduce128(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternatives = "{", Comma<Alternative>, "}", ";" => ActionFn(324);
     check(
@@ -63815,9 +63541,7 @@ internal fun reduce128(
 internal fun reduce129(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Alternatives = "{", Comma<Alternative>, "}" => ActionFn(325);
     check(
@@ -63836,9 +63560,7 @@ internal fun reduce129(
 internal fun reduce130(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AssociatedType = "type", Id, "=", TypeRef, ";" => ActionFn(456);
     check(
@@ -63859,9 +63581,7 @@ internal fun reduce130(
 internal fun reduce131(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AssociatedType* =  => ActionFn(138);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63874,9 +63594,7 @@ internal fun reduce131(
 internal fun reduce132(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AssociatedType* = AssociatedType+ => ActionFn(139);
     val sym0 = popVariant49(symbols)
@@ -63890,9 +63608,7 @@ internal fun reduce132(
 internal fun reduce133(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AssociatedType+ = AssociatedType => ActionFn(273);
     val sym0 = popVariant48(symbols)
@@ -63906,9 +63622,7 @@ internal fun reduce133(
 internal fun reduce134(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AssociatedType+ = AssociatedType+, AssociatedType => ActionFn(274);
     check(
@@ -63926,9 +63640,7 @@ internal fun reduce134(
 internal fun reduce135(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Attribute = "#", "[", AttributeInner, "]" => ActionFn(34);
     check(
@@ -63948,9 +63660,7 @@ internal fun reduce135(
 internal fun reduce136(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Attribute* =  => ActionFn(199);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -63963,9 +63673,7 @@ internal fun reduce136(
 internal fun reduce137(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Attribute* = Attribute+ => ActionFn(200);
     val sym0 = popVariant13(symbols)
@@ -63979,9 +63687,7 @@ internal fun reduce137(
 internal fun reduce138(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Attribute+ = Attribute => ActionFn(209);
     val sym0 = popVariant12(symbols)
@@ -63995,9 +63701,7 @@ internal fun reduce138(
 internal fun reduce139(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Attribute+ = Attribute+, Attribute => ActionFn(210);
     check(
@@ -64015,9 +63719,7 @@ internal fun reduce139(
 internal fun reduce140(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeArg = "(", Comma<AttributeInner>, ")" => ActionFn(36);
     check(
@@ -64036,9 +63738,7 @@ internal fun reduce140(
 internal fun reduce141(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeArg = "=", "StringLiteral" => ActionFn(37);
     check(
@@ -64056,9 +63756,7 @@ internal fun reduce141(
 internal fun reduce142(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeArg? = AttributeArg => ActionFn(170);
     val sym0 = popVariant50(symbols)
@@ -64072,9 +63770,7 @@ internal fun reduce142(
 internal fun reduce143(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeArg? =  => ActionFn(171);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64087,9 +63783,7 @@ internal fun reduce143(
 internal fun reduce144(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeInner = Id, AttributeArg => ActionFn(509);
     check(
@@ -64107,9 +63801,7 @@ internal fun reduce144(
 internal fun reduce145(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeInner = Id => ActionFn(510);
     val sym0 = popVariant22(symbols)
@@ -64123,9 +63815,7 @@ internal fun reduce145(
 internal fun reduce146(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeInner? = AttributeInner => ActionFn(246);
     val sym0 = popVariant12(symbols)
@@ -64139,9 +63829,7 @@ internal fun reduce146(
 internal fun reduce147(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // AttributeInner? =  => ActionFn(247);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64154,9 +63842,7 @@ internal fun reduce147(
 internal fun reduce148(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Alternative> = Alternative => ActionFn(483);
     val sym0 = popVariant10(symbols)
@@ -64170,9 +63856,7 @@ internal fun reduce148(
 internal fun reduce149(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Alternative> =  => ActionFn(484);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64185,9 +63869,7 @@ internal fun reduce149(
 internal fun reduce150(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Alternative> = (<Alternative> ",")+, Alternative => ActionFn(485);
     check(
@@ -64205,9 +63887,7 @@ internal fun reduce150(
 internal fun reduce151(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Alternative> = (<Alternative> ",")+ => ActionFn(486);
     val sym0 = popVariant11(symbols)
@@ -64221,9 +63901,7 @@ internal fun reduce151(
 internal fun reduce152(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<AttributeInner> = AttributeInner => ActionFn(511);
     val sym0 = popVariant12(symbols)
@@ -64237,9 +63915,7 @@ internal fun reduce152(
 internal fun reduce153(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<AttributeInner> =  => ActionFn(512);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64252,9 +63928,7 @@ internal fun reduce153(
 internal fun reduce154(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<AttributeInner> = (<AttributeInner> ",")+, AttributeInner => ActionFn(513);
     check(
@@ -64272,9 +63946,7 @@ internal fun reduce154(
 internal fun reduce155(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<AttributeInner> = (<AttributeInner> ",")+ => ActionFn(514);
     val sym0 = popVariant13(symbols)
@@ -64288,9 +63960,7 @@ internal fun reduce155(
 internal fun reduce156(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Conversion> = Conversion => ActionFn(515);
     val sym0 = popVariant14(symbols)
@@ -64304,9 +63974,7 @@ internal fun reduce156(
 internal fun reduce157(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Conversion> =  => ActionFn(516);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64319,9 +63987,7 @@ internal fun reduce157(
 internal fun reduce158(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Conversion> = (<Conversion> ",")+, Conversion => ActionFn(517);
     check(
@@ -64339,9 +64005,7 @@ internal fun reduce158(
 internal fun reduce159(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Conversion> = (<Conversion> ",")+ => ActionFn(518);
     val sym0 = popVariant15(symbols)
@@ -64355,9 +64019,7 @@ internal fun reduce159(
 internal fun reduce160(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarParameter> = GrammarParameter => ActionFn(541);
     val sym0 = popVariant18(symbols)
@@ -64371,9 +64033,7 @@ internal fun reduce160(
 internal fun reduce161(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarParameter> =  => ActionFn(542);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64386,9 +64046,7 @@ internal fun reduce161(
 internal fun reduce162(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarParameter> = (<GrammarParameter> ",")+, GrammarParameter => ActionFn(543);
     check(
@@ -64406,9 +64064,7 @@ internal fun reduce162(
 internal fun reduce163(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarParameter> = (<GrammarParameter> ",")+ => ActionFn(544);
     val sym0 = popVariant19(symbols)
@@ -64422,9 +64078,7 @@ internal fun reduce163(
 internal fun reduce164(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarWhereClause> = GrammarWhereClause => ActionFn(569);
     val sym0 = popVariant20(symbols)
@@ -64438,9 +64092,7 @@ internal fun reduce164(
 internal fun reduce165(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarWhereClause> =  => ActionFn(570);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64453,9 +64105,7 @@ internal fun reduce165(
 internal fun reduce166(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+, GrammarWhereClause => ActionFn(571);
     check(
@@ -64473,9 +64123,7 @@ internal fun reduce166(
 internal fun reduce167(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<GrammarWhereClause> = (<GrammarWhereClause> ",")+ => ActionFn(572);
     val sym0 = popVariant21(symbols)
@@ -64489,9 +64137,7 @@ internal fun reduce167(
 internal fun reduce168(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<MatchItem> = MatchItem => ActionFn(613);
     val sym0 = popVariant26(symbols)
@@ -64505,9 +64151,7 @@ internal fun reduce168(
 internal fun reduce169(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<MatchItem> =  => ActionFn(614);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64520,9 +64164,7 @@ internal fun reduce169(
 internal fun reduce170(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<MatchItem> = (<MatchItem> ",")+, MatchItem => ActionFn(615);
     check(
@@ -64540,9 +64182,7 @@ internal fun reduce170(
 internal fun reduce171(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<MatchItem> = (<MatchItem> ",")+ => ActionFn(616);
     val sym0 = popVariant27(symbols)
@@ -64556,9 +64196,7 @@ internal fun reduce171(
 internal fun reduce172(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<NotMacroId> = NotMacroId => ActionFn(617);
     val sym0 = popVariant28(symbols)
@@ -64572,9 +64210,7 @@ internal fun reduce172(
 internal fun reduce173(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<NotMacroId> =  => ActionFn(618);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64587,9 +64223,7 @@ internal fun reduce173(
 internal fun reduce174(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<NotMacroId> = (<NotMacroId> ",")+, NotMacroId => ActionFn(619);
     check(
@@ -64607,9 +64241,7 @@ internal fun reduce174(
 internal fun reduce175(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<NotMacroId> = (<NotMacroId> ",")+ => ActionFn(620);
     val sym0 = popVariant29(symbols)
@@ -64623,9 +64255,7 @@ internal fun reduce175(
 internal fun reduce176(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Pattern> = Pattern => ActionFn(621);
     val sym0 = popVariant30(symbols)
@@ -64639,9 +64269,7 @@ internal fun reduce176(
 internal fun reduce177(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Pattern> =  => ActionFn(622);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64654,9 +64282,7 @@ internal fun reduce177(
 internal fun reduce178(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Pattern> = (<Pattern> ",")+, Pattern => ActionFn(623);
     check(
@@ -64674,9 +64300,7 @@ internal fun reduce178(
 internal fun reduce179(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Pattern> = (<Pattern> ",")+ => ActionFn(624);
     val sym0 = popVariant31(symbols)
@@ -64690,9 +64314,7 @@ internal fun reduce179(
 internal fun reduce180(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Symbol> = Symbol => ActionFn(691);
     val sym0 = popVariant32(symbols)
@@ -64706,9 +64328,7 @@ internal fun reduce180(
 internal fun reduce181(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Symbol> =  => ActionFn(692);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64721,9 +64341,7 @@ internal fun reduce181(
 internal fun reduce182(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Symbol> = (<Symbol> ",")+, Symbol => ActionFn(693);
     check(
@@ -64741,9 +64359,7 @@ internal fun reduce182(
 internal fun reduce183(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<Symbol> = (<Symbol> ",")+ => ActionFn(694);
     val sym0 = popVariant33(symbols)
@@ -64757,9 +64373,7 @@ internal fun reduce183(
 internal fun reduce184(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeBoundParameter> = TypeBoundParameter => ActionFn(701);
     val sym0 = popVariant38(symbols)
@@ -64773,9 +64387,7 @@ internal fun reduce184(
 internal fun reduce185(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeBoundParameter> =  => ActionFn(702);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64788,9 +64400,7 @@ internal fun reduce185(
 internal fun reduce186(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+, TypeBoundParameter => ActionFn(703);
     check(
@@ -64808,9 +64418,7 @@ internal fun reduce186(
 internal fun reduce187(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeBoundParameter> = (<TypeBoundParameter> ",")+ => ActionFn(704);
     val sym0 = popVariant39(symbols)
@@ -64824,9 +64432,7 @@ internal fun reduce187(
 internal fun reduce188(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeParameter> = TypeParameter => ActionFn(705);
     val sym0 = popVariant40(symbols)
@@ -64840,9 +64446,7 @@ internal fun reduce188(
 internal fun reduce189(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeParameter> =  => ActionFn(706);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64855,9 +64459,7 @@ internal fun reduce189(
 internal fun reduce190(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeParameter> = (<TypeParameter> ",")+, TypeParameter => ActionFn(707);
     check(
@@ -64875,9 +64477,7 @@ internal fun reduce190(
 internal fun reduce191(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeParameter> = (<TypeParameter> ",")+ => ActionFn(708);
     val sym0 = popVariant41(symbols)
@@ -64891,9 +64491,7 @@ internal fun reduce191(
 internal fun reduce192(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRef> = TypeRef => ActionFn(709);
     val sym0 = popVariant3(symbols)
@@ -64907,9 +64505,7 @@ internal fun reduce192(
 internal fun reduce193(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRef> =  => ActionFn(710);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64922,9 +64518,7 @@ internal fun reduce193(
 internal fun reduce194(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRef> = (<TypeRef> ",")+, TypeRef => ActionFn(711);
     check(
@@ -64942,9 +64536,7 @@ internal fun reduce194(
 internal fun reduce195(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRef> = (<TypeRef> ",")+ => ActionFn(712);
     val sym0 = popVariant42(symbols)
@@ -64958,9 +64550,7 @@ internal fun reduce195(
 internal fun reduce196(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRefOrLifetime> = TypeRefOrLifetime => ActionFn(713);
     val sym0 = popVariant3(symbols)
@@ -64974,9 +64564,7 @@ internal fun reduce196(
 internal fun reduce197(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRefOrLifetime> =  => ActionFn(714);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -64989,9 +64577,7 @@ internal fun reduce197(
 internal fun reduce198(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+, TypeRefOrLifetime => ActionFn(715);
     check(
@@ -65009,9 +64595,7 @@ internal fun reduce198(
 internal fun reduce199(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Comma<TypeRefOrLifetime> = (<TypeRefOrLifetime> ",")+ => ActionFn(716);
     val sym0 = popVariant42(symbols)
@@ -65025,9 +64609,7 @@ internal fun reduce199(
 internal fun reduce200(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Cond = NotMacroId, CondOp, StringLiteral => ActionFn(458);
     check(
@@ -65046,9 +64628,7 @@ internal fun reduce200(
 internal fun reduce201(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // CondOp = "==" => ActionFn(50);
     val sym0 = popVariant0(symbols)
@@ -65062,9 +64642,7 @@ internal fun reduce201(
 internal fun reduce202(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // CondOp = "!=" => ActionFn(51);
     val sym0 = popVariant0(symbols)
@@ -65078,9 +64656,7 @@ internal fun reduce202(
 internal fun reduce203(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // CondOp = "~~" => ActionFn(52);
     val sym0 = popVariant0(symbols)
@@ -65094,9 +64670,7 @@ internal fun reduce203(
 internal fun reduce204(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // CondOp = "!~" => ActionFn(53);
     val sym0 = popVariant0(symbols)
@@ -65110,9 +64684,7 @@ internal fun reduce204(
 internal fun reduce207(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Conversion? = Conversion => ActionFn(280);
     val sym0 = popVariant14(symbols)
@@ -65126,9 +64698,7 @@ internal fun reduce207(
 internal fun reduce208(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Conversion? =  => ActionFn(281);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -65141,9 +64711,7 @@ internal fun reduce208(
 internal fun reduce209(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // EnumToken = "enum", TypeRef, "{", Comma<Conversion>, "}" => ActionFn(460);
     check(
@@ -65164,9 +64732,7 @@ internal fun reduce209(
 internal fun reduce210(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Escape = "Escape" => ActionFn(119);
     val sym0 = popVariant1(symbols)
@@ -65180,9 +64746,7 @@ internal fun reduce210(
 internal fun reduce211(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExprSymbol =  => ActionFn(689);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -65195,9 +64759,7 @@ internal fun reduce211(
 internal fun reduce212(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExprSymbol = Symbol+ => ActionFn(690);
     val sym0 = popVariant33(symbols)
@@ -65211,9 +64773,7 @@ internal fun reduce212(
 internal fun reduce213(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", EnumToken, "}" => ActionFn(487);
     check(
@@ -65233,9 +64793,7 @@ internal fun reduce213(
 internal fun reduce214(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", EnumToken, AssociatedType+, "}" => ActionFn(488);
     check(
@@ -65256,9 +64814,7 @@ internal fun reduce214(
 internal fun reduce215(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, EnumToken, "}" => ActionFn(489);
     check(
@@ -65279,9 +64835,7 @@ internal fun reduce215(
 internal fun reduce216(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, EnumToken, AssociatedType+, "}" => ActionFn(490);
     check(
@@ -65303,9 +64857,7 @@ internal fun reduce216(
 internal fun reduce217(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", "}" => ActionFn(491);
     check(
@@ -65324,9 +64876,7 @@ internal fun reduce217(
 internal fun reduce218(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ExternToken = "extern", "{", AssociatedType+, "}" => ActionFn(492);
     check(
@@ -65346,9 +64896,7 @@ internal fun reduce218(
 internal fun reduce219(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // FieldPattern = Id, ":", Pattern => ActionFn(463);
     check(
@@ -65367,9 +64915,7 @@ internal fun reduce219(
 internal fun reduce220(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // FieldPattern? = FieldPattern => ActionFn(130);
     val sym0 = popVariant16(symbols)
@@ -65383,9 +64929,7 @@ internal fun reduce220(
 internal fun reduce221(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // FieldPattern? =  => ActionFn(131);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -65398,9 +64942,7 @@ internal fun reduce221(
 internal fun reduce222(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ForAll = "for", "<", Comma<TypeParameter>, ">" => ActionFn(13);
     check(
@@ -65420,9 +64962,7 @@ internal fun reduce222(
 internal fun reduce223(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ForAll =  => ActionFn(348);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -65435,9 +64975,7 @@ internal fun reduce223(
 internal fun reduce224(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(717);
     check(
@@ -65458,9 +64996,7 @@ internal fun reduce224(
 internal fun reduce225(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(718);
     check(
@@ -65482,9 +65018,7 @@ internal fun reduce225(
 internal fun reduce226(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(719);
     check(
@@ -65506,9 +65040,7 @@ internal fun reduce226(
 internal fun reduce227(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(720);
     check(
@@ -65531,9 +65063,7 @@ internal fun reduce227(
 internal fun reduce228(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(721);
     check(
@@ -65553,9 +65083,7 @@ internal fun reduce228(
 internal fun reduce229(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(722);
     check(
@@ -65576,9 +65104,7 @@ internal fun reduce229(
 internal fun reduce230(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(723);
     check(
@@ -65599,9 +65125,7 @@ internal fun reduce230(
 internal fun reduce231(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(724);
     check(
@@ -65623,9 +65147,7 @@ internal fun reduce231(
 internal fun reduce232(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(725);
     check(
@@ -65645,9 +65167,7 @@ internal fun reduce232(
 internal fun reduce233(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(726);
     check(
@@ -65668,9 +65188,7 @@ internal fun reduce233(
 internal fun reduce234(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(727);
     check(
@@ -65691,9 +65209,7 @@ internal fun reduce234(
 internal fun reduce235(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(728);
     check(
@@ -65715,9 +65231,7 @@ internal fun reduce235(
 internal fun reduce236(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, ";" => ActionFn(729);
     check(
@@ -65736,9 +65250,7 @@ internal fun reduce236(
 internal fun reduce237(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, ";" => ActionFn(730);
     check(
@@ -65758,9 +65270,7 @@ internal fun reduce237(
 internal fun reduce238(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";" => ActionFn(731);
     check(
@@ -65780,9 +65290,7 @@ internal fun reduce238(
 internal fun reduce239(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";" => ActionFn(732);
     check(
@@ -65803,9 +65311,7 @@ internal fun reduce239(
 internal fun reduce240(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(733);
     check(
@@ -65825,9 +65331,7 @@ internal fun reduce240(
 internal fun reduce241(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(734);
     check(
@@ -65848,9 +65352,7 @@ internal fun reduce241(
 internal fun reduce242(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(735);
     check(
@@ -65871,9 +65373,7 @@ internal fun reduce242(
 internal fun reduce243(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(736);
     check(
@@ -65895,9 +65395,7 @@ internal fun reduce243(
 internal fun reduce244(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, ";" => ActionFn(737);
     check(
@@ -65916,9 +65414,7 @@ internal fun reduce244(
 internal fun reduce245(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(738);
     check(
@@ -65938,9 +65434,7 @@ internal fun reduce245(
 internal fun reduce246(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(739);
     check(
@@ -65960,9 +65454,7 @@ internal fun reduce246(
 internal fun reduce247(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";" => ActionFn(740);
     check(
@@ -65983,9 +65475,7 @@ internal fun reduce247(
 internal fun reduce248(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarWhereClauses, ";" => ActionFn(741);
     check(
@@ -66004,9 +65494,7 @@ internal fun reduce248(
 internal fun reduce249(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(742);
     check(
@@ -66026,9 +65514,7 @@ internal fun reduce249(
 internal fun reduce250(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(743);
     check(
@@ -66048,9 +65534,7 @@ internal fun reduce250(
 internal fun reduce251(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";" => ActionFn(744);
     check(
@@ -66071,9 +65555,7 @@ internal fun reduce251(
 internal fun reduce252(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", ";" => ActionFn(745);
     check(
@@ -66091,9 +65573,7 @@ internal fun reduce252(
 internal fun reduce253(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", ";" => ActionFn(746);
     check(
@@ -66112,9 +65592,7 @@ internal fun reduce253(
 internal fun reduce254(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", ";" => ActionFn(747);
     check(
@@ -66133,9 +65611,7 @@ internal fun reduce254(
 internal fun reduce255(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", ";" => ActionFn(748);
     check(
@@ -66155,9 +65631,7 @@ internal fun reduce255(
 internal fun reduce256(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(749);
     check(
@@ -66179,9 +65653,7 @@ internal fun reduce256(
 internal fun reduce257(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(750);
     check(
@@ -66204,9 +65676,7 @@ internal fun reduce257(
 internal fun reduce258(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(751);
     check(
@@ -66229,9 +65699,7 @@ internal fun reduce258(
 internal fun reduce259(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(752);
     check(
@@ -66255,9 +65723,7 @@ internal fun reduce259(
 internal fun reduce260(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(753);
     check(
@@ -66278,9 +65744,7 @@ internal fun reduce260(
 internal fun reduce261(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(754);
     check(
@@ -66302,9 +65766,7 @@ internal fun reduce261(
 internal fun reduce262(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(755);
     check(
@@ -66326,9 +65788,7 @@ internal fun reduce262(
 internal fun reduce263(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(756);
     check(
@@ -66351,9 +65811,7 @@ internal fun reduce263(
 internal fun reduce264(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(757);
     check(
@@ -66374,9 +65832,7 @@ internal fun reduce264(
 internal fun reduce265(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(758);
     check(
@@ -66398,9 +65854,7 @@ internal fun reduce265(
 internal fun reduce266(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(759);
     check(
@@ -66422,9 +65876,7 @@ internal fun reduce266(
 internal fun reduce267(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(760);
     check(
@@ -66447,9 +65899,7 @@ internal fun reduce267(
 internal fun reduce268(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(761);
     check(
@@ -66469,9 +65919,7 @@ internal fun reduce268(
 internal fun reduce269(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(762);
     check(
@@ -66492,9 +65940,7 @@ internal fun reduce269(
 internal fun reduce270(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(763);
     check(
@@ -66515,9 +65961,7 @@ internal fun reduce270(
 internal fun reduce271(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(764);
     check(
@@ -66539,9 +65983,7 @@ internal fun reduce271(
 internal fun reduce272(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(765);
     check(
@@ -66562,9 +66004,7 @@ internal fun reduce272(
 internal fun reduce273(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(766);
     check(
@@ -66586,9 +66026,7 @@ internal fun reduce273(
 internal fun reduce274(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(767);
     check(
@@ -66610,9 +66048,7 @@ internal fun reduce274(
 internal fun reduce275(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(768);
     check(
@@ -66635,9 +66071,7 @@ internal fun reduce275(
 internal fun reduce276(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(769);
     check(
@@ -66657,9 +66091,7 @@ internal fun reduce276(
 internal fun reduce277(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(770);
     check(
@@ -66680,9 +66112,7 @@ internal fun reduce277(
 internal fun reduce278(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(771);
     check(
@@ -66703,9 +66133,7 @@ internal fun reduce278(
 internal fun reduce279(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(772);
     check(
@@ -66727,9 +66155,7 @@ internal fun reduce279(
 internal fun reduce280(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(773);
     check(
@@ -66749,9 +66175,7 @@ internal fun reduce280(
 internal fun reduce281(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(774);
     check(
@@ -66772,9 +66196,7 @@ internal fun reduce281(
 internal fun reduce282(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(775);
     check(
@@ -66795,9 +66217,7 @@ internal fun reduce282(
 internal fun reduce283(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(776);
     check(
@@ -66819,9 +66239,7 @@ internal fun reduce283(
 internal fun reduce284(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = "grammar", ";", GrammarItem+ => ActionFn(777);
     check(
@@ -66840,9 +66258,7 @@ internal fun reduce284(
 internal fun reduce285(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, "grammar", ";", GrammarItem+ => ActionFn(778);
     check(
@@ -66862,9 +66278,7 @@ internal fun reduce285(
 internal fun reduce286(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, "grammar", ";", GrammarItem+ => ActionFn(779);
     check(
@@ -66884,9 +66298,7 @@ internal fun reduce286(
 internal fun reduce287(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, "grammar", ";", GrammarItem+ => ActionFn(780);
     check(
@@ -66907,9 +66319,7 @@ internal fun reduce287(
 internal fun reduce288(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(781);
     check(
@@ -66931,9 +66341,7 @@ internal fun reduce288(
 internal fun reduce289(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(782);
     check(
@@ -66956,9 +66364,7 @@ internal fun reduce289(
 internal fun reduce290(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(783);
     check(
@@ -66981,9 +66387,7 @@ internal fun reduce290(
 internal fun reduce291(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";" => ActionFn(784);
     check(
@@ -67007,9 +66411,7 @@ internal fun reduce291(
 internal fun reduce292(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(785);
     check(
@@ -67030,9 +66432,7 @@ internal fun reduce292(
 internal fun reduce293(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(786);
     check(
@@ -67054,9 +66454,7 @@ internal fun reduce293(
 internal fun reduce294(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(787);
     check(
@@ -67078,9 +66476,7 @@ internal fun reduce294(
 internal fun reduce295(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";" => ActionFn(788);
     check(
@@ -67103,9 +66499,7 @@ internal fun reduce295(
 internal fun reduce296(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(789);
     check(
@@ -67126,9 +66520,7 @@ internal fun reduce296(
 internal fun reduce297(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(790);
     check(
@@ -67150,9 +66542,7 @@ internal fun reduce297(
 internal fun reduce298(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(791);
     check(
@@ -67174,9 +66564,7 @@ internal fun reduce298(
 internal fun reduce299(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";" => ActionFn(792);
     check(
@@ -67199,9 +66587,7 @@ internal fun reduce299(
 internal fun reduce300(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, ";" => ActionFn(793);
     check(
@@ -67221,9 +66607,7 @@ internal fun reduce300(
 internal fun reduce301(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(794);
     check(
@@ -67244,9 +66628,7 @@ internal fun reduce301(
 internal fun reduce302(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(795);
     check(
@@ -67267,9 +66649,7 @@ internal fun reduce302(
 internal fun reduce303(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";" => ActionFn(796);
     check(
@@ -67291,9 +66671,7 @@ internal fun reduce303(
 internal fun reduce304(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(797);
     check(
@@ -67314,9 +66692,7 @@ internal fun reduce304(
 internal fun reduce305(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(798);
     check(
@@ -67338,9 +66714,7 @@ internal fun reduce305(
 internal fun reduce306(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(799);
     check(
@@ -67362,9 +66736,7 @@ internal fun reduce306(
 internal fun reduce307(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";" => ActionFn(800);
     check(
@@ -67387,9 +66759,7 @@ internal fun reduce307(
 internal fun reduce308(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(801);
     check(
@@ -67409,9 +66779,7 @@ internal fun reduce308(
 internal fun reduce309(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(802);
     check(
@@ -67432,9 +66800,7 @@ internal fun reduce309(
 internal fun reduce310(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(803);
     check(
@@ -67455,9 +66821,7 @@ internal fun reduce310(
 internal fun reduce311(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";" => ActionFn(804);
     check(
@@ -67479,9 +66843,7 @@ internal fun reduce311(
 internal fun reduce312(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(805);
     check(
@@ -67501,9 +66863,7 @@ internal fun reduce312(
 internal fun reduce313(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(806);
     check(
@@ -67524,9 +66884,7 @@ internal fun reduce313(
 internal fun reduce314(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(807);
     check(
@@ -67547,9 +66905,7 @@ internal fun reduce314(
 internal fun reduce315(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";" => ActionFn(808);
     check(
@@ -67571,9 +66927,7 @@ internal fun reduce315(
 internal fun reduce316(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", ";" => ActionFn(809);
     check(
@@ -67592,9 +66946,7 @@ internal fun reduce316(
 internal fun reduce317(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", ";" => ActionFn(810);
     check(
@@ -67614,9 +66966,7 @@ internal fun reduce317(
 internal fun reduce318(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", ";" => ActionFn(811);
     check(
@@ -67636,9 +66986,7 @@ internal fun reduce318(
 internal fun reduce319(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";" => ActionFn(812);
     check(
@@ -67659,9 +67007,7 @@ internal fun reduce319(
 internal fun reduce320(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(813);
     check(
@@ -67684,9 +67030,7 @@ internal fun reduce320(
 internal fun reduce321(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(814);
     check(
@@ -67710,9 +67054,7 @@ internal fun reduce321(
 internal fun reduce322(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(815);
     check(
@@ -67736,9 +67078,7 @@ internal fun reduce322(
 internal fun reduce323(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(816);
     check(
@@ -67763,9 +67103,7 @@ internal fun reduce323(
 internal fun reduce324(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(817);
     check(
@@ -67787,9 +67125,7 @@ internal fun reduce324(
 internal fun reduce325(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(818);
     check(
@@ -67812,9 +67148,7 @@ internal fun reduce325(
 internal fun reduce326(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(819);
     check(
@@ -67837,9 +67171,7 @@ internal fun reduce326(
 internal fun reduce327(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarParameters, ";", GrammarItem+ => ActionFn(820);
     check(
@@ -67863,9 +67195,7 @@ internal fun reduce327(
 internal fun reduce328(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(821);
     check(
@@ -67887,9 +67217,7 @@ internal fun reduce328(
 internal fun reduce329(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(822);
     check(
@@ -67912,9 +67240,7 @@ internal fun reduce329(
 internal fun reduce330(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(823);
     check(
@@ -67937,9 +67263,7 @@ internal fun reduce330(
 internal fun reduce331(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(824);
     check(
@@ -67963,9 +67287,7 @@ internal fun reduce331(
 internal fun reduce332(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(825);
     check(
@@ -67986,9 +67308,7 @@ internal fun reduce332(
 internal fun reduce333(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(826);
     check(
@@ -68010,9 +67330,7 @@ internal fun reduce333(
 internal fun reduce334(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(827);
     check(
@@ -68034,9 +67352,7 @@ internal fun reduce334(
 internal fun reduce335(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarParameters, ";", GrammarItem+ => ActionFn(828);
     check(
@@ -68059,9 +67375,7 @@ internal fun reduce335(
 internal fun reduce336(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(829);
     check(
@@ -68083,9 +67397,7 @@ internal fun reduce336(
 internal fun reduce337(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(830);
     check(
@@ -68108,9 +67420,7 @@ internal fun reduce337(
 internal fun reduce338(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(831);
     check(
@@ -68133,9 +67443,7 @@ internal fun reduce338(
 internal fun reduce339(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, GrammarWhereClauses, ";", GrammarItem+ => ActionFn(832);
     check(
@@ -68159,9 +67467,7 @@ internal fun reduce339(
 internal fun reduce340(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(833);
     check(
@@ -68182,9 +67488,7 @@ internal fun reduce340(
 internal fun reduce341(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(834);
     check(
@@ -68206,9 +67510,7 @@ internal fun reduce341(
 internal fun reduce342(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(835);
     check(
@@ -68230,9 +67532,7 @@ internal fun reduce342(
 internal fun reduce343(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarTypeParameters, ";", GrammarItem+ => ActionFn(836);
     check(
@@ -68255,9 +67555,7 @@ internal fun reduce343(
 internal fun reduce344(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(837);
     check(
@@ -68278,9 +67576,7 @@ internal fun reduce344(
 internal fun reduce345(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(838);
     check(
@@ -68302,9 +67598,7 @@ internal fun reduce345(
 internal fun reduce346(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(839);
     check(
@@ -68326,9 +67620,7 @@ internal fun reduce346(
 internal fun reduce347(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", GrammarWhereClauses, ";", GrammarItem+ => ActionFn(840);
     check(
@@ -68351,9 +67643,7 @@ internal fun reduce347(
 internal fun reduce348(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Attribute+, "grammar", ";", GrammarItem+ => ActionFn(841);
     check(
@@ -68373,9 +67663,7 @@ internal fun reduce348(
 internal fun reduce349(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(842);
     check(
@@ -68396,9 +67684,7 @@ internal fun reduce349(
 internal fun reduce350(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(843);
     check(
@@ -68419,9 +67705,7 @@ internal fun reduce350(
 internal fun reduce351(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Grammar = ShebangAttribute+, Use+, Attribute+, "grammar", ";", GrammarItem+ => ActionFn(844);
     check(
@@ -68443,9 +67727,7 @@ internal fun reduce351(
 internal fun reduce352(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem = Use => ActionFn(24);
     val sym0 = popVariant67(symbols)
@@ -68459,9 +67741,7 @@ internal fun reduce352(
 internal fun reduce353(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem = MatchToken => ActionFn(25);
     val sym0 = popVariant67(symbols)
@@ -68475,9 +67755,7 @@ internal fun reduce353(
 internal fun reduce354(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem = ExternToken => ActionFn(26);
     val sym0 = popVariant67(symbols)
@@ -68491,9 +67769,7 @@ internal fun reduce354(
 internal fun reduce355(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem = Nonterminal => ActionFn(27);
     val sym0 = popVariant67(symbols)
@@ -68507,9 +67783,7 @@ internal fun reduce355(
 internal fun reduce356(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem* =  => ActionFn(189);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -68522,9 +67796,7 @@ internal fun reduce356(
 internal fun reduce357(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem* = GrammarItem+ => ActionFn(190);
     val sym0 = popVariant70(symbols)
@@ -68538,9 +67810,7 @@ internal fun reduce357(
 internal fun reduce358(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem+ = GrammarItem => ActionFn(211);
     val sym0 = popVariant67(symbols)
@@ -68554,9 +67824,7 @@ internal fun reduce358(
 internal fun reduce359(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarItem+ = GrammarItem+, GrammarItem => ActionFn(212);
     check(
@@ -68574,9 +67842,7 @@ internal fun reduce359(
 internal fun reduce360(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarParameter = Id, ":", TypeRef => ActionFn(23);
     check(
@@ -68595,9 +67861,7 @@ internal fun reduce360(
 internal fun reduce361(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarParameter? = GrammarParameter => ActionFn(241);
     val sym0 = popVariant18(symbols)
@@ -68611,9 +67875,7 @@ internal fun reduce361(
 internal fun reduce362(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarParameter? =  => ActionFn(242);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -68626,9 +67888,7 @@ internal fun reduce362(
 internal fun reduce363(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarParameters = "(", Comma<GrammarParameter>, ")" => ActionFn(22);
     check(
@@ -68647,9 +67907,7 @@ internal fun reduce363(
 internal fun reduce364(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarParameters? = GrammarParameters => ActionFn(193);
     val sym0 = popVariant55(symbols)
@@ -68663,9 +67921,7 @@ internal fun reduce364(
 internal fun reduce365(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarParameters? =  => ActionFn(194);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -68678,9 +67934,7 @@ internal fun reduce365(
 internal fun reduce366(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarTypeParameters = "<", Comma<TypeParameter>, ">" => ActionFn(7);
     check(
@@ -68699,9 +67953,7 @@ internal fun reduce366(
 internal fun reduce367(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarTypeParameters? = GrammarTypeParameters => ActionFn(195);
     val sym0 = popVariant61(symbols)
@@ -68715,9 +67967,7 @@ internal fun reduce367(
 internal fun reduce368(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarTypeParameters? =  => ActionFn(196);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -68730,9 +67980,7 @@ internal fun reduce368(
 internal fun reduce369(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 3,
@@ -68750,9 +67998,7 @@ internal fun reduce369(
 internal fun reduce370(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarWhereClause = "for", "<", Comma<TypeParameter>, ">", TypeRef, ":", TypeBounds => ActionFn(523);
     check(
@@ -68775,9 +68021,7 @@ internal fun reduce370(
 internal fun reduce371(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarWhereClause = TypeRef, ":", TypeBounds => ActionFn(524);
     check(
@@ -68796,9 +68040,7 @@ internal fun reduce371(
 internal fun reduce372(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarWhereClause? = GrammarWhereClause => ActionFn(218);
     val sym0 = popVariant20(symbols)
@@ -68812,9 +68054,7 @@ internal fun reduce372(
 internal fun reduce373(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarWhereClause? =  => ActionFn(219);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -68827,9 +68067,7 @@ internal fun reduce373(
 internal fun reduce374(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarWhereClauses = "where", Comma<GrammarWhereClause> => ActionFn(10);
     check(
@@ -68847,9 +68085,7 @@ internal fun reduce374(
 internal fun reduce375(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarWhereClauses? = GrammarWhereClauses => ActionFn(191);
     val sym0 = popVariant56(symbols)
@@ -68863,9 +68099,7 @@ internal fun reduce375(
 internal fun reduce376(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // GrammarWhereClauses? =  => ActionFn(192);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -68878,9 +68112,7 @@ internal fun reduce376(
 internal fun reduce377(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Id = "Id" => ActionFn(117);
     val sym0 = popVariant1(symbols)
@@ -68894,9 +68126,7 @@ internal fun reduce377(
 internal fun reduce378(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Id = "MacroId" => ActionFn(118);
     val sym0 = popVariant1(symbols)
@@ -68910,9 +68140,7 @@ internal fun reduce378(
 internal fun reduce379(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant1(symbols)
     val start = sym0.first
@@ -68925,9 +68153,7 @@ internal fun reduce379(
 internal fun reduce380(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -68940,9 +68166,7 @@ internal fun reduce380(
 internal fun reduce381(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
@@ -68954,9 +68178,7 @@ internal fun reduce381(
 internal fun reduce382(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MacroId = "MacroId" => ActionFn(115);
     val sym0 = popVariant1(symbols)
@@ -68970,9 +68192,7 @@ internal fun reduce382(
 internal fun reduce383(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchContents = Comma<MatchItem> => ActionFn(93);
     val sym0 = popVariant57(symbols)
@@ -68986,9 +68206,7 @@ internal fun reduce383(
 internal fun reduce384(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchItem = "_" => ActionFn(465);
     val sym0 = popVariant0(symbols)
@@ -69002,9 +68220,7 @@ internal fun reduce384(
 internal fun reduce385(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchItem = TerminalLiteral => ActionFn(466);
     val sym0 = popVariant80(symbols)
@@ -69018,9 +68234,7 @@ internal fun reduce385(
 internal fun reduce387(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchItem? = MatchItem => ActionFn(275);
     val sym0 = popVariant26(symbols)
@@ -69034,9 +68248,7 @@ internal fun reduce387(
 internal fun reduce388(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchItem? =  => ActionFn(276);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -69049,9 +68261,7 @@ internal fun reduce388(
 internal fun reduce389(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchMapping = Terminal => ActionFn(98);
     val sym0 = popVariant89(symbols)
@@ -69065,9 +68275,7 @@ internal fun reduce389(
 internal fun reduce390(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchMapping = "{", "}" => ActionFn(99);
     check(
@@ -69085,9 +68293,7 @@ internal fun reduce390(
 internal fun reduce391(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TerminalLiteral = QuotedLiteral => ActionFn(97);
     val sym0 = popVariant80(symbols)
@@ -69101,9 +68307,7 @@ internal fun reduce391(
 internal fun reduce392(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchToken = MatchTokenInt => ActionFn(90);
     val sym0 = popVariant81(symbols)
@@ -69117,9 +68321,7 @@ internal fun reduce392(
 internal fun reduce393(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchTokenInt = MatchTokenInt, "else", "{", MatchContents, "}" => ActionFn(91);
     check(
@@ -69140,9 +68342,7 @@ internal fun reduce393(
 internal fun reduce394(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // MatchTokenInt = "match", "{", MatchContents, "}" => ActionFn(468);
     check(
@@ -69162,9 +68362,7 @@ internal fun reduce394(
 internal fun reduce395(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Nonterminal = Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(505);
     check(
@@ -69186,9 +68384,7 @@ internal fun reduce395(
 internal fun reduce396(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Nonterminal = Attribute+, Visibility, NonterminalName, ":", TypeRef, "=", Alternatives => ActionFn(506);
     check(
@@ -69211,9 +68407,7 @@ internal fun reduce396(
 internal fun reduce397(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Nonterminal = Visibility, NonterminalName, "=", Alternatives => ActionFn(507);
     check(
@@ -69233,9 +68427,7 @@ internal fun reduce397(
 internal fun reduce398(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Nonterminal = Attribute+, Visibility, NonterminalName, "=", Alternatives => ActionFn(508);
     check(
@@ -69256,9 +68448,7 @@ internal fun reduce398(
 internal fun reduce399(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // NonterminalName = MacroId, "<", Comma<NotMacroId>, ">" => ActionFn(38);
     check(
@@ -69278,9 +68468,7 @@ internal fun reduce399(
 internal fun reduce400(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // NonterminalName = NotMacroId => ActionFn(39);
     val sym0 = popVariant28(symbols)
@@ -69294,9 +68482,7 @@ internal fun reduce400(
 internal fun reduce401(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // NonterminalName = "Escape" => ActionFn(40);
     val sym0 = popVariant1(symbols)
@@ -69310,9 +68496,7 @@ internal fun reduce401(
 internal fun reduce402(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // NotMacroId = "Id" => ActionFn(116);
     val sym0 = popVariant1(symbols)
@@ -69326,9 +68510,7 @@ internal fun reduce402(
 internal fun reduce403(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // NotMacroId? = NotMacroId => ActionFn(251);
     val sym0 = popVariant28(symbols)
@@ -69342,9 +68524,7 @@ internal fun reduce403(
 internal fun reduce404(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // NotMacroId? =  => ActionFn(252);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -69357,9 +68537,7 @@ internal fun reduce404(
 internal fun reduce405(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Path = "::", Id => ActionFn(378);
     check(
@@ -69377,9 +68555,7 @@ internal fun reduce405(
 internal fun reduce406(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Path = "::", (<Id> "::")+, Id => ActionFn(379);
     check(
@@ -69398,9 +68574,7 @@ internal fun reduce406(
 internal fun reduce407(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Path = Id => ActionFn(380);
     val sym0 = popVariant22(symbols)
@@ -69414,9 +68588,7 @@ internal fun reduce407(
 internal fun reduce408(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Path = (<Id> "::")+, Id => ActionFn(381);
     check(
@@ -69434,9 +68606,7 @@ internal fun reduce408(
 internal fun reduce409(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Pattern = PatternKind => ActionFn(471);
     val sym0 = popVariant86(symbols)
@@ -69450,9 +68620,7 @@ internal fun reduce409(
 internal fun reduce410(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Pattern? = Pattern => ActionFn(285);
     val sym0 = popVariant30(symbols)
@@ -69466,9 +68634,7 @@ internal fun reduce410(
 internal fun reduce411(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Pattern? =  => ActionFn(286);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -69481,9 +68647,7 @@ internal fun reduce411(
 internal fun reduce412(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path, "(", Comma<Pattern>, ")" => ActionFn(104);
     check(
@@ -69503,9 +68667,7 @@ internal fun reduce412(
 internal fun reduce413(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", FieldPattern, "}" => ActionFn(519);
     check(
@@ -69525,9 +68687,7 @@ internal fun reduce413(
 internal fun reduce414(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", "}" => ActionFn(520);
     check(
@@ -69546,9 +68706,7 @@ internal fun reduce414(
 internal fun reduce415(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, FieldPattern, "}" => ActionFn(521);
     check(
@@ -69569,9 +68727,7 @@ internal fun reduce415(
 internal fun reduce416(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, "}" => ActionFn(522);
     check(
@@ -69591,9 +68747,7 @@ internal fun reduce416(
 internal fun reduce417(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", "..", "}" => ActionFn(366);
     check(
@@ -69613,9 +68767,7 @@ internal fun reduce417(
 internal fun reduce418(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path, "{", (<FieldPattern> ",")+, "..", "}" => ActionFn(367);
     check(
@@ -69636,9 +68788,7 @@ internal fun reduce418(
 internal fun reduce419(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = "_" => ActionFn(107);
     val sym0 = popVariant0(symbols)
@@ -69652,9 +68802,7 @@ internal fun reduce419(
 internal fun reduce420(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = ".." => ActionFn(108);
     val sym0 = popVariant0(symbols)
@@ -69668,9 +68816,7 @@ internal fun reduce420(
 internal fun reduce421(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = "<", TypeRef, ">" => ActionFn(109);
     check(
@@ -69689,9 +68835,7 @@ internal fun reduce421(
 internal fun reduce422(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = "(", Comma<Pattern>, ")" => ActionFn(110);
     check(
@@ -69710,9 +68854,7 @@ internal fun reduce422(
 internal fun reduce423(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = "CharLiteral" => ActionFn(111);
     val sym0 = popVariant1(symbols)
@@ -69726,9 +68868,7 @@ internal fun reduce423(
 internal fun reduce424(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = Path => ActionFn(112);
     val sym0 = popVariant84(symbols)
@@ -69742,9 +68882,7 @@ internal fun reduce424(
 internal fun reduce425(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // PatternKind = StringConstant => ActionFn(113);
     val sym0 = popVariant91(symbols)
@@ -69758,9 +68896,7 @@ internal fun reduce425(
 internal fun reduce426(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -69773,9 +68909,7 @@ internal fun reduce426(
 internal fun reduce427(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
     val end = start
@@ -69787,9 +68921,7 @@ internal fun reduce427(
 internal fun reduce428(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 2,
@@ -69806,9 +68938,7 @@ internal fun reduce428(
 internal fun reduce429(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant25(symbols)
     val start = sym0.first
@@ -69821,9 +68951,7 @@ internal fun reduce429(
 internal fun reduce430(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Plus<TypeBound> = TypeBound => ActionFn(697);
     val sym0 = popVariant36(symbols)
@@ -69837,9 +68965,7 @@ internal fun reduce430(
 internal fun reduce431(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Plus<TypeBound> =  => ActionFn(698);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -69852,9 +68978,7 @@ internal fun reduce431(
 internal fun reduce432(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Plus<TypeBound> = (<TypeBound> "+")+, TypeBound => ActionFn(699);
     check(
@@ -69872,9 +68996,7 @@ internal fun reduce432(
 internal fun reduce433(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Plus<TypeBound> = (<TypeBound> "+")+ => ActionFn(700);
     val sym0 = popVariant37(symbols)
@@ -69888,9 +69010,7 @@ internal fun reduce433(
 internal fun reduce434(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // QuotedLiteral = StringLiteral => ActionFn(124);
     val sym0 = popVariant22(symbols)
@@ -69904,9 +69024,7 @@ internal fun reduce434(
 internal fun reduce435(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // QuotedLiteral = RegexLiteral => ActionFn(125);
     val sym0 = popVariant22(symbols)
@@ -69920,9 +69038,7 @@ internal fun reduce435(
 internal fun reduce436(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // QuotedTerminal = QuotedLiteral => ActionFn(123);
     val sym0 = popVariant80(symbols)
@@ -69936,9 +69052,7 @@ internal fun reduce436(
 internal fun reduce437(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // RegexLiteral = "RegexLiteral" => ActionFn(128);
     val sym0 = popVariant1(symbols)
@@ -69952,9 +69066,7 @@ internal fun reduce437(
 internal fun reduce438(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // RepeatOp = "+" => ActionFn(61);
     val sym0 = popVariant0(symbols)
@@ -69968,9 +69080,7 @@ internal fun reduce438(
 internal fun reduce439(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // RepeatOp = "*" => ActionFn(62);
     val sym0 = popVariant0(symbols)
@@ -69984,9 +69094,7 @@ internal fun reduce439(
 internal fun reduce440(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // RepeatOp = "?" => ActionFn(63);
     val sym0 = popVariant0(symbols)
@@ -70000,9 +69108,7 @@ internal fun reduce440(
 internal fun reduce441(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ShebangAttribute = "#![...]" => ActionFn(129);
     val sym0 = popVariant1(symbols)
@@ -70016,9 +69122,7 @@ internal fun reduce441(
 internal fun reduce442(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ShebangAttribute* =  => ActionFn(203);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -70031,9 +69135,7 @@ internal fun reduce442(
 internal fun reduce443(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ShebangAttribute* = ShebangAttribute+ => ActionFn(204);
     val sym0 = popVariant92(symbols)
@@ -70047,9 +69149,7 @@ internal fun reduce443(
 internal fun reduce444(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ShebangAttribute+ = ShebangAttribute => ActionFn(205);
     val sym0 = popVariant91(symbols)
@@ -70063,9 +69163,7 @@ internal fun reduce444(
 internal fun reduce445(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // ShebangAttribute+ = ShebangAttribute+, ShebangAttribute => ActionFn(206);
     check(
@@ -70083,9 +69181,7 @@ internal fun reduce445(
 internal fun reduce448(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol = "<", "mut", Id, ":", Symbol0, ">" => ActionFn(472);
     check(
@@ -70107,9 +69203,7 @@ internal fun reduce448(
 internal fun reduce449(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol = "<", Id, ":", Symbol0, ">" => ActionFn(473);
     check(
@@ -70130,9 +69224,7 @@ internal fun reduce449(
 internal fun reduce450(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol = "<", Symbol0, ">" => ActionFn(474);
     check(
@@ -70151,9 +69243,7 @@ internal fun reduce450(
 internal fun reduce451(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol = "<", Tuples, ":", Symbol0, ">" => ActionFn(475);
     check(
@@ -70174,9 +69264,7 @@ internal fun reduce451(
 internal fun reduce452(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol = Symbol0 => ActionFn(58);
     val sym0 = popVariant32(symbols)
@@ -70190,9 +69278,7 @@ internal fun reduce452(
 internal fun reduce453(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol* =  => ActionFn(156);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -70205,9 +69291,7 @@ internal fun reduce453(
 internal fun reduce454(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol* = Symbol+ => ActionFn(157);
     val sym0 = popVariant33(symbols)
@@ -70221,9 +69305,7 @@ internal fun reduce454(
 internal fun reduce455(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol+ = Symbol => ActionFn(163);
     val sym0 = popVariant32(symbols)
@@ -70237,9 +69319,7 @@ internal fun reduce455(
 internal fun reduce456(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol+ = Symbol+, Symbol => ActionFn(164);
     check(
@@ -70257,9 +69337,7 @@ internal fun reduce456(
 internal fun reduce457(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol0 = Symbol1 => ActionFn(59);
     val sym0 = popVariant32(symbols)
@@ -70273,9 +69351,7 @@ internal fun reduce457(
 internal fun reduce458(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol0 = Symbol0, RepeatOp => ActionFn(476);
     check(
@@ -70293,9 +69369,7 @@ internal fun reduce458(
 internal fun reduce459(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol1 = SymbolKind1 => ActionFn(477);
     val sym0 = popVariant94(symbols)
@@ -70309,9 +69383,7 @@ internal fun reduce459(
 internal fun reduce460(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol? = Symbol => ActionFn(261);
     val sym0 = popVariant32(symbols)
@@ -70325,9 +69397,7 @@ internal fun reduce460(
 internal fun reduce461(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Symbol? =  => ActionFn(262);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -70340,9 +69410,7 @@ internal fun reduce461(
 internal fun reduce462(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = MacroId, "<", Comma<Symbol>, ">" => ActionFn(65);
     check(
@@ -70362,9 +69430,7 @@ internal fun reduce462(
 internal fun reduce463(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = QuotedTerminal => ActionFn(66);
     val sym0 = popVariant89(symbols)
@@ -70378,9 +69444,7 @@ internal fun reduce463(
 internal fun reduce464(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = "Id" => ActionFn(67);
     val sym0 = popVariant1(symbols)
@@ -70394,9 +69458,7 @@ internal fun reduce464(
 internal fun reduce465(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = Escape => ActionFn(68);
     val sym0 = popVariant22(symbols)
@@ -70410,9 +69472,7 @@ internal fun reduce465(
 internal fun reduce466(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = "(", ExprSymbol, ")" => ActionFn(69);
     check(
@@ -70431,9 +69491,7 @@ internal fun reduce466(
 internal fun reduce467(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = "@L" => ActionFn(70);
     val sym0 = popVariant0(symbols)
@@ -70447,9 +69505,7 @@ internal fun reduce467(
 internal fun reduce468(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = "@R" => ActionFn(71);
     val sym0 = popVariant0(symbols)
@@ -70463,9 +69519,7 @@ internal fun reduce468(
 internal fun reduce469(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // SymbolKind1 = "!" => ActionFn(72);
     val sym0 = popVariant0(symbols)
@@ -70479,9 +69533,7 @@ internal fun reduce469(
 internal fun reduce470(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Terminal = QuotedTerminal => ActionFn(121);
     val sym0 = popVariant89(symbols)
@@ -70495,9 +69547,7 @@ internal fun reduce470(
 internal fun reduce471(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Terminal = "Id" => ActionFn(122);
     val sym0 = popVariant1(symbols)
@@ -70511,9 +69561,7 @@ internal fun reduce471(
 internal fun reduce472(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Top = "StartGrammar", Grammar => ActionFn(1);
     check(
@@ -70531,9 +69579,7 @@ internal fun reduce472(
 internal fun reduce473(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Top = "StartPattern", Pattern => ActionFn(2);
     check(
@@ -70551,9 +69597,7 @@ internal fun reduce473(
 internal fun reduce474(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Top = "StartMatchMapping", MatchMapping => ActionFn(3);
     check(
@@ -70571,9 +69615,7 @@ internal fun reduce474(
 internal fun reduce475(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Top = "StartTypeRef", TypeRef => ActionFn(4);
     check(
@@ -70591,9 +69633,7 @@ internal fun reduce475(
 internal fun reduce476(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Top = "StartGrammarWhereClauses", GrammarWhereClauses => ActionFn(5);
     check(
@@ -70611,9 +69651,7 @@ internal fun reduce476(
 internal fun reduce477(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TupleItem = "mut", Id => ActionFn(328);
     check(
@@ -70631,9 +69669,7 @@ internal fun reduce477(
 internal fun reduce478(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TupleItem = Id => ActionFn(329);
     val sym0 = popVariant22(symbols)
@@ -70647,9 +69683,7 @@ internal fun reduce478(
 internal fun reduce479(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TupleItem = Tuples => ActionFn(75);
     val sym0 = popVariant97(symbols)
@@ -70663,9 +69697,7 @@ internal fun reduce479(
 internal fun reduce480(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TupleItem? = TupleItem => ActionFn(148);
     val sym0 = popVariant34(symbols)
@@ -70679,9 +69711,7 @@ internal fun reduce480(
 internal fun reduce481(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TupleItem? =  => ActionFn(149);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -70694,9 +69724,7 @@ internal fun reduce481(
 internal fun reduce482(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Tuples = "(", (<TupleItem> ",")+, TupleItem, ")" => ActionFn(695);
     check(
@@ -70716,9 +69744,7 @@ internal fun reduce482(
 internal fun reduce483(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Tuples = "(", (<TupleItem> ",")+, ")" => ActionFn(696);
     check(
@@ -70737,9 +69763,7 @@ internal fun reduce483(
 internal fun reduce484(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -70752,9 +69776,7 @@ internal fun reduce484(
 internal fun reduce485(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(525);
     check(
@@ -70780,9 +69802,7 @@ internal fun reduce485(
 internal fun reduce486(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = Path, "(", Comma<TypeRef>, ")", "->", TypeRef => ActionFn(526);
     check(
@@ -70804,9 +69824,7 @@ internal fun reduce486(
 internal fun reduce487(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "(", Comma<TypeRef>, ")" => ActionFn(527);
     check(
@@ -70830,9 +69848,7 @@ internal fun reduce487(
 internal fun reduce488(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = Path, "(", Comma<TypeRef>, ")" => ActionFn(528);
     check(
@@ -70852,9 +69868,7 @@ internal fun reduce488(
 internal fun reduce489(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(529);
     check(
@@ -70878,9 +69892,7 @@ internal fun reduce489(
 internal fun reduce490(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = Path, "<", Comma<TypeBoundParameter>, ">" => ActionFn(530);
     check(
@@ -70900,9 +69912,7 @@ internal fun reduce490(
 internal fun reduce491(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = "for", "<", Comma<TypeParameter>, ">", Path => ActionFn(531);
     check(
@@ -70923,9 +69933,7 @@ internal fun reduce491(
 internal fun reduce492(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound = Path => ActionFn(532);
     val sym0 = popVariant84(symbols)
@@ -70939,9 +69947,7 @@ internal fun reduce492(
 internal fun reduce493(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound? = TypeBound => ActionFn(226);
     val sym0 = popVariant36(symbols)
@@ -70955,9 +69961,7 @@ internal fun reduce493(
 internal fun reduce494(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBound? =  => ActionFn(227);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -70970,9 +69974,7 @@ internal fun reduce494(
 internal fun reduce495(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -70985,9 +69987,7 @@ internal fun reduce495(
 internal fun reduce496(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBoundParameter = TypeRef => ActionFn(20);
     val sym0 = popVariant3(symbols)
@@ -71001,9 +70001,7 @@ internal fun reduce496(
 internal fun reduce497(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBoundParameter = Id, "=", TypeRef => ActionFn(21);
     check(
@@ -71022,9 +70020,7 @@ internal fun reduce497(
 internal fun reduce498(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBoundParameter? = TypeBoundParameter => ActionFn(236);
     val sym0 = popVariant38(symbols)
@@ -71038,9 +70034,7 @@ internal fun reduce498(
 internal fun reduce499(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBoundParameter? =  => ActionFn(237);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -71053,9 +70047,7 @@ internal fun reduce499(
 internal fun reduce500(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeBounds = Plus<TypeBound> => ActionFn(15);
     val sym0 = popVariant88(symbols)
@@ -71069,9 +70061,7 @@ internal fun reduce500(
 internal fun reduce501(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -71084,9 +70074,7 @@ internal fun reduce501(
 internal fun reduce502(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeParameter = Id => ActionFn(9);
     val sym0 = popVariant22(symbols)
@@ -71100,9 +70088,7 @@ internal fun reduce502(
 internal fun reduce503(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeParameter? = TypeParameter => ActionFn(213);
     val sym0 = popVariant40(symbols)
@@ -71116,9 +70102,7 @@ internal fun reduce503(
 internal fun reduce504(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeParameter? =  => ActionFn(214);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -71131,9 +70115,7 @@ internal fun reduce504(
 internal fun reduce505(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef = "(", Comma<TypeRef>, ")" => ActionFn(76);
     check(
@@ -71152,9 +70134,7 @@ internal fun reduce505(
 internal fun reduce506(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef = "[", TypeRef, "]" => ActionFn(77);
     check(
@@ -71173,9 +70153,7 @@ internal fun reduce506(
 internal fun reduce507(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef = "#", Symbol, "#" => ActionFn(78);
     check(
@@ -71194,9 +70172,7 @@ internal fun reduce507(
 internal fun reduce508(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 4,
@@ -71215,9 +70191,7 @@ internal fun reduce508(
 internal fun reduce509(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef = "&", "mut", TypeRef => ActionFn(610);
     check(
@@ -71236,9 +70210,7 @@ internal fun reduce509(
 internal fun reduce510(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 3,
@@ -71256,9 +70228,7 @@ internal fun reduce510(
 internal fun reduce511(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef = "&", TypeRef => ActionFn(612);
     check(
@@ -71276,9 +70246,7 @@ internal fun reduce511(
 internal fun reduce512(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef = Path, "<", Comma<TypeRefOrLifetime>, ">" => ActionFn(80);
     check(
@@ -71298,9 +70266,7 @@ internal fun reduce512(
 internal fun reduce513(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef = Path => ActionFn(81);
     val sym0 = popVariant84(symbols)
@@ -71314,9 +70280,7 @@ internal fun reduce513(
 internal fun reduce514(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 5,
@@ -71336,9 +70300,7 @@ internal fun reduce514(
 internal fun reduce515(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 2,
@@ -71355,9 +70317,7 @@ internal fun reduce515(
 internal fun reduce516(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 11,
@@ -71383,9 +70343,7 @@ internal fun reduce516(
 internal fun reduce517(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 7,
@@ -71407,9 +70365,7 @@ internal fun reduce517(
 internal fun reduce518(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 9,
@@ -71433,9 +70389,7 @@ internal fun reduce518(
 internal fun reduce519(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     check(
         symbols.size >= 5,
@@ -71455,9 +70409,7 @@ internal fun reduce519(
 internal fun reduce520(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef? = TypeRef => ActionFn(231);
     val sym0 = popVariant3(symbols)
@@ -71471,9 +70423,7 @@ internal fun reduce520(
 internal fun reduce521(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRef? =  => ActionFn(232);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -71486,9 +70436,7 @@ internal fun reduce521(
 internal fun reduce522(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRefOrLifetime = TypeRef => ActionFn(85);
     val sym0 = popVariant3(symbols)
@@ -71502,9 +70450,7 @@ internal fun reduce522(
 internal fun reduce523(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     val sym0 = popVariant24(symbols)
     val start = sym0.first
@@ -71517,9 +70463,7 @@ internal fun reduce523(
 internal fun reduce524(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRefOrLifetime? = TypeRefOrLifetime => ActionFn(266);
     val sym0 = popVariant3(symbols)
@@ -71533,9 +70477,7 @@ internal fun reduce524(
 internal fun reduce525(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // TypeRefOrLifetime? =  => ActionFn(267);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -71548,9 +70490,7 @@ internal fun reduce525(
 internal fun reduce526(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Use = "use", ";" => ActionFn(28);
     check(
@@ -71568,9 +70508,7 @@ internal fun reduce526(
 internal fun reduce527(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Use* =  => ActionFn(201);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)
@@ -71583,9 +70521,7 @@ internal fun reduce527(
 internal fun reduce528(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Use* = Use+ => ActionFn(202);
     val sym0 = popVariant70(symbols)
@@ -71599,9 +70535,7 @@ internal fun reduce528(
 internal fun reduce529(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Use+ = Use => ActionFn(207);
     val sym0 = popVariant67(symbols)
@@ -71615,9 +70549,7 @@ internal fun reduce529(
 internal fun reduce530(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Use+ = Use+, Use => ActionFn(208);
     check(
@@ -71635,9 +70567,7 @@ internal fun reduce530(
 internal fun reduce531(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Visibility = "public", "(", Path, ")" => ActionFn(29);
     check(
@@ -71657,9 +70587,7 @@ internal fun reduce531(
 internal fun reduce532(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Visibility = "public", "(", "in", Path, ")" => ActionFn(30);
     check(
@@ -71680,9 +70608,7 @@ internal fun reduce532(
 internal fun reduce533(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Visibility = "public" => ActionFn(31);
     val sym0 = popVariant0(symbols)
@@ -71696,9 +70622,7 @@ internal fun reduce533(
 internal fun reduce534(
     text: String,
     lookaheadStart: Int?,
-    symbols: MutableList<
-        Triple<Int, Symbol, Int>,
-    >,
+    symbols: MutableList<Triple<Int, Symbol, Int>>,
 ): Pair<Int, Int> {
     // Visibility =  => ActionFn(349);
     val start = lookaheadStart ?: (symbols.lastOrNull()?.third ?: 0)

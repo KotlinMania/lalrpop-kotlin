@@ -1,4 +1,4 @@
-// port-lint: source main.rs
+// port-lint: tests main.rs
 package io.github.kotlinmania.lalrpop
 
 import kotlin.test.Test

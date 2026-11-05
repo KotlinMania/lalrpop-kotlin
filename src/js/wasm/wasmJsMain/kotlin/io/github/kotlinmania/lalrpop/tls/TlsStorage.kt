@@ -1,4 +1,3 @@
-// port-lint: source tls/mod.rs (threadLocal! definition, wasmJs target)
 package io.github.kotlinmania.lalrpop.tls
 
 /**

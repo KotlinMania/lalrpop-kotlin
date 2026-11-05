@@ -1,8 +1,5 @@
-// port-lint: source external/ena/unify
-// Minimal port of `ena::unify::InPlaceUnificationTable` — a union-find
-// (a.k.a. disjoint-set) structure with per-key values that are merged
-// via user-supplied `unifyValues`. Only the surface used by the
-// lane-table construction is modeled.
+// Disjoint-set union-find table (`InPlaceUnificationTable`) with per-key values
+// merged via user-supplied `unifyValues` for lane-table construction.
 package io.github.kotlinmania.lalrpop
 
 internal interface UnifyKey<V> {

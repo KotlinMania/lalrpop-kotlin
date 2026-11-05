@@ -1,4 +1,3 @@
-// port-lint: source api/test.rs (platform glue, test support)
 package io.github.kotlinmania.lalrpop.api
 
 /*
@@ -14,38 +13,34 @@ package io.github.kotlinmania.lalrpop.api
  */
 
 // ---------------------------------------------------------------------------
-// Filesystem and environment glue used by the api/test.rs port. Upstream
-// uses `std::env::{tempDir, setCurrentDir, setVar}` and
-// `std::fs::{exists, createDir, createDirAll, removeDirAll,
-// removeFile}`. Kotlin Multiplatform commonMain has no portable
-// filesystem; the actuals live alongside the production Api.kt actuals
-// per-platform.
+// Filesystem and environment glue used by the API test suite.
+// Kotlin Multiplatform commonMain delegates filesystem and process environment
+// operations to per-platform actuals alongside Api.kt.
 // ---------------------------------------------------------------------------
 
-/** Mirror of `std::env::tempDir()`. Returns the absolute path to the system temp dir. */
+/** Returns the absolute path to the system temporary directory. */
 internal expect fun apiTempDir(): String
 
-/** Mirror of `std::env::setCurrentDir(path)`. */
+/** Changes the process current working directory to [path]. */
 internal expect fun apiSetCurrentDir(path: String)
 
-/** Mirror of `std::env::setVar(name, value)`. */
+/** Sets the environment variable [name] to [value] for the current process. */
 internal expect fun apiSetEnvVar(name: String, value: String)
 
-/** Mirror of `std::fs::exists(path).unwrap()`. */
+/** Returns true when [path] exists on the filesystem. */
 internal expect fun apiPathExists(path: String): Boolean
 
-/** Mirror of `std::fs::createDir(path).unwrap()`. */
+/** Creates the directory [path]. */
 internal expect fun apiCreateDir(path: String)
 
-/** Mirror of `std::fs::removeDirAll(path).unwrap()`. */
+/** Recursively removes [path] and its contents. */
 internal expect fun apiRemoveDirAll(path: String)
 
-/** Mirror of `std::fs::removeFile(path).unwrap()`. */
+/** Removes the file at [path]. */
 internal expect fun apiRemoveFile(path: String)
 
 /**
- * Mirror of `path::Path::new(a).join(b)`. Portable, pure-string path
- * join: uses `/` as the separator (the upstream tests run on Unix).
+ * Portable string path join using `/` as the separator.
  */
 internal fun apiPathJoin(a: String, b: String): String =
     when {

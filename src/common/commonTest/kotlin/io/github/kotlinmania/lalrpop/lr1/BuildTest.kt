@@ -14,6 +14,7 @@ package io.github.kotlinmania.lalrpop.lr1
  */
 
 import io.github.kotlinmania.lalrpop.Atom
+import io.github.kotlinmania.lalrpop.ChaCha20Rng
 import io.github.kotlinmania.lalrpop.compare
 import io.github.kotlinmania.lalrpop.expectDebug
 import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
@@ -22,7 +23,6 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.normalizedGrammar
 import io.github.kotlinmania.lalrpop.randomParseTree
 import io.github.kotlinmania.lalrpop.tls.Tls
-import io.github.kotlinmania.rand.rngs.StdRng
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -33,7 +33,7 @@ private fun nt(t: String): NonterminalString = NonterminalString(Atom.from(t))
 private const val ITERATIONS: Int = 96
 
 private fun randomTest(grammar: Grammar, states: List<State<TokenSet>>, startSymbol: NonterminalString) {
-    val rng = StdRng.seedFromU64(0uL)
+    val rng = ChaCha20Rng.seedFromU64(0uL)
 
     for (i in 0 until ITERATIONS) {
         val inputTree = randomParseTree(grammar, startSymbol, rng)

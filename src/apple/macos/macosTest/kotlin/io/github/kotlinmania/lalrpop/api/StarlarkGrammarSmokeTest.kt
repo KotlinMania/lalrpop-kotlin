@@ -1,21 +1,12 @@
-// port-lint: ignore
 package io.github.kotlinmania.lalrpop.api
 
 /*
- * One-off smoke test: feeds the upstream starlark-syntax grammar.lalrpop
- * through lalrpop-kotlin's Configuration.processFile and reports whether
- * the run completes and how big the output is.
- *
- * Driven by environment variables so the test does not hard-code a
- * cross-repo path:
+ * Optional smoke test: feeds an external starlark-syntax grammar.lalrpop
+ * through lalrpop-kotlin's Configuration.processFile when configured via:
  *   LALRPOP_STARLARK_GRAMMAR_PATH — absolute path to grammar.lalrpop
- *                                  (default: /tmp/lalrpop_oracle/grammar.lalrpop)
- *   LALRPOP_STARLARK_OUT_PATH    — where to drop the generated grammar.rs
- *                                  (default: /tmp/lalrpop_kotlin_out/grammar.rs)
+ *   LALRPOP_STARLARK_OUT_PATH     — where to write the generated grammar.rs
  *
- * The test prints the head and tail of the generated file for visual
- * inspection. It is intended to be skipped when the source path is
- * absent so it does not break the regular hostNative test run.
+ * Skipped when either environment variable or source file is absent.
  */
 
 import io.github.kotlinmania.lalrpop.build.apiBuildReadFileToString
@@ -25,12 +16,8 @@ import kotlin.test.Test
 class StarlarkGrammarSmokeTest {
     @Test
     fun runsAgainstStarlarkGrammar() {
-        val grammarPath =
-            apiEnvVar("LALRPOP_STARLARK_GRAMMAR_PATH")
-                ?: "/tmp/lalrpop_oracle/grammar.lalrpop"
-        val outPath =
-            apiEnvVar("LALRPOP_STARLARK_OUT_PATH")
-                ?: "/tmp/lalrpop_kotlin_out/grammar.rs"
+        val grammarPath = apiEnvVar("LALRPOP_STARLARK_GRAMMAR_PATH") ?: return
+        val outPath = apiEnvVar("LALRPOP_STARLARK_OUT_PATH") ?: return
 
         if (!apiPathExists(grammarPath)) {
             println("skip: starlark grammar not at $grammarPath")
@@ -51,7 +38,8 @@ class StarlarkGrammarSmokeTest {
         val origDir = apiCurrentDir()
         apiSetCurrentDir(outParent)
         try {
-            Configuration.new()
+            Configuration
+                .new()
                 .forceBuild(true)
                 .emitComments(true)
                 .processFile("grammar.lalrpop")

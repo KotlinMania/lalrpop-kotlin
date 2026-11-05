@@ -202,7 +202,7 @@ class Configuration internal constructor(
      * Sets the features used during compilation, disables the use of cargo features.
      * (Default: Loaded from `CARGO_FEATURE_{}` environment variables).
      */
-    fun setFeatures(iterable: Iterable<String>): Configuration {
+    fun setFeatures(iterable: List<String>): Configuration {
         session.features = BTreeSet.fromIterable(iterable)
         return this
     }
@@ -288,7 +288,7 @@ class Configuration internal constructor(
         /**
          * Creates the default configuration.
          *
-         * equivalent to `Configuration::default`.
+         * Equivalent to [Configuration.default].
          */
         fun new(): Configuration = default()
 
@@ -303,7 +303,7 @@ class Configuration internal constructor(
  * If your project only builds one crate and your files are in a ./src directory, you should use
  * [processSrc] instead
  *
- * Equivalent to `Configuration::new().processCurrentDir()`.
+ * Equivalent to `Configuration.new().processCurrentDir()`.
  */
 fun processRoot() {
     Configuration.new().processCurrentDir()
@@ -330,10 +330,6 @@ fun processSrc() {
  * Configuration.new().forceBuild(true).processCurrentDir()
  * ```
  */
-@Deprecated(
-    message = "use `Configuration.new().forceBuild(true).processCurrentDir()` instead",
-    level = DeprecationLevel.WARNING,
-)
 fun processRootUnconditionally() {
     Configuration.new().forceBuild(true).processCurrentDir()
 }

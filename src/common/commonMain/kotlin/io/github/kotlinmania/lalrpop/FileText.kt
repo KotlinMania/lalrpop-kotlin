@@ -97,21 +97,35 @@ internal class FileText(
             out.appendLine("  $text")
 
             if (endCol - startCol <= 1) {
-                out.appendLine("  " + " ".repeat(startCol) + "^")
+                out.appendLine("  ${Repeat(' ', startCol)}^")
             } else {
                 val width = endCol - startCol
-                out.appendLine("  " + " ".repeat(startCol) + "~" + "~".repeat((width - 2).coerceAtLeast(0)) + "~")
+                out.appendLine("  ${Repeat(' ', startCol)}~${Repeat('~', width - 2)}~")
             }
         } else {
             // span is across many lines, find the maximal width of any of those
             val lineStrs: List<String> = (startLine..endLine).map { i -> lineText(i) }
             val maxLen = lineStrs.maxOf { it.length }
-            out.appendLine("  " + " ".repeat(startCol) + "~".repeat((maxLen - startCol).coerceAtLeast(0)) + "~+")
+            out.appendLine("  ${Repeat(' ', startCol)}${Repeat('~', maxLen - startCol)}~+")
             for (line in lineStrs.subList(0, lineStrs.size - 1)) {
                 out.appendLine("| ${line.padEnd(maxLen)} |")
             }
             out.appendLine("| ${lineStrs[lineStrs.size - 1]}")
-            out.appendLine("+~" + "~".repeat(endCol))
+            out.appendLine("+~${Repeat('~', endCol)}")
+        }
+    }
+}
+
+private class Repeat(
+    private val ch: Char,
+    private val count: Int,
+) {
+    override fun toString(): String {
+        val len = count.coerceAtLeast(0)
+        return buildString(len) {
+            repeat(len) {
+                append(ch)
+            }
         }
     }
 }

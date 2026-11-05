@@ -4,12 +4,7 @@ package io.github.kotlinmania.lalrpop.build
 
 import kotlin.JsFun
 import kotlin.js.ExperimentalWasmJsInterop
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.boolean
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlin.js.JsAny
 
 @JsFun("(path) => globalThis.KotlinManiaLalrpopHost.sha3Hex(path)")
 private external fun hostSha3Hex(path: String): String?
@@ -32,8 +27,26 @@ private external fun hostPathExists(path: String): Boolean
 @JsFun("(path) => globalThis.KotlinManiaLalrpopHost.pathIsSymlink(path)")
 private external fun hostPathIsSymlink(path: String): Boolean
 
-@JsFun("(root) => globalThis.KotlinManiaLalrpopHost.walkDir(root)")
-private external fun hostWalkDir(root: String): String
+@JsFun("(root) => JSON.parse(globalThis.KotlinManiaLalrpopHost.walkDir(root))")
+private external fun hostWalkEntries(root: String): JsAny
+
+@JsFun("(arr) => arr.length")
+private external fun hostArrayLength(arr: JsAny): Int
+
+@JsFun("(arr, i) => String(arr[i].kind)")
+private external fun hostWalkKind(arr: JsAny, i: Int): String
+
+@JsFun("(arr, i) => String(arr[i].path)")
+private external fun hostWalkPath(arr: JsAny, i: Int): String
+
+@JsFun("(arr, i) => Boolean(arr[i].isFile)")
+private external fun hostWalkIsFile(arr: JsAny, i: Int): Boolean
+
+@JsFun("(arr, i) => String(arr[i].message ?? '')")
+private external fun hostWalkMessage(arr: JsAny, i: Int): String
+
+@JsFun("(arr, i) => Boolean(arr[i].kindIsNotFound)")
+private external fun hostWalkKindIsNotFound(arr: JsAny, i: Int): Boolean
 
 @JsFun("(message) => globalThis.KotlinManiaLalrpopHost.eprint(message)")
 private external fun hostEPrint(message: String)
@@ -117,7 +130,7 @@ internal actual fun apiBuildWalkDir(root: String): Sequence<WalkEntry> {
             ),
         )
     }
-    return parseWalkEntries(hostWalkDir(root)).asSequence()
+    return parseWalkEntries(hostWalkEntries(root)).asSequence()
 }
 
 internal actual fun apiBuildEPrintln(message: String) {
@@ -137,31 +150,31 @@ internal actual fun apiBuildPrint(message: String) {
 }
 
 internal actual fun apiBuildIsStdoutTerminal(): Boolean = false
+
 internal actual fun apiBuildOpenAnsiStdout(): Appendable? = null
 
-private fun parseWalkEntries(json: String): List<WalkEntry> {
-    val array = Json.parseToJsonElement(json) as JsonArray
-    return array.map { element ->
-        val obj = element.jsonObject
-        when (obj.requiredString("kind")) {
-            "ok" -> WalkEntry.Ok(
-                path = obj.requiredString("path"),
-                isFile = obj.requiredBoolean("isFile"),
+private fun parseWalkEntries(array: JsAny): List<WalkEntry> {
+    val count = hostArrayLength(array)
+    val out = ArrayList<WalkEntry>(count)
+    for (i in 0 until count) {
+        when (hostWalkKind(array, i)) {
+            "ok" -> out.add(
+                WalkEntry.Ok(
+                    path = hostWalkPath(array, i),
+                    isFile = hostWalkIsFile(array, i),
+                ),
             )
-            "err" -> WalkEntry.Err(
-                WalkDirError(
-                    message = obj.requiredString("message"),
-                    path = obj.requiredString("path"),
-                    kindIsNotFound = obj["kindIsNotFound"]?.jsonPrimitive?.boolean ?: false,
+            "err" -> out.add(
+                WalkEntry.Err(
+                    WalkDirError(
+                        message = hostWalkMessage(array, i),
+                        path = hostWalkPath(array, i),
+                        kindIsNotFound = hostWalkKindIsNotFound(array, i),
+                    ),
                 ),
             )
             else -> error("unknown walk entry kind")
         }
     }
+    return out
 }
-
-private fun JsonObject.requiredString(name: String): String =
-    this[name]?.jsonPrimitive?.content ?: error("missing walk entry field: $name")
-
-private fun JsonObject.requiredBoolean(name: String): Boolean =
-    this[name]?.jsonPrimitive?.boolean ?: error("missing walk entry field: $name")

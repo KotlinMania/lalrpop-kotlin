@@ -1,4 +1,3 @@
-// port-lint: source lr1/tls.rs (thread_local! definition, wasmWasi target)
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.grammar.repr.TerminalSet

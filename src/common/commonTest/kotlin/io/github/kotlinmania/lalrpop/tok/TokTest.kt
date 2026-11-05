@@ -772,7 +772,7 @@ class TokTest {
     fun stringEscapes() {
         assertEquals("foo", applyStringEscapes("foo", 5).getOrThrow())
         assertEquals("""\""", applyStringEscapes("""\\""", 10).getOrThrow())
-        assertEquals(""""""", applyStringEscapes("""\"""", 15).getOrThrow())
+        assertEquals("\"", applyStringEscapes("""\"""", 15).getOrThrow())
         assertEquals("up\ndown", applyStringEscapes("""up\ndown""", 25).getOrThrow())
         assertEquals("forth\rback", applyStringEscapes("""forth\rback""", 25).getOrThrow())
         assertEquals("left\tright", applyStringEscapes("""left\tright""", 40).getOrThrow())

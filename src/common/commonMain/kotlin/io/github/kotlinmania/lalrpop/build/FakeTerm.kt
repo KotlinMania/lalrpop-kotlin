@@ -1,3 +1,4 @@
+// port-lint: source build/fake_term.rs
 package io.github.kotlinmania.lalrpop.build
 
 import io.github.kotlinmania.lalrpop.TermAttr

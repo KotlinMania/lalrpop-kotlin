@@ -1,6 +1,4 @@
-// port-lint: source external/stringCache/DefaultAtom
-// Minimal port of `stringCache::DefaultAtom` — an interned string.
-// Interning is not implemented here; this is a plain string wrapper.
+// String wrapper modeling DefaultAtom for LALRPOP identifier keys.
 package io.github.kotlinmania.lalrpop
 
 internal class Atom private constructor(

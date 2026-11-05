@@ -1,4 +1,3 @@
-// port-lint: source tls/mod.rs (threadLocal! definition, native target)
 package io.github.kotlinmania.lalrpop.tls
 
 import kotlin.native.concurrent.ThreadLocal

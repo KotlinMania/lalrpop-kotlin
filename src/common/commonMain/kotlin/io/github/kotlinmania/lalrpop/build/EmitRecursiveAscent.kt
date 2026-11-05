@@ -9,16 +9,16 @@ import io.github.kotlinmania.lalrpop.grammar.repr.LrCodeGeneration
 import io.github.kotlinmania.lalrpop.grammar.repr.WhereClause
 import io.github.kotlinmania.lalrpop.lexer.compileInternToken
 import io.github.kotlinmania.lalrpop.lr1.BuildOutcome
+import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
 import io.github.kotlinmania.lalrpop.lr1.buildStatesOrError
 import io.github.kotlinmania.lalrpop.lr1.codegen.Ascent
 import io.github.kotlinmania.lalrpop.lr1.codegen.ParseTable
 import io.github.kotlinmania.lalrpop.lr1.codegen.TestAll
-import io.github.kotlinmania.lalrpop.lr1.Lr1Tls
-import io.github.kotlinmania.lalrpop.lr1.error.reportError as reportLr1Error
 import io.github.kotlinmania.lalrpop.lr1.report.LrResult
 import io.github.kotlinmania.lalrpop.lr1.report.generateReport
 import io.github.kotlinmania.lalrpop.rust.RustWrite
 import io.github.kotlinmania.lalrpop.rust.rust
+import io.github.kotlinmania.lalrpop.lr1.error.reportError as reportLr1Error
 
 internal fun emitRecursiveAscent(
     session: Session,

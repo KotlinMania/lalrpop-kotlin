@@ -36,6 +36,4 @@ enum class Level {
     Debug,
 }
 
-// NOTE: Rust macros `log!`, `debug!`, and `profile!` are intentionally omitted —
-// macros are a Rust-specific construct. Call `session.log(Level.X) { ... }`
-// directly. A `profile` helper belongs with Session once that ported.
+// Call `session.log(Level.X) { ... }` directly for structured logging.

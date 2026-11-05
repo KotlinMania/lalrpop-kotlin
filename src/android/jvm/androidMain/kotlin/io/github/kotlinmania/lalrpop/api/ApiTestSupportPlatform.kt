@@ -1,4 +1,3 @@
-// port-lint: source api/test.rs (platform glue, JVM/Android target)
 package io.github.kotlinmania.lalrpop.api
 
 /*
@@ -13,40 +12,45 @@ package io.github.kotlinmania.lalrpop.api
  * at your option.
  */
 
-import java.io.File
+import io.github.kotlinmania.io.files.Path
+import io.github.kotlinmania.io.files.SystemFileSystem
+import io.github.kotlinmania.io.files.SystemPathSeparator
+import io.github.kotlinmania.io.files.SystemTemporaryDirectory
+import io.github.kotlinmania.io.files.createDirectory
+import io.github.kotlinmania.io.files.isDirectory
 
 internal actual fun apiTempDir(): String =
-    System.getProperty("java.io.tmpdir")?.trimEnd(File.separatorChar)?.ifEmpty { "/" } ?: "/tmp"
+    SystemTemporaryDirectory
+        .toString()
+        .trimEnd(SystemPathSeparator)
+        .ifEmpty { "/" }
 
 internal actual fun apiSetCurrentDir(path: String) {
-    // The JVM does not support changing the working directory. Set
-    // `user.dir` so subsequent `apiCurrentDir()` calls reflect the
-    // change; relative File operations on the JVM resolve against the
-    // process CWD captured at startup, so the api/test.rs port should
-    // import absolute paths derived from this property where possible.
     System.setProperty("user.dir", path)
 }
 
 internal actual fun apiSetEnvVar(name: String, value: String) {
-    // The JVM does not expose a portable setter for the process
-    // environment.  System properties are a reasonable surrogate for
-    // the `OUT_DIR` import case in the api/test.rs port: production code
-    // reads via `apiEnvVar`, which on JVM consults `System.getenv`.
-    // We additionally publish to system properties so test fixtures
-    // that need to override `OUT_DIR` have a hook.
     System.setProperty(name, value)
 }
 
-internal actual fun apiPathExists(path: String): Boolean = File(path).exists()
+internal actual fun apiPathExists(path: String): Boolean =
+    SystemFileSystem.exists(Path(path))
 
 internal actual fun apiCreateDir(path: String) {
-    if (!File(path).mkdir()) error("create_dir($path) failed")
+    SystemFileSystem.createDirectory(Path(path))
 }
 
 internal actual fun apiRemoveDirAll(path: String) {
-    File(path).deleteRecursively()
+    val root = Path(path)
+    if (!SystemFileSystem.exists(root)) return
+    if (SystemFileSystem.isDirectory(root)) {
+        for (child in SystemFileSystem.list(root)) {
+            apiRemoveDirAll(child.toString())
+        }
+    }
+    SystemFileSystem.delete(root, mustExist = false)
 }
 
 internal actual fun apiRemoveFile(path: String) {
-    if (!File(path).delete()) error("remove_file($path) failed")
+    SystemFileSystem.delete(Path(path), mustExist = true)
 }

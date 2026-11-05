@@ -1,4 +1,4 @@
-// port-lint: source lexer/dfa/overlap.rs
+// port-lint: tests lexer/dfa/overlap.rs
 package io.github.kotlinmania.lalrpop.lexer.dfa
 
 import io.github.kotlinmania.lalrpop.collections.set
@@ -7,9 +7,8 @@ import kotlin.test.assertEquals
 import io.github.kotlinmania.lalrpop.lexer.nfa.Test as NfaTest
 
 /**
- * Helper that mirrors the upstream `macroRules! test!` in `overlap.rs`: collect a
- * set of inclusive `Char` ranges, call [removeOverlap], and map the resulting
- * [Test]s back into `CharRange`s for readable comparison.
+ * Collects a set of inclusive `Char` ranges, calls [removeOverlap], and maps
+ * the resulting [NfaTest] ranges back into `CharRange` values for comparison.
  */
 private fun runOverlap(ranges: List<CharRange>): List<CharRange> {
     val s = set<NfaTest>()

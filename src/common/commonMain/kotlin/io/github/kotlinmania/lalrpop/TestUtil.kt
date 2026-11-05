@@ -20,16 +20,10 @@ private class ExpectedDebug(
 }
 
 /**
- * Mirror of Rust `format!("{:#?}", value)` for the value shapes the
- * lalrpop-kotlin tests pass. `Vec<String>` (i.e. the `List<String>`
- * — and `List<Row>`, whose `Row.toString()` already returns the bare
- * line text — that the message and error tests pass through
- * `AsciiCanvas.toStrings()`) renders as the indented, quoted,
- * comma-separated multiline form Rust prints under `{:#?}`. Other
- * receivers fall through to their existing `toString()` — types like
- * the LR(1) trees already implement `toString()` that mirrors Rust's
- * `{:?}` single-line Debug output, which is also what `{:#?}` emits
- * for tuple/enum variants without sub-fields.
+ * Pretty-printed debug formatter for the value shapes passed by the
+ * lalrpop-kotlin test suite (`List<String>` and `List<Row>` from
+ * `AsciiCanvas.toStrings()`, rendered as indented, quoted, comma-separated
+ * multiline lists, with other types delegating to `toString()`).
  */
 private fun rustDebugFormat(value: Any?): String =
     when (value) {
@@ -132,7 +126,7 @@ private object Diff {
     }
 
     fun lines(a: String, b: String): List<Result> {
-        // Minimal stand-in for `diff::lines`: line-by-line comparison.
+        // Line-by-line diff comparison.
         val al = a.split('\n')
         val bl = b.split('\n')
         val out = mutableListOf<Result>()
