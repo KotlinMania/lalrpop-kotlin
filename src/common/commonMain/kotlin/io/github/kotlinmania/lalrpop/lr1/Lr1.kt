@@ -27,6 +27,13 @@ internal fun buildStates(grammar: Grammar, start: NonterminalString): MutableLis
 
 internal fun generateReport(
     out: Appendable,
+    lr1result: Lr1Result,
+) {
+    generateReportImpl(out, lr1result)
+}
+
+internal fun generateReport(
+    out: Appendable,
     lr1result: MutableList<State<TokenSet>>,
 ) {
     generateReportImpl(out, lr1result)

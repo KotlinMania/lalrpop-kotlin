@@ -14,6 +14,8 @@ internal interface Lookahead<Self : Lookahead<Self>> :
     fun fmtAsItemSuffix(): String
 
     fun conflicts(thisState: State<Self>): MutableList<Conflict<Self>>
+
+    fun clone(): Self
 }
 
 internal class Nil :
@@ -23,6 +25,8 @@ internal class Nil :
     override fun push(item: Nil): Boolean = false
 
     override fun fmtAsItemSuffix(): String = ""
+
+    override fun clone(): Nil = Nil()
 
     override fun epsilonMoves(
         lr: Lr<Nil>,
@@ -85,20 +89,28 @@ internal class Nil :
  * pseudo-symbol EOF that represents "end of input".
  */
 internal sealed class Token : Comparable<Token> {
+    fun fmt(fmt: Appendable) {
+        when (this) {
+            Eof -> fmt.append("Eof")
+            Error -> fmt.append("Error")
+            is Terminal -> fmt.append("$terminalString")
+        }
+    }
+
     abstract override fun toString(): String
 
     object Eof : Token() {
-        override fun toString(): String = "Eof"
+        override fun toString(): String = buildString { fmt(this) }
     }
 
     object Error : Token() {
-        override fun toString(): String = "Error"
+        override fun toString(): String = buildString { fmt(this) }
     }
 
     data class Terminal(
         val terminalString: TerminalString,
     ) : Token() {
-        override fun toString(): String = "$terminalString"
+        override fun toString(): String = buildString { fmt(this) }
     }
 
     fun unwrapTerminal(): TerminalString =
@@ -296,7 +308,7 @@ internal class TokenSet :
 
     fun iter(): TokenSetIter = TokenSetIter(bitSet.sorted().iterator())
 
-    fun clone(): TokenSet {
+    override fun clone(): TokenSet {
         val result = TokenSet()
         result.bitSet.addAll(this.bitSet)
         return result

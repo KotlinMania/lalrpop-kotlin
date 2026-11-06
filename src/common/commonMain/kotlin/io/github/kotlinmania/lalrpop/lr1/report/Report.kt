@@ -11,26 +11,11 @@ import io.github.kotlinmania.lalrpop.lr1.Conflict
 import io.github.kotlinmania.lalrpop.lr1.Item
 import io.github.kotlinmania.lalrpop.lr1.Items
 import io.github.kotlinmania.lalrpop.lr1.Lookahead
+import io.github.kotlinmania.lalrpop.lr1.LrResult
 import io.github.kotlinmania.lalrpop.lr1.Nil
 import io.github.kotlinmania.lalrpop.lr1.State
 import io.github.kotlinmania.lalrpop.lr1.StateIndex
-import io.github.kotlinmania.lalrpop.lr1.TableConstructionError
 import io.github.kotlinmania.lalrpop.lr1.TokenSet
-
-/**
- * Result analogue used by the report generator: either a successful
- * list of states, or a construction error capturing partial states
- * plus the list of conflicts we found.
- */
-internal sealed class LrResult<L : Lookahead<L>> {
-    data class Ok<L : Lookahead<L>>(
-        val states: List<State<L>>,
-    ) : LrResult<L>()
-
-    data class Err<L : Lookahead<L>>(
-        val error: TableConstructionError<L>,
-    ) : LrResult<L>()
-}
 
 internal fun <L : Lookahead<L>> generateReport(
     out: Appendable,
