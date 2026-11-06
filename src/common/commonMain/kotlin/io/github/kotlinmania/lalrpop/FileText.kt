@@ -1,6 +1,18 @@
 // port-lint: source file_text.rs
 package io.github.kotlinmania.lalrpop
 
+/*
+ * Copyright 2015-2025 The LALRPOP Project Developers.
+ * Copyright (c) 2026 Sydney Renee, The Solace Project (Kotlin port).
+ *
+ * Licensed under either of
+ *   - Apache License, Version 2.0
+ *     (https://www.apache.org/licenses/LICENSE-2.0)
+ *   - MIT license
+ *     (https://opensource.org/licenses/MIT)
+ * at your option.
+ */
+
 import io.github.kotlinmania.lalrpop.build.apiBuildReadFileToString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 
