@@ -4,6 +4,7 @@ package io.github.kotlinmania.lalrpop.tok
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 private sealed class Expectation {
@@ -805,5 +806,92 @@ class TokTest {
             Error(location = 7, code = ErrorCode.UnterminatedAsciiEscape),
             (applyStringEscapes("""\x0""", 5).exceptionOrNull() as TokError).err,
         )
+    }
+
+    @Test
+    fun utf8ByteSpansAcrossCommentsStringsEscapesRegexesAndUnicodeIdentifiers() {
+        val input = "/* \u00E9 */ // \uD83E\uDD80\n\"\u8A9E\" `\uD83E\uDD80` r#\"\u00E9\"# '\uD83E\uDD80' '\uD835\uDD4F' '\uD835\uDD4F \uD835\uDD4F_1"
+        val tokens = mutableListOf<Spanned<Tok>>()
+        val tokenizer = Tokenizer.new(input, 0)
+        while (true) {
+            val next = tokenizer.nextResult() ?: break
+            tokens.add(next.getOrThrow())
+        }
+        assertEquals(
+            listOf(
+                Spanned(17, Tok.StringLiteral("\u8A9E"), 22),
+                Spanned(23, Tok.Escape("\uD83E\uDD80"), 29),
+                Spanned(30, Tok.RegexLiteral("\u00E9"), 37),
+                Spanned(38, Tok.CharLiteral("\uD83E\uDD80"), 44),
+                Spanned(45, Tok.CharLiteral("\uD835\uDD4F"), 51),
+                Spanned(52, Tok.Lifetime("'\uD835\uDD4F"), 57),
+                Spanned(58, Tok.Id("\uD835\uDD4F_1"), 64),
+            ),
+            tokens,
+        )
+    }
+
+    @Test
+    fun utf8ByteSpansInActionCodeSupplementaryCharLiteralsShebangBacktrackingAndEof() {
+        val codeInput = "/* \u8A9E */ => ('\uD83E\uDD80', ')'), => \uD835\uDD4F + 1"
+        val codeTokens = mutableListOf<Spanned<Tok>>()
+        val codeTokenizer = Tokenizer.new(codeInput, 0)
+        while (true) {
+            val next = codeTokenizer.nextResult() ?: break
+            codeTokens.add(next.getOrThrow())
+        }
+        assertEquals(
+            listOf(
+                Spanned(10, Tok.EqualsGreaterThanCode(" ('\uD83E\uDD80', ')')"), 26),
+                Spanned(26, Tok.Comma, 27),
+                Spanned(28, Tok.EqualsGreaterThanCode(" \uD835\uDD4F + 1"), 39),
+            ),
+            codeTokens,
+        )
+
+        val shebangInput = "/* \uD83E\uDD80 */ #![allow(\"\u8A9E\")] #[attr]"
+        val shebangTokens = mutableListOf<Spanned<Tok>>()
+        val shebangTokenizer = Tokenizer.new(shebangInput, 0)
+        while (true) {
+            val next = shebangTokenizer.nextResult() ?: break
+            shebangTokens.add(next.getOrThrow())
+        }
+        assertEquals(
+            listOf(
+                Spanned(11, Tok.ShebangAttribute("#![allow(\"\u8A9E\")]"), 27),
+                Spanned(28, Tok.Hash, 29),
+                Spanned(29, Tok.LeftBracket, 30),
+                Spanned(30, Tok.Id("attr"), 34),
+                Spanned(34, Tok.RightBracket, 35),
+            ),
+            shebangTokens,
+        )
+    }
+
+    @Test
+    fun shiftedTokenAndErrorByteOffsetsAndSupplementaryStringEscapes() {
+        val shiftedTokenizer = Tokenizer.new("/* \u00E9 */ \"\uD83E\uDD80\" \u00A7", 100)
+        assertEquals<Spanned<Tok>>(
+            Spanned(109, Tok.StringLiteral("\uD83E\uDD80"), 115),
+            shiftedTokenizer.nextResult()!!.getOrThrow(),
+        )
+        val shiftedErr = (shiftedTokenizer.nextResult()!!.exceptionOrNull() as TokError).err
+        assertEquals(Error(location = 116, code = ErrorCode.UnrecognizedToken), shiftedErr)
+
+        assertEquals(
+            "\uD83E\uDD80\n\u8A9E\tA",
+            applyStringEscapes("\uD83E\uDD80\\n\u8A9E\\t\\x41", 50).getOrThrow(),
+        )
+        assertEquals(
+            Error(location = 55, code = ErrorCode.UnrecognizedEscape),
+            (applyStringEscapes("\uD83E\uDD80\\q", 50).exceptionOrNull() as TokError).err,
+        )
+        assertEquals(
+            Error(location = 55, code = ErrorCode.UnrecognizedEscape),
+            (applyStringEscapes("\uD83E\uDD80\\x\u06630", 50).exceptionOrNull() as TokError).err,
+        )
+        assertFailsWith<CharacterCodingException> {
+            Tokenizer.new("unpaired \uD83E surrogate", 0)
+        }
     }
 }

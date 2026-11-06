@@ -237,7 +237,7 @@ internal fun <E> reportParseError(
     return when (error) {
         is ParseError.InvalidToken -> {
             val location = error.location
-            val ch = fileText.text().substring(location).first()
+            val ch = utf8FirstScalarAt(fileText.text(), location)
             reporter(
                 fileText,
                 Span(location, location),
@@ -257,7 +257,7 @@ internal fun <E> reportParseError(
         is ParseError.UnrecognizedToken -> {
             val (lo, _, hi) = error.token
             // error.expected is ignored: didn't implement this yet :)
-            val text = fileText.text().substring(lo, hi)
+            val text = fileText.spanText(Span(lo, hi))
             reporter(
                 fileText,
                 Span(lo, hi),
@@ -267,7 +267,7 @@ internal fun <E> reportParseError(
 
         is ParseError.ExtraToken -> {
             val (lo, _, hi) = error.token
-            val text = fileText.text().substring(lo, hi)
+            val text = fileText.spanText(Span(lo, hi))
             reporter(
                 fileText,
                 Span(lo, hi),
@@ -303,6 +303,33 @@ internal fun <E> reportParseError(
             )
         }
     }
+}
+
+private fun utf8FirstScalarAt(text: String, location: Int): String {
+    val bytes = text.encodeToByteArray(throwOnInvalidSequence = true)
+    if (location < 0 || location > bytes.size) {
+        throw IndexOutOfBoundsException("UTF-8 byte offset $location out of bounds for length ${bytes.size}")
+    }
+    if (location == bytes.size) {
+        throw NoSuchElementException("No Unicode scalar at EOF byte offset $location")
+    }
+    val b0 = bytes[location].toInt() and 0xFF
+    if ((b0 and 0xC0) == 0x80) {
+        throw IllegalArgumentException("UTF-8 byte offset $location is not on a char boundary")
+    }
+    val seqLen =
+        when {
+            b0 < 0x80 -> 1
+            (b0 and 0xE0) == 0xC0 -> 2
+            (b0 and 0xF0) == 0xE0 -> 3
+            (b0 and 0xF8) == 0xF0 -> 4
+            else -> throw IllegalArgumentException("Invalid UTF-8 lead byte at offset $location")
+        }
+    return bytes.decodeToString(
+        startIndex = location,
+        endIndex = location + seqLen,
+        throwOnInvalidSequence = true,
+    )
 }
 
 internal fun reportError(fileText: FileText, span: Span, message: String): IllegalStateException {

@@ -2,6 +2,11 @@
 /** A tokenizer for use in LALRPOP itself. */
 package io.github.kotlinmania.lalrpop.tok
 
+import io.github.kotlinmania.regexsyntax.hir.Class
+import io.github.kotlinmania.regexsyntax.hir.ClassUnicodeRange
+import io.github.kotlinmania.regexsyntax.hir.HirKind
+import io.github.kotlinmania.regexsyntax.parser.ParserBuilder
+
 internal data class Error(
     val location: Int,
     val code: ErrorCode,
@@ -70,25 +75,30 @@ internal sealed class Tok {
         val s: String,
     ) : Tok()
 
+    // identifier followed immediately by `<`
     data class MacroId(
         val s: String,
-    ) : Tok() // identifier followed immediately by `<`
+    ) : Tok()
 
+    // includes the `'`
     data class Lifetime(
         val s: String,
-    ) : Tok() // includes the `'`
+    ) : Tok()
 
+    // excludes the `"`
     data class StringLiteral(
         val s: String,
-    ) : Tok() // excludes the `"`
+    ) : Tok()
 
+    // excludes the `'`
     data class CharLiteral(
         val s: String,
-    ) : Tok() // excludes the `'`
+    ) : Tok()
 
+    // excludes the `r"` and `"`
     data class RegexLiteral(
         val s: String,
-    ) : Tok() // excludes the `r"` and `"`
+    ) : Tok()
 
     // Symbols:
     object Ampersand : Tok()
@@ -133,9 +143,11 @@ internal sealed class Tok {
 
     object LessThan : Tok()
 
-    object Lookahead : Tok() // @L
+    // @L
+    object Lookahead : Tok()
 
-    object Lookbehind : Tok() // @R
+    // @R
+    object Lookbehind : Tok()
 
     object MinusGreaterThan : Tok()
 
@@ -159,9 +171,10 @@ internal sealed class Tok {
 
     object Bang : Tok()
 
+    // #![...]
     data class ShebangAttribute(
         val s: String,
-    ) : Tok() // #![...]
+    ) : Tok()
 
     // Dummy tokens for parser sharing
     object StartGrammar : Tok()
@@ -175,113 +188,98 @@ internal sealed class Tok {
     object StartTypeRef : Tok()
 }
 
-internal class Tokenizer(
+private val KEYWORDS: List<Pair<String, Tok>> =
+    listOf(
+        "enum" to Tok.Enum,
+        "extern" to Tok.Extern,
+        "grammar" to Tok.Grammar,
+        "match" to Tok.Match,
+        "else" to Tok.Else,
+        "if" to Tok.If,
+        "mut" to Tok.Mut,
+        "pub" to Tok.Pub,
+        "in" to Tok.In,
+        "type" to Tok.KwType,
+        "where" to Tok.Where,
+        "for" to Tok.For,
+        "dyn" to Tok.Dyn,
+    )
+
+internal class Tokenizer private constructor(
     val text: String,
+    var chars: CharIndices,
+    var lookahead: Pair<Int, Int>?,
     val shift: Int,
+    private val textBytes: ByteArray,
 ) : Iterator<Spanned<Tok>> {
-    var chars: Int = 0
-    var lookahead: Pair<Int, Char>? = null
-
-    init {
-        bump()
-    }
-
-    companion object {
-        fun new(text: String, shift: Int): Tokenizer = Tokenizer(text, shift)
-
-        private val KEYWORDS: List<Pair<String, Tok>> =
-            listOf(
-                "enum" to Tok.Enum,
-                "extern" to Tok.Extern,
-                "grammar" to Tok.Grammar,
-                "match" to Tok.Match,
-                "else" to Tok.Else,
-                "if" to Tok.If,
-                "mut" to Tok.Mut,
-                "pub" to Tok.Pub,
-                "in" to Tok.In,
-                "type" to Tok.KwType,
-                "where" to Tok.Where,
-                "for" to Tok.For,
-                "dyn" to Tok.Dyn,
-            )
+    constructor(
+        text: String,
+        shift: Int,
+    ) : this(
+        text = text,
+        chars = text.charIndices(),
+        lookahead = null,
+        shift = shift,
+        textBytes = text.encodeToByteArray(throwOnInvalidSequence = true),
+    ) {
+        this.bump()
     }
 
     private var pending: Result<Spanned<Tok>>? = null
 
     override fun hasNext(): Boolean {
-        if (pending != null) return true
-        pending = next_()
-        return pending != null
+        if (this.pending != null) return true
+        this.pending = this.nextShifted()
+        return this.pending != null
     }
 
     override fun next(): Spanned<Tok> {
-        val p = pending ?: next_() ?: throw NoSuchElementException()
-        pending = null
+        val p = this.pending ?: this.nextShifted() ?: throw NoSuchElementException()
+        this.pending = null
         return p.getOrThrow()
     }
 
     internal fun nextResult(): Result<Spanned<Tok>>? {
-        val p = pending
+        val p = this.pending
         if (p != null) {
-            pending = null
+            this.pending = null
             return p
         }
-        return next_()
-    }
-
-    private fun next_(): Result<Spanned<Tok>>? =
-        when (val r = nextUnshifted()) {
-            null -> {
-                null
-            }
-
-            else -> {
-                r.map { (l, t, rr) -> Spanned(l + shift, t, rr + shift) }.recoverCatching {
-                    val err = (it as TokError).err
-                    throw TokError(Error(location = err.location + shift, code = err.code))
-                }
-            }
-        }
-
-    fun bump(): Pair<Int, Char>? {
-        lookahead =
-            if (chars < text.length) {
-                val p = chars to text[chars]
-                chars += 1
-                p
-            } else {
-                null
-            }
-        return lookahead
+        return this.nextShifted()
     }
 
     fun shebangAttribute(idx0: Int): Result<Spanned<Tok>> {
-        expectChar('!')?.let {
-            val inner = it.exceptionOrNull()
-            if (inner != null) return error(ErrorCode.UnrecognizedToken, idx0)
-        } ?: return error(ErrorCode.UnrecognizedToken, idx0)
-        expectChar('[')?.let {
-            val inner = it.exceptionOrNull()
-            if (inner != null) return error(ErrorCode.UnterminatedAttribute, idx0)
-        } ?: return error(ErrorCode.UnterminatedAttribute, idx0)
+        when (val r = this.expectChar('!'.code)) {
+            null -> return error(ErrorCode.UnrecognizedToken, idx0)
+            else -> {
+                val err = r.exceptionOrNull()
+                if (err != null) return Result.failure(err)
+            }
+        }
+        when (val r1 = this.expectChar('['.code)) {
+            null -> return error(ErrorCode.UnterminatedAttribute, idx0)
+            else -> {
+                val err1 = r1.exceptionOrNull()
+                if (err1 != null) return Result.failure(err1)
+            }
+        }
         var sqBracketCounter = 1
         while (true) {
-            val (idx1, c) = lookahead ?: break
+            val (idx1, c) = this.lookahead ?: break
             when (c) {
-                '[' -> {
-                    bump()
+                '['.code -> {
+                    this.bump()
                     sqBracketCounter += 1
                 }
 
-                ']' -> {
-                    bump()
+                ']'.code -> {
+                    this.bump()
                     sqBracketCounter -= 1
                     when {
                         sqBracketCounter == 0 -> {
                             val idx2 = idx1 + 1
-                            val data = text.substring(idx0, idx2)
-                            bump()
+                            val data = this.sliceBytes(idx0, idx2)
+                            this.bump()
                             return Result.success(Spanned(idx0, Tok.ShebangAttribute(data), idx2))
                         }
 
@@ -289,22 +287,21 @@ internal class Tokenizer(
                             return error(ErrorCode.UnrecognizedToken, idx0)
                         }
 
-                        else -> {}
+                        else -> Unit
                     }
                 }
 
-                '"' -> {
-                    bump()
-                    val r = stringLiteral(idx1)
-                    if (r.isFailure) return r
+                '"'.code -> {
+                    this.bump()
+                    this.stringLiteral(idx1).getOrElse { return Result.failure(it) }
                 }
 
-                '\n' -> {
+                '\n'.code -> {
                     return error(ErrorCode.UnrecognizedToken, idx0)
                 }
 
                 else -> {
-                    bump()
+                    this.bump()
                 }
             }
         }
@@ -313,359 +310,317 @@ internal class Tokenizer(
 
     fun nextUnshifted(): Result<Spanned<Tok>>? {
         while (true) {
-            val (idx0, c) = lookahead ?: return null
+            val (idx0, c) = this.lookahead ?: return null
 
-            return when (c) {
-                '&' -> {
-                    bump()
+            return when {
+                c == '&'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.Ampersand, idx0 + 1))
                 }
 
-                '!' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            Result.success(Spanned(idx0, Tok.Bang, idx0 + 1))
+                c == '!'.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == '='.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.BangEquals, idx1 + 1))
                         }
 
-                        else -> {
-                            when (n.second) {
-                                '=' -> {
-                                    bump()
-                                    Result.success(Spanned(idx0, Tok.BangEquals, n.first + 1))
-                                }
-
-                                '~' -> {
-                                    bump()
-                                    Result.success(Spanned(idx0, Tok.BangTilde, n.first + 1))
-                                }
-
-                                else -> {
-                                    Result.success(Spanned(idx0, Tok.Bang, idx0 + 1))
-                                }
-                            }
+                        matchVal != null && matchVal.second == '~'.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.BangTilde, idx1 + 1))
                         }
+
+                        else -> Result.success(Spanned(idx0, Tok.Bang, idx0 + 1))
                     }
                 }
 
-                ':' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            Result.success(Spanned(idx0, Tok.Colon, idx0 + 1))
+                c == ':'.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == ':'.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.ColonColon, idx1 + 1))
                         }
 
-                        else -> {
-                            if (n.second == ':') {
-                                bump()
-                                Result.success(Spanned(idx0, Tok.ColonColon, n.first + 1))
-                            } else {
-                                Result.success(Spanned(idx0, Tok.Colon, idx0 + 1))
-                            }
-                        }
+                        else -> Result.success(Spanned(idx0, Tok.Colon, idx0 + 1))
                     }
                 }
 
-                ',' -> {
-                    bump()
+                c == ','.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.Comma, idx0 + 1))
                 }
 
-                '.' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            error(ErrorCode.UnrecognizedToken, idx0)
+                c == '.'.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == '.'.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.DotDot, idx1 + 1))
                         }
 
-                        else -> {
-                            if (n.second == '.') {
-                                bump()
-                                Result.success(Spanned(idx0, Tok.DotDot, n.first + 1))
-                            } else {
-                                error(ErrorCode.UnrecognizedToken, idx0)
-                            }
-                        }
+                        else -> error(ErrorCode.UnrecognizedToken, idx0)
                     }
                 }
 
-                '=' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            Result.success(Spanned(idx0, Tok.Equals, idx0 + 1))
+                c == '='.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == '='.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.EqualsEquals, idx1 + 1))
                         }
 
-                        else -> {
-                            when (n.second) {
-                                '=' -> {
-                                    bump()
-                                    Result.success(Spanned(idx0, Tok.EqualsEquals, n.first + 1))
-                                }
-
-                                '>' -> {
-                                    bump()
-                                    rightArrow(idx0)
-                                }
-
-                                else -> {
-                                    Result.success(Spanned(idx0, Tok.Equals, idx0 + 1))
-                                }
-                            }
+                        matchVal != null && matchVal.second == '>'.code -> {
+                            this.bump()
+                            this.rightArrow(idx0)
                         }
+
+                        else -> Result.success(Spanned(idx0, Tok.Equals, idx0 + 1))
                     }
                 }
 
-                '#' -> {
-                    bump()
-                    // first!: try shebangAttribute, fall back to Hash on failure
-                    val fallbackChars = chars
-                    val fallbackLookahead = lookahead
-                    val result = shebangAttribute(idx0)
+                c == '#'.code -> {
+                    this.bump()
+                    // Helper for backtracking.
+                    val fallbackState = Pair(this.chars.clone(), this.lookahead)
+                    val result = this.shebangAttribute(idx0)
                     if (result.isSuccess) {
                         result
                     } else {
-                        chars = fallbackChars
-                        lookahead = fallbackLookahead
+                        this.chars = fallbackState.first
+                        this.lookahead = fallbackState.second
                         Result.success(Spanned(idx0, Tok.Hash, idx0 + 1))
                     }
                 }
 
-                '>' -> {
-                    bump()
+                c == '>'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.GreaterThan, idx0 + 1))
                 }
 
-                '{' -> {
-                    bump()
+                c == '{'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.LeftBrace, idx0 + 1))
                 }
 
-                '[' -> {
-                    bump()
+                c == '['.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.LeftBracket, idx0 + 1))
                 }
 
-                '(' -> {
-                    bump()
+                c == '('.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.LeftParen, idx0 + 1))
                 }
 
-                '<' -> {
-                    bump()
+                c == '<'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.LessThan, idx0 + 1))
                 }
 
-                '@' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            error(ErrorCode.UnrecognizedToken, idx0)
+                c == '@'.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == 'L'.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.Lookahead, idx1 + 1))
                         }
 
-                        else -> {
-                            when (n.second) {
-                                'L' -> {
-                                    bump()
-                                    Result.success(Spanned(idx0, Tok.Lookahead, n.first + 1))
-                                }
-
-                                'R' -> {
-                                    bump()
-                                    Result.success(Spanned(idx0, Tok.Lookbehind, n.first + 1))
-                                }
-
-                                else -> {
-                                    error(ErrorCode.UnrecognizedToken, idx0)
-                                }
-                            }
+                        matchVal != null && matchVal.second == 'R'.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.Lookbehind, idx1 + 1))
                         }
+
+                        else -> error(ErrorCode.UnrecognizedToken, idx0)
                     }
                 }
 
-                '+' -> {
-                    bump()
+                c == '+'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.Plus, idx0 + 1))
                 }
 
-                '?' -> {
-                    bump()
+                c == '?'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.Question, idx0 + 1))
                 }
 
-                '}' -> {
-                    bump()
+                c == '}'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.RightBrace, idx0 + 1))
                 }
 
-                ']' -> {
-                    bump()
+                c == ']'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.RightBracket, idx0 + 1))
                 }
 
-                ')' -> {
-                    bump()
+                c == ')'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.RightParen, idx0 + 1))
                 }
 
-                ';' -> {
-                    bump()
+                c == ';'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.Semi, idx0 + 1))
                 }
 
-                '*' -> {
-                    bump()
+                c == '*'.code -> {
+                    this.bump()
                     Result.success(Spanned(idx0, Tok.Star, idx0 + 1))
                 }
 
-                '~' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            error(ErrorCode.UnrecognizedToken, idx0)
+                c == '~'.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == '~'.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.TildeTilde, idx1 + 1))
                         }
 
-                        else -> {
-                            if (n.second == '~') {
-                                bump()
-                                Result.success(Spanned(idx0, Tok.TildeTilde, n.first + 1))
-                            } else {
-                                error(ErrorCode.UnrecognizedToken, idx0)
-                            }
-                        }
+                        else -> error(ErrorCode.UnrecognizedToken, idx0)
                     }
                 }
 
-                '`' -> {
-                    bump()
-                    escape(idx0)
+                c == '`'.code -> {
+                    this.bump()
+                    this.escape(idx0)
                 }
 
-                '\'' -> {
-                    bump()
-                    lifetimeish(idx0)
+                c == '\''.code -> {
+                    this.bump()
+                    this.lifetimeish(idx0)
                 }
 
-                '"' -> {
-                    bump()
-                    stringLiteral(idx0)
+                c == '"'.code -> {
+                    this.bump()
+                    this.stringLiteral(idx0)
                 }
 
-                '/' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            error(ErrorCode.UnrecognizedToken, idx0)
+                c == '/'.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == '/'.code -> {
+                            this.takeUntil { ch -> ch == '\n'.code }
+                            continue
                         }
 
-                        else -> {
-                            when (n.second) {
-                                '/' -> {
-                                    takeUntil { ch -> ch == '\n' }
-                                    continue
-                                }
-
-                                '*' -> {
-                                    bump() // Skip over the *
-                                    val r = blockComment(idx0)
-                                    if (r.isFailure) {
-                                        Result.failure(r.exceptionOrNull()!!)
-                                    } else {
-                                        continue
-                                    }
-                                }
-
-                                else -> {
-                                    error(ErrorCode.UnrecognizedToken, idx0)
-                                }
+                        matchVal != null && matchVal.second == '*'.code -> {
+                            this.bump() // Skip over the *
+                            val r = this.blockComment(idx0)
+                            if (r.isFailure) {
+                                Result.failure(r.exceptionOrNull()!!)
+                            } else {
+                                continue
                             }
                         }
+
+                        else -> error(ErrorCode.UnrecognizedToken, idx0)
                     }
                 }
 
-                '-' -> {
-                    when (val n = bump()) {
-                        null -> {
-                            error(ErrorCode.UnrecognizedToken, idx0)
+                c == '-'.code -> {
+                    val matchVal = this.bump()
+                    when {
+                        matchVal != null && matchVal.second == '>'.code -> {
+                            val idx1 = matchVal.first
+                            this.bump()
+                            Result.success(Spanned(idx0, Tok.MinusGreaterThan, idx1 + 1))
                         }
 
-                        else -> {
-                            if (n.second == '>') {
-                                bump()
-                                Result.success(Spanned(idx0, Tok.MinusGreaterThan, n.first + 1))
-                            } else {
-                                error(ErrorCode.UnrecognizedToken, idx0)
-                            }
-                        }
+                        else -> error(ErrorCode.UnrecognizedToken, idx0)
                     }
                 }
 
-                else -> {
-                    if (isIdentifierStart(c)) {
-                        if (c == 'r') {
-                            // watch out for r"..." or r#"..."# strings
-                            bump()
-                            val la = lookahead
-                            if (la != null && (la.second == '#' || la.second == '"')) {
-                                regexLiteral(idx0)
-                            } else {
-                                identifierish(idx0)
+                isIdentifierStart(c) -> {
+                    if (c == 'r'.code) {
+                        // watch out for r"..." or r#"..."# strings
+                        this.bump()
+                        val matchVal = this.lookahead
+                        when {
+                            matchVal != null && (matchVal.second == '#'.code || matchVal.second == '"'.code) ->
+                                this.regexLiteral(idx0)
+
+                            else -> {
+                                // due to the particulars of how identifierish works,
+                                // it's ok that we already consumed the `r`, because the
+                                // identifier will run from idx0 (the `r`) to the end
+                                this.identifierish(idx0)
                             }
-                        } else {
-                            identifierish(idx0)
                         }
-                    } else if (c.isWhitespace()) {
-                        bump()
-                        continue
                     } else {
-                        error(ErrorCode.UnrecognizedToken, idx0)
+                        this.identifierish(idx0)
                     }
                 }
+
+                isUnicodeWhitespace(c) -> {
+                    this.bump()
+                    continue
+                }
+
+                else -> error(ErrorCode.UnrecognizedToken, idx0)
             }
         }
     }
 
+    fun bump(): Pair<Int, Int>? {
+        val next = this.chars.next()
+        this.lookahead = next
+        return next
+    }
+
     fun rightArrow(idx0: Int): Result<Spanned<Tok>> {
-        // we have seen =>, now we have to choose between:
+        // we've seen =>, now we have to choose between:
         //
         // => code
         // =>? code
         // =>@L
         // =>@R
-        val la = lookahead ?: return Result.failure(TokError(Error(idx0, ErrorCode.UnterminatedCode)))
-        val (idx1, c) = la
+        val (idx1, c) =
+            this.lookahead
+                ?: return Result.failure(TokError(Error(location = idx0, code = ErrorCode.UnterminatedCode)))
 
         return when (c) {
-            '@' -> {
-                when (val n = bump()) {
-                    null -> {
-                        error(ErrorCode.UnrecognizedToken, idx0)
+            '@'.code -> {
+                val matchVal = this.bump()
+                when {
+                    matchVal != null && matchVal.second == 'L'.code -> {
+                        val idx2 = matchVal.first
+                        this.bump()
+                        Result.success(Spanned(idx0, Tok.EqualsGreaterThanLookahead, idx2 + 1))
                     }
 
-                    else -> {
-                        when (n.second) {
-                            'L' -> {
-                                bump()
-                                Result.success(Spanned(idx0, Tok.EqualsGreaterThanLookahead, n.first + 1))
-                            }
-
-                            'R' -> {
-                                bump()
-                                Result.success(Spanned(idx0, Tok.EqualsGreaterThanLookbehind, n.first + 1))
-                            }
-
-                            else -> {
-                                error(ErrorCode.UnrecognizedToken, idx0)
-                            }
-                        }
+                    matchVal != null && matchVal.second == 'R'.code -> {
+                        val idx2 = matchVal.first
+                        this.bump()
+                        Result.success(Spanned(idx0, Tok.EqualsGreaterThanLookbehind, idx2 + 1))
                     }
+
+                    else -> error(ErrorCode.UnrecognizedToken, idx0)
                 }
             }
 
-            '?' -> {
-                bump()
-                val idx2 = code(idx0, "([{", "}])").getOrElse { return Result.failure(it) }
-                val codeStr = text.substring(idx1 + 1, idx2)
-                Result.success(Spanned(idx0, Tok.EqualsGreaterThanQuestionCode(codeStr), idx2))
+            '?'.code -> {
+                this.bump()
+                val idx2 = this.code(idx0, "([{", "}])").getOrElse { return Result.failure(it) }
+                val code = this.sliceBytes(idx1 + 1, idx2)
+                Result.success(Spanned(idx0, Tok.EqualsGreaterThanQuestionCode(code), idx2))
             }
 
             else -> {
-                val idx2 = code(idx0, "([{", "}])").getOrElse { return Result.failure(it) }
-                val codeStr = text.substring(idx1, idx2)
-                Result.success(Spanned(idx0, Tok.EqualsGreaterThanCode(codeStr), idx2))
+                val idx2 = this.code(idx0, "([{", "}])").getOrElse { return Result.failure(it) }
+                val code = this.sliceBytes(idx1, idx2)
+                Result.success(Spanned(idx0, Tok.EqualsGreaterThanCode(code), idx2))
             }
         }
     }
@@ -678,73 +633,57 @@ internal class Tokenizer(
         // equal to one of delimiters.
         var balance = 0 // number of unclosed `(` etc
         while (true) {
-            val la = lookahead
-            if (la != null) {
-                val (idx, c) = la
-                when {
-                    c == '"' -> {
-                        bump()
-                        val r = stringLiteral(idx)
-                        if (r.isFailure) return Result.failure(r.exceptionOrNull()!!)
-                        continue
+            val matchVal = this.lookahead
+            if (matchVal != null) {
+                val (idx, c) = matchVal
+                if (c == '"'.code) {
+                    this.bump()
+                    this.stringLiteral(idx).getOrElse { return Result.failure(it) } // discard the produced token
+                    continue
+                } else if (c == '\''.code) {
+                    this.bump()
+                    if (this.takeLifetimeOrCharacterLiteral() == null) {
+                        return error(ErrorCode.UnterminatedCharacterLiteral, idx)
                     }
-
-                    c == '\'' -> {
-                        bump()
-                        if (takeLifetimeOrCharacterLiteral() == null) {
-                            return error(ErrorCode.UnterminatedCharacterLiteral, idx)
+                    continue
+                } else if (c == 'r'.code) {
+                    this.bump()
+                    val matchVal1 = this.lookahead
+                    if (matchVal1 != null && matchVal1.second == '#'.code) {
+                        this.regexLiteral(matchVal1.first).getOrElse { return Result.failure(it) }
+                    }
+                    continue
+                } else if (c == '/'.code) {
+                    this.bump()
+                    val matchVal2 = this.lookahead
+                    when {
+                        matchVal2 != null && matchVal2.second == '/'.code -> {
+                            this.takeUntil { ch -> ch == '\n'.code }
                         }
-                        continue
-                    }
 
-                    c == 'r' -> {
-                        bump()
-                        val la2 = lookahead
-                        if (la2 != null && la2.second == '#') {
-                            val r = regexLiteral(la2.first)
-                            if (r.isFailure) return Result.failure(r.exceptionOrNull()!!)
+                        matchVal2 != null && matchVal2.second == '*'.code -> {
+                            this.bump() // Skip over the *
+                            this.blockComment(idx).getOrElse { return Result.failure(it) }
                         }
-                        continue
+
+                        else -> Unit
                     }
-
-                    c == '/' -> {
-                        bump()
-                        val la2 = lookahead
-                        when {
-                            la2 != null && la2.second == '/' -> {
-                                takeUntil { ch -> ch == '\n' }
-                            }
-
-                            la2 != null && la2.second == '*' -> {
-                                bump() // Skip over the *
-                                val r = blockComment(idx)
-                                if (r.isFailure) return Result.failure(r.exceptionOrNull()!!)
-                            }
-
-                            else -> {}
-                        }
-                        continue
+                    continue
+                } else if (containsAsciiScalar(openDelims, c)) {
+                    balance += 1
+                } else if (balance > 0) {
+                    if (containsAsciiScalar(closeDelims, c)) {
+                        balance -= 1
                     }
+                } else {
+                    check(balance == 0)
 
-                    openDelims.indexOf(c) >= 0 -> {
-                        balance += 1
-                    }
-
-                    balance > 0 -> {
-                        if (closeDelims.indexOf(c) >= 0) {
-                            balance -= 1
-                        }
-                    }
-
-                    else -> {
-                        // balance == 0
-                        if (c == ',' || c == ';' || closeDelims.indexOf(c) >= 0) {
-                            // Note: we do not consume the
-                            // terminator. The code is everything *up
-                            // to but not including* the terminating
-                            // `,`, `;`, etc.
-                            return Result.success(idx)
-                        }
+                    if (c == ','.code || c == ';'.code || containsAsciiScalar(closeDelims, c)) {
+                        // Note: we do not consume the
+                        // terminator. The code is everything *up
+                        // to but not including* the terminating
+                        // `,`, `;`, etc.
+                        return Result.success(idx)
                     }
                 }
             } else if (balance > 0) {
@@ -752,130 +691,118 @@ internal class Tokenizer(
                 // unbalanced number of `{` etc!
                 return error(ErrorCode.UnterminatedCode, idx0)
             } else {
-                // balance == 0
-                return Result.success(text.length)
+                check(balance == 0)
+                return Result.success(this.textBytes.size)
             }
 
-            bump()
+            this.bump()
         }
     }
 
     fun escape(idx0: Int): Result<Spanned<Tok>> =
-        when (val idx1 = takeUntil { c -> c == '`' }) {
-            null -> {
-                error(ErrorCode.UnterminatedEscape, idx0)
-            }
-
+        when (val idx1 = this.takeUntil { c -> c == '`'.code }) {
+            null -> error(ErrorCode.UnterminatedEscape, idx0)
             else -> {
-                bump() // consume the '`'
-                val txt: String = text.substring(idx0 + 1, idx1) // do not include the `` in the str
-                Result.success(Spanned(idx0, Tok.Escape(txt), idx1 + 1))
+                this.bump() // consume the '`'
+                val text: String = this.sliceBytes(idx0 + 1, idx1) // do not include the `` in the str
+                Result.success(Spanned(idx0, Tok.Escape(text), idx1 + 1))
             }
         }
 
     fun takeLifetimeOrCharacterLiteral(): Int? {
-        // Try to decide whether `'` is the start of a scope binder or a character literal.
-        val la = lookahead ?: return null
-        val c = la.second
+        // Try to decide whether `'` is the start of a scope or a character literal.
+        val forgetCharacter = { p: Pair<Int, Int> -> p.first }
 
-        return if (c == '\\') {
+        val matchVal = this.lookahead ?: return null
+        val c = matchVal.second
+        return if (c == '\\'.code) {
             // escape after `'` => it had to be character literal token, consume
             // the backslash and escaped character, then consume until `'`
-            bump()
-            bump()
-            takeUntilAndConsumeTerminatingCharacter { cc -> cc == '\'' }
+            this.bump()
+            this.bump()
+            this.takeUntilAndConsumeTerminatingCharacter { ch -> ch == '\''.code }
         } else {
-            // no escape, then we require to see next `'` or we assume it was a scope binder
-            val n = bump() ?: return null
-            val (idx, cc) = n
-            if (cc == '\'') {
-                bump()?.first
-            } else {
-                idx
+            // no escape, then we require to see next `'` or we assume it was scope
+            this.bump()?.let { (idx, ch) ->
+                if (ch == '\''.code) {
+                    this.bump()?.let(forgetCharacter)
+                } else {
+                    idx
+                }
             }
         }
     }
 
     fun stringOrCharLiteral(
         idx0: Int,
-        quote: Char,
+        quote: Int,
         variant: (String) -> Tok,
     ): Spanned<Tok>? {
         var escape = false
-        val terminate = { c: Char ->
+        val terminate = { c: Int ->
             if (escape) {
                 escape = false
                 false
-            } else if (c == '\\') {
+            } else if (c == '\\'.code) {
                 escape = true
                 false
             } else {
                 c == quote
             }
         }
-        return when (val idx1 = takeUntil(terminate)) {
-            null -> {
-                null
-            }
-
+        return when (val idx1 = this.takeUntil(terminate)) {
+            null -> null
             else -> {
-                bump() // consume the closing quote
-                val txt = text.substring(idx0 + 1, idx1) // do not include quotes in the str
-                Spanned(idx0, variant(txt), idx1 + 1)
+                this.bump() // consume the closing quote
+                val text = this.sliceBytes(idx0 + 1, idx1) // do not include quotes in the str
+                Spanned(idx0, variant(text), idx1 + 1)
             }
         }
     }
 
-    fun stringLiteral(idx0: Int): Result<Spanned<Tok>> {
-        val r = stringOrCharLiteral(idx0, '"') { s -> Tok.StringLiteral(s) }
-        return if (r != null) {
-            Result.success(r)
-        } else {
-            error(ErrorCode.UnterminatedStringLiteral, idx0)
+    fun stringLiteral(idx0: Int): Result<Spanned<Tok>> =
+        when (val x = this.stringOrCharLiteral(idx0, '"'.code, Tok::StringLiteral)) {
+            null -> error(ErrorCode.UnterminatedStringLiteral, idx0)
+            else -> Result.success(x)
         }
-    }
 
     fun blockComment(idx0: Int): Result<Unit> {
+        var depth = 1
         var state = BlockCommentState.Initial
 
-        var depth = 1
-
-        val endOfComment = { c: Char ->
+        val endOfComment = { c: Int ->
             state =
                 when {
-                    (state == BlockCommentState.Initial || state == BlockCommentState.Star) && c == '*' -> {
+                    (state == BlockCommentState.Initial || state == BlockCommentState.Star) && c == '*'.code ->
                         BlockCommentState.Star
-                    }
 
-                    (state == BlockCommentState.Initial || state == BlockCommentState.Slash) && c == '/' -> {
+                    (state == BlockCommentState.Initial || state == BlockCommentState.Slash) && c == '/'.code ->
                         BlockCommentState.Slash
-                    }
 
-                    state == BlockCommentState.Slash && c == '*' -> {
+                    state == BlockCommentState.Slash && c == '*'.code -> {
                         depth += 1
                         BlockCommentState.Initial
                     }
 
-                    state == BlockCommentState.Star && c == '/' -> {
+                    state == BlockCommentState.Star && c == '/'.code -> {
                         depth -= 1
-                        if (depth == 0) BlockCommentState.Complete else BlockCommentState.Initial
+                        if (depth == 0) {
+                            BlockCommentState.Complete
+                        } else {
+                            BlockCommentState.Initial
+                        }
                     }
 
-                    else -> {
-                        BlockCommentState.Initial
-                    }
+                    else -> BlockCommentState.Initial
                 }
 
             state == BlockCommentState.Complete
         }
 
-        return when (takeUntil(endOfComment)) {
-            null -> {
-                error(ErrorCode.UnterminatedBlockComment, idx0)
-            }
-
+        return when (this.takeUntil(endOfComment)) {
+            null -> error(ErrorCode.UnterminatedBlockComment, idx0)
             else -> {
-                bump()
+                this.bump()
                 Result.success(Unit)
             }
         }
@@ -884,16 +811,17 @@ internal class Tokenizer(
     // parses `r#"..."#` (for some number of #), starts after the `r`
     // has been consumed; idx0 points at the `r`
     fun regexLiteral(idx0: Int): Result<Spanned<Tok>> {
-        val idx1 = takeWhile { c -> c == '#' }
+        val idx1 = this.takeWhile { c -> c == '#'.code }
+        val currentLookahead = this.lookahead
         return when {
-            idx1 != null && lookahead == (idx1 to '"') -> {
-                bump()
+            idx1 != null && currentLookahead == (idx1 to '"'.code) -> {
+                this.bump()
                 val hashes = idx1 - idx0 - 1
                 var state = 0
-                val endOfRegex = { c: Char ->
+                val endOfRegex = { c: Int ->
                     if (state > 0) {
                         // state N>0 means: observed n-1 hashes
-                        if (c == '#') {
+                        if (c == '#'.code) {
                             state += 1
                         } else {
                             state = 0
@@ -901,74 +829,68 @@ internal class Tokenizer(
                     }
 
                     // state 0 means: not yet seen the `"`
-                    if (state == 0 && c == '"') {
+                    if (state == 0 && c == '"'.code) {
                         state = 1
                     }
 
                     state == (hashes + 1)
                 }
-                when (val idxEnd = takeUntil(endOfRegex)) {
-                    null -> {
-                        error(ErrorCode.UnterminatedStringLiteral, idx0)
-                    }
-
+                when (val idxEnd = this.takeUntil(endOfRegex)) {
+                    null -> error(ErrorCode.UnterminatedStringLiteral, idx0)
                     else -> {
                         // idxEnd is the closing quote
-                        bump()
+                        this.bump()
                         val start = idx0 + 2 + hashes // skip the `r###"`
                         val end = idxEnd - hashes // skip the `###`.
-                        Result.success(Spanned(idx0, Tok.RegexLiteral(text.substring(start, end)), idxEnd + 1))
+                        Result.success(Spanned(idx0, Tok.RegexLiteral(this.sliceBytes(start, end)), idxEnd + 1))
                     }
                 }
             }
 
-            idx1 != null &&
-                run {
-                    val la = lookahead
-                    la != null && idx1 == la.first && isIdentifierStart(la.second)
-                }
+            idx1 != null && currentLookahead != null && idx1 == currentLookahead.first &&
+                isIdentifierStart(currentLookahead.second)
             -> {
-                bump()
-                identifierish(idx0)
+                this.bump()
+                this.identifierish(idx0)
             }
 
-            idx1 != null -> {
-                error(ErrorCode.ExpectedStringLiteral, idx1)
-            }
+            idx1 != null -> error(ErrorCode.ExpectedStringLiteral, idx1)
 
-            else -> {
-                error(ErrorCode.UnterminatedStringLiteral, idx0)
-            }
+            else -> error(ErrorCode.UnterminatedStringLiteral, idx0)
         }
     }
 
     // Saw a `'`, could either be: `'a` or `'a'`.
     fun lifetimeish(idx0: Int): Result<Spanned<Tok>> {
-        val la = lookahead ?: return Result.failure(TokError(Error(idx0, ErrorCode.UnterminatedCharacterLiteral)))
-        val c = la.second
+        val (_, c) =
+            this.lookahead
+                ?: return Result.failure(
+                    TokError(Error(location = idx0, code = ErrorCode.UnterminatedCharacterLiteral)),
+                )
 
         return if (isIdentifierStart(c)) {
-            val (start, word, end) = word(idx0)
-            val la2 = lookahead
-            if (la2 != null && la2.second == '\'') {
-                bump()
-                val txt = text.substring(idx0 + 1, la2.first)
-                Result.success(Spanned(idx0, Tok.CharLiteral(txt), la2.first + 1))
-            } else {
-                Result.success(Spanned(start, Tok.Lifetime(word), end))
+            val (start, word, end) = this.word(idx0)
+            val matchVal = this.lookahead
+            when {
+                matchVal != null && matchVal.second == '\''.code -> {
+                    val idx2 = matchVal.first
+                    this.bump()
+                    val text = this.sliceBytes(idx0 + 1, idx2)
+                    Result.success(Spanned(idx0, Tok.CharLiteral(text), idx2 + 1))
+                }
+
+                else -> Result.success(Spanned(start, Tok.Lifetime(word), end))
             }
         } else {
-            val r = stringOrCharLiteral(idx0, '\'') { s -> Tok.CharLiteral(s) }
-            if (r != null) {
-                Result.success(r)
-            } else {
-                error(ErrorCode.UnterminatedCharacterLiteral, idx0)
+            when (val x = this.stringOrCharLiteral(idx0, '\''.code, Tok::CharLiteral)) {
+                null -> error(ErrorCode.UnterminatedCharacterLiteral, idx0)
+                else -> Result.success(x)
             }
         }
     }
 
     fun identifierish(idx0: Int): Result<Spanned<Tok>> {
-        val (start, word, end) = word(idx0)
+        val (start, word, end) = this.word(idx0)
 
         if (word == "_") {
             return Result.success(Spanned(idx0, Tok.Underscore, idx0 + 1))
@@ -979,9 +901,9 @@ internal class Tokenizer(
         }
 
         if (word == "use") {
-            val codeEnd = code(idx0, "([{", "}])").getOrElse { return Result.failure(it) }
-            val codeStr = text.substring(end, codeEnd)
-            return Result.success(Spanned(start, Tok.Use(codeStr), codeEnd))
+            val codeEnd = this.code(idx0, "([{", "}])").getOrElse { return Result.failure(it) }
+            val code = this.sliceBytes(end, codeEnd)
+            return Result.success(Spanned(start, Tok.Use(code), codeEnd))
         }
 
         val tok: Tok =
@@ -994,8 +916,8 @@ internal class Tokenizer(
                 .map { (_, t) -> t }
                 .firstOrNull()
                 ?: run {
-                    val la = lookahead
-                    if (la != null && la.second == '<') {
+                    val matchVal = this.lookahead
+                    if (matchVal != null && matchVal.second == '<'.code) {
                         Tok.MacroId(word)
                     } else {
                         Tok.Id(word)
@@ -1006,36 +928,76 @@ internal class Tokenizer(
     }
 
     fun word(idx0: Int): Spanned<String> =
-        when (val end = takeWhile(::isIdentifierContinue)) {
-            null -> Spanned(idx0, text.substring(idx0), text.length)
-            else -> Spanned(idx0, text.substring(idx0, end), end)
+        when (val end = this.takeWhile(::isIdentifierContinue)) {
+            null -> Spanned(idx0, this.sliceBytes(idx0, this.textBytes.size), this.textBytes.size)
+            else -> Spanned(idx0, this.sliceBytes(idx0, end), end)
         }
 
-    fun takeWhile(keepGoing: (Char) -> Boolean): Int? = takeUntil { c -> !keepGoing(c) }
+    fun takeWhile(keepGoing: (Int) -> Boolean): Int? = this.takeUntil { c -> !keepGoing(c) }
 
-    fun takeUntil(terminate: (Char) -> Boolean): Int? {
+    fun takeUntil(terminate: (Int) -> Boolean): Int? {
         while (true) {
-            val (idx1, c) = lookahead ?: return null
+            val (idx1, c) = this.lookahead ?: return null
             if (terminate(c)) {
                 return idx1
             } else {
-                bump()
+                this.bump()
             }
         }
     }
 
-    fun takeUntilAndConsumeTerminatingCharacter(terminate: (Char) -> Boolean): Int? = takeUntil(terminate)?.let { bump()?.first }
+    fun takeUntilAndConsumeTerminatingCharacter(terminate: (Int) -> Boolean): Int? =
+        this.takeUntil(terminate)?.let { this.bump()?.first }
 
-    fun expectChar(c: Char): Result<Int>? {
-        val la = lookahead ?: return null
-        val (idx0, cc) = la
+    fun expectChar(c: Int): Result<Int>? {
+        val (idx0, cc) = this.lookahead ?: return null
 
-        bump()
+        this.bump()
         return if (c == cc) {
             Result.success(idx0)
         } else {
             error(ErrorCode.UnrecognizedToken, idx0)
         }
+    }
+
+    private fun nextShifted(): Result<Spanned<Tok>>? =
+        when (val matchVal = this.nextUnshifted()) {
+            null -> null
+            else ->
+                matchVal
+                    .map { (l, t, r) -> Spanned(l + this.shift, t, r + this.shift) }
+                    .recoverCatching { ex ->
+                        val err = (ex as TokError).err
+                        throw TokError(Error(location = err.location + this.shift, code = err.code))
+                    }
+        }
+
+    private fun sliceBytes(start: Int, end: Int): String {
+        if (start < 0 || end < start || end > this.textBytes.size) {
+            throw IndexOutOfBoundsException(
+                "UTF-8 byte span $start..$end out of bounds for length ${this.textBytes.size}",
+            )
+        }
+        val validStart =
+            start == 0 ||
+                start == this.textBytes.size ||
+                (this.textBytes[start].toInt() and 0xC0) != 0x80
+        val validEnd =
+            end == 0 ||
+                end == this.textBytes.size ||
+                (this.textBytes[end].toInt() and 0xC0) != 0x80
+        if (!validStart || !validEnd) {
+            throw IllegalArgumentException("UTF-8 byte span $start..$end is not on a char boundary")
+        }
+        return this.textBytes.decodeToString(
+            startIndex = start,
+            endIndex = end,
+            throwOnInvalidSequence = true,
+        )
+    }
+
+    companion object {
+        fun new(text: String, shift: Int): Tokenizer = Tokenizer(text, shift)
     }
 }
 
@@ -1052,133 +1014,201 @@ internal data class Spanned<T>(
     val end: Int,
 )
 
-internal fun isIdentifierStart(c: Char): Boolean =
-    isXidStart(c) || c == '_'
+/**
+ * Yields `(byteOffset, scalar)` pairs where `byteOffset` is the start offset in
+ * UTF-8 bytes and `scalar` is the full 32-bit Unicode scalar value. Unpaired
+ * UTF-16 surrogates throw [CharacterCodingException] rather than performing
+ * lossy substitution.
+ */
+internal class CharIndices private constructor(
+    private val s: String,
+    private var charPos: Int,
+    private var bytePos: Int,
+) {
+    constructor(s: String) : this(s = s, charPos = 0, bytePos = 0)
 
-internal fun isIdentifierContinue(c: Char): Boolean =
-    isXidContinue(c) || c == '_'
+    fun clone(): CharIndices = CharIndices(s = this.s, charPos = this.charPos, bytePos = this.bytePos)
 
-// Approximation of unicodeXid::UnicodeXID; LALRPOP grammar is predominantly ASCII.
-private fun isXidStart(c: Char): Boolean =
-    c.isLetter()
+    fun next(): Pair<Int, Int>? {
+        if (this.charPos >= this.s.length) return null
+        val startByte = this.bytePos
+        val c = this.s[this.charPos]
+        val scalar: Int =
+            if (c.isHighSurrogate()) {
+                if (this.charPos + 1 >= this.s.length || !this.s[this.charPos + 1].isLowSurrogate()) {
+                    throw CharacterCodingException()
+                }
+                val low = this.s[this.charPos + 1]
+                this.charPos += 2
+                ((c.code - 0xD800) shl 10) + (low.code - 0xDC00) + 0x10000
+            } else if (c.isLowSurrogate()) {
+                throw CharacterCodingException()
+            } else {
+                this.charPos += 1
+                c.code
+            }
+        this.bytePos +=
+            when {
+                scalar < 0x80 -> 1
+                scalar < 0x800 -> 2
+                scalar < 0x10000 -> 3
+                else -> 4
+            }
+        return startByte to scalar
+    }
+}
 
-private fun isXidContinue(c: Char): Boolean =
-    c.isLetterOrDigit()
+private fun String.charIndices(): CharIndices = CharIndices(this)
+
+private fun containsAsciiScalar(asciiDelims: String, scalar: Int): Boolean =
+    scalar in 0..0x7F && asciiDelims.indexOf(scalar.toChar()) >= 0
+
+private val XID_START_RANGES: List<ClassUnicodeRange> by lazy {
+    parseUnicodeClassRanges("\\p{XID_Start}")
+}
+
+private val XID_CONTINUE_RANGES: List<ClassUnicodeRange> by lazy {
+    parseUnicodeClassRanges("\\p{XID_Continue}")
+}
+
+private val WHITE_SPACE_RANGES: List<ClassUnicodeRange> by lazy {
+    parseUnicodeClassRanges("\\p{White_Space}")
+}
+
+private fun parseUnicodeClassRanges(pattern: String): List<ClassUnicodeRange> {
+    val hir =
+        ParserBuilder
+            .new()
+            .build()
+            .parse(pattern)
+            .getOrThrow()
+    val kind = hir.kind() as HirKind.Class
+    val unicode = kind.value as Class.Unicode
+    return unicode.value.ranges()
+}
+
+private fun containsUnicodeScalar(ranges: List<ClassUnicodeRange>, scalar: Int): Boolean {
+    var lo = 0
+    var hi = ranges.size - 1
+    while (lo <= hi) {
+        val mid = (lo + hi) ushr 1
+        val range = ranges[mid]
+        val start = range.start()
+        val end = range.end()
+        when {
+            scalar < start -> hi = mid - 1
+            scalar > end -> lo = mid + 1
+            else -> return true
+        }
+    }
+    return false
+}
+
+internal fun isIdentifierStart(c: Int): Boolean =
+    if (c < 0x80) {
+        (c in 'A'.code..'Z'.code) || (c in 'a'.code..'z'.code) || c == '_'.code
+    } else {
+        containsUnicodeScalar(XID_START_RANGES, c)
+    }
+
+internal fun isIdentifierStart(c: Char): Boolean = isIdentifierStart(c.code)
+
+internal fun isIdentifierContinue(c: Int): Boolean =
+    if (c < 0x80) {
+        (c in 'A'.code..'Z'.code) ||
+            (c in 'a'.code..'z'.code) ||
+            (c in '0'.code..'9'.code) ||
+            c == '_'.code
+    } else {
+        containsUnicodeScalar(XID_CONTINUE_RANGES, c)
+    }
+
+internal fun isIdentifierContinue(c: Char): Boolean = isIdentifierContinue(c.code)
+
+private fun isUnicodeWhitespace(c: Int): Boolean =
+    if (c < 0x80) {
+        c == ' '.code || c == '\t'.code || c == '\n'.code || c == '\r'.code || c == 0x0B || c == 0x0C
+    } else {
+        containsUnicodeScalar(WHITE_SPACE_RANGES, c)
+    }
+
+private fun asciiDigitToIntOrNull(scalar: Int, radix: Int): Int? {
+    val value =
+        when (scalar) {
+            in '0'.code..'9'.code -> scalar - '0'.code
+            in 'a'.code..'z'.code -> scalar - 'a'.code + 10
+            in 'A'.code..'Z'.code -> scalar - 'A'.code + 10
+            else -> return null
+        }
+    return if (value < radix) value else null
+}
 
 private fun applyAsciiCharEscape(
-    code: CharIndicesIter,
+    code: CharIndices,
     idx0: Int,
     offset: Int,
-): Result<Char> {
-    val first = code.next() ?: return error(ErrorCode.UnterminatedAsciiEscape, idx0 + offset)
-    val octalOffset = first.first
-    val octal = first.second
+): Result<Int> {
+    val (octalOffset, octal) =
+        code.next() ?: return error(ErrorCode.UnterminatedAsciiEscape, idx0 + offset)
 
-    val second = code.next() ?: return error(ErrorCode.UnterminatedAsciiEscape, idx0 + octalOffset)
-    val hex = second.second
+    val (_, hex) =
+        code.next() ?: return error(ErrorCode.UnterminatedAsciiEscape, idx0 + octalOffset)
 
     val err = Error(location = idx0 + offset, code = ErrorCode.UnrecognizedEscape)
 
-    val high = Character.digitOrNull(octal, 8) ?: return Result.failure(TokError(err))
-    val low = Character.digitOrNull(hex, 16) ?: return Result.failure(TokError(err))
+    val high = asciiDigitToIntOrNull(octal, 8) ?: return Result.failure(TokError(err))
+    val low = asciiDigitToIntOrNull(hex, 16) ?: return Result.failure(TokError(err))
 
-    return Result.success(((high.toInt() shl 4) or low.toInt()).toChar())
+    return Result.success((high shl 4) or low)
 }
 
-private object Character {
-    fun digitOrNull(c: Char, radix: Int): UByte? {
-        val d = c.digitToIntOrNull(radix) ?: return null
-        return d.toUByte()
+private fun StringBuilder.appendScalar(scalar: Int) {
+    if (scalar < 0x10000) {
+        append(scalar.toChar())
+    } else {
+        val u = scalar - 0x10000
+        append((0xD800 + (u ushr 10)).toChar())
+        append((0xDC00 + (u and 0x3FF)).toChar())
     }
 }
 
 /**
- * Port of the upstream `str::charIndices()`. Yields `(byteOffset, char)` pairs,
- * where `byteOffset` is the position of the start of each character in the
- * string UTF-8 encoding — matching the upstream indexing, not Kotlin native
- * UTF-16 code-unit indexing. Surrogate pairs are collapsed so one `next()`
- * call produces one code point; the emitted `Char` loses any supplementary
- * plane info but the byte offset still advances by 4 bytes.
- */
-private class CharIndicesIter(
-    private val s: String,
-) {
-    private var charPos: Int = 0
-    private var bytePos: Int = 0
-
-    fun next(): Pair<Int, Char>? {
-        if (charPos >= s.length) return null
-        val startByte = bytePos
-        val c = s[charPos]
-        val codePoint: Int =
-            if (c.isHighSurrogate() && charPos + 1 < s.length) {
-                val low = s[charPos + 1]
-                charPos += 2
-                ((c.code - 0xD800) shl 10) + (low.code - 0xDC00) + 0x10000
-            } else {
-                charPos += 1
-                c.code
-            }
-        bytePos +=
-            when {
-                codePoint < 0x80 -> 1
-                codePoint < 0x800 -> 2
-                codePoint < 0x10000 -> 3
-                else -> 4
-            }
-        return startByte to c
-    }
-}
-
-/** Expand escape characters in a string literal, converting the source code
+ * Expand escape characters in a string literal, converting the source code
  * representation to the text it represents. The `idx0` argument should be the
  * position in the input stream of the first character of `text`, the position
- * after the opening double-quote. */
+ * after the opening double-quote.
+ */
 internal fun applyStringEscapes(code: String, idx0: Int): Result<String> {
     return if (!code.contains('\\')) {
+        // Validate UTF-16 surrogate integrity even when no backslash is present.
+        code.encodeToByteArray(throwOnInvalidSequence = true)
         Result.success(code)
     } else {
-        val iter = CharIndicesIter(code)
+        val iter = code.charIndices()
         val text = StringBuilder()
         while (true) {
-            val pair = iter.next() ?: break
-            var ch = pair.second
-            if (ch == '\\') {
+            val matchVal = iter.next() ?: break
+            var ch = matchVal.second
+            if (ch == '\\'.code) {
                 // The parser should never have accepted an ill-formed string
-                // literal, so we know it cannot end in a backslash.
+                // literal, so we know it can't end in a backslash.
                 val (offset, nextCh) = iter.next()!!
                 ch =
                     when (nextCh) {
-                        '\\', '"' -> {
-                            nextCh
-                        }
-
-                        'n' -> {
-                            '\n'
-                        }
-
-                        'r' -> {
-                            '\r'
-                        }
-
-                        't' -> {
-                            '\t'
-                        }
-
-                        '0' -> {
-                            '\u0000'
-                        }
-
-                        'x' -> {
-                            applyAsciiCharEscape(iter, idx0, offset).getOrElse { return Result.failure(it) }
-                        }
-
+                        '\\'.code, '"'.code -> nextCh
+                        'n'.code -> '\n'.code
+                        'r'.code -> '\r'.code
+                        't'.code -> '\t'.code
+                        '0'.code -> 0
+                        'x'.code ->
+                            applyAsciiCharEscape(iter, idx0, offset)
+                                .getOrElse { return Result.failure(it) }
                         else -> {
                             return error(ErrorCode.UnrecognizedEscape, idx0 + offset)
                         }
                     }
             }
-            text.append(ch)
+            text.appendScalar(ch)
         }
         Result.success(text.toString())
     }
