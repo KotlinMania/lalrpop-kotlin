@@ -9,13 +9,40 @@ import kotlin.JsFun
 import kotlin.js.ExperimentalWasmJsInterop
 import kotlin.js.JsAny
 
-@JsFun("() => globalThis.KotlinManiaLalrpopHost.currentDir()")
+@JsFun(
+    """() => {
+        const host = globalThis.KotlinManiaLalrpopHost;
+        if (host && typeof host.currentDir === 'function') return host.currentDir();
+        const proc = globalThis.process;
+        if (proc && typeof proc.cwd === 'function') return proc.cwd();
+        return '/';
+    }""",
+)
 private external fun hostCurrentDir(): String
 
-@JsFun("(name) => globalThis.KotlinManiaLalrpopHost.envVar(name)")
+@JsFun(
+    """(name) => {
+        const host = globalThis.KotlinManiaLalrpopHost;
+        if (host && typeof host.envVar === 'function') return host.envVar(name);
+        const proc = globalThis.process;
+        if (proc && proc.env && Object.prototype.hasOwnProperty.call(proc.env, name)) {
+            const v = proc.env[name];
+            return v === undefined ? null : String(v);
+        }
+        return null;
+    }""",
+)
 private external fun hostEnvVar(name: String): String?
 
-@JsFun("() => Object.entries(JSON.parse(globalThis.KotlinManiaLalrpopHost.envVars()))")
+@JsFun(
+    """() => {
+        const host = globalThis.KotlinManiaLalrpopHost;
+        if (host && typeof host.envVars === 'function') return Object.entries(JSON.parse(host.envVars()));
+        const proc = globalThis.process;
+        if (proc && proc.env) return Object.entries(proc.env);
+        return [];
+    }""",
+)
 private external fun hostEnvEntries(): JsAny
 
 @JsFun("(entries) => entries.length")
@@ -27,24 +54,39 @@ private external fun hostEntryKey(entries: JsAny, i: Int): String
 @JsFun("(entries, i) => String(entries[i][1] ?? '')")
 private external fun hostEntryValue(entries: JsAny, i: Int): String
 
-@JsFun("(message) => globalThis.KotlinManiaLalrpopHost.eprint(message)")
+@JsFun(
+    """(message) => {
+        const host = globalThis.KotlinManiaLalrpopHost;
+        if (host && typeof host.eprint === 'function') { host.eprint(message); return; }
+        const proc = globalThis.process;
+        if (proc && proc.stderr && typeof proc.stderr.write === 'function') { proc.stderr.write(message); return; }
+        console.error(message.endsWith('\n') ? message.slice(0, -1) : message);
+    }""",
+)
 private external fun hostEPrint(message: String)
+
+internal val wasmJsEnvOverrides: MutableMap<String, String> = mutableMapOf()
 
 internal actual fun apiCurrentDir(): String = hostCurrentDir()
 
-internal actual fun apiEnvVar(name: String): String? = hostEnvVar(name)
+internal actual fun apiEnvVar(name: String): String? = wasmJsEnvOverrides[name] ?: hostEnvVar(name)
 
 internal actual fun apiEnvVars(): Sequence<Pair<String, String>> {
+    val merged = LinkedHashMap<String, String>()
     val entries = hostEnvEntries()
     val count = hostEntriesLength(entries)
-    val pairs = mutableListOf<Pair<String, String>>()
     for (i in 0 until count) {
         val value = hostEntryValue(entries, i)
         if (value.isNotEmpty()) {
-            pairs.add(hostEntryKey(entries, i) to value)
+            merged[hostEntryKey(entries, i)] = value
         }
     }
-    return pairs.asSequence()
+    for ((k, v) in wasmJsEnvOverrides) {
+        if (v.isNotEmpty()) {
+            merged[k] = v
+        }
+    }
+    return merged.entries.asSequence().map { (k, v) -> k to v }
 }
 
 internal actual fun apiEPrintln(message: String) {

@@ -3,6 +3,7 @@
 package io.github.kotlinmania.lalrpop.lr1
 
 import io.github.kotlinmania.lalrpop.Level
+import io.github.kotlinmania.lalrpop.api.apiEnvVar
 import io.github.kotlinmania.lalrpop.collections.Multimap
 import io.github.kotlinmania.lalrpop.collections.VecCollection
 import io.github.kotlinmania.lalrpop.collections.map
@@ -11,6 +12,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Symbol
 import io.github.kotlinmania.lalrpop.lr1.first.FirstSets
 import io.github.kotlinmania.lalrpop.lr1.lanetable.buildLaneTableStates
+import io.github.kotlinmania.lalrpop.profile
 import io.github.kotlinmania.lalrpop.tls.Tls
 import io.github.kotlinmania.lalrpop.Kernel as KKernelInterface
 import io.github.kotlinmania.lalrpop.KernelSet as KKernelSet
@@ -33,9 +35,8 @@ private fun buildLr1StatesLegacy(
 }
 
 /**
- * Mirrors the Rust `Result<Vec<State<L>>, TableConstructionError<L>>`
- * returned by `build_lr0_states` / `build_lr1_states`. Use this typed
- * accessor when the caller needs to inspect the typed
+ * Typed outcome for state construction returned by [buildLr0StatesOrError].
+ * Use this typed accessor when the caller needs to inspect the typed
  * [TableConstructionError] payload without relying on a runtime cast
  * out of the erased [TableConstructionErrorException.inner].
  */
@@ -54,18 +55,19 @@ internal fun buildLr0StatesOrError(
     start: NonterminalString,
 ): BuildOutcome<Nil> = Lr.new(grammar, start, Nil()).buildStatesOrError()
 
-internal fun useLaneTable(): Boolean = true
+internal fun useLaneTable(): Boolean = apiEnvVar("LALRPOP_LANE_TABLE") != "disabled"
 
 internal fun buildLr1States(grammar: Grammar, start: NonterminalString): MutableList<State<TokenSet>> {
-    val (_, methodFn: ConstructionFunction) =
+    val (methodName, methodFn: ConstructionFunction) =
         if (useLaneTable()) {
             Pair("lane", ::buildLaneTableStates)
         } else {
             Pair("legacy", ::buildLr1StatesLegacy)
         }
 
-    // profile! { &Tls::session(), formatCall("LR(1) state construction ({})", methodName), { methodFn(grammar, start) } }
-    return methodFn(grammar, start)
+    return profile(Tls.session(), "LR(1) state construction ($methodName)") {
+        methodFn(grammar, start)
+    }
 }
 
 internal fun buildLr0States(
@@ -263,7 +265,7 @@ internal class Lr<L>(
             // `lookahead`. In LR1 at least, it is the union of:
             //
             //   (a) FIRST(remainder)
-            //   (b) if remainder may when epsilon, also our lookahead.
+            //   (b) if remainder may match epsilon, also our lookahead.
             for (newItem in epsilonMoves(this, nt, remainder, lookahead)) {
                 val newItem0 = newItem.toLr0()
                 if (map.push(newItem0, newItem.lookahead)) {

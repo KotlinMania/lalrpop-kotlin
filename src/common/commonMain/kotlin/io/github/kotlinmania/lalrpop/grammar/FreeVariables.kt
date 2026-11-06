@@ -122,7 +122,7 @@ internal fun NominalTypeRepr.freeVariables(typeParameters: List<TypeParameter>):
         types.flatMap { t -> t.freeVariables(typeParameters) }
 }
 
-internal fun <T> ParseTreeWhereClause<T>.freeVariables(
+internal fun <T : Comparable<T>> ParseTreeWhereClause<T>.freeVariables(
     typeParameters: List<TypeParameter>,
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =
@@ -141,7 +141,7 @@ internal fun <T> ParseTreeWhereClause<T>.freeVariables(
         }
     }
 
-internal fun <T> TypeBoundParameter<T>.freeVariables(
+internal fun <T : Comparable<T>> TypeBoundParameter<T>.freeVariables(
     typeParameters: List<TypeParameter>,
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =
@@ -151,7 +151,7 @@ internal fun <T> TypeBoundParameter<T>.freeVariables(
         is TypeBoundParameter.Associated<T> -> listOf()
     }
 
-internal fun <T> TypeBound<T>.freeVariables(
+internal fun <T : Comparable<T>> TypeBound<T>.freeVariables(
     typeParameters: List<TypeParameter>,
     freeVars: (T, List<TypeParameter>) -> List<TypeParameter>,
 ): List<TypeParameter> =

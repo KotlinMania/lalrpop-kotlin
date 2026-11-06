@@ -23,7 +23,14 @@ private external fun hostTempDir(): String
 @JsFun("(path) => globalThis.KotlinManiaLalrpopHost.setCurrentDir(path)")
 private external fun hostSetCurrentDir(path: String)
 
-@JsFun("(name, value) => globalThis.KotlinManiaLalrpopHost.setEnvVar(name, value)")
+@JsFun(
+    """(name, value) => {
+        const host = globalThis.KotlinManiaLalrpopHost;
+        if (host && typeof host.setEnvVar === 'function') { host.setEnvVar(name, value); return; }
+        const proc = globalThis.process;
+        if (proc && proc.env) { proc.env[name] = value; }
+    }""",
+)
 private external fun hostSetEnvVar(name: String, value: String)
 
 @JsFun("(path) => globalThis.KotlinManiaLalrpopHost.pathExists(path)")
@@ -45,6 +52,7 @@ internal actual fun apiSetCurrentDir(path: String) {
 }
 
 internal actual fun apiSetEnvVar(name: String, value: String) {
+    wasmJsEnvOverrides[name] = value
     hostSetEnvVar(name, value)
 }
 

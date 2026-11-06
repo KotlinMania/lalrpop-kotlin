@@ -42,6 +42,7 @@ internal actual fun apiSetEnvVar(
     name: String,
     value: String,
 ) {
+    jsEnvOverrides[name] = value
     val proc = nodeProcess() ?: return
     if (proc.env != null) {
         proc.env[name] = value

@@ -10,6 +10,7 @@ import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Path
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
+import io.github.kotlinmania.lalrpop.lexer.rustDebugQuote
 
 internal data class Pattern<T>(
     var span: Span,
@@ -166,7 +167,7 @@ internal sealed class PatternKind<T> {
             }
 
             is StringKind -> {
-                "\"$s\""
+                rustDebugQuote(s)
             }
         }
 

@@ -1,8 +1,11 @@
 // port-lint: source log.rs
 package io.github.kotlinmania.lalrpop
 
+import kotlin.time.TimeSource
+
 internal class Log(
     level: Level,
+    private val writer: (String) -> Unit = ::println,
 ) {
     var level: Level = level
         private set
@@ -13,7 +16,7 @@ internal class Log(
 
     fun log(level: Level, message: () -> String) {
         if (this.level >= level) {
-            println(message())
+            writer(message())
         }
     }
 
@@ -36,4 +39,15 @@ enum class Level {
     Debug,
 }
 
-// Call `session.log(Level.X) { ... }` directly for structured logging.
+internal inline fun <T> profile(
+    session: Session,
+    phaseName: String,
+    action: () -> T,
+): T {
+    session.log(Level.Verbose) { "Phase `$phaseName` begun" }
+    val timeStamp = TimeSource.Monotonic.markNow()
+    val result = action()
+    val elapsed = timeStamp.elapsedNow().inWholeNanoseconds.toDouble() / 1_000_000_000.0
+    session.log(Level.Verbose) { "Phase `$phaseName` completed in $elapsed seconds" }
+    return result
+}

@@ -11,6 +11,8 @@ import io.github.kotlinmania.lalrpop.grammar.parsetree.NonterminalString
 import io.github.kotlinmania.lalrpop.grammar.parsetree.TerminalString
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Production
+import io.github.kotlinmania.lalrpop.profile
+import io.github.kotlinmania.lalrpop.tls.Tls
 
 // Intermediate LALR(1) state. Identical to an LR(1) state, but that
 // the items can be pushed to. We initially create these with an empty
@@ -35,8 +37,9 @@ internal fun buildLalrStates(grammar: Grammar, start: NonterminalString): Mutabl
         return lrStates
     }
 
-    // profile! { &Tls::session(), "LALR(1) state collapse", collapseToLalrStates(&lrStates) }
-    return collapseToLalrStates(lrStates)
+    return profile(Tls.session(), "LALR(1) state collapse") {
+        collapseToLalrStates(lrStates)
+    }
 }
 
 internal fun collapseToLalrStates(lrStates: List<State<TokenSet>>): MutableList<State<TokenSet>> {

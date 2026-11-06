@@ -7,6 +7,8 @@ package io.github.kotlinmania.lalrpop.grammar.repr
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
 import io.github.kotlinmania.lalrpop.collections.Map
+import io.github.kotlinmania.lalrpop.collections.compareLists
+import io.github.kotlinmania.lalrpop.collections.compareNullable
 import io.github.kotlinmania.lalrpop.collections.map
 import io.github.kotlinmania.lalrpop.grammar.Pattern
 import io.github.kotlinmania.lalrpop.grammar.freeVariables
@@ -97,7 +99,29 @@ internal sealed class WhereClause : Comparable<WhereClause> {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: WhereClause): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: WhereClause): Int {
+        val variantCmp = ordinal().compareTo(other.ordinal())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is Forall -> {
+                val o = other as Forall
+                val c = compareLists(binder, o.binder)
+                if (c != 0) c else clause.compareTo(o.clause)
+            }
+
+            is Bound -> {
+                val o = other as Bound
+                val c = subject.compareTo(o.subject)
+                if (c != 0) c else bound.compareTo(o.bound)
+            }
+        }
+    }
+
+    private fun ordinal(): Int =
+        when (this) {
+            is Forall -> 0
+            is Bound -> 1
+        }
 
     fun fmt(): String =
         when (this) {
@@ -435,17 +459,56 @@ internal sealed class TypeRepr : Comparable<TypeRepr> {
 
     override fun compareTo(other: TypeRepr): Int {
         // Mirror the upstream derived ordering for TypeRepr: sort
-        // by variant declaration order first, then by inner contents.
-        // toString-based compare gives a different order (because
-        // reference formatting uses punctuation), which
-        // flips popVariant0 / popVariant1 ordering in the
-        // emitted parse table.
+        // by variant declaration order first, then structurally by
+        // fields in declaration order.
         val ao = ordinal()
         val bo = other.ordinal()
         if (ao != bo) return ao - bo
-        // Within a variant, compare the rendered form used by the
-        // contained Kotlin port types.
-        return toString().compareTo(other.toString())
+        return when (this) {
+            is Tuple -> {
+                compareLists(types, (other as Tuple).types)
+            }
+
+            is Slice -> {
+                ty.compareTo((other as Slice).ty)
+            }
+
+            is Nominal -> {
+                data.compareTo((other as Nominal).data)
+            }
+
+            is Associated -> {
+                val o = other as Associated
+                val c = typeParameter.compareTo(o.typeParameter)
+                if (c != 0) c else id.compareTo(o.id)
+            }
+
+            is LifetimeRepr -> {
+                lifetime.compareTo((other as LifetimeRepr).lifetime)
+            }
+
+            is Ref -> {
+                val o = other as Ref
+                val c1 = compareNullable(lifetime, o.lifetime)
+                if (c1 != 0) return c1
+                val c2 = mutable.compareTo(o.mutable)
+                if (c2 != 0) c2 else referent.compareTo(o.referent)
+            }
+
+            is TraitObject -> {
+                data.compareTo((other as TraitObject).data)
+            }
+
+            is Fn -> {
+                val o = other as Fn
+                val c1 = compareLists(forall, o.forall)
+                if (c1 != 0) return c1
+                val c2 = path.compareTo(o.path)
+                if (c2 != 0) return c2
+                val c3 = compareLists(parameters, o.parameters)
+                if (c3 != 0) c3 else compareNullable(ret, o.ret)
+            }
+        }
     }
 
     private fun ordinal(): Int =
@@ -620,7 +683,10 @@ internal data class NominalTypeRepr(
     var path: Path,
     var types: MutableList<TypeRepr>,
 ) : Comparable<NominalTypeRepr> {
-    override fun compareTo(other: NominalTypeRepr): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: NominalTypeRepr): Int {
+        val c = path.compareTo(other.path)
+        return if (c != 0) c else compareLists(types, other.types)
+    }
 
     fun fmt(): String =
         if (types.isEmpty()) {

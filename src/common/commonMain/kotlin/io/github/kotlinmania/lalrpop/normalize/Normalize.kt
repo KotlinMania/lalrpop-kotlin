@@ -6,7 +6,6 @@
  */
 package io.github.kotlinmania.lalrpop.normalize
 
-import io.github.kotlinmania.lalrpop.Level
 import io.github.kotlinmania.lalrpop.Session
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
 import io.github.kotlinmania.lalrpop.normalize.condcomp.removeDisabledDecls
@@ -16,6 +15,7 @@ import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros
 import io.github.kotlinmania.lalrpop.normalize.precedence.expandPrecedence
 import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
 import io.github.kotlinmania.lalrpop.normalize.tyinfer.inferTypes
+import io.github.kotlinmania.lalrpop.profile
 import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar as PtGrammar
 import io.github.kotlinmania.lalrpop.grammar.repr.Grammar as RGrammar
 import io.github.kotlinmania.lalrpop.normalize.prevalidate.validate as prevalidateValidate
@@ -35,13 +35,6 @@ internal fun returnErr(span: Span, message: String): Nothing =
 internal class NormErrorException(
     val err: NormError,
 ) : RuntimeException(err.message)
-
-private inline fun <T> profile(session: Session, phaseName: String, action: () -> T): T {
-    session.log.log(Level.Verbose) { "Phase `$phaseName` begun" }
-    val result = action()
-    session.log.log(Level.Verbose) { "Phase `$phaseName` completed" }
-    return result
-}
 
 internal fun normalize(session: Session, grammar: PtGrammar): RGrammar =
     normalizeHelper(session, grammar, true)

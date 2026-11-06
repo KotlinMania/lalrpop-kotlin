@@ -7,6 +7,8 @@ package io.github.kotlinmania.lalrpop.grammar.parsetree
 
 import io.github.kotlinmania.lalrpop.Atom
 import io.github.kotlinmania.lalrpop.Sep
+import io.github.kotlinmania.lalrpop.collections.compareLists
+import io.github.kotlinmania.lalrpop.collections.compareNullable
 import io.github.kotlinmania.lalrpop.grammar.INPUT_LIFETIME
 import io.github.kotlinmania.lalrpop.grammar.LALR
 import io.github.kotlinmania.lalrpop.grammar.Pattern
@@ -18,6 +20,7 @@ import io.github.kotlinmania.lalrpop.grammar.repr.LrCodeGeneration
 import io.github.kotlinmania.lalrpop.grammar.repr.NominalTypeRepr
 import io.github.kotlinmania.lalrpop.grammar.repr.TypeRepr
 import io.github.kotlinmania.lalrpop.lexer.dfa.Dfa
+import io.github.kotlinmania.lalrpop.lexer.rustDebugQuote
 import io.github.kotlinmania.lalrpop.message.builder.InlineBuilder
 import io.github.kotlinmania.lalrpop.message.message.Content
 import io.github.kotlinmania.lalrpop.tls.Tls
@@ -142,7 +145,20 @@ internal sealed class MatchMapping : Comparable<MatchMapping> {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: MatchMapping): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: MatchMapping): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is Terminal -> terminal.compareTo((other as Terminal).terminal)
+            Skip -> 0
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is Terminal -> 0
+            Skip -> 1
+        }
 
     // Debug implementation
     fun debugFmt(): String =
@@ -292,7 +308,7 @@ internal data class Path(
     }
 }
 
-internal sealed class TypeRef {
+internal sealed class TypeRef : Comparable<TypeRef> {
     // (T1, T2)
     data class Tuple(
         val types: MutableList<TypeRef>,
@@ -412,6 +428,75 @@ internal sealed class TypeRef {
             }
         }
 
+    override fun compareTo(other: TypeRef): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is Tuple -> {
+                compareLists(types, (other as Tuple).types)
+            }
+
+            is Slice -> {
+                ty.compareTo((other as Slice).ty)
+            }
+
+            is Nominal -> {
+                val o = other as Nominal
+                val c = path.compareTo(o.path)
+                if (c != 0) c else compareLists(types, o.types)
+            }
+
+            is Ref -> {
+                val o = other as Ref
+                val c1 = compareNullable(lifetime, o.lifetime)
+                if (c1 != 0) return c1
+                val c2 = mutable.compareTo(o.mutable)
+                if (c2 != 0) c2 else referent.compareTo(o.referent)
+            }
+
+            is TraitObject -> {
+                val o = other as TraitObject
+                val c = path.compareTo(o.path)
+                if (c != 0) c else compareLists(types, o.types)
+            }
+
+            is LifetimeRef -> {
+                lifetime.compareTo((other as LifetimeRef).lifetime)
+            }
+
+            is Id -> {
+                atom.compareTo((other as Id).atom)
+            }
+
+            is OfSymbol -> {
+                kind.compareTo((other as OfSymbol).kind)
+            }
+
+            is Fn -> {
+                val o = other as Fn
+                val c1 = compareLists(forall, o.forall)
+                if (c1 != 0) return c1
+                val c2 = path.compareTo(o.path)
+                if (c2 != 0) return c2
+                val c3 = compareLists(parameters, o.parameters)
+                if (c3 != 0) c3 else compareNullable(ret, o.ret)
+            }
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is Tuple -> 0
+            is Slice -> 1
+            is Nominal -> 2
+            is Ref -> 3
+            is TraitObject -> 4
+            is LifetimeRef -> 5
+            is Id -> 6
+            is OfSymbol -> 7
+            is Fn -> 8
+        }
+
     override fun toString(): String = fmt()
 
     // Converts a TypeRef to a TypeRepr, assuming no inference is
@@ -481,16 +566,16 @@ internal sealed class TypeRef {
         }
 }
 
-internal sealed class WhereClause<T> : Comparable<WhereClause<T>> {
+internal sealed class WhereClause<T : Comparable<T>> : Comparable<WhereClause<T>> {
     // Clause form (a: b + c)
-    data class LifetimeClause<T>(
+    data class LifetimeClause<T : Comparable<T>>(
         val lifetime: Lifetime,
         val bounds: MutableList<Lifetime>,
     ) : WhereClause<T>() {
         override fun toString(): String = fmt()
     }
 
-    data class TypeClause<T>(
+    data class TypeClause<T : Comparable<T>>(
         val forall: MutableList<TypeParameter>,
         val ty: T,
         val bounds: MutableList<TypeBound<T>>,
@@ -498,7 +583,31 @@ internal sealed class WhereClause<T> : Comparable<WhereClause<T>> {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: WhereClause<T>): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: WhereClause<T>): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is LifetimeClause<T> -> {
+                val o = other as LifetimeClause<T>
+                val c = lifetime.compareTo(o.lifetime)
+                if (c != 0) c else compareLists(bounds, o.bounds)
+            }
+
+            is TypeClause<T> -> {
+                val o = other as TypeClause<T>
+                val c1 = compareLists(forall, o.forall)
+                if (c1 != 0) return c1
+                val c2 = ty.compareTo(o.ty)
+                if (c2 != 0) c2 else compareLists(bounds, o.bounds)
+            }
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is LifetimeClause -> 0
+            is TypeClause -> 1
+        }
 
     fun fmt(): String =
         when (this) {
@@ -534,15 +643,15 @@ internal sealed class WhereClause<T> : Comparable<WhereClause<T>> {
     override fun toString(): String = fmt()
 }
 
-internal sealed class TypeBound<T> : Comparable<TypeBound<T>> {
+internal sealed class TypeBound<T : Comparable<T>> : Comparable<TypeBound<T>> {
     // A bound parameter in a type constraint.
-    data class LifetimeBound<T>(
+    data class LifetimeBound<T : Comparable<T>>(
         val lifetime: Lifetime,
     ) : TypeBound<T>() {
         override fun toString(): String = fmt()
     }
 
-    data class Fn<T>(
+    data class Fn<T : Comparable<T>>(
         val forall: MutableList<TypeParameter>,
         val path: Path,
         val parameters: MutableList<T>,
@@ -552,7 +661,7 @@ internal sealed class TypeBound<T> : Comparable<TypeBound<T>> {
     }
 
     // `some::Trait` or `some::Trait<Param, ...>` or `some::Trait<Item = Assoc>`
-    data class Trait<T>(
+    data class Trait<T : Comparable<T>>(
         val forall: MutableList<TypeParameter>,
         val path: Path,
         val parameters: MutableList<TypeBoundParameter<T>>,
@@ -560,9 +669,42 @@ internal sealed class TypeBound<T> : Comparable<TypeBound<T>> {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: TypeBound<T>): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: TypeBound<T>): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is LifetimeBound<T> -> {
+                lifetime.compareTo((other as LifetimeBound<T>).lifetime)
+            }
 
-    fun <U> map(f: (T) -> U): TypeBound<U> =
+            is Fn<T> -> {
+                val o = other as Fn<T>
+                val c1 = compareLists(forall, o.forall)
+                if (c1 != 0) return c1
+                val c2 = path.compareTo(o.path)
+                if (c2 != 0) return c2
+                val c3 = compareLists(parameters, o.parameters)
+                if (c3 != 0) c3 else compareNullable(ret, o.ret)
+            }
+
+            is Trait<T> -> {
+                val o = other as Trait<T>
+                val c1 = compareLists(forall, o.forall)
+                if (c1 != 0) return c1
+                val c2 = path.compareTo(o.path)
+                if (c2 != 0) c2 else compareLists(parameters, o.parameters)
+            }
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is LifetimeBound -> 0
+            is Fn -> 1
+            is Trait -> 2
+        }
+
+    fun <U : Comparable<U>> map(f: (T) -> U): TypeBound<U> =
         when (this) {
             is LifetimeBound -> {
                 LifetimeBound(lifetime)
@@ -637,32 +779,57 @@ internal sealed class TypeBound<T> : Comparable<TypeBound<T>> {
     override fun toString(): String = fmt()
 }
 
-internal sealed class TypeBoundParameter<T> : Comparable<TypeBoundParameter<T>> {
+internal sealed class TypeBoundParameter<T : Comparable<T>> : Comparable<TypeBoundParameter<T>> {
     // Bound parameter
-    data class LifetimeParam<T>(
+    data class LifetimeParam<T : Comparable<T>>(
         val lifetime: Lifetime,
     ) : TypeBoundParameter<T>() {
         override fun toString(): String = fmt()
     }
 
     // Type parameter or bound parameter
-    data class TypeParameterParam<T>(
+    data class TypeParameterParam<T : Comparable<T>>(
         val ty: T,
     ) : TypeBoundParameter<T>() {
         override fun toString(): String = fmt()
     }
 
     // `Item = T`
-    data class Associated<T>(
+    data class Associated<T : Comparable<T>>(
         val id: Atom,
         val ty: T,
     ) : TypeBoundParameter<T>() {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: TypeBoundParameter<T>): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: TypeBoundParameter<T>): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is LifetimeParam<T> -> {
+                lifetime.compareTo((other as LifetimeParam<T>).lifetime)
+            }
 
-    fun <U> map(f: (T) -> U): TypeBoundParameter<U> =
+            is TypeParameterParam<T> -> {
+                ty.compareTo((other as TypeParameterParam<T>).ty)
+            }
+
+            is Associated<T> -> {
+                val o = other as Associated<T>
+                val c = id.compareTo(o.id)
+                if (c != 0) c else ty.compareTo(o.ty)
+            }
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is LifetimeParam -> 0
+            is TypeParameterParam -> 1
+            is Associated -> 2
+        }
+
+    fun <U : Comparable<U>> map(f: (T) -> U): TypeBoundParameter<U> =
         when (this) {
             is LifetimeParam -> LifetimeParam(lifetime)
             is TypeParameterParam -> TypeParameterParam(f(ty))
@@ -692,7 +859,20 @@ internal sealed class TypeParameter : Comparable<TypeParameter> {
         override fun toString(): String = fmt()
     }
 
-    override fun compareTo(other: TypeParameter): Int = toString().compareTo(other.toString())
+    override fun compareTo(other: TypeParameter): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is LifetimeTp -> lifetime.compareTo((other as LifetimeTp).lifetime)
+            is Id -> atom.compareTo((other as Id).atom)
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is LifetimeTp -> 0
+            is Id -> 1
+        }
 
     fun fmt(): String =
         when (this) {
@@ -839,9 +1019,14 @@ internal enum class ConditionOp {
 internal data class Symbol(
     var span: Span,
     var kind: SymbolKind,
-) {
+) : Comparable<Symbol> {
     companion object {
         fun new(span: Span, kind: SymbolKind): Symbol = Symbol(span, kind)
+    }
+
+    override fun compareTo(other: Symbol): Int {
+        val c = span.compareTo(other.span)
+        return if (c != 0) c else kind.compareTo(other.kind)
     }
 
     fun canonicalForm(): String = "$this"
@@ -857,7 +1042,7 @@ internal data class Symbol(
     override fun toString(): String = fmt()
 }
 
-internal sealed class SymbolKind {
+internal sealed class SymbolKind : Comparable<SymbolKind> {
     // (X Y)
     data class Expr(
         val expr: ExprSymbol,
@@ -937,6 +1122,72 @@ internal sealed class SymbolKind {
         override fun toString(): String = fmt()
     }
 
+    override fun compareTo(other: SymbolKind): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is Expr -> {
+                expr.compareTo((other as Expr).expr)
+            }
+
+            is AmbiguousId -> {
+                atom.compareTo((other as AmbiguousId).atom)
+            }
+
+            is Terminal -> {
+                terminal.compareTo((other as Terminal).terminal)
+            }
+
+            is Nonterminal -> {
+                nt.compareTo((other as Nonterminal).nt)
+            }
+
+            is Macro -> {
+                sym.compareTo((other as Macro).sym)
+            }
+
+            is Repeat -> {
+                sym.compareTo((other as Repeat).sym)
+            }
+
+            is Choose -> {
+                sym.compareTo((other as Choose).sym)
+            }
+
+            is Name -> {
+                val o = other as Name
+                val c = name.compareTo(o.name)
+                if (c != 0) c else sym.compareTo(o.sym)
+            }
+
+            is TupleKind -> {
+                val o = other as TupleKind
+                val c = tuple.compareTo(o.tuple)
+                if (c != 0) c else sym.compareTo(o.sym)
+            }
+
+            Lookahead, Lookbehind, Error -> {
+                0
+            }
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is Expr -> 0
+            is AmbiguousId -> 1
+            is Terminal -> 2
+            is Nonterminal -> 3
+            is Macro -> 4
+            is Repeat -> 5
+            is Choose -> 6
+            is Name -> 7
+            is TupleKind -> 8
+            Lookahead -> 9
+            Lookbehind -> 10
+            Error -> 11
+        }
+
     fun fmt(): String =
         when (this) {
             is Expr -> "$expr"
@@ -959,11 +1210,16 @@ internal sealed class SymbolKind {
 internal data class Name(
     var mutable: Boolean,
     var name: Atom,
-) {
+) : Comparable<Name> {
     companion object {
         fun new(mutable: Boolean, name: Atom): Name = Name(mutable, name)
 
         fun immut(name: Atom): Name = new(false, name)
+    }
+
+    override fun compareTo(other: Name): Int {
+        val c = mutable.compareTo(other.mutable)
+        return if (c != 0) c else name.compareTo(other.name)
     }
 
     fun fmt(): String =
@@ -975,17 +1231,19 @@ internal data class Name(
 internal data class Tuple(
     // Vec<(mutable, name)>
     var tuples: MutableList<ArgPattern>,
-) {
+) : Comparable<Tuple> {
     companion object {
         fun new(tuples: MutableList<ArgPattern>): Tuple = Tuple(tuples)
     }
+
+    override fun compareTo(other: Tuple): Int = compareLists(tuples, other.tuples)
 
     fun fmt(): String = "(${Sep(", ", tuples)})"
 
     override fun toString(): String = fmt()
 }
 
-internal sealed class ArgPattern {
+internal sealed class ArgPattern : Comparable<ArgPattern> {
     data class NamePat(
         val name: io.github.kotlinmania.lalrpop.grammar.parsetree.Name,
     ) : ArgPattern() {
@@ -997,6 +1255,21 @@ internal sealed class ArgPattern {
     ) : ArgPattern() {
         override fun toString(): String = fmt()
     }
+
+    override fun compareTo(other: ArgPattern): Int {
+        val variantCmp = variantOrder().compareTo(other.variantOrder())
+        if (variantCmp != 0) return variantCmp
+        return when (this) {
+            is NamePat -> name.compareTo((other as NamePat).name)
+            is TuplePat -> tuple.compareTo((other as TuplePat).tuple)
+        }
+    }
+
+    private fun variantOrder(): Int =
+        when (this) {
+            is NamePat -> 0
+            is TuplePat -> 1
+        }
 
     fun name(): String =
         when (this) {
@@ -1153,31 +1426,11 @@ internal sealed class TerminalLiteral : Comparable<TerminalLiteral> {
             // terminal containing a literal newline (e.g. starlark's `"\n"`
             // token) would be rendered as a raw newline inside the
             // generated debug comments, breaking byte parity with upstream.
-            is Quoted -> rustDebugQuoteString(atom.asRef())
+            is Quoted -> rustDebugQuote(atom.asRef())
 
             is Hir -> "r#\"${atom.asRef()}\"#" // NOTE -- need to determine proper number of #
         }
 }
-
-private fun rustDebugQuoteString(s: String): String =
-    buildString {
-        append('"')
-        for (c in s) {
-            val cp = c.code
-            when {
-                cp == 0x22 -> append("\\\"")
-                cp == 0x5C -> append("\\\\")
-                cp == 0x0A -> append("\\n")
-                cp == 0x0D -> append("\\r")
-                cp == 0x09 -> append("\\t")
-                cp == 0x00 -> append("\\0")
-                cp < 0x20 || cp == 0x7F -> append("\\x").append(cp.toString(16).padStart(2, '0'))
-                cp >= 0x7F -> append("\\u{").append(cp.toString(16)).append('}')
-                else -> append(c)
-            }
-        }
-        append('"')
-    }
 
 internal typealias MatchSymbol = TerminalLiteral
 
@@ -1245,7 +1498,12 @@ internal enum class RepeatOp {
 internal data class RepeatSymbol(
     var op: RepeatOp,
     var symbol: Symbol,
-) {
+) : Comparable<RepeatSymbol> {
+    override fun compareTo(other: RepeatSymbol): Int {
+        val c = op.compareTo(other.op)
+        return if (c != 0) c else symbol.compareTo(other.symbol)
+    }
+
     fun canonicalForm(): String = "$this"
 
     fun fmt(): String = "$symbol$op"
@@ -1255,7 +1513,9 @@ internal data class RepeatSymbol(
 
 internal data class ExprSymbol(
     var symbols: MutableList<Symbol>,
-) {
+) : Comparable<ExprSymbol> {
+    override fun compareTo(other: ExprSymbol): Int = compareLists(symbols, other.symbols)
+
     fun canonicalForm(): String = "$this"
 
     fun fmt(): String = "(${Sep(" ", symbols)})"
@@ -1266,7 +1526,12 @@ internal data class ExprSymbol(
 internal data class MacroSymbol(
     var name: NonterminalString,
     var args: MutableList<Symbol>,
-) {
+) : Comparable<MacroSymbol> {
+    override fun compareTo(other: MacroSymbol): Int {
+        val c = name.compareTo(other.name)
+        return if (c != 0) c else compareLists(args, other.args)
+    }
+
     fun canonicalForm(): String = "$this"
 
     fun fmt(): String = "$name<${Sep(", ", args)}>"

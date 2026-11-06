@@ -92,8 +92,17 @@ internal fun compileInternToken(
 internal fun rustDebugQuote(s: String): String =
     buildString {
         append('"')
-        for (c in s) {
-            val cp = c.code
+        var i = 0
+        while (i < s.length) {
+            val c = s[i]
+            val cp: Int
+            if (c.isHighSurrogate() && i + 1 < s.length && s[i + 1].isLowSurrogate()) {
+                cp = 0x10000 + ((c.code - 0xD800) shl 10) + (s[i + 1].code - 0xDC00)
+                i += 2
+            } else {
+                cp = c.code
+                i += 1
+            }
             when {
                 cp == 0x22 -> append("\\\"")
 
@@ -111,11 +120,11 @@ internal fun rustDebugQuote(s: String): String =
 
                 // Mirror the upstream `<&str as Debug>::fmt` for non-ASCII Unicode:
                 // characters outside the printable ASCII range are escaped
-                // as `\u{HH..}`. Without this, the upstream-emitted regex
-                // source for `r"\s"` (which contains raw NEL / NBSP / etc.
-                // characters) round-trips through Debug as raw bytes
-                // instead of `\u{85}\u{a0}...`, breaking byte parity.
-                cp >= 0x7F -> append("\\u{").append(cp.toString(16)).append('}')
+                // as `\u{HH..}` using full Unicode scalar values. Without this,
+                // the upstream-emitted regex source for `r"\s"` (which contains
+                // raw NEL / NBSP / etc. characters) round-trips through Debug as
+                // raw bytes instead of `\u{85}\u{a0}...`, breaking byte parity.
+                cp > 0x7F -> append("\\u{").append(cp.toString(16)).append('}')
 
                 else -> append(c)
             }

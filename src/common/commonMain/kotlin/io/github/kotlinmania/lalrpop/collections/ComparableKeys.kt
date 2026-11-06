@@ -6,6 +6,29 @@
 // `port-lint: source` header.
 package io.github.kotlinmania.lalrpop.collections
 
+internal fun <T : Comparable<T>> compareLists(
+    a: List<T>,
+    b: List<T>,
+): Int {
+    val n = minOf(a.size, b.size)
+    for (i in 0 until n) {
+        val c = a[i].compareTo(b[i])
+        if (c != 0) return c
+    }
+    return a.size.compareTo(b.size)
+}
+
+internal fun <T : Comparable<T>> compareNullable(
+    a: T?,
+    b: T?,
+): Int =
+    when {
+        a === b -> 0
+        a == null -> -1
+        b == null -> 1
+        else -> a.compareTo(b)
+    }
+
 /**
  * Hand-rolled stand-in for the upstream auto-derived `Ord` on
  * `Vec<T: Ord>`: lexicographic compare with shorter-list-first when
@@ -15,14 +38,7 @@ package io.github.kotlinmania.lalrpop.collections
 internal data class ComparableList<T : Comparable<T>>(
     val items: List<T>,
 ) : Comparable<ComparableList<T>> {
-    override fun compareTo(other: ComparableList<T>): Int {
-        val n = minOf(items.size, other.items.size)
-        for (i in 0 until n) {
-            val c = items[i].compareTo(other.items[i])
-            if (c != 0) return c
-        }
-        return items.size.compareTo(other.items.size)
-    }
+    override fun compareTo(other: ComparableList<T>): Int = compareLists(items, other.items)
 
     override fun toString(): String = items.toString()
 }

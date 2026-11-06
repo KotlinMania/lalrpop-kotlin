@@ -16,20 +16,30 @@ internal actual fun apiCurrentDir(): String {
     return if (proc != null && proc.cwd != null) (proc.cwd() as String) else "/"
 }
 
+internal val jsEnvOverrides: MutableMap<String, String> = mutableMapOf()
+
 internal actual fun apiEnvVar(name: String): String? {
+    jsEnvOverrides[name]?.let { return it }
     val proc = nodeProcess() ?: return null
     val env = proc.env ?: return null
     return env[name] as String?
 }
 
 internal actual fun apiEnvVars(): Sequence<Pair<String, String>> {
-    val proc = nodeProcess() ?: return emptySequence()
-    val env = proc.env ?: return emptySequence()
-    val names = js("Object.keys(env)") as Array<String>
-    return names.asSequence().mapNotNull { name ->
-        val value = env[name] as String?
-        if (value != null) name to value else null
+    val merged = LinkedHashMap<String, String>()
+    val proc = nodeProcess()
+    val env = proc?.env
+    if (env != null) {
+        val names = js("Object.keys(env)") as Array<String>
+        for (name in names) {
+            val value = env[name] as String?
+            if (value != null) {
+                merged[name] = value
+            }
+        }
     }
+    merged.putAll(jsEnvOverrides)
+    return merged.entries.asSequence().map { (k, v) -> k to v }
 }
 
 internal actual fun apiEPrintln(message: String) {
