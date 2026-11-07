@@ -4,26 +4,28 @@ Based on AST analysis, here are the concrete next steps.
 
 ## Summary
 
-- **Files Present:** 65/106 (61.3%)
-- **Function parity:** 2052/2073 matched (target 2356) — 99.0%
-- **Class/type parity:** 139/147 matched (target 379) — 94.6%
-- **Combined symbol parity:** 2191/2220 matched (target 2735) — 98.7%
-- **Average inline-code cosine:** 0.74 (function body across 63 matched files)
-- **Average documentation cosine:** 0.43 (doc text across 63 matched files)
-- **Cheat-zeroed Files:** 4
-- **Critical Issues:** 11 files with <0.60 function similarity
+- **Files Present:** 64/106 (60.4%)
+- **Function parity:** 2127/2157 matched (target 2363) — 98.6%
+- **Class/type parity:** 142/147 matched (target 381) — 96.6%
+- **Combined symbol parity:** 2269/2304 matched (target 2744) — 98.5%
+- **Average inline-code cosine:** 0.35 (function body across 64 matched files)
+- **Average documentation cosine:** 0.44 (doc text across 64 matched files)
+- **Cheat-zeroed Files:** 0
+- **Critical Issues:** 61 files with <0.60 function similarity
+- **Needs Review:** 1 files with 0.60-0.84 function similarity
+- **Excellent:** 2 files with >=0.85 function similarity
 
 ## Priority 1: Fix Incomplete High-Dependency Files
 
 ### 1. lr1.tls
-- **Similarity:** 0.69 (needs 16% improvement)
+- **Similarity:** 0.13 (needs 72% improvement)
 - **Dependencies:** 16
-- **Priority Score:** 16000403.0
+- **Priority Score:** 16000409.0
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched (target 2)
 - **Missing types:** _none_
-- **Action:** Review and complete missing sections
+- **Action:** Deep review - likely missing major functionality
 
 ## Priority 2: Port Missing High-Value Files
 
@@ -38,9 +40,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 1. lr1.tls
 
 - **Target:** `lr1.Tls`
-- **Similarity:** 0.69
+- **Similarity:** 0.13
 - **Dependents:** 16
-- **Priority Score:** 16000403.0
+- **Priority Score:** 16000409.0
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched (target 2)
@@ -49,9 +51,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 2. session
 
 - **Target:** `lalrpop.Session`
-- **Similarity:** 0.86
+- **Similarity:** 0.41
 - **Dependents:** 8
-- **Priority Score:** 8010801.5
+- **Priority Score:** 8010806.0
 - **Functions:** 5/6 matched (target 7)
 - **Missing functions:** `test`
 - **Types:** 2/2 matched
@@ -61,9 +63,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 3. collections.set
 
 - **Target:** `collections.Set`
-- **Similarity:** 0.22
+- **Similarity:** 0.00
 - **Dependents:** 6
-- **Priority Score:** 6000208.0
+- **Priority Score:** 6000210.0
 - **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
@@ -72,9 +74,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 4. lr1.state_graph
 
 - **Target:** `lr1.StateGraph`
-- **Similarity:** 0.89
+- **Similarity:** 0.44
 - **Dependents:** 5
-- **Priority Score:** 5000501.0
+- **Priority Score:** 5000505.5
 - **Functions:** 4/4 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
@@ -83,66 +85,66 @@ Every matched file is listed below with function and type symbol parity.
 ### 5. lr1.interpret
 
 - **Target:** `lr1.Interpret`
-- **Similarity:** 0.52
+- **Similarity:** 0.18
 - **Dependents:** 4
-- **Priority Score:** 4021204.8
-- **Functions:** 7/9 matched (target 8)
-- **Missing functions:** `fmt`, `reduction`
+- **Priority Score:** 4041408.2
+- **Functions:** 7/11 matched (target 8)
+- **Missing functions:** `fmt`, `fmt`, `reduction`, `reduction`
 - **Types:** 3/3 matched (target 4)
 - **Missing types:** _none_
 
-### 6. file_text
-
-- **Target:** `lalrpop.FileText`
-- **Similarity:** 0.73
-- **Dependents:** 2
-- **Priority Score:** 2031202.8
-- **Functions:** 8/10 matched (target 9)
-- **Missing functions:** `test`, `fmt`
-- **Types:** 1/2 matched (target 1)
-- **Missing types:** `Repeat`
-- **Tests:** 0/1 matched
-
-### 7. lr1.lookahead
+### 6. lr1.lookahead
 
 - **Target:** `lr1.Lookahead`
-- **Similarity:** 0.81
+- **Similarity:** 0.33
 - **Dependents:** 2
-- **Priority Score:** 2023501.9
-- **Functions:** 28/28 matched (target 51)
+- **Priority Score:** 2023806.6
+- **Functions:** 31/31 matched (target 51)
 - **Missing functions:** _none_
 - **Types:** 5/7 matched (target 8)
 - **Missing types:** `Item`, `IntoIter`
 
-### 8. test_util
+### 7. file_text
 
-- **Target:** `lalrpop.TestUtil [ZERO]`
-- **Similarity:** 0.00
+- **Target:** `lalrpop.FileText`
+- **Similarity:** 0.20
 - **Dependents:** 2
-- **Priority Score:** 2010710.0
-- **Functions:** 5/6 matched (target 9)
-- **Missing functions:** `fmt`
-- **Types:** 1/1 matched (target 6)
+- **Priority Score:** 2021208.0
+- **Functions:** 8/10 matched
+- **Missing functions:** `test`, `fmt`
+- **Types:** 2/2 matched
 - **Missing types:** _none_
+- **Tests:** 0/1 matched
 
-### 9. construct.state_set
+### 8. construct.state_set
 
 - **Target:** `stateset.StateSet`
-- **Similarity:** 0.63
+- **Similarity:** 0.20
 - **Dependents:** 2
-- **Priority Score:** 2010703.8
+- **Priority Score:** 2010708.0
 - **Functions:** 4/4 matched
 - **Missing functions:** _none_
 - **Types:** 2/3 matched (target 2)
 - **Missing types:** `Value`
 
+### 9. test_util
+
+- **Target:** `lalrpop.TestUtil`
+- **Similarity:** 0.30
+- **Dependents:** 2
+- **Priority Score:** 2010707.0
+- **Functions:** 5/6 matched (target 9)
+- **Missing functions:** `fmt`
+- **Types:** 1/1 matched (target 6)
+- **Missing types:** _none_
+
 ### 10. grammar.pattern
 
 - **Target:** `grammar.Pattern`
-- **Similarity:** 0.59
+- **Similarity:** 0.21
 - **Dependents:** 2
-- **Priority Score:** 2000604.1
-- **Functions:** 3/3 matched (target 23)
+- **Priority Score:** 2001007.9
+- **Functions:** 7/7 matched (target 23)
 - **Missing functions:** _none_
 - **Types:** 3/3 matched (target 14)
 - **Missing types:** _none_
@@ -150,103 +152,100 @@ Every matched file is listed below with function and type symbol parity.
 ### 11. message.message
 
 - **Target:** `message.Message`
-- **Similarity:** 0.79
+- **Similarity:** 0.39
 - **Dependents:** 2
-- **Priority Score:** 2000602.1
+- **Priority Score:** 2000606.1
 - **Functions:** 5/5 matched (target 6)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 12. api.test
-
-- **Target:** `api.ApiTestSupport [PROVENANCE-FALLBACK]`
-- **Similarity:** 0.00
-- **Dependents:** 1
-- **Priority Score:** 1121210.0
-- **Functions:** 0/10 matched (target 4)
-- **Missing functions:** `new`, `drop`, `setup`, `remove_local_generated_files`, `verify_file`, `test_process_root`, `test_process_src`, `test_process_file`, `test_explicit_in_out`, `test_cargo_dir_conventions`
-- **Types:** 0/2 matched (target 1)
-- **Missing types:** `GenFileLoc`, `TestState`
-- **Tests:** 0/5 matched
-- **Provenance warning:** port-lint provenance header matched only by basename: `lr1/build_lalr/test.rs` vs expected `api/test.rs`
-- **Proposed provenance header:** `// port-lint: source api/test.rs` (current: `// port-lint: source lr1/build_lalr/test.rs`)
-- **Lint issues:** 1
-
-### 13. collections.multimap
-
-- **Target:** `collections.Multimap`
-- **Similarity:** 0.59
-- **Dependents:** 1
-- **Priority Score:** 1011304.1
-- **Functions:** 9/9 matched (target 17)
-- **Missing functions:** _none_
-- **Types:** 3/4 matched (target 8)
-- **Missing types:** `Item`
-- **Tests:** 1/1 matched
-
-### 14. grammar.parse_tree
+### 12. grammar.parse_tree
 
 - **Target:** `parsetree.ParseTree`
-- **Similarity:** 0.56
+- **Similarity:** 0.18
 - **Dependents:** 1
-- **Priority Score:** 1008204.4
-- **Functions:** 40/40 matched (target 158)
-- **Missing functions:** _none_
+- **Priority Score:** 1051908.1
+- **Functions:** 73/77 matched (target 158)
+- **Missing functions:** `fmt`, `fmt`, `fmt`, `fmt`
 - **Types:** 42/42 matched (target 88)
 - **Missing types:** _none_
 
-### 15. grammar.repr
+### 13. grammar.repr
 
 - **Target:** `repr.Repr`
-- **Similarity:** 0.67
+- **Similarity:** 0.18
 - **Dependents:** 1
-- **Priority Score:** 1005303.3
-- **Functions:** 34/34 matched (target 70)
-- **Missing functions:** _none_
+- **Priority Score:** 1046508.2
+- **Functions:** 42/46 matched (target 70)
+- **Missing functions:** `fmt`, `fmt`, `fmt`, `fmt`
 - **Types:** 19/19 matched (target 38)
 - **Missing types:** _none_
 
-### 16. construct.merge
+### 14. collections.multimap
+
+- **Target:** `collections.Multimap`
+- **Similarity:** 0.26
+- **Dependents:** 1
+- **Priority Score:** 1032007.4
+- **Functions:** 14/16 matched (target 17)
+- **Missing functions:** `into_iter`, `into_iter`
+- **Types:** 3/4 matched (target 8)
+- **Missing types:** `Item`
+- **Tests:** 2/2 matched
+
+### 15. construct.merge
 
 - **Target:** `construct.Merge`
-- **Similarity:** 0.87
+- **Similarity:** 0.29
 - **Dependents:** 1
-- **Priority Score:** 1001301.3
+- **Priority Score:** 1001307.1
 - **Functions:** 11/11 matched
 - **Missing functions:** _none_
 - **Types:** 2/2 matched
 - **Missing types:** _none_
 
+### 16. api.test
+
+- **Target:** `api.ApiTest`
+- **Similarity:** 0.44
+- **Dependents:** 1
+- **Priority Score:** 1001205.6
+- **Functions:** 10/10 matched (target 17)
+- **Missing functions:** _none_
+- **Types:** 2/2 matched (target 5)
+- **Missing types:** _none_
+- **Tests:** 5/5 matched
+
 ### 17. message.horiz
 
 - **Target:** `horiz.Horiz`
-- **Similarity:** 0.77
+- **Similarity:** 0.35
 - **Dependents:** 1
-- **Priority Score:** 1000602.2
+- **Priority Score:** 1000606.5
 - **Functions:** 5/5 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 18. message.vert
-
-- **Target:** `vert.Vert`
-- **Similarity:** 0.86
-- **Dependents:** 1
-- **Priority Score:** 1000601.4
-- **Functions:** 5/5 matched
-- **Missing functions:** _none_
-- **Types:** 1/1 matched
-- **Missing types:** _none_
-
-### 19. message.styled
+### 18. message.styled
 
 - **Target:** `styled.Styled`
-- **Similarity:** 0.88
+- **Similarity:** 0.36
 - **Dependents:** 1
-- **Priority Score:** 1000601.2
+- **Priority Score:** 1000606.4
 - **Functions:** 5/5 matched (target 6)
+- **Missing functions:** _none_
+- **Types:** 1/1 matched
+- **Missing types:** _none_
+
+### 19. message.vert
+
+- **Target:** `vert.Vert`
+- **Similarity:** 0.39
+- **Dependents:** 1
+- **Priority Score:** 1000606.1
+- **Functions:** 5/5 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
@@ -254,31 +253,31 @@ Every matched file is listed below with function and type symbol parity.
 ### 20. message.text
 
 - **Target:** `text.Text`
-- **Similarity:** 0.85
+- **Similarity:** 0.35
 - **Dependents:** 1
-- **Priority Score:** 1000501.6
+- **Priority Score:** 1000506.6
 - **Functions:** 4/4 matched (target 5)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 21. message.wrap
+### 21. message.indent
 
-- **Target:** `wrap.Wrap`
-- **Similarity:** 0.85
+- **Target:** `indent.Indent`
+- **Similarity:** 0.38
 - **Dependents:** 1
-- **Priority Score:** 1000501.5
+- **Priority Score:** 1000506.2
 - **Functions:** 4/4 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 22. message.indent
+### 22. message.wrap
 
-- **Target:** `indent.Indent`
-- **Similarity:** 0.88
+- **Target:** `wrap.Wrap`
+- **Similarity:** 0.41
 - **Dependents:** 1
-- **Priority Score:** 1000501.2
+- **Priority Score:** 1000505.9
 - **Functions:** 4/4 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
@@ -287,9 +286,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 23. collections.map
 
 - **Target:** `collections.Map`
-- **Similarity:** 0.21
+- **Similarity:** 0.00
 - **Dependents:** 1
-- **Priority Score:** 1000207.9
+- **Priority Score:** 1000210.0
 - **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
@@ -298,22 +297,22 @@ Every matched file is listed below with function and type symbol parity.
 ### 24. parser.lrgrammar
 
 - **Target:** `parser.LrGrammar`
-- **Similarity:** 0.70
+- **Similarity:** 0.23
 - **Dependents:** 0
-- **Priority Score:** 151103.0
-- **Functions:** 1498/1498 matched (target 1524)
-- **Missing functions:** _none_
+- **Priority Score:** 201907.7
+- **Functions:** 1501/1506 matched (target 1524)
+- **Missing functions:** `action`, `goto`, `expected_tokens`, `expected_tokens_from_states`, `___token_to_symbol`
 - **Types:** 13/13 matched (target 116)
 - **Missing types:** _none_
-- **Lint issues:** 874
+- **Lint issues:** 503
 
 ### 25. message.builder
 
 - **Target:** `builder.Builder`
-- **Similarity:** 0.85
+- **Similarity:** 0.34
 - **Dependents:** 0
-- **Priority Score:** 23101.5
-- **Functions:** 20/21 matched (target 31)
+- **Priority Score:** 24006.6
+- **Functions:** 29/30 matched (target 31)
 - **Missing functions:** `from`
 - **Types:** 9/10 matched (target 9)
 - **Missing types:** `End`
@@ -321,9 +320,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 26. main
 
 - **Target:** `lalrpop.Main`
-- **Similarity:** 0.74
+- **Similarity:** 0.28
 - **Dependents:** 0
-- **Priority Score:** 21602.6
+- **Priority Score:** 21607.2
 - **Functions:** 11/13 matched (target 20)
 - **Missing functions:** `os_vec`, `parse_args_slice`
 - **Types:** 3/3 matched (target 5)
@@ -333,139 +332,139 @@ Every matched file is listed below with function and type symbol parity.
 ### 27. codegen.parse_table
 
 - **Target:** `codegen.ParseTable`
-- **Similarity:** 0.82
+- **Similarity:** 0.26
 - **Dependents:** 0
-- **Priority Score:** 13001.8
+- **Priority Score:** 13007.4
 - **Functions:** 26/27 matched (target 30)
 - **Missing functions:** `fmt`
 - **Types:** 3/3 matched (target 7)
 - **Missing types:** _none_
 
-### 28. dfa.overlap
+### 28. lane_table.test
+
+- **Target:** `lanetable.LaneTableTest`
+- **Similarity:** 0.39
+- **Dependents:** 0
+- **Priority Score:** 11606.1
+- **Functions:** 15/16 matched (target 17)
+- **Missing functions:** `sym`
+- **Types:** 0/0 matched (target 1)
+- **Missing types:** _none_
+- **Tests:** 7/7 matched
+
+### 29. example.test
+
+- **Target:** `example.ExampleTest`
+- **Similarity:** 0.39
+- **Dependents:** 0
+- **Priority Score:** 11006.1
+- **Functions:** 9/10 matched
+- **Missing functions:** `term`
+- **Types:** 0/0 matched (target 1)
+- **Missing types:** _none_
+- **Tests:** 5/5 matched
+
+### 30. dfa.overlap
 
 - **Target:** `dfa.Overlap`
-- **Similarity:** 0.64
+- **Similarity:** 0.38
 - **Dependents:** 0
-- **Priority Score:** 10703.6
+- **Priority Score:** 10706.2
 - **Functions:** 6/7 matched (target 8)
 - **Missing functions:** `null`
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 4/5 matched
 
-### 29. tok.test
+### 31. tok.test
 
 - **Target:** `tok.TokTest`
-- **Similarity:** 0.62
+- **Similarity:** 0.22
 - **Dependents:** 0
-- **Priority Score:** 6603.8
+- **Priority Score:** 6607.8
 - **Functions:** 65/65 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched (target 4)
 - **Missing types:** _none_
 - **Tests:** 62/62 matched
 
-### 30. prevalidate.test
+### 32. prevalidate.test
 
 - **Target:** `prevalidate.PrevalidateTest`
-- **Similarity:** 0.98
+- **Similarity:** 0.30
 - **Dependents:** 0
-- **Priority Score:** 2600.2
+- **Priority Score:** 2607.0
 - **Functions:** 26/26 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 25/25 matched
 
-### 31. codegen.ascent
+### 33. codegen.ascent
 
-- **Target:** `codegen.Ascent [STUB]`
-- **Similarity:** 0.00
+- **Target:** `codegen.Ascent`
+- **Similarity:** 0.30
 - **Dependents:** 0
-- **Priority Score:** 2410.0
+- **Priority Score:** 2407.0
 - **Functions:** 22/22 matched (target 23)
 - **Missing functions:** _none_
 - **Types:** 2/2 matched (target 3)
 - **Missing types:** _none_
 
-### 32. token_check.test
+### 34. token_check.test
 
 - **Target:** `tokencheck.TokenCheckTest`
-- **Similarity:** 0.82
+- **Similarity:** 0.29
 - **Dependents:** 0
-- **Priority Score:** 1901.8
+- **Priority Score:** 1907.1
 - **Functions:** 19/19 matched (target 20)
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 11/11 matched
 
-### 33. tyinfer.test
+### 35. tyinfer.test
 
 - **Target:** `tyinfer.TyinferTest`
-- **Similarity:** 0.62
+- **Similarity:** 0.30
 - **Dependents:** 0
-- **Priority Score:** 1703.8
+- **Priority Score:** 1707.0
 - **Functions:** 17/17 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 15/15 matched
 
-### 34. lane_table.test
-
-- **Target:** `lanetable.LaneTableTest`
-- **Similarity:** 0.88
-- **Dependents:** 0
-- **Priority Score:** 1601.2
-- **Functions:** 16/16 matched (target 18)
-- **Missing functions:** _none_
-- **Types:** 0/0 matched (target 1)
-- **Missing types:** _none_
-- **Tests:** 7/7 matched
-
-### 35. nfa.test
+### 36. nfa.test
 
 - **Target:** `nfa.NfaTest`
-- **Similarity:** 0.73
+- **Similarity:** 0.29
 - **Dependents:** 0
-- **Priority Score:** 1202.7
+- **Priority Score:** 1207.1
 - **Functions:** 12/12 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 11/11 matched
 
-### 36. normalize.norm_util
+### 37. normalize.norm_util
 
 - **Target:** `normutil.NormUtil`
-- **Similarity:** 0.80
+- **Similarity:** 0.35
 - **Dependents:** 0
-- **Priority Score:** 1102.0
+- **Priority Score:** 1106.5
 - **Functions:** 8/8 matched
 - **Missing functions:** _none_
 - **Types:** 3/3 matched (target 8)
 - **Missing types:** _none_
 - **Tests:** 4/4 matched
 
-### 37. example.test
-
-- **Target:** `example.ExampleTest`
-- **Similarity:** 0.87
-- **Dependents:** 0
-- **Priority Score:** 1001.3
-- **Functions:** 10/10 matched (target 11)
-- **Missing functions:** _none_
-- **Types:** 0/0 matched (target 1)
-- **Missing types:** _none_
-- **Tests:** 5/5 matched
-
 ### 38. codegen.base
 
 - **Target:** `codegen.Base`
-- **Similarity:** 0.87
+- **Similarity:** 0.25
 - **Dependents:** 0
-- **Priority Score:** 1001.3
+- **Priority Score:** 1007.5
 - **Functions:** 9/9 matched
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
@@ -474,9 +473,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 39. error.test
 
 - **Target:** `error.ErrorTest`
-- **Similarity:** 0.92
+- **Similarity:** 0.47
 - **Dependents:** 0
-- **Priority Score:** 900.8
+- **Priority Score:** 905.3
 - **Functions:** 9/9 matched (target 10)
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -486,9 +485,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 40. dfa.test
 
 - **Target:** `dfa.DfaTest`
-- **Similarity:** 0.73
+- **Similarity:** 0.19
 - **Dependents:** 0
-- **Priority Score:** 802.7
+- **Priority Score:** 808.1
 - **Functions:** 8/8 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -498,101 +497,101 @@ Every matched file is listed below with function and type symbol parity.
 ### 41. resolve.test
 
 - **Target:** `resolve.ResolveTest`
-- **Similarity:** 0.94
+- **Similarity:** 0.59
 - **Dependents:** 0
-- **Priority Score:** 800.6
+- **Priority Score:** 804.1
 - **Functions:** 8/8 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 7/7 matched
 
-### 42. generate
+### 42. util
+
+- **Target:** `lalrpop.Util`
+- **Similarity:** 0.19
+- **Dependents:** 0
+- **Priority Score:** 708.1
+- **Functions:** 4/4 matched (target 7)
+- **Missing functions:** _none_
+- **Types:** 3/3 matched
+- **Missing types:** _none_
+
+### 43. generate
 
 - **Target:** `lalrpop.Generate`
-- **Similarity:** 0.91
+- **Similarity:** 0.34
 - **Dependents:** 0
-- **Priority Score:** 700.9
-- **Functions:** 5/5 matched (target 7)
+- **Priority Score:** 706.6
+- **Functions:** 5/5 matched (target 16)
 - **Missing functions:** _none_
 - **Types:** 2/2 matched (target 5)
 - **Missing types:** _none_
 
-### 43. first.test
-
-- **Target:** `first.FirstTest`
-- **Similarity:** 0.91
-- **Dependents:** 0
-- **Priority Score:** 700.9
-- **Functions:** 7/7 matched
-- **Missing functions:** _none_
-- **Types:** 0/0 matched (target 1)
-- **Missing types:** _none_
-- **Tests:** 2/2 matched
-
 ### 44. reduce.test
 
 - **Target:** `reduce.ReduceTest`
-- **Similarity:** 0.91
+- **Similarity:** 0.47
 - **Dependents:** 0
-- **Priority Score:** 700.9
+- **Priority Score:** 705.3
 - **Functions:** 7/7 matched (target 8)
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 4/4 matched
 
-### 45. codegen.test_all
+### 45. first.test
+
+- **Target:** `first.FirstTest`
+- **Similarity:** 0.58
+- **Dependents:** 0
+- **Priority Score:** 704.2
+- **Functions:** 7/7 matched
+- **Missing functions:** _none_
+- **Types:** 0/0 matched (target 1)
+- **Missing types:** _none_
+- **Tests:** 2/2 matched
+
+### 46. codegen.test_all
 
 - **Target:** `codegen.TestAll`
-- **Similarity:** 0.83
+- **Similarity:** 0.37
 - **Dependents:** 0
-- **Priority Score:** 601.7
+- **Priority Score:** 606.3
 - **Functions:** 5/5 matched (target 6)
 - **Missing functions:** _none_
 - **Types:** 1/1 matched
 - **Missing types:** _none_
 
-### 46. kernel_set
+### 47. kernel_set
 
 - **Target:** `lalrpop.KernelSet`
-- **Similarity:** 0.65
+- **Similarity:** 0.18
 - **Dependents:** 0
-- **Priority Score:** 503.5
+- **Priority Score:** 508.2
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 2/2 matched
 - **Missing types:** _none_
 
-### 47. parser.test
+### 48. parser.test
 
 - **Target:** `parser.ParserTest`
-- **Similarity:** 0.68
+- **Similarity:** 0.28
 - **Dependents:** 0
-- **Priority Score:** 503.2
+- **Priority Score:** 507.2
 - **Functions:** 5/5 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 5/5 matched
 
-### 48. util
-
-- **Target:** `lalrpop.Util`
-- **Similarity:** 0.71
-- **Dependents:** 0
-- **Priority Score:** 502.9
-- **Functions:** 2/2 matched (target 7)
-- **Missing functions:** _none_
-- **Types:** 3/3 matched
-- **Missing types:** _none_
-
 ### 49. precedence.test
 
 - **Target:** `precedence.PrecedenceTest`
-- **Similarity:** 0.76
+- **Similarity:** 0.32
 - **Dependents:** 0
-- **Priority Score:** 502.4
+- **Priority Score:** 506.8
 - **Functions:** 5/5 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -602,9 +601,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 50. log
 
 - **Target:** `lalrpop.Log`
-- **Similarity:** 0.97
+- **Similarity:** 0.54
 - **Dependents:** 0
-- **Priority Score:** 500.3
+- **Priority Score:** 504.6
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 2/2 matched
@@ -613,9 +612,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 51. macro_expand.test
 
 - **Target:** `macroexpand.MacroExpandTest`
-- **Similarity:** 0.68
+- **Similarity:** 0.40
 - **Dependents:** 0
-- **Priority Score:** 403.2
+- **Priority Score:** 406.0
 - **Functions:** 4/4 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -625,9 +624,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 52. graph.test
 
 - **Target:** `graph.GraphTest`
-- **Similarity:** 0.73
+- **Similarity:** 0.35
 - **Dependents:** 0
-- **Priority Score:** 302.7
+- **Priority Score:** 306.5
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -637,9 +636,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 53. inline.test
 
 - **Target:** `inline.InlineTest`
-- **Similarity:** 0.77
+- **Similarity:** 0.41
 - **Dependents:** 0
-- **Priority Score:** 302.3
+- **Priority Score:** 305.9
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -649,9 +648,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 54. message.test
 
 - **Target:** `message.MessageTest`
-- **Similarity:** 0.96
+- **Similarity:** 0.66
 - **Dependents:** 0
-- **Priority Score:** 300.4
+- **Priority Score:** 303.4
 - **Functions:** 3/3 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -661,9 +660,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 55. re.test
 
 - **Target:** `lexer.ReTest`
-- **Similarity:** 0.71
+- **Similarity:** 0.33
 - **Dependents:** 0
-- **Priority Score:** 202.9
+- **Priority Score:** 206.7
 - **Functions:** 2/2 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -673,44 +672,44 @@ Every matched file is listed below with function and type symbol parity.
 ### 56. trace_graph.test
 
 - **Target:** `tracegraph.TraceGraphTest`
-- **Similarity:** 0.80
+- **Similarity:** 0.34
 - **Dependents:** 0
-- **Priority Score:** 202.0
+- **Priority Score:** 206.6
 - **Functions:** 2/2 matched (target 5)
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 2/2 matched
 
-### 57. nfa.interpret
-
-- **Target:** `nfa.Interpret`
-- **Similarity:** 0.84
-- **Dependents:** 0
-- **Priority Score:** 201.6
-- **Functions:** 2/2 matched
-- **Missing functions:** _none_
-- **Types:** 0/0 matched
-- **Missing types:** _none_
-
-### 58. shift.test
+### 57. shift.test
 
 - **Target:** `shift.ShiftTest`
-- **Similarity:** 0.93
+- **Similarity:** 0.54
 - **Dependents:** 0
-- **Priority Score:** 200.7
+- **Priority Score:** 204.6
 - **Functions:** 2/2 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 1/1 matched
 
+### 58. nfa.interpret
+
+- **Target:** `nfa.Interpret`
+- **Similarity:** 0.55
+- **Dependents:** 0
+- **Priority Score:** 204.5
+- **Functions:** 2/2 matched
+- **Missing functions:** _none_
+- **Types:** 0/0 matched
+- **Missing types:** _none_
+
 ### 59. cond_comp.test
 
 - **Target:** `condcomp.CondCompTest`
-- **Similarity:** 0.68
+- **Similarity:** 0.19
 - **Dependents:** 0
-- **Priority Score:** 103.2
+- **Priority Score:** 108.1
 - **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -720,9 +719,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 60. report.test
 
 - **Target:** `report.ReportTest`
-- **Similarity:** 0.80
+- **Similarity:** 0.34
 - **Dependents:** 0
-- **Priority Score:** 102.0
+- **Priority Score:** 106.6
 - **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
@@ -732,9 +731,9 @@ Every matched file is listed below with function and type symbol parity.
 ### 61. dfa.interpret
 
 - **Target:** `dfa.Interpret`
-- **Similarity:** 0.89
+- **Similarity:** 0.37
 - **Dependents:** 0
-- **Priority Score:** 101.1
+- **Priority Score:** 106.3
 - **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched
@@ -743,46 +742,29 @@ Every matched file is listed below with function and type symbol parity.
 ### 62. free_variables.test
 
 - **Target:** `grammar.FreeVariablesTest`
-- **Similarity:** 0.95
+- **Similarity:** 0.58
 - **Dependents:** 0
-- **Priority Score:** 100.5
+- **Priority Score:** 104.2
 - **Functions:** 1/1 matched
 - **Missing functions:** _none_
 - **Types:** 0/0 matched (target 1)
 - **Missing types:** _none_
 - **Tests:** 1/1 matched
 
-### 63. lib
+### 63. grammar.consts
 
-- **Target:** `runtime.LibTest [STUB] [PROVENANCE-FALLBACK]`
-- **Similarity:** 0.00
+- **Target:** `grammar.Consts`
+- **Similarity:** 1.00
 - **Dependents:** 0
-- **Priority Score:** 10.0
-- **Functions:** 0/0 matched (target 1)
+- **Priority Score:** 0.0
+- **Functions:** 0/0 matched
 - **Missing functions:** _none_
-- **Types:** 0/0 matched (target 1)
+- **Types:** 0/0 matched
 - **Missing types:** _none_
-- **Provenance warning:** port-lint provenance header matched only after fallback normalization: `lalrpop-util/src/lib.rs` vs expected `lib.rs`
-- **Proposed provenance header:** `// port-lint: source lib.rs` (current: `// port-lint: source lalrpop-util/src/lib.rs`)
-- **Lint issues:** 1
 
 ### 64. context_set.test
 
-- **Target:** `lr1.BuildTest [ZERO] [PROVENANCE-FALLBACK]`
-- **Similarity:** 0.00
-- **Dependents:** 0
-- **Priority Score:** 10.0
-- **Functions:** 0/0 matched (target 13)
-- **Missing functions:** _none_
-- **Types:** 0/0 matched (target 2)
-- **Missing types:** _none_
-- **Provenance warning:** port-lint provenance header matched only by basename: `lr1/build/test.rs` vs expected `lr1/lane_table/table/context_set/test.rs`
-- **Proposed provenance header:** `// port-lint: source lr1/lane_table/table/context_set/test.rs` (current: `// port-lint: source lr1/build/test.rs`)
-- **Lint issues:** 1
-
-### 65. grammar.consts
-
-- **Target:** `grammar.Consts`
+- **Target:** `contextset.ContextSetTest`
 - **Similarity:** 1.00
 - **Dependents:** 0
 - **Priority Score:** 0.0
@@ -820,6 +802,7 @@ do not treat them as the next implementation target by default.
 | `lexer.mod` | `lexer.Mod` | 0 | `lexer/mod.rs` | `lexer/Mod.kt` |
 | `nfa.mod` | `lexer.nfa.Mod` | 0 | `lexer/nfa/mod.rs` | `lexer/nfa/Mod.kt` |
 | `re.mod` | `lexer.re.Mod` | 0 | `lexer/re/mod.rs` | `lexer/re/Mod.kt` |
+| `lib` | `Lib` | 0 | `lib.rs` | `Lib.kt` |
 | `codegen.mod` | `lr1.codegen.Mod` | 0 | `lr1/codegen/mod.rs` | `lr1/codegen/Mod.kt` |
 | `core.mod` | `lr1.core.Mod` | 0 | `lr1/core/mod.rs` | `lr1/core/Mod.kt` |
 | `error.mod` | `lr1.error.Mod` | 0 | `lr1/error/mod.rs` | `lr1/error/Mod.kt` |

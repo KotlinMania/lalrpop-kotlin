@@ -1,0 +1,74 @@
+// Disjoint-set union-find table (`InPlaceUnificationTable`) with per-key values
+// merged via user-supplied `unifyValues` for lane-table construction.
+package io.github.kotlinmania.lalrpop
+
+internal interface UnifyKey<V> {
+    fun index(): Int
+
+    companion object {
+        fun tag(): String = "UnifyKey"
+    }
+}
+
+internal interface UnifyValue<Self> {
+    /**
+     * Merge two values. Returns `null` if the merge is not possible;
+     * callers treat that as a unification failure.
+     */
+    fun unifyValues(other: Self): Self?
+}
+
+internal class InPlaceUnificationTable<K : UnifyKey<V>, V>(
+    private val keyFromIndex: (Int) -> K,
+    private val unifyValues: (V, V) -> V?,
+) {
+    private val parent: MutableList<Int> = mutableListOf()
+    private val values: MutableList<V> = mutableListOf()
+    private val rank: MutableList<Int> = mutableListOf()
+
+    fun newKey(value: V): K {
+        val idx = parent.size
+        parent.add(idx)
+        values.add(value)
+        rank.add(0)
+        return keyFromIndex(idx)
+    }
+
+    fun probeValue(key: K): V = values[find(key.index())]
+
+    fun unifyVarVar(a: K, b: K): Boolean {
+        val ra = find(a.index())
+        val rb = find(b.index())
+        if (ra == rb) return true
+
+        val merged = unifyValues(values[ra], values[rb]) ?: return false
+
+        val (winner, loser) =
+            when {
+                rank[ra] < rank[rb] -> {
+                    Pair(rb, ra)
+                }
+
+                rank[ra] > rank[rb] -> {
+                    Pair(ra, rb)
+                }
+
+                else -> {
+                    rank[ra] = rank[ra] + 1
+                    Pair(ra, rb)
+                }
+            }
+        parent[loser] = winner
+        values[winner] = merged
+        return true
+    }
+
+    private fun find(i: Int): Int {
+        var current = i
+        while (parent[current] != current) {
+            parent[current] = parent[parent[current]]
+            current = parent[current]
+        }
+        return current
+    }
+}

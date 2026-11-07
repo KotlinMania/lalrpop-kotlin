@@ -10,17 +10,19 @@ Rust→Kotlin port.
 ## Usage
 
 ```bash
-python tools/sig_diff/sig_diff.py <rust_file> <kotlin_file> [--out DIR]
+tools/sig_diff/sig_diff.sh <rust_file> <kotlin_file> [--out DIR]
 ```
 
-Default output dir is `tools/sig_diff/output/<kotlin_basename>/`.
+Default output dir is `build/sig-diff/<kotlin_basename>/`. Explicit output
+directories must stay inside this repository. The Java implementation is
+`buildSrc/src/main/java/io/github/kotlinmania/build/SourceSignatureDiff.java`.
 
 Example — the headline pair:
 
 ```bash
-python tools/sig_diff/sig_diff.py \
+tools/sig_diff/sig_diff.sh \
   tmp/lalrpop-rs/lalrpop/src/parser/lrgrammar.rs \
-  src/commonMain/kotlin/io/github/kotlinmania/lalrpop/parser/LrGrammar.kt
+  src/common/commonMain/kotlin/io/github/kotlinmania/lalrpop/parser/LrGrammar.kt
 ```
 
 ## Output

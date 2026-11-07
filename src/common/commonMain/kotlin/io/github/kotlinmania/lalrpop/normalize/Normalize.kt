@@ -1,0 +1,73 @@
+// transliterated from upstream module root
+/**
+ * Normalization processes a parse tree until it is in suitable form to
+ * be converted to the more canonical form. This is done as a series of
+ * passes, each contained in their own module below.
+ */
+package io.github.kotlinmania.lalrpop.normalize
+
+import io.github.kotlinmania.lalrpop.Session
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Span
+import io.github.kotlinmania.lalrpop.normalize.condcomp.removeDisabledDecls
+import io.github.kotlinmania.lalrpop.normalize.inline.inline
+import io.github.kotlinmania.lalrpop.normalize.lower.lower
+import io.github.kotlinmania.lalrpop.normalize.macroexpand.expandMacros
+import io.github.kotlinmania.lalrpop.normalize.precedence.expandPrecedence
+import io.github.kotlinmania.lalrpop.normalize.resolve.resolve
+import io.github.kotlinmania.lalrpop.normalize.tyinfer.inferTypes
+import io.github.kotlinmania.lalrpop.profile
+import io.github.kotlinmania.lalrpop.grammar.parsetree.Grammar as PtGrammar
+import io.github.kotlinmania.lalrpop.grammar.repr.Grammar as RGrammar
+import io.github.kotlinmania.lalrpop.normalize.prevalidate.validate as prevalidateValidate
+import io.github.kotlinmania.lalrpop.normalize.tokencheck.validate as tokenCheckValidate
+
+internal typealias NormResult<T> = Result<T>
+
+internal data class NormError(
+    val message: String,
+    val span: Span,
+)
+
+/** Throws the equivalent of `return Err(NormError { ... })` in the Rust original. */
+internal fun returnErr(span: Span, message: String): Nothing =
+    throw NormErrorException(NormError(message, span))
+
+internal class NormErrorException(
+    val err: NormError,
+) : RuntimeException(err.message)
+
+internal fun normalize(session: Session, grammar: PtGrammar): RGrammar =
+    normalizeHelper(session, grammar, true)
+
+/** for unit tests, it is convenient to skip the validation step, and supply a dummy session */
+internal fun normalizeWithoutValidating(grammar: PtGrammar): RGrammar =
+    normalizeHelper(Session.new(), grammar, false)
+
+private fun normalizeHelper(session: Session, grammar: PtGrammar, validate: Boolean): RGrammar {
+    val lowered = lowerHelper(session, grammar, validate)
+    return profile(session, "Inlining") { inline(lowered) }
+}
+
+internal fun lowerHelper(session: Session, grammar: PtGrammar, validate: Boolean): RGrammar {
+    profile(session, "Grammar validation") {
+        if (validate) {
+            prevalidateValidate(grammar)
+        }
+    }
+    val afterCondComp =
+        profile(session, "Conditional compilation") {
+            removeDisabledDecls(session, grammar)
+        }
+    val resolved = profile(session, "Grammar resolution") { resolve(afterCondComp) }
+    val precedenceExpanded =
+        profile(session, "Precedence expansion") {
+            expandPrecedence(resolved)
+        }
+    val macroExpanded =
+        profile(session, "Macro expansion") {
+            expandMacros(precedenceExpanded, session.macroRecursionLimit)
+        }
+    val tokenChecked = profile(session, "Token check") { tokenCheckValidate(macroExpanded) }
+    val types = profile(session, "Infer types") { inferTypes(tokenChecked) }
+    return profile(session, "Lowering") { lower(session, tokenChecked, types) }
+}

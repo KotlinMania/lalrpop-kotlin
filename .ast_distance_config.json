@@ -6,7 +6,7 @@
     "lang": "rust"
   },
   "target": {
-    "path": "src/commonMain/kotlin/io/github/kotlinmania/lalrpop",
+    "path": "src",
     "lang": "kotlin"
   },
   "checks": {
