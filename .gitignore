@@ -6,6 +6,9 @@ verification/*/buildSrc/build/
 src/js/node-ffi/dist/build/
 tools/**/build/
 .gradle/
+.gradle-tmp/
+.gradle-user-home/
+.konan/
 .kotlin/
 *.class
 *.jar
