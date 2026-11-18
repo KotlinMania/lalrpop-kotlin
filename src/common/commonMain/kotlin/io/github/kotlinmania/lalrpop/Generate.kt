@@ -17,7 +17,7 @@ internal sealed class ParseTree {
         val nt: NonterminalString,
         val trees: MutableList<ParseTree>,
     ) : ParseTree() {
-        override fun toString(): String = "[$nt: ${Sep(", ", trees)}]"
+        override fun toString(): String = renderParseTree(this)
     }
 
     data class Terminal(
@@ -28,22 +28,45 @@ internal sealed class ParseTree {
 
     fun terminals(): MutableList<TerminalString> {
         val vec: MutableList<TerminalString> = mutableListOf()
-        pushTerminals(vec)
+        val stack = ArrayDeque<ParseTree>()
+        stack.addLast(this)
+        while (stack.isNotEmpty()) {
+            when (val node = stack.removeLast()) {
+                is Terminal -> vec.add(node.t)
+                is Nonterminal -> {
+                    for (i in node.trees.lastIndex downTo 0) {
+                        stack.addLast(node.trees[i])
+                    }
+                }
+            }
+        }
         return vec
     }
+}
 
-    private fun pushTerminals(vec: MutableList<TerminalString>) {
-        when (this) {
-            is Terminal -> {
-                vec.add(t)
-            }
-
-            is Nonterminal -> {
-                for (tree in trees) tree.pushTerminals(vec)
+private fun renderParseTree(root: ParseTree): String =
+    buildString {
+        val stack = ArrayDeque<Any>()
+        stack.addLast(root)
+        while (stack.isNotEmpty()) {
+            when (val item = stack.removeLast()) {
+                is String -> append(item)
+                is ParseTree.Terminal -> append(item.t)
+                is ParseTree.Nonterminal -> {
+                    append('[')
+                    append(item.nt)
+                    append(": ")
+                    stack.addLast("]")
+                    for (i in item.trees.lastIndex downTo 0) {
+                        stack.addLast(item.trees[i])
+                        if (i > 0) {
+                            stack.addLast(", ")
+                        }
+                    }
+                }
             }
         }
     }
-}
 
 /**
  * Cryptographic 20-round ChaCha20 pseudo-random number generator (RFC 7539
